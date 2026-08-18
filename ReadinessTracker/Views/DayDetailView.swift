@@ -126,7 +126,8 @@ struct DayDetailView: View {
     private var sleepDeepDive: some View {
         VStack(spacing: AppleTheme.cardPadding) {
             SectionHeader(title: "Sleep Analysis")
-            
+
+            if data.sleepHours > 0 {
             // Sleep hours hero
             NativeCard {
                 VStack(spacing: 16) {
@@ -213,6 +214,25 @@ struct DayDetailView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                }
+            }
+            } else {
+                NativeCard {
+                    VStack(spacing: 12) {
+                        Image(systemName: "bed.double.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(RTColor.surfaceHighlight)
+
+                        Text("No Sleep Data")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(.white)
+
+                        Text("No sleep was recorded for this day")
+                            .font(.subheadline)
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 24)
                 }
             }
         }
@@ -455,24 +475,26 @@ struct DayDetailView: View {
     // MARK: - Sleep Stage Analysis
     private var sleepStageAnalysis: some View {
         VStack(spacing: AppleTheme.cardPadding) {
-            SectionHeader(title: "Sleep Stage Analysis")
-            
-            // Use the new Whoop-style SleepStageBreakdown
-            SleepStageBreakdown(
-                sleepHours: data.sleepHours,
-                deepPercent: data.deepSleepPercent,
-                remPercent: data.remSleepPercent,
-                awakePercent: data.awakePercent,
-                efficiency: data.sleepEfficiency
-            )
-            
-            // Sleep disturbance tracker — real bed/wake times, no synthetic awake period
-            SleepDisturbanceTracker(
-                awakePeriods: [],
-                totalSleepHours: data.sleepHours,
-                sleepStart: data.sleepStartTime,
-                sleepEnd: data.sleepEndTime
-            )
+            if data.sleepHours > 0 {
+                SectionHeader(title: "Sleep Stage Analysis")
+
+                // Use the new Whoop-style SleepStageBreakdown
+                SleepStageBreakdown(
+                    sleepHours: data.sleepHours,
+                    deepPercent: data.deepSleepPercent,
+                    remPercent: data.remSleepPercent,
+                    awakePercent: data.awakePercent,
+                    efficiency: data.sleepEfficiency
+                )
+
+                // Sleep disturbance tracker — real bed/wake times, no synthetic awake period
+                SleepDisturbanceTracker(
+                    awakePeriods: [],
+                    totalSleepHours: data.sleepHours,
+                    sleepStart: data.sleepStartTime,
+                    sleepEnd: data.sleepEndTime
+                )
+            }
         }
     }
     

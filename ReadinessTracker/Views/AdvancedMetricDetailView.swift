@@ -91,6 +91,25 @@ struct AdvancedMetricDetailView: View {
                             showOutliers: showOutliers
                         )
                     }
+                } else {
+                    NativeCard {
+                        VStack(spacing: 12) {
+                            Image(systemName: "chart.line.uptrend.xyaxis")
+                                .font(.system(size: 40))
+                                .foregroundStyle(RTColor.surfaceHighlight)
+
+                            Text("Not Enough Data")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(.white)
+
+                            Text("Need at least 2 days of data in this period for analysis")
+                                .font(.caption)
+                                .foregroundStyle(RTColor.tertiaryText)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 32)
+                    }
                 }
                 
                 // Outlier callouts section

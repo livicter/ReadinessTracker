@@ -113,7 +113,7 @@ struct PoincarePlotView: View {
                     // Axes labels
                     VStack {
                         Text("RR(n+1) (ms)")
-                            .font(.system(size: 9))
+                            .font(.caption2)
                             .foregroundColor(RTColor.tertiaryText)
                         Spacer()
                     }
@@ -123,7 +123,7 @@ struct PoincarePlotView: View {
                     HStack {
                         Spacer()
                         Text("RR(n) (ms)")
-                            .font(.system(size: 9))
+                            .font(.caption2)
                             .foregroundColor(RTColor.tertiaryText)
                     }
                     .frame(width: width, height: height)
@@ -132,6 +132,9 @@ struct PoincarePlotView: View {
                 }
             }
             .frame(height: size)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Poincaré plot")
+            .accessibilityValue("Scatter plot of each RR interval against the next, \(points.count) points. SD1 \(String(format: "%.1f", sd1)) milliseconds, SD2 \(String(format: "%.1f", sd2)) milliseconds")
             
             // Stats
             HStack(spacing: 20) {
@@ -164,16 +167,16 @@ struct StatBadge: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(label)
-                .font(.system(size: 10, weight: .medium))
+                .font(.caption2.weight(.medium))
                 .foregroundColor(RTColor.secondaryText)
             
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(.headline, design: .rounded).weight(.bold))
                     .foregroundColor(color)
                 if !unit.isEmpty {
                     Text(unit)
-                        .font(.system(size: 10))
+                        .font(.caption2)
                         .foregroundColor(RTColor.tertiaryText)
                 }
             }
@@ -184,5 +187,6 @@ struct StatBadge: View {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(RTColor.surface)
         )
+        .accessibilityElement(children: .combine)
     }
 }

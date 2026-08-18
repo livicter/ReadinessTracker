@@ -45,6 +45,23 @@ struct StrainRecoveryBalanceCard: View {
                     color: zone.color,
                     height: 8
                 )
+
+                HStack {
+                    Text("Rest")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(RTColor.tertiaryText)
+
+                    Spacer()
+
+                    Text("Balanced")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+
+                Text("How recovery keeps up with your training load")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

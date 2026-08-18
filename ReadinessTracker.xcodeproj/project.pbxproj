@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		00BC10E3DD13EF2BC2276280 /* StrainRecoveryBalanceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B0DA072454C458C48F95EAD /* StrainRecoveryBalanceCard.swift */; };
-		3F1A9C4B7D2E4F08A5B6C1D9 /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0E930E51454203B8786F2C /* BreathingView.swift */; };
 		0667BB02BE7E4EBFBAFE99D6999B53F1 /* StrainCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F371515D46F540FD8094CED0B52AEE3A /* StrainCalculator.swift */; };
 		0E461FA090FB65C4BDF4AE50 /* BaselineManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1953FFA7C85EECE5D00CD67D /* BaselineManagerTests.swift */; };
 		0ECAFC05BA148C030F1BC201 /* StrainRecoveryBalance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FC4DB7D055FF6D28CC53FB /* StrainRecoveryBalance.swift */; };
@@ -17,22 +16,19 @@
 		1429D6A18568A07A87CA4399 /* ReadinessTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19F4501D295F232278CE3D7E /* ReadinessTrackerApp.swift */; };
 		14ADFE5AC029A634CD0C4540 /* NutritionSummaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72916A6EF0015F9C4B74BDA6 /* NutritionSummaryTests.swift */; };
 		155F7F5758ED9AEA1457BC2E /* RecoveryCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C607D9F3471CED6F2B4DC292 /* RecoveryCalculatorTests.swift */; };
+		1F7883B1A027AD3FAE8604DC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0759E50E0B67A527BF7C73A /* SwiftUI.framework */; };
 		23AE06D7FA36DDB9EB4EDE5A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CB65267C349A3D15B1DBBD /* Theme.swift */; };
 		24C7E159249B84DB696DE608 /* RecoveryTrajectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCCDF3441063EDB71939BC3 /* RecoveryTrajectoryView.swift */; };
+		2698ED50744835883E5BB90A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156364342BFD68DEC2AFF4EC /* Foundation.framework */; };
 		298A51EEAC859F0333313C78 /* JournalEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E128320003B1E4D9832FC65 /* JournalEntryView.swift */; };
 		2AA3ECDA9075D57C38A33E53 /* AdvancedMetricChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B73BC055849D7963B0FE2D3 /* AdvancedMetricChartView.swift */; };
 		2CC8C6BF536BEF7EAF0B84E6 /* SleepPerformanceScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7752D98AAEC3B97BECBA33 /* SleepPerformanceScore.swift */; };
 		37A13C3DA547120D6391F7C1 /* WeeklyPatternView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5368C2E138A33B72A0CDC4C5 /* WeeklyPatternView.swift */; };
+		37DC4839AE0C23214F42E6D5 /* CoachingInsight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3D4619CC2F8467C6C914F2 /* CoachingInsight.swift */; };
 		3A6FEE83BC553A539F370D9F /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37223140F7E660A4E7A40F2 /* CheckInView.swift */; };
 		3B7B4A1E392E52656FC254BF /* StrainSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C89708E130904A359297629 /* StrainSessionTests.swift */; };
-		57AA00020000000000000001 /* SleepStageInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00010000000000000001 /* SleepStageInterval.swift */; };
-		57AA00040000000000000001 /* SleepStageIntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00030000000000000001 /* SleepStageIntervalTests.swift */; };
-		57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00070000000000000001 /* SleepCycleDetectorTests.swift */; };
-		57AA00060000000000000001 /* SleepCycleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00050000000000000001 /* SleepCycleDetector.swift */; };
-		57AA000A0000000000000001 /* HypnogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00090000000000000001 /* HypnogramView.swift */; };
-		57AA000C0000000000000001 /* SleepCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000B0000000000000001 /* SleepCycleView.swift */; };
-		57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000D0000000000000001 /* DepthTimelineChart.swift */; };
 		3EBF1CB0F58E0BA805DB213C /* StrainRecoveryWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C916B78D2BC26B5597ADFD8 /* StrainRecoveryWheel.swift */; };
+		3F1A9C4B7D2E4F08A5B6C1D9 /* BreathingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C0E930E51454203B8786F2C /* BreathingView.swift */; };
 		413106F5F8C5438E96251DC7 /* RecoveryCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F374807A3D1489FB9169AA7 /* RecoveryCalculator.swift */; };
 		44844797585450E23D738EB9 /* QuickTrendTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9975446B618A947B5BE1069 /* QuickTrendTests.swift */; };
 		44EDA2E2DAE451F3E6847E8D /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4B0236D9705AED197F3EE9 /* DataStore.swift */; };
@@ -42,13 +38,22 @@
 		4D76C44E6D20D4D0A9EED41F /* MetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A8CE12792788BABA32946 /* MetadataStore.swift */; };
 		4F234BCB0921F7B493AC2D34 /* WeeklyReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E7B4697F418E973EDA9E8B /* WeeklyReportView.swift */; };
 		57A5F0D72FCA0C280061C07C /* ReadinessTrackerWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 57A5F0D62FCA0C280061C07C /* ReadinessTrackerWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		57AA00020000000000000001 /* SleepStageInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00010000000000000001 /* SleepStageInterval.swift */; };
+		57AA00040000000000000001 /* SleepStageIntervalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00030000000000000001 /* SleepStageIntervalTests.swift */; };
+		57AA00060000000000000001 /* SleepCycleDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00050000000000000001 /* SleepCycleDetector.swift */; };
+		57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00070000000000000001 /* SleepCycleDetectorTests.swift */; };
+		57AA000A0000000000000001 /* HypnogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00090000000000000001 /* HypnogramView.swift */; };
+		57AA000C0000000000000001 /* SleepCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000B0000000000000001 /* SleepCycleView.swift */; };
+		57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000D0000000000000001 /* DepthTimelineChart.swift */; };
 		5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */; };
+		5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA60028BE763A221CC4030F9 /* NotificationManager.swift */; };
 		682DEC717507792EB4575DF9 /* StrainRecoveryBalanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B890012BCB6B39E045ACD28E /* StrainRecoveryBalanceTests.swift */; };
 		68B3F90497051845053C11FE9205D816 /* RecoveryStrainDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A856E35F0744D01AC94A1AFD57A51E6 /* RecoveryStrainDetailView.swift */; };
 		6A61E9382920864A09CB1138 /* TrendAnalysisEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3726965C8A625B069AB691 /* TrendAnalysisEngine.swift */; };
 		6B24AF7FD20BF954A1C522A1 /* SleepHRVCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E678C92BEC966084F4FB29E6 /* SleepHRVCard.swift */; };
 		6B7F34B5D04F79535AD30C5B /* BaselineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264C12BD4BDC41159DBA14B7 /* BaselineManager.swift */; };
 		6CE8A7ACC28ED78129F0091A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC90D2ADB45EC5D1985C2A7 /* DashboardView.swift */; };
+		6FB8615A93A9843C86C23F1E /* ReadinessTrackerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6723B71151F1714D1ADFB238 /* ReadinessTrackerWidget.swift */; };
 		7000A0ED19CF4F6FAC37B7E4 /* TripleRingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BA040C138E14DB7AE926B08 /* TripleRingView.swift */; };
 		7B5950BAD4C02A8C75454B73 /* DayDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60195A9C493E18B3114E43BF /* DayDetailView.swift */; };
 		7CDA3A19B6D71BFC1A18E644 /* StrainSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964793E8536881915509FC96 /* StrainSession.swift */; };
@@ -57,6 +62,8 @@
 		8101771D43D7B94A2B429611 /* SmartInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D4B77F38260D5C0D8B47B8 /* SmartInsightsView.swift */; };
 		823E33C920B69115FA3F814A /* RespiratoryRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9659B149E7D7989F93C74A /* RespiratoryRateCard.swift */; };
 		85F5598095EC19DD37BC120D /* HRVCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDD5423DA5F87145875D338 /* HRVCalculator.swift */; };
+		88655F0BEB2B5D453C78C1F7 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */; };
+		8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */; };
 		9B7FD4F03262E5F9581A33065B7C6E0F /* TrendDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B236C2807467D43F387A70ACA6E85D0 /* TrendDetailView.swift */; };
 		9BC30AC593F57F5E13EFBCD4 /* SyncStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D551B1384E980CF2EC373C72 /* SyncStatusView.swift */; };
 		A01A36F3EA3BD434A91390B6 /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A36B816B69A544FD88F21F88 /* Animations.swift */; };
@@ -66,6 +73,7 @@
 		A7442CF52710D2883AA10C0F /* MetricCorrelationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E2F01C7BD9E3A2B1E1567F /* MetricCorrelationView.swift */; };
 		B309AACC01BE00FC168E58F2 /* NutritionSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80A8466BA4658DE094ECE5FE /* NutritionSummary.swift */; };
 		B39C74720C62CCA88E238EB3 /* SleepData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD27F885137C313F07166EB /* SleepData.swift */; };
+		B90A7A945861C708AF855B62 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C59BEA3111F0535ECE8127D0 /* WidgetKit.framework */; };
 		BD12EF99A2F54B158191B099 /* SleepAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E96211548B04767A1F6B642 /* SleepAnalysisView.swift */; };
 		BD5F8136FE16431994D9456A /* HRSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFECBF49ABD42C5892F03B2 /* HRSample.swift */; };
 		C2599ACF009B926BDCA4EEE2 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A03F999ED1A7CE974162D7 /* HealthKitManager.swift */; };
@@ -74,11 +82,15 @@
 		C5B78A67D82B0EBF244499A0 /* SleepDisturbanceTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC304F6A5570CE5B45776AF0 /* SleepDisturbanceTracker.swift */; };
 		CA56CC34ABACD11B57AF2BBC /* SleepDebtCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667E1BFE6863B497FB5F7ADD /* SleepDebtCalculator.swift */; };
 		CE9A3E3BE30DFAB4247C7E11 /* HRVCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB5FAA70F3ECE1BE4B52C43 /* HRVCalculatorTests.swift */; };
+		D43FB07A3FEA01E96CC21DB8 /* ReadinessTrackerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D7EA6CD5920E9A3E14A3A606 /* DistributionHistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D15E893384A1EC8F195C31B /* DistributionHistogramView.swift */; };
 		D88D1601AA428652E2DA0439 /* ReadinessCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364F8B906BAF6887FA801A2F /* ReadinessCalculator.swift */; };
+		D8B1B1F8A192CF005A8E212F /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B924C81AF57BDFFF7A207A0 /* NotificationSettingsView.swift */; };
 		D91F919B127DFE3D9AD7B50F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156364342BFD68DEC2AFF4EC /* Foundation.framework */; };
 		DA351070FEEEB49A1DB55DEF /* SleepConsistencyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */; };
+		DA6B374DC4663B26CD969BD9 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */; };
 		DF3BC5618216DF0064BADC23 /* UserMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA90E3B855B871337DEB0A0 /* UserMetadata.swift */; };
+		E3010EC13C0C6FABE2C9360F /* CoachingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7A8CCED4BECFEAF1F7AD4B /* CoachingView.swift */; };
 		EA1C997340E8B855CC18A6D1 /* AppleNativeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CC408E4EF9AA4508C25854 /* AppleNativeTheme.swift */; };
 		F237C8BF45FE0ABD71A82E63 /* AIRecommendationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E147463102C064553F4F698 /* AIRecommendationsTests.swift */; };
 		F3A6DC794EDA044BC7F3EF5C /* SleepQualityTrend.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96E99869EDEA83FC2F54D7C /* SleepQualityTrend.swift */; };
@@ -105,6 +117,13 @@
 			remoteGlobalIDString = 57A5F0D52FCA0C280061C07C;
 			remoteInfo = "ReadinessTrackerWatch Watch App";
 		};
+		99F176A88ECC4275785BCC62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 390C8C7D7247342CD8100F2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 11BCE63BA2721C8EB6DC5A97;
+			remoteInfo = ReadinessTrackerWidget;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -119,14 +138,27 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E8815442EBCF723D4D5A0BEA /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				D43FB07A3FEA01E96CC21DB8 /* ReadinessTrackerWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0518368B65DA466798DA533A /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSettings.swift; path = ReadinessTracker/Models/UserSettings.swift; sourceTree = SOURCE_ROOT; };
 		0DC90D2ADB45EC5D1985C2A7 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		0DD4A4F0863C67ECD459DCE4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		0E147463102C064553F4F698 /* AIRecommendationsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AIRecommendationsTests.swift; sourceTree = "<group>"; };
 		156364342BFD68DEC2AFF4EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		16FC4DB7D055FF6D28CC53FB /* StrainRecoveryBalance.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainRecoveryBalance.swift; sourceTree = "<group>"; };
+		189EBB5A695A4B5FE5D68934 /* ReadinessTrackerWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = ReadinessTrackerWidget.entitlements; path = ReadinessTrackerWidget.entitlements; sourceTree = "<group>"; };
 		1953FFA7C85EECE5D00CD67D /* BaselineManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = BaselineManagerTests.swift; sourceTree = "<group>"; };
 		19F4501D295F232278CE3D7E /* ReadinessTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadinessTrackerApp.swift; sourceTree = "<group>"; };
 		1B236C2807467D43F387A70ACA6E85D0 /* TrendDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TrendDetailView.swift; path = ReadinessTracker/Views/TrendDetailView.swift; sourceTree = SOURCE_ROOT; };
@@ -134,14 +166,17 @@
 		1C0E930E51454203B8786F2C /* BreathingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BreathingView.swift; path = ReadinessTracker/Views/BreathingView.swift; sourceTree = SOURCE_ROOT; };
 		1C89708E130904A359297629 /* StrainSessionTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainSessionTests.swift; sourceTree = "<group>"; };
 		1CEC47662E4DE99F51DD0791 /* StrainCalculatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StrainCalculatorTests.swift; path = StrainCalculatorTests.swift; sourceTree = "<group>"; };
+		1F7A8CCED4BECFEAF1F7AD4B /* CoachingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoachingView.swift; path = ReadinessTracker/Views/CoachingView.swift; sourceTree = SOURCE_ROOT; };
 		264C12BD4BDC41159DBA14B7 /* BaselineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineManager.swift; sourceTree = "<group>"; };
 		2A77F1EB943BD413A146320A /* ReadinessTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReadinessTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B056B9B7C4F499A8D0EDF65 /* AIRecommendations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AIRecommendations.swift; path = ReadinessTracker/Services/AIRecommendations.swift; sourceTree = SOURCE_ROOT; };
+		2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReadinessTrackerWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		2E96211548B04767A1F6B642 /* SleepAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepAnalysisView.swift; path = ReadinessTracker/Views/SleepAnalysisView.swift; sourceTree = SOURCE_ROOT; };
 		2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SkinTemperatureCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SkinTemperatureCard.swift; sourceTree = SOURCE_ROOT; };
 		364F8B906BAF6887FA801A2F /* ReadinessCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadinessCalculator.swift; sourceTree = "<group>"; };
 		3C79AA44D52F10911E9AEC24 /* AdvancedMetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AdvancedMetricDetailView.swift; path = ReadinessTracker/Views/AdvancedMetricDetailView.swift; sourceTree = SOURCE_ROOT; };
 		3E128320003B1E4D9832FC65 /* JournalEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JournalEntryView.swift; path = ReadinessTracker/Views/WhoopFeatures/JournalEntryView.swift; sourceTree = SOURCE_ROOT; };
+		43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoachingEngineTests.swift; path = CoachingEngineTests.swift; sourceTree = "<group>"; };
 		43E2F01C7BD9E3A2B1E1567F /* MetricCorrelationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MetricCorrelationView.swift; path = ReadinessTracker/Views/MetricCorrelationView.swift; sourceTree = SOURCE_ROOT; };
 		49A4299792EB44CCA8AB0233 /* JournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JournalView.swift; path = ReadinessTracker/Views/JournalView.swift; sourceTree = SOURCE_ROOT; };
 		4EFECBF49ABD42C5892F03B2 /* HRSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRSample.swift; path = ReadinessTracker/Models/HRSample.swift; sourceTree = SOURCE_ROOT; };
@@ -150,11 +185,19 @@
 		5368C2E138A33B72A0CDC4C5 /* WeeklyPatternView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WeeklyPatternView.swift; path = ReadinessTracker/Views/WeeklyPatternView.swift; sourceTree = SOURCE_ROOT; };
 		57A5F0CA2FCA0C260061C07C /* ReadinessTrackerWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadinessTrackerWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57A5F0D62FCA0C280061C07C /* ReadinessTrackerWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ReadinessTrackerWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		57AA00010000000000000001 /* SleepStageInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepStageInterval.swift; sourceTree = "<group>"; };
+		57AA00030000000000000001 /* SleepStageIntervalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepStageIntervalTests.swift; sourceTree = "<group>"; };
+		57AA00050000000000000001 /* SleepCycleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleDetector.swift; sourceTree = "<group>"; };
+		57AA00070000000000000001 /* SleepCycleDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepCycleDetectorTests.swift; sourceTree = "<group>"; };
+		57AA00090000000000000001 /* HypnogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HypnogramView.swift; sourceTree = "<group>"; };
+		57AA000B0000000000000001 /* SleepCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleView.swift; sourceTree = "<group>"; };
+		57AA000D0000000000000001 /* DepthTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthTimelineChart.swift; sourceTree = "<group>"; };
 		5CCCDF3441063EDB71939BC3 /* RecoveryTrajectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecoveryTrajectoryView.swift; path = ReadinessTracker/Views/RecoveryTrajectoryView.swift; sourceTree = SOURCE_ROOT; };
 		60195A9C493E18B3114E43BF /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DayDetailView.swift; path = ReadinessTracker/Views/DayDetailView.swift; sourceTree = SOURCE_ROOT; };
 		62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRVFrequencyAnalysis.swift; path = ReadinessTracker/Models/HRVFrequencyAnalysis.swift; sourceTree = SOURCE_ROOT; };
 		6486CB9C71DF96B78F03DB23 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = ReadinessTracker/Design/HapticFeedback.swift; sourceTree = SOURCE_ROOT; };
 		667E1BFE6863B497FB5F7ADD /* SleepDebtCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepDebtCalculator.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepDebtCalculator.swift; sourceTree = SOURCE_ROOT; };
+		6723B71151F1714D1ADFB238 /* ReadinessTrackerWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ReadinessTrackerWidget.swift; path = ReadinessTrackerWidget.swift; sourceTree = "<group>"; };
 		69D7C70AC2F403B498C7D670 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		6B0DA072454C458C48F95EAD /* StrainRecoveryBalanceCard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainRecoveryBalanceCard.swift; sourceTree = "<group>"; };
 		700DF0173912F4A2D17798B849BB6ADE /* ReadinessDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReadinessDetailView.swift; path = ReadinessTracker/Views/ReadinessDetailView.swift; sourceTree = SOURCE_ROOT; };
@@ -170,11 +213,14 @@
 		8AF7EEDF89A57D2C8EE67CED /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		8CE5E39CEF2C51B85DE581D1 /* SleepStageBreakdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepStageBreakdown.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepStageBreakdown.swift; sourceTree = SOURCE_ROOT; };
 		8E9659B149E7D7989F93C74A /* RespiratoryRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RespiratoryRateCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RespiratoryRateCard.swift; sourceTree = SOURCE_ROOT; };
+		8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDataExporter.swift; path = ReadinessTracker/Services/WidgetDataExporter.swift; sourceTree = SOURCE_ROOT; };
 		964793E8536881915509FC96 /* StrainSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainSession.swift; sourceTree = "<group>"; };
 		985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepConsistencyTracker.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepConsistencyTracker.swift; sourceTree = SOURCE_ROOT; };
 		99D4B77F38260D5C0D8B47B8 /* SmartInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SmartInsightsView.swift; path = ReadinessTracker/Views/SmartInsightsView.swift; sourceTree = SOURCE_ROOT; };
+		9B924C81AF57BDFFF7A207A0 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotificationSettingsView.swift; path = ReadinessTracker/Views/NotificationSettingsView.swift; sourceTree = SOURCE_ROOT; };
 		9C916B78D2BC26B5597ADFD8 /* StrainRecoveryWheel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StrainRecoveryWheel.swift; path = ReadinessTracker/Views/WhoopFeatures/StrainRecoveryWheel.swift; sourceTree = SOURCE_ROOT; };
 		9D15E893384A1EC8F195C31B /* DistributionHistogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DistributionHistogramView.swift; path = ReadinessTracker/Views/DistributionHistogramView.swift; sourceTree = SOURCE_ROOT; };
+		9D3D4619CC2F8467C6C914F2 /* CoachingInsight.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoachingInsight.swift; path = ReadinessTracker/Models/CoachingInsight.swift; sourceTree = SOURCE_ROOT; };
 		9DDD5423DA5F87145875D338 /* HRVCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HRVCalculator.swift; path = ReadinessTracker/Models/HRVCalculator.swift; sourceTree = SOURCE_ROOT; };
 		A36B816B69A544FD88F21F88 /* Animations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Animations.swift; path = ReadinessTracker/Design/Animations.swift; sourceTree = SOURCE_ROOT; };
 		A9A03F999ED1A7CE974162D7 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
@@ -183,12 +229,16 @@
 		AF7752D98AAEC3B97BECBA33 /* SleepPerformanceScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepPerformanceScore.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepPerformanceScore.swift; sourceTree = SOURCE_ROOT; };
 		B37223140F7E660A4E7A40F2 /* CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInView.swift; sourceTree = "<group>"; };
 		B890012BCB6B39E045ACD28E /* StrainRecoveryBalanceTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainRecoveryBalanceTests.swift; sourceTree = "<group>"; };
+		BA60028BE763A221CC4030F9 /* NotificationManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotificationManager.swift; path = ReadinessTracker/Services/NotificationManager.swift; sourceTree = SOURCE_ROOT; };
+		C0759E50E0B67A527BF7C73A /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		C0CB65267C349A3D15B1DBBD /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		C59BEA3111F0535ECE8127D0 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/WidgetKit.framework; sourceTree = DEVELOPER_DIR; };
 		C607D9F3471CED6F2B4DC292 /* RecoveryCalculatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RecoveryCalculatorTests.swift; path = RecoveryCalculatorTests.swift; sourceTree = "<group>"; };
 		C96E99869EDEA83FC2F54D7C /* SleepQualityTrend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepQualityTrend.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepQualityTrend.swift; sourceTree = SOURCE_ROOT; };
 		CC304F6A5570CE5B45776AF0 /* SleepDisturbanceTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepDisturbanceTracker.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepDisturbanceTracker.swift; sourceTree = SOURCE_ROOT; };
 		CCA90E3B855B871337DEB0A0 /* UserMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMetadata.swift; sourceTree = "<group>"; };
 		CCBFE0E73D7E7320AD0A7570 /* ReadinessTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadinessTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchConnectivityManager.swift; path = ReadinessTracker/Services/WatchConnectivityManager.swift; sourceTree = SOURCE_ROOT; };
 		D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PoincarePlotView.swift; path = ReadinessTracker/Design/PoincarePlotView.swift; sourceTree = SOURCE_ROOT; };
 		D551B1384E980CF2EC373C72 /* SyncStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncStatusView.swift; path = ReadinessTracker/Views/SyncStatusView.swift; sourceTree = SOURCE_ROOT; };
 		E26DF2562B91AB2F789E7365 /* FitbitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitbitManager.swift; sourceTree = "<group>"; };
@@ -200,13 +250,6 @@
 		F87A8CE12792788BABA32946 /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
 		F8F6449F83F9046308CEE1BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F9975446B618A947B5BE1069 /* QuickTrendTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QuickTrendTests.swift; sourceTree = "<group>"; };
-		57AA00010000000000000001 /* SleepStageInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepStageInterval.swift; sourceTree = "<group>"; };
-		57AA00030000000000000001 /* SleepStageIntervalTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepStageIntervalTests.swift; sourceTree = "<group>"; };
-		57AA00070000000000000001 /* SleepCycleDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepCycleDetectorTests.swift; sourceTree = "<group>"; };
-		57AA00050000000000000001 /* SleepCycleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleDetector.swift; sourceTree = "<group>"; };
-		57AA00090000000000000001 /* HypnogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HypnogramView.swift; sourceTree = "<group>"; };
-		57AA000B0000000000000001 /* SleepCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleView.swift; sourceTree = "<group>"; };
-		57AA000D0000000000000001 /* DepthTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthTimelineChart.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -264,6 +307,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A098C37E12CC011C02026E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2698ED50744835883E5BB90A /* Foundation.framework in Frameworks */,
+				B90A7A945861C708AF855B62 /* WidgetKit.framework in Frameworks */,
+				1F7883B1A027AD3FAE8604DC /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -273,6 +326,17 @@
 				BA4673431273CF813E147343 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		23AA9304A9F63484AE35CE53 /* ReadinessTrackerWidget */ = {
+			isa = PBXGroup;
+			children = (
+				6723B71151F1714D1ADFB238 /* ReadinessTrackerWidget.swift */,
+				0DD4A4F0863C67ECD459DCE4 /* Info.plist */,
+				189EBB5A695A4B5FE5D68934 /* ReadinessTrackerWidget.entitlements */,
+			);
+			name = ReadinessTrackerWidget;
+			path = ReadinessTrackerWidget;
 			sourceTree = "<group>";
 		};
 		577D53ECC28A70A61C7510A1 /* Services */ = {
@@ -285,6 +349,9 @@
 				8686481D0DA74E44A76C8197 /* WeeklyReportGenerator.swift */,
 				AE3726965C8A625B069AB691 /* TrendAnalysisEngine.swift */,
 				2B056B9B7C4F499A8D0EDF65 /* AIRecommendations.swift */,
+				8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */,
+				BA60028BE763A221CC4030F9 /* NotificationManager.swift */,
+				D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -307,6 +374,7 @@
 				57A5F0C52FCA0BAC0061C07C /* Recovered References */,
 				A9BEC5E3B9915C5F4854B822 /* ReadinessTrackerTests */,
 				0D2E13630F4F605C2F8DB7A1 /* Frameworks */,
+				23AA9304A9F63484AE35CE53 /* ReadinessTrackerWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -330,6 +398,7 @@
 				16FC4DB7D055FF6D28CC53FB /* StrainRecoveryBalance.swift */,
 				57AA00010000000000000001 /* SleepStageInterval.swift */,
 				57AA00050000000000000001 /* SleepCycleDetector.swift */,
+				9D3D4619CC2F8467C6C914F2 /* CoachingInsight.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -371,6 +440,7 @@
 				57A5F0CA2FCA0C260061C07C /* ReadinessTrackerWatch.app */,
 				57A5F0D62FCA0C280061C07C /* ReadinessTrackerWatch Watch App.app */,
 				2A77F1EB943BD413A146320A /* ReadinessTrackerTests.xctest */,
+				2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -389,6 +459,7 @@
 				F9975446B618A947B5BE1069 /* QuickTrendTests.swift */,
 				57AA00030000000000000001 /* SleepStageIntervalTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
+				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
 			);
 			name = ReadinessTrackerTests;
 			path = ReadinessTrackerTests;
@@ -398,6 +469,8 @@
 			isa = PBXGroup;
 			children = (
 				156364342BFD68DEC2AFF4EC /* Foundation.framework */,
+				C59BEA3111F0535ECE8127D0 /* WidgetKit.framework */,
+				C0759E50E0B67A527BF7C73A /* SwiftUI.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -418,6 +491,8 @@
 				57AA00090000000000000001 /* HypnogramView.swift */,
 				57AA000B0000000000000001 /* SleepCycleView.swift */,
 				57AA000D0000000000000001 /* DepthTimelineChart.swift */,
+				1F7A8CCED4BECFEAF1F7AD4B /* CoachingView.swift */,
+				9B924C81AF57BDFFF7A207A0 /* NotificationSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -438,6 +513,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		11BCE63BA2721C8EB6DC5A97 /* ReadinessTrackerWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 597413B66771EF8DFAA0641B /* Build configuration list for PBXNativeTarget "ReadinessTrackerWidget" */;
+			buildPhases = (
+				57F1761DB95FB9ACEE142B25 /* Sources */,
+				7A098C37E12CC011C02026E4 /* Frameworks */,
+				84AF7D09E58F74100318AA9B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReadinessTrackerWidget;
+			productName = ReadinessTrackerWidget;
+			productReference = 2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		51D820C5C3EF80053A88AE39 /* ReadinessTracker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E892D8F94F61976F1D1FA01D /* Build configuration list for PBXNativeTarget "ReadinessTracker" */;
@@ -445,10 +537,12 @@
 				96DE50E801865B3698654EBF /* Sources */,
 				5200A5FA0939B99D7A1D7B28 /* Frameworks */,
 				2BF8234041F35487D86C669F /* Resources */,
+				E8815442EBCF723D4D5A0BEA /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				0FF47D110F8AB7E24CEFB1E3 /* PBXTargetDependency */,
 			);
 			name = ReadinessTracker;
 			productName = ReadinessTracker;
@@ -552,6 +646,7 @@
 				57A5F0C92FCA0C260061C07C /* ReadinessTrackerWatch */,
 				57A5F0D52FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
 				B58574B0B3BD6FDD527B3530 /* ReadinessTrackerTests */,
+				11BCE63BA2721C8EB6DC5A97 /* ReadinessTrackerWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -573,6 +668,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		57A5F0D42FCA0C280061C07C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		84AF7D09E58F74100318AA9B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -604,6 +706,7 @@
 				44844797585450E23D738EB9 /* QuickTrendTests.swift in Sources */,
 				57AA00040000000000000001 /* SleepStageIntervalTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
+				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -618,6 +721,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57F1761DB95FB9ACEE142B25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FB8615A93A9843C86C23F1E /* ReadinessTrackerWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,12 +803,24 @@
 				57AA000A0000000000000001 /* HypnogramView.swift in Sources */,
 				57AA000C0000000000000001 /* SleepCycleView.swift in Sources */,
 				57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */,
+				88655F0BEB2B5D453C78C1F7 /* WidgetDataExporter.swift in Sources */,
+				37DC4839AE0C23214F42E6D5 /* CoachingInsight.swift in Sources */,
+				5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */,
+				DA6B374DC4663B26CD969BD9 /* WatchConnectivityManager.swift in Sources */,
+				E3010EC13C0C6FABE2C9360F /* CoachingView.swift in Sources */,
+				D8B1B1F8A192CF005A8E212F /* NotificationSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0FF47D110F8AB7E24CEFB1E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ReadinessTrackerWidget;
+			target = 11BCE63BA2721C8EB6DC5A97 /* ReadinessTrackerWidget */;
+			targetProxy = 99F176A88ECC4275785BCC62 /* PBXContainerItemProxy */;
+		};
 		57A5F0D92FCA0C280061C07C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 57A5F0D52FCA0C280061C07C /* ReadinessTrackerWatch Watch App */;
@@ -1121,6 +1244,35 @@
 			};
 			name = Release;
 		};
+		87144D85C3268F2F55D28962 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ReadinessTrackerWidget/ReadinessTrackerWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReadinessTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Readiness;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker.widget;
+				PRODUCT_NAME = ReadinessTrackerWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		D85D8EEC7F26E23219072F79 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1138,6 +1290,36 @@
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
+		};
+		E57CDD00F8748E2E60F35A0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = ReadinessTrackerWidget/ReadinessTrackerWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReadinessTrackerWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Readiness;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker.widget;
+				PRODUCT_NAME = ReadinessTrackerWidget;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
 		};
 		FBB2A557DE66C3152CE1740B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1203,6 +1385,15 @@
 			buildConfigurations = (
 				57A5F0E12FCA0C290061C07C /* Debug */,
 				57A5F0E22FCA0C290061C07C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		597413B66771EF8DFAA0641B /* Build configuration list for PBXNativeTarget "ReadinessTrackerWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E57CDD00F8748E2E60F35A0D /* Release */,
+				87144D85C3268F2F55D28962 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

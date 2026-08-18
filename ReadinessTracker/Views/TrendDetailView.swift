@@ -208,11 +208,21 @@ struct TrendDetailView: View {
                         }
                     }
                 } else {
-                    Text("Need more data")
-                        .font(.subheadline)
-                        .foregroundStyle(RTColor.secondaryText)
-                        .frame(height: 260)
-                        .frame(maxWidth: .infinity)
+                    VStack(spacing: 12) {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.system(size: 40))
+                            .foregroundStyle(RTColor.surfaceHighlight)
+
+                        Text("Not Enough Data")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(RTColor.secondaryText)
+
+                        Text("Need at least 2 days of data in this period to show trends")
+                            .font(.caption)
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .frame(height: 260)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }

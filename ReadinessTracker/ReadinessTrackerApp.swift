@@ -15,6 +15,15 @@ struct ReadinessTrackerApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Notification delegate must be set before launch finishes to catch delivery events
+        NotificationManager.shared.setUp()
+        WatchConnectivityManager.shared.start()
+        Task {
+            // Rebuilds pending notifications from latest data; no-op until the
+            // user enables notifications in Settings, so no permission prompt here.
+            await NotificationManager.shared.rescheduleAll()
+        }
+
         // Auto-request HealthKit authorization on first launch
         Task {
             await HealthKitManager.shared.requestAuthorization()
@@ -47,6 +56,9 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         scheduleAppRefresh()
         let refreshTask = Task {
             await HealthKitManager.shared.fetchTodayData()
+            // Re-evaluate low-recovery warning and refresh notification content
+            // with today's data
+            await NotificationManager.shared.rescheduleAll()
         }
         task.expirationHandler = {
             refreshTask.cancel()

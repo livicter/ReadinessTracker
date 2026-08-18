@@ -65,6 +65,13 @@ struct QuickTrendCard: View {
                 if trend.sparkline.count >= 2 {
                     AnimatedSparkline(data: trend.sparkline, color: metric.color)
                         .frame(height: 32)
+                } else {
+                    // Keep card height consistent when the window has too few samples
+                    Text("Not enough data")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(RTColor.tertiaryText)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 32)
                 }
             }
         }

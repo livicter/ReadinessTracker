@@ -40,17 +40,22 @@ struct TripleRingHero: View {
             
             // Center score display
             VStack(spacing: 2) {
+                // Fixed size by design — lives inside a fixed-size ring; Dynamic Type would break the layout
                 Text("\(overallScore)")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
                 
                 Text("READY")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.caption2.weight(.semibold))
                     .foregroundColor(RTColor.secondaryText)
                     .tracking(2)
             }
         }
         .frame(width: size + 20, height: size + 20)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Readiness score")
+        .accessibilityValue("\(overallScore) out of 100. Sleep \(sleepScore), work \(workScore), gym \(gymScore)")
+        .accessibilityAddTraits(.isSummaryElement)
     }
     
     private var overallScore: Int {
@@ -100,6 +105,9 @@ struct ActivityRing: View {
             }
         }
         .frame(width: size, height: size)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Progress ring")
+        .accessibilityValue("\(Int(min(max(progress, 0), 1) * 100)) percent")
         .onAppear {
             withAnimation(.easeOut(duration: 1.2)) {
                 animatedProgress = progress
@@ -138,17 +146,19 @@ struct LegendItem: View {
         VStack(spacing: 6) {
             HStack(spacing: 4) {
                 Image(systemName: icon)
-                    .font(.system(size: 12))
+                    .font(.caption.weight(.semibold))
                     .foregroundColor(color)
                 Text(label)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.caption.weight(.medium))
                     .foregroundColor(RTColor.secondaryText)
             }
             
             Text("\(score)")
-                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .font(.system(.title3, design: .rounded).weight(.bold))
                 .foregroundColor(.white)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label) score \(score)")
     }
 }

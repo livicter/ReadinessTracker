@@ -238,6 +238,34 @@ class AIRecommendationEngine {
         return runs
     }
 
+    /// Builds the ranked daily coaching feed for the given source.
+    /// Gathers inputs from the stores and delegates the rules to CoachingEngine.
+    func generateCoachingFeed(for source: DataSource) -> [CoachingInsight] {
+        let history = DataStore.shared.dataForSource(source, days: 30)
+        guard let latest = history.last else { return [] }
+
+        let metadata = MetadataStore.shared.metadataFor(date: Date(), timeOfDay: .morning)
+        let dualScores = ReadinessCalculator.calculateDualScores(from: latest, history: history, metadata: metadata)
+        let guidance = workoutSuggestion(readinessScore: dualScores.general, gymScore: dualScores.gym)
+
+        return CoachingEngine.generateFeed(
+            latest: latest,
+            history: history,
+            morningMetadata: metadata,
+            journalEntries: Self.loadJournalEntries(),
+            trainingGuidance: guidance
+        )
+    }
+
+    /// Journal entries persisted by JournalView (same UserDefaults key).
+    private static func loadJournalEntries() -> [JournalEntry] {
+        guard let data = UserDefaults.standard.data(forKey: "journal_entries"),
+              let decoded = try? JSONDecoder().decode([JournalEntry].self, from: data) else {
+            return []
+        }
+        return decoded
+    }
+
     func workoutSuggestion(readinessScore: Int, gymScore: Int) -> String {
         switch gymScore {
         case 80...100:

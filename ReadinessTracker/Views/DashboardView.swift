@@ -11,40 +11,38 @@ struct DashboardView: View {
     @State private var quickTrendWindow: Int = 7
     @State private var isRefreshing = false
     @State private var lastSyncDate: Date?
+    @State private var dismissedError: String?
     @State private var isWeeklyReportPresented = false
-    
+
+    private var latestData: DailyHealthData? {
+        dataStore.latest(for: selectedSource)
+    }
+
+    private var currentError: String? {
+        let message = selectedSource == .appleWatch ? healthKit.errorMessage : fitbit.errorMessage
+        guard let message, message != dismissedError else { return nil }
+        return message
+    }
+
+    private var isInitialLoading: Bool {
+        latestData == nil && isRefreshing
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 AppBackground()
-                
+
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: AppleTheme.sectionSpacing) {
                         sourcePicker
-                        
-                        // Sync status bar
-                        SyncStatusView(
-                            lastSync: lastSyncDate,
-                            isSyncing: isRefreshing,
-                            sourceName: selectedSource == .appleWatch ? healthKit.dataSource : "Fitbit",
-                            onSync: {
-                                Haptic.press()
-                                Task {
-                                    isRefreshing = true
-                                    await refreshData()
-                                    isRefreshing = false
-                                    lastSyncDate = Date()
-                                    Haptic.success()
-                                }
-                            }
-                        )
-                        
-                        if let data = dataStore.latest(for: selectedSource) {
+
+                        if let data = latestData {
                             let history = dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
                             let longHistory = dataStore.dataForSource(selectedSource, days: 180)
                             let metadata = metadataStore.metadataFor(date: Date(), timeOfDay: .morning)
                             let dualScores = ReadinessCalculator.calculateDualScores(from: data, history: history, metadata: metadata)
-                            
+
                             // Apply strain decay and cognitive lag
                             let yesterdayMetadata = metadataStore.previousEveningMetadata()
                             let strainAdjusted = ReadinessCalculator.applyStrainDecay(
@@ -58,38 +56,62 @@ struct DashboardView: View {
                                 previousWorkloadStress: yesterdayMetadata?.workloadStress,
                                 daysSince: 1
                             )
-                            
+
                             let finalScores = DualReadinessScores(
                                 general: dualScores.general,
                                 cognitive: cognitiveAdjusted,
                                 gym: strainAdjusted,
                                 breakdown: dualScores.breakdown
                             )
-                            
+
                             heroSection(scores: finalScores)
-                            recommendationsSection(scores: finalScores)
+                                .slideIn(delay: 0)
+
+                            syncStatusBar
+                                .slideIn(delay: 0.05)
+
+                            if let error = currentError {
+                                errorBanner(error)
+                                    .slideIn(delay: 0.08)
+                            }
+
                             checkInSection
+                                .slideIn(delay: 0.1)
                             journalButton
+                                .slideIn(delay: 0.13)
+                            recommendationsSection(scores: finalScores)
+                                .slideIn(delay: 0.16)
                             whoopSection(data: data, history: history, scores: finalScores)
+                                .slideIn(delay: 0.2)
                             metricsSection(data: data, history: history)
+                                .slideIn(delay: 0.24)
                             quickTrendsSection(history: longHistory)
+                                .slideIn(delay: 0.28)
                             sleepSection(data: data)
+                                .slideIn(delay: 0.32)
                             breakdownSection(breakdown: dualScores.breakdown, data: data, history: history)
+                                .slideIn(delay: 0.36)
                             trendSection(history: history)
+                                .slideIn(delay: 0.4)
                         } else {
-                            noDataView
+                            syncStatusBar
+
+                            if let error = currentError {
+                                errorBanner(error)
+                            }
+
+                            if isInitialLoading {
+                                loadingView
+                            } else {
+                                noDataView
+                            }
                         }
                     }
                     .padding(.horizontal, AppleTheme.horizontalMargin)
                     .padding(.vertical, 12)
                 }
                 .refreshable {
-                    isRefreshing = true
-                    Haptic.press()
-                    await refreshData()
-                    isRefreshing = false
-                    lastSyncDate = Date()
-                    Haptic.success()
+                    await performRefresh()
                 }
             }
             .navigationTitle("Readiness")
@@ -120,11 +142,19 @@ struct DashboardView: View {
             }
             .onAppear {
                 Haptic.prepare()
-                lastSyncDate = dataStore.latest(for: selectedSource)?.date
+                lastSyncDate = latestData?.date
+            }
+            .onChange(of: selectedSource) { _ in
+                dismissedError = nil
+                lastSyncDate = latestData?.date
+                Task { await initialLoadIfNeeded() }
+            }
+            .task {
+                await initialLoadIfNeeded()
             }
         }
     }
-    
+
     // MARK: - Source Picker
     private var sourcePicker: some View {
         VStack(spacing: 4) {
@@ -148,13 +178,13 @@ struct DashboardView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                
+
                 Spacer()
             }
             .padding(4)
             .background(RTColor.surface)
             .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusSmall, style: .continuous))
-            
+
             // Data source indicator
             if selectedSource == .appleWatch {
                 HStack(spacing: 4) {
@@ -169,31 +199,104 @@ struct DashboardView: View {
             }
         }
     }
-    
+
+    // MARK: - Sync Status Bar
+    private var syncStatusBar: some View {
+        SyncStatusView(
+            lastSync: lastSyncDate,
+            isSyncing: isRefreshing,
+            sourceName: selectedSource == .appleWatch ? healthKit.dataSource : "Fitbit",
+            onSync: {
+                Haptic.press()
+                Task { await performRefresh() }
+            }
+        )
+    }
+
+    // MARK: - Error Banner
+    private func errorBanner(_ message: String) -> some View {
+        NativeCard {
+            HStack(spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 16))
+                    .foregroundStyle(RTColor.warning)
+
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Spacer()
+
+                Button {
+                    Haptic.press()
+                    Task { await performRefresh() }
+                } label: {
+                    Text("Retry")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.optimal)
+                }
+                .buttonStyle(.plain)
+                .disabled(isRefreshing)
+
+                Button {
+                    Haptic.tap()
+                    dismissedError = message
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     // MARK: - Hero Section (Triple Ring)
     private func heroSection(scores: DualReadinessScores) -> some View {
-        NavigationLink(destination: ReadinessDetailView(
+        let zone = ScoreZone(score: scores.general)
+
+        return NavigationLink(destination: ReadinessDetailView(
             scores: scores,
             data: dataStore.latest(for: selectedSource)!,
             history: dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
         )) {
             NativeCard {
                 VStack(spacing: 20) {
+                    // Eyebrow + zone badge
+                    HStack {
+                        Text("TODAY'S READINESS")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                            .tracking(1.5)
+
+                        Spacer()
+
+                        Text(zone.label.uppercased())
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(zone.color)
+                            .padding(.horizontal, AppleTheme.badgeHPadding)
+                            .padding(.vertical, 4)
+                            .background(zone.color.opacity(AppleTheme.badgeBgOpacity))
+                            .clipShape(Capsule())
+                    }
+
                     // Triple ring
                     TripleRingHero(
                         gymScore: scores.gym,
                         workScore: scores.cognitive,
                         sleepScore: scores.breakdown.sleepScore,
-                        size: 200
+                        size: 220
                     )
-                    
+
                     // Legend
                     RingLegend(
                         gymScore: scores.gym,
                         workScore: scores.cognitive,
                         sleepScore: scores.breakdown.sleepScore
                     )
-                    
+
                     // Recommendation
                     Text(scores.recommendation())
                         .font(.subheadline.weight(.medium))
@@ -219,7 +322,7 @@ struct DashboardView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     // MARK: - Recommendations Section
     private func recommendationsSection(scores: DualReadinessScores) -> some View {
         let recs = AIRecommendationEngine.shared.generateRecommendations(for: selectedSource)
@@ -277,7 +380,7 @@ struct DashboardView: View {
             )
         }
     }
-    
+
     // MARK: - Journal Button
     private var journalButton: some View {
         NavigationLink(destination: JournalView()) {
@@ -309,19 +412,19 @@ struct DashboardView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     // MARK: - Metrics Section
     private func metricsSection(data: DailyHealthData, history: [DailyHealthData]) -> some View {
         let hrvHistory = history.map { Double($0.hrv) }
         let rhrHistory = history.map { Double($0.restingHeartRate) }
         let sleepHistory = history.map { $0.sleepHours }
-        
+
         let hrvBase = BaselineManager.hrvBaseline(from: history, matchesRMSSD: data.hrvIsRMSSD)
         let rhrBase = BaselineManager.rhrBaseline(from: history)
-        
+
         return VStack(spacing: AppleTheme.cardPadding) {
             SectionHeader(title: "Metrics")
-            
+
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 MetricCard(
                     title: "Sleep",
@@ -336,7 +439,7 @@ struct DashboardView: View {
                     history: history,
                     source: selectedSource
                 )
-                
+
                 MetricCard(
                     title: data.hrvIsRMSSD ? "RMSSD" : "HRV",
                     value: "\(Int(data.hrv))",
@@ -350,7 +453,7 @@ struct DashboardView: View {
                     history: history,
                     source: selectedSource
                 )
-                
+
                 MetricCard(
                     title: "Resting HR",
                     value: "\(Int(data.restingHeartRate))",
@@ -364,7 +467,7 @@ struct DashboardView: View {
                     history: history,
                     source: selectedSource
                 )
-                
+
                 MetricCard(
                     title: "Active Cals",
                     value: "\(Int(data.activeCalories))",
@@ -381,7 +484,7 @@ struct DashboardView: View {
             }
         }
     }
-    
+
     // MARK: - Quick Trends Section
     private func quickTrendsSection(history: [DailyHealthData]) -> some View {
         VStack(spacing: AppleTheme.cardPadding) {
@@ -431,14 +534,14 @@ struct DashboardView: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(RTColor.tertiaryText)
                     }
-                    
+
                     SleepStageBar(stages: [
                         ("Deep", data.deepSleepPercent, RTColor.sleep),
                         ("REM", data.remSleepPercent, RTColor.consistency),
                         ("Light", data.lightSleepPercent, RTColor.sleep.opacity(0.5)),
                         ("Awake", data.awakePercent, RTColor.tertiaryText)
                     ])
-                    
+
                     HStack(spacing: 16) {
                         StageLabel(label: "Deep", percent: data.deepSleepPercent, optimal: "15-20%", isOptimal: SleepData.optimalDeep.contains(data.deepSleepPercent))
                         StageLabel(label: "REM", percent: data.remSleepPercent, optimal: "20-25%", isOptimal: SleepData.optimalRem.contains(data.remSleepPercent))
@@ -449,11 +552,11 @@ struct DashboardView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     // MARK: - WHOOP-Style Section
     private func whoopSection(data: DailyHealthData, history: [DailyHealthData], scores: DualReadinessScores) -> some View {
         let strainValue = scores.breakdown.strainScoreValue
-        
+
         return NavigationLink(destination: RecoveryStrainDetailView(
             data: data,
             history: history,
@@ -470,7 +573,7 @@ struct DashboardView: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(RTColor.tertiaryText)
                 }
-                
+
                 // Strain/Recovery Wheel
                 NativeCard {
                     StrainRecoveryWheel(
@@ -480,7 +583,7 @@ struct DashboardView: View {
                     )
                     .frame(maxWidth: .infinity)
                 }
-                
+
                 // Sleep Performance
                 SleepPerformanceScore(
                     sleepNeeded: BaselineManager.sleepBaseline(from: history) * 1.1,
@@ -490,7 +593,7 @@ struct DashboardView: View {
                 )
 
                 StrainRecoveryBalanceCard(balance: scores.balance)
-                
+
                 // Advanced metrics row
                 HStack(spacing: 12) {
                     if let respRate = data.respiratoryRate {
@@ -502,7 +605,7 @@ struct DashboardView: View {
                             baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
                         )
                     }
-                    
+
                     if let skinTemp = data.skinTemperature {
                         let tempHistory = history.compactMap { d in
                             d.skinTemperature.map { (date: d.date, value: $0) }
@@ -519,7 +622,7 @@ struct DashboardView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
         guard history.count >= 3 else { return 50 }
         let sleepHours = history.map { $0.sleepHours }
@@ -529,13 +632,13 @@ struct DashboardView: View {
         // Lower stdDev = higher consistency (100 - normalized stdDev * factor)
         return max(0, min(100, 100 - stdDev * 30))
     }
-    
+
     // MARK: - Breakdown Section
     private func breakdownSection(breakdown: ReadinessBreakdown, data: DailyHealthData, history: [DailyHealthData]) -> some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 16) {
                 SectionHeader(title: "Breakdown")
-                
+
                 VStack(spacing: 14) {
                     BreakdownBar(label: "Sleep", score: breakdown.sleepScore, color: RTColor.sleep, weight: "25%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: selectedSource)
                     BreakdownBar(label: "HRV", score: breakdown.hrvScore, color: RTColor.hrv, weight: "25%", metricType: .hrv, currentValue: data.hrv, history: history, source: selectedSource)
@@ -544,10 +647,10 @@ struct DashboardView: View {
                     BreakdownBar(label: "Strain", score: breakdown.strainScore, color: RTColor.strain, weight: "15%", metricType: .activeCalories, currentValue: data.activeCalories, history: history, source: selectedSource)
                     BreakdownBar(label: "Consistency", score: breakdown.consistencyScore, color: RTColor.consistency, weight: "10%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: selectedSource)
                 }
-                
+
                 Divider()
                     .background(RTColor.divider)
-                
+
                 HStack {
                     Text("Total")
                         .font(RTFont.headline)
@@ -559,7 +662,7 @@ struct DashboardView: View {
             }
         }
     }
-    
+
     // MARK: - Trend Section (Multi-metric)
     private func trendSection(history: [DailyHealthData]) -> some View {
         NavigationLink(destination: TrendDetailView(history: history)) {
@@ -573,7 +676,7 @@ struct DashboardView: View {
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundStyle(RTColor.tertiaryText)
                     }
-                    
+
                     if history.count >= 2 {
                         // Precompute chart points once so calculateBreakdown is not
                         // called per point per render (O(n^2) -> O(n) work).
@@ -630,7 +733,7 @@ struct DashboardView: View {
                         }
                         .frame(height: 200)
                         .chartYScale(domain: 0...100)
-                        
+
                         // Legend
                         HStack(spacing: 16) {
                             LegendDot(label: "Readiness", color: RTColor.optimal, style: .solid)
@@ -650,19 +753,64 @@ struct DashboardView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
+    // MARK: - Loading State
+    private var loadingView: some View {
+        VStack(spacing: AppleTheme.sectionSpacing) {
+            // Hero skeleton
+            NativeCard {
+                VStack(spacing: 20) {
+                    Circle()
+                        .fill(RTColor.surfaceHighlight)
+                        .frame(width: 200, height: 200)
+
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(RTColor.surfaceHighlight)
+                        .frame(width: 220, height: 16)
+
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(RTColor.surfaceHighlight)
+                        .frame(width: 160, height: 12)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+            }
+            .shimmer()
+
+            // Card skeletons
+            ForEach(0..<3, id: \.self) { _ in
+                NativeCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(RTColor.surfaceHighlight)
+                            .frame(width: 120, height: 14)
+
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(RTColor.surfaceHighlight)
+                            .frame(height: 32)
+                    }
+                }
+                .shimmer()
+            }
+
+            Text("Loading your health data...")
+                .font(.caption)
+                .foregroundStyle(RTColor.secondaryText)
+        }
+    }
+
     // MARK: - No Data
     private var noDataView: some View {
         VStack(spacing: 24) {
             Image(systemName: "arrow.down.heart.fill")
                 .font(.system(size: 64))
                 .foregroundStyle(RTColor.surfaceHighlight)
-            
+
             VStack(spacing: 8) {
                 Text("No data yet")
                     .font(RTFont.title)
                     .foregroundStyle(.white)
-                
+
                 Text(selectedSource == .appleWatch
                      ? "Pull down to refresh your HealthKit data"
                      : "Connect your Fitbit account")
@@ -670,12 +818,13 @@ struct DashboardView: View {
                     .foregroundStyle(RTColor.secondaryText)
                     .multilineTextAlignment(.center)
             }
-            
+
             Button(action: {
                 Haptic.press()
                 Task {
                     if selectedSource == .appleWatch {
                         await healthKit.requestAuthorization()
+                        await performRefresh()
                     }
                 }
             }) {
@@ -691,8 +840,26 @@ struct DashboardView: View {
         }
         .padding(.top, 80)
     }
-    
+
     // MARK: - Helpers
+    private func initialLoadIfNeeded() async {
+        guard latestData == nil, !isRefreshing else { return }
+        isRefreshing = true
+        await refreshData()
+        isRefreshing = false
+        lastSyncDate = latestData?.date ?? lastSyncDate
+    }
+
+    private func performRefresh() async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        Haptic.press()
+        await refreshData()
+        isRefreshing = false
+        lastSyncDate = latestData?.date ?? Date()
+        Haptic.success()
+    }
+
     private func refreshData() async {
         if selectedSource == .appleWatch {
             await healthKit.fetchTodayData()
@@ -702,7 +869,7 @@ struct DashboardView: View {
             await fitbit.fetchTodayData()
         }
     }
-    
+
     private func trendFor(_ value: Double, baseline: Double, higherIsBetter: Bool) -> TrendDirection {
         let threshold = baseline * 0.05
         if abs(value - baseline) < threshold { return .flat }
@@ -718,7 +885,7 @@ struct CheckInStatusCard: View {
     let icon: String
     let isDone: Bool
     let color: Color
-    
+
     var body: some View {
         NativeCard {
             HStack(spacing: 10) {
@@ -754,7 +921,7 @@ struct BreakdownBar: View {
     let currentValue: Double
     let history: [DailyHealthData]
     let source: DataSource
-    
+
     var body: some View {
         NavigationLink(destination: AdvancedMetricDetailView(
             metric: metricType,
@@ -767,18 +934,18 @@ struct BreakdownBar: View {
                     .font(RTFont.body)
                     .foregroundStyle(.white)
                     .frame(width: 70, alignment: .leading)
-                
+
                 Text(weight)
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(RTColor.tertiaryText)
                     .frame(width: 30)
-                
+
                 AnimatedProgressBar(
                     progress: Double(score) / 100,
                     color: color,
                     height: 8
                 )
-                
+
                 Text("\(score)")
                     .font(RTFont.metricValue)
                     .foregroundStyle(color)
@@ -796,17 +963,17 @@ struct StageLabel: View {
     let percent: Double
     let optimal: String
     let isOptimal: Bool
-    
+
     var body: some View {
         VStack(spacing: 4) {
             Text(label)
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(RTColor.secondaryText)
-            
+
             Text("\(Int(percent * 100))%")
                 .font(RTFont.metricValue)
                 .foregroundStyle(.white)
-            
+
             Text(optimal)
                 .font(.caption2.weight(.medium))
                 .foregroundStyle(isOptimal ? RTColor.optimal : RTColor.tertiaryText)
@@ -835,7 +1002,7 @@ struct LegendDot: View {
     enum LineStyle {
         case solid, dashed, dotted
     }
-    
+
     var body: some View {
         HStack(spacing: 6) {
             Rectangle()
@@ -845,7 +1012,7 @@ struct LegendDot: View {
                     Rectangle()
                         .stroke(color, style: style == .dashed ? StrokeStyle(lineWidth: 2, dash: [3, 3]) : style == .dotted ? StrokeStyle(lineWidth: 2, dash: [2, 2]) : StrokeStyle())
                 )
-            
+
             Text(label)
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(RTColor.secondaryText)
@@ -859,7 +1026,7 @@ struct DualScoreCard: View {
     let score: Int
     let icon: String
     let color: Color
-    
+
     var body: some View {
         NativeCard {
             VStack(spacing: 8) {

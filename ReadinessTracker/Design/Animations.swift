@@ -11,6 +11,8 @@ struct AnimatedNumber: View {
         Text("\(displayValue)")
             .font(font)
             .foregroundColor(color)
+            // Announce the final value, not the count-up frames
+            .accessibilityLabel("\(value)")
             .onAppear {
                 // Only animate on first appear, not on re-appear
                 if displayValue == 0 {
@@ -57,6 +59,9 @@ struct AnimatedRing: View {
             )
             .rotationEffect(.degrees(-90))
             .frame(width: size, height: size)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Progress ring")
+            .accessibilityValue("\(Int(min(max(progress, 0), 1) * 100)) percent")
             .onAppear {
                 // Only animate on first appear
                 if animatedProgress == 0 {

@@ -13,7 +13,7 @@ struct ReadinessEntry: TimelineEntry {
 }
 
 struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> ReadinessEntry {
+    static var sampleEntry: ReadinessEntry {
         ReadinessEntry(
             date: Date(),
             readinessScore: 78,
@@ -24,6 +24,10 @@ struct Provider: TimelineProvider {
             rhr: 58,
             sleepHours: 7.5
         )
+    }
+
+    func placeholder(in context: Context) -> ReadinessEntry {
+        Self.sampleEntry
     }
     
     func getSnapshot(in context: Context, completion: @escaping (ReadinessEntry) -> Void) {
@@ -39,19 +43,20 @@ struct Provider: TimelineProvider {
     
     private func loadLatestEntry() -> ReadinessEntry {
         // Try to load from shared storage
-        if let defaults = UserDefaults(suiteName: "group.com.readinesstracker") {
-            return ReadinessEntry(
-                date: Date(),
-                readinessScore: defaults.integer(forKey: "readinessScore"),
-                gymScore: defaults.integer(forKey: "gymScore"),
-                workScore: defaults.integer(forKey: "workScore"),
-                sleepScore: defaults.integer(forKey: "sleepScore"),
-                hrv: defaults.integer(forKey: "hrv"),
-                rhr: defaults.integer(forKey: "rhr"),
-                sleepHours: defaults.double(forKey: "sleepHours")
-            )
+        guard let defaults = UserDefaults(suiteName: "group.com.readinesstracker"),
+              defaults.object(forKey: "readinessScore") != nil else {
+            return Self.sampleEntry
         }
-        return placeholder(in: Context())
+        return ReadinessEntry(
+            date: Date(),
+            readinessScore: defaults.integer(forKey: "readinessScore"),
+            gymScore: defaults.integer(forKey: "gymScore"),
+            workScore: defaults.integer(forKey: "workScore"),
+            sleepScore: defaults.integer(forKey: "sleepScore"),
+            hrv: defaults.integer(forKey: "hrv"),
+            rhr: defaults.integer(forKey: "rhr"),
+            sleepHours: defaults.double(forKey: "sleepHours")
+        )
     }
 }
 

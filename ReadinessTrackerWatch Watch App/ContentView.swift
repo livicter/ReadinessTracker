@@ -1,24 +1,25 @@
-//
-//  ContentView.swift
-//  ReadinessTrackerWatch Watch App
-//
-//  Created by 🦭 Victor on 30/5/2026.
-//
-
 import SwiftUI
 
+/// Root: vertical pager (swipe or Digital Crown) over the three glanceable pages.
 struct ContentView: View {
+    @EnvironmentObject private var session: WatchSessionManager
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            TabView {
+                WatchDashboardView()
+                WatchStrainView()
+                WatchSleepView()
+            }
+            .tabViewStyle(.verticalPage)
         }
-        .padding()
+        .onAppear {
+            session.requestSnapshot()
+        }
     }
 }
 
 #Preview {
     ContentView()
+        .environmentObject(WatchSessionManager.shared)
 }

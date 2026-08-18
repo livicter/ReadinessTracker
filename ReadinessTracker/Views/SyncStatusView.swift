@@ -84,14 +84,6 @@ struct ContentStateTransition<Content: View>: View {
             .opacity(isLoaded ? 1 : 0)
             .offset(y: isLoaded ? 0 : 8)
             .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isLoaded)
-            .onAppear {
-                // Prevent re-triggering if already loaded
-                if !isLoaded {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        // This is a View, not a state change — the binding handles it
-                    }
-                }
-            }
     }
 }
 

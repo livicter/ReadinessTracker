@@ -63,6 +63,7 @@ struct MetricCard: View {
                             .frame(height: 32)
                     }
                 }
+                .accessibilityElement(children: .combine)
             }
         }
         .buttonStyle(.plain)
@@ -98,6 +99,7 @@ struct TrendArrow: View {
                 .font(.caption.weight(.medium))
         }
         .foregroundStyle(color)
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -142,8 +144,8 @@ struct SleepStageBar: View {
                             Group {
                                 if pct > 0.15 {
                                     Text("\(Int(stage.percent * 100))%")
-                                        .font(.system(size: 10, weight: .semibold))
-                                        .foregroundColor(.white)
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundColor(stage.color.contrastingTextColor)
                                 }
                             }
                         )
@@ -151,6 +153,9 @@ struct SleepStageBar: View {
             }
         }
         .frame(height: 32)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Sleep stages")
+        .accessibilityValue(stages.map { "\($0.label) \(Int($0.percent * 100)) percent" }.joined(separator: ", "))
     }
 }
 // MARK: - Navigation Destinations
@@ -265,6 +270,7 @@ struct AppIconTile: View {
             .frame(width: size, height: size)
             .background(color.opacity(0.12))
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .accessibilityHidden(true)
     }
 }
 
@@ -297,5 +303,6 @@ struct AppListRow: View {
             RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                 .fill(RTColor.surface)
         )
+        .accessibilityElement(children: .combine)
     }
 }

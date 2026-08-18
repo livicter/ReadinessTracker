@@ -16,6 +16,7 @@ enum TrendPeriod: Int, CaseIterable {
 // MARK: - Apple Native Design Tokens
 // Inspired by Apple Health, Stocks, and Fitness apps
 // Solid cards, capsule badges, SF Symbols, .continuous corner radius
+// CANONICAL source for layout tokens — `RTLayout` (Theme.swift) forwards here.
 
 enum AppleTheme {
     // Corner radii - Apple uses .continuous style
@@ -26,6 +27,7 @@ enum AppleTheme {
     // Spacing
     static let sectionSpacing: CGFloat = 24
     static let cardPadding: CGFloat = 16
+    static let cardSpacing: CGFloat = 12
     static let horizontalMargin: CGFloat = 20
     
     // Typography - Apple Health style
@@ -86,6 +88,9 @@ struct TrendBadge: View {
         .padding(.vertical, AppleTheme.badgeVPadding)
         .background(direction.color.opacity(AppleTheme.badgeBgOpacity))
         .clipShape(Capsule())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(direction.label) trend")
+        .accessibilityValue(value)
     }
 }
 
@@ -104,6 +109,15 @@ struct CompactTrendIndicator: View {
             }
         }
         .foregroundStyle(direction.color)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityText)
+    }
+
+    private var accessibilityText: String {
+        if let change = percentChange {
+            return "\(direction.label), \(Int(abs(change))) percent"
+        }
+        return direction.label
     }
 }
 
@@ -173,6 +187,7 @@ struct OutlierCallout: View {
             RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                 .fill(RTColor.surface)
         )
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -232,6 +247,7 @@ struct ChartTooltip: View {
                 .fill(RTColor.surface)
                 .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)
         )
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -267,6 +283,7 @@ struct StatGridItem: View {
             RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                 .fill(RTColor.surface)
         )
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -290,6 +307,7 @@ struct AppSectionHeader: View {
             Text(title)
                 .font(AppleTheme.sectionHeader)
                 .foregroundStyle(.white)
+                .accessibilityAddTraits(.isHeader)
             Spacer()
             if let action {
                 Button(action: action) {
@@ -333,6 +351,7 @@ struct AppSegmentedControl<Option: Hashable>: View {
                         }
                 }
                 .buttonStyle(.plain)
+                .accessibilityAddTraits(selection == option ? .isSelected : [])
             }
         }
         .padding(4)
@@ -366,6 +385,7 @@ struct AppStatPill: View {
         .padding(.vertical, 12)
         .background(RTColor.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 }
 

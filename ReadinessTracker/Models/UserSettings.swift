@@ -18,11 +18,14 @@ struct UserSettings: Codable {
     
     /// Whether to apply a small recovery penalty when menstrual flow is reported.
     var trackMenstrualCycle: Bool = false
-    
+
+    /// Smart notification preferences (see NotificationManager).
+    var notifications = NotificationSettings()
+
     static let `default` = UserSettings()
     
     private static let key = "com.readinesstracker.usersettings"
-    
+
     static func load() -> UserSettings {
         guard let data = UserDefaults.standard.data(forKey: key),
               let settings = try? JSONDecoder().decode(UserSettings.self, from: data) else {
@@ -96,5 +99,52 @@ extension UserSettings {
 extension UserSettings {
     var estimatedMaxHeartRate: Int {
         maxHeartRate ?? (age.map { 220 - $0 } ?? 190)
+    }
+}
+
+// MARK: - Codable (declared in an extension to keep the synthesized memberwise init)
+
+extension UserSettings {
+    /// Custom decoder so newly added fields fall back to their defaults when
+    /// decoding settings persisted by an older app version.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let fallback = UserSettings()
+        dayStartHour = try container.decodeIfPresent(Int.self, forKey: .dayStartHour) ?? fallback.dayStartHour
+        useCustomDayStart = try container.decodeIfPresent(Bool.self, forKey: .useCustomDayStart) ?? fallback.useCustomDayStart
+        age = try container.decodeIfPresent(Int.self, forKey: .age)
+        maxHeartRate = try container.decodeIfPresent(Int.self, forKey: .maxHeartRate)
+        trackMenstrualCycle = try container.decodeIfPresent(Bool.self, forKey: .trackMenstrualCycle) ?? fallback.trackMenstrualCycle
+        notifications = try container.decodeIfPresent(NotificationSettings.self, forKey: .notifications) ?? fallback.notifications
+    }
+}
+
+// MARK: - Notification Settings
+
+extension UserSettings {
+    /// Smart notification preferences, persisted as part of UserSettings.
+    struct NotificationSettings: Codable, Equatable {
+        /// Master switch for all app notifications.
+        var notificationsEnabled: Bool = false
+
+        /// Morning readiness summary (score + zone).
+        var morningSummaryEnabled: Bool = true
+        var morningSummaryHour: Int = 8
+        var morningSummaryMinute: Int = 0
+
+        /// Warning when today's readiness drops well below the personal baseline.
+        var lowRecoveryEnabled: Bool = true
+        /// Readiness must fall this many points below the 14-day baseline to trigger.
+        var lowRecoveryThreshold: Int = 20
+
+        /// Reminder ahead of the user's typical bedtime (derived from sleep history).
+        var bedtimeReminderEnabled: Bool = true
+        /// Minutes before typical bedtime to fire the reminder.
+        var bedtimeReminderLeadMinutes: Int = 60
+
+        /// Suppress notifications whose fire time falls inside quiet hours.
+        var quietHoursEnabled: Bool = false
+        var quietHoursStartHour: Int = 22
+        var quietHoursEndHour: Int = 7
     }
 }

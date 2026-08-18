@@ -135,11 +135,21 @@ struct ReadinessDetailView: View {
                     .frame(height: 200)
                     .chartYScale(domain: 0...100)
                 } else {
-                    Text("Need more data")
-                        .font(.subheadline)
-                        .foregroundStyle(RTColor.secondaryText)
-                        .frame(height: 200)
-                        .frame(maxWidth: .infinity)
+                    VStack(spacing: 12) {
+                        Image(systemName: "chart.line.uptrend.xyaxis")
+                            .font(.system(size: 40))
+                            .foregroundStyle(RTColor.surfaceHighlight)
+
+                        Text("Not Enough Data")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(RTColor.secondaryText)
+
+                        Text("Score history appears once at least 2 days are recorded")
+                            .font(.caption)
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .frame(height: 200)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }

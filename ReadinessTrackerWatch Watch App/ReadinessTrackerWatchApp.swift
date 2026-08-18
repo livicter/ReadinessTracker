@@ -9,9 +9,16 @@ import SwiftUI
 
 @main
 struct ReadinessTracker_Watch_AppApp: App {
+    @StateObject private var session = WatchSessionManager.shared
+
+    init() {
+        WatchSessionManager.shared.start()
+    }
+
     var body: some Scene {
         WindowGroup {
-            WatchDashboardView()
+            ContentView()
+                .environmentObject(session)
         }
     }
 }

@@ -11,25 +11,28 @@ struct ContentView: View {
                     Label("Today", systemImage: "gauge.with.dots.needle.67percent")
                 }
                 .tag(0)
-            
+
             HistoryView()
                 .tabItem {
                     Label("History", systemImage: "chart.line.uptrend.xyaxis")
                 }
                 .tag(1)
-            
+
             CheckInView()
                 .tabItem {
                     Label("Check-in", systemImage: "checkmark.circle")
                 }
+                .environment(\.symbolVariants, selectedTab == 2 ? .fill : .none)
                 .tag(2)
-            
+
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label("Settings", systemImage: "gearshape")
                 }
+                .environment(\.symbolVariants, selectedTab == 3 ? .fill : .none)
                 .tag(3)
         }
+        .tint(RTColor.optimal)
         .toolbarBackground(RTColor.surface, for: .tabBar)
     }
 }
@@ -88,6 +91,12 @@ struct HistoryView: View {
                     )
                     .listRowSeparator(.hidden)
                 }
+
+                if dataStore.history.filter({ $0.source == selectedSource }).isEmpty {
+                    emptyHistoryState
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                }
             }
             .scrollContentBackground(.hidden)
             .navigationTitle("History")
@@ -104,16 +113,65 @@ struct HistoryView: View {
                 )
             }
             .sheet(isPresented: $showWeeklyReport) {
-                if let report = WeeklyReportGenerator.shared.generateReport(for: selectedSource) {
-                    NavigationStack {
+                NavigationStack {
+                    if let report = WeeklyReportGenerator.shared.generateReport(for: selectedSource) {
                         WeeklyReportView(report: report)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") { showWeeklyReport = false }
+                                }
+                            }
+                    } else {
+                        weeklyReportUnavailable
                     }
-                } else {
-                    Text("Need at least 3 days of data for a weekly report")
-                        .foregroundStyle(RTColor.secondaryText)
-                        .padding()
                 }
             }
+            }
+        }
+    }
+
+    // MARK: - Empty States
+    private var emptyHistoryState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "calendar.badge.clock")
+                .font(.system(size: 40))
+                .foregroundStyle(RTColor.surfaceHighlight)
+
+            Text("No Data for \(selectedSource.rawValue)")
+                .font(.headline)
+                .foregroundStyle(.white)
+
+            Text("Sync your device to start building history")
+                .font(.caption)
+                .foregroundStyle(RTColor.secondaryText)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+    }
+
+    private var weeklyReportUnavailable: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "doc.text")
+                .font(.system(size: 40))
+                .foregroundStyle(RTColor.surfaceHighlight)
+
+            Text("Not Enough Data")
+                .font(.headline)
+                .foregroundStyle(.white)
+
+            Text("Need at least 3 days of data for a weekly report")
+                .font(.subheadline)
+                .foregroundStyle(RTColor.secondaryText)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppBackground())
+        .navigationTitle("Weekly Report")
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Done") { showWeeklyReport = false }
             }
         }
     }
@@ -221,6 +279,19 @@ struct SettingsView: View {
                     }
                 }
                 
+                Section("Insights") {
+                    NavigationLink {
+                        CoachingView()
+                    } label: {
+                        Label("Coaching", systemImage: "lightbulb.fill")
+                    }
+                    NavigationLink {
+                        NotificationSettingsView()
+                    } label: {
+                        Label("Notifications", systemImage: "bell.fill")
+                    }
+                }
+
                 Section("Actions") {
                     Button {
                         Task {

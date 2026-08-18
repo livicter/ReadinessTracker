@@ -10,7 +10,8 @@ enum RTColor {
     
     static let primaryText = Color.white
     static let secondaryText = Color(hex: "98989D")
-    static let tertiaryText = Color(hex: "6C6C70")
+    // iOS systemGray (dark) — 4.9:1 on `surface`, meets WCAG AA for small caption text
+    static let tertiaryText = Color(hex: "8E8E93")
     
     // Zone colors - Apple system colors
     static let optimal = Color(hex: "30D158")
@@ -33,6 +34,8 @@ enum RTColor {
 }
 
 // MARK: - Typography
+// Legacy fixed-size display fonts for hero numerals. For new reusable components
+// prefer semantic text styles (`.headline`, `.caption`, …) so Dynamic Type scales.
 enum RTFont {
     static let hero = Font.system(size: 72, weight: .bold, design: .rounded)
     static let heroMonospaced = Font.system(size: 72, weight: .bold, design: .rounded).monospacedDigit()
@@ -47,11 +50,13 @@ enum RTFont {
 }
 
 // MARK: - Layout
+// Canonical layout tokens live in `AppleTheme` (AppleNativeTheme.swift).
+// These forward so existing call sites keep working.
 enum RTLayout {
-    static let cardCornerRadius: CGFloat = 20
-    static let cardPadding: CGFloat = 20
-    static let cardSpacing: CGFloat = 12
-    static let sectionSpacing: CGFloat = 24
+    static var cardCornerRadius: CGFloat { AppleTheme.cornerRadiusLarge }
+    static var cardPadding: CGFloat { AppleTheme.cardPadding }
+    static var cardSpacing: CGFloat { AppleTheme.cardSpacing }
+    static var sectionSpacing: CGFloat { AppleTheme.sectionSpacing }
 }
 
 // MARK: - Color Extension
@@ -72,6 +77,20 @@ extension Color {
             (a, r, g, b) = (255, 0, 0, 0)
         }
         self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
+    }
+}
+
+// MARK: - Contrast Helpers
+extension Color {
+    /// Black or white — whichever yields higher WCAG contrast against this color.
+    /// Use for text drawn on top of dynamic accent fills (e.g. sleep-stage segments).
+    var contrastingTextColor: Color {
+        let ui = UIColor(self)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        guard ui.getRed(&r, green: &g, blue: &b, alpha: &a) else { return .white }
+        func linear(_ c: CGFloat) -> CGFloat { c <= 0.03928 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4) }
+        let luminance = 0.2126 * linear(r) + 0.7152 * linear(g) + 0.0722 * linear(b)
+        return luminance > 0.179 ? .black : .white
     }
 }
 
