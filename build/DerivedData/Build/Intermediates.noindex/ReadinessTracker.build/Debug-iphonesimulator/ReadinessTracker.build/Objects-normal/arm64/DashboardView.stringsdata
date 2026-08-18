@@ -1,0 +1,200 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/DashboardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Readiness",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Journal",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 226
+        }
+      },
+      {
+        "comment": "",
+        "key": "Track behaviors affecting recovery",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 229
+        }
+      },
+      {
+        "comment": "",
+        "key": "Total",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 459
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 462
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 540
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 489
+        }
+      },
+      {
+        "comment": "",
+        "key": "Score",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 490
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 499
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 500
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 509
+        }
+      },
+      {
+        "comment": "",
+        "key": "RHR",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 510
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 517
+        }
+      },
+      {
+        "comment": "",
+        "key": "Score",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 518
+        }
+      },
+      {
+        "comment": "",
+        "key": "No data yet",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 561
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pull down to refresh your HealthKit data",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 566
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connect your Fitbit account",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 567
+        }
+      },
+      {
+        "comment": "",
+        "key": "Grant HealthKit Access",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 581
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connect Fitbit",
+        "location": {
+          "startingColumn": 82,
+          "startingLine": 581
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 631
+        }
+      },
+      {
+        "comment": "",
+        "key": "Pending",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 631
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 682
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 706
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 791
+        }
+      }
+    ]
+  },
+  "version": 1
+}

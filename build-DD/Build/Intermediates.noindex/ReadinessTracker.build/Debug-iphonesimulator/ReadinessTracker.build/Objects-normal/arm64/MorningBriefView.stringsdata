@@ -1,0 +1,80 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/MorningBriefView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Good Morning",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Readiness",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld from yesterday",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "Key Insights",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 125
+        }
+      },
+      {
+        "comment": "",
+        "key": "Today's Recommendation",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 169
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quick Actions",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 190
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Data Yet",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep data will appear here once HealthKit syncs your first night.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 238
+        }
+      }
+    ]
+  },
+  "version": 1
+}

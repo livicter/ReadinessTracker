@@ -1,0 +1,24 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/AdvancedMetricDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "HealthKit only stores data from when you first granted permission. Apple does not retroactively backfill historical health data when you install a new app.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 363
+        }
+      },
+      {
+        "comment": "",
+        "key": "About This Data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 358
+        }
+      }
+    ]
+  },
+  "version": 1
+}

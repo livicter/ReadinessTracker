@@ -1,0 +1,88 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WorkoutListView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Activity",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Today",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 93
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld workout%@ today",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 134
+        }
+      },
+      {
+        "comment": "",
+        "key": "Strain",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 185
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more workouts for strain chart",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 214
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "Strain",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 194
+        }
+      },
+      {
+        "comment": "",
+        "key": "No workouts yet",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 283
+        }
+      },
+      {
+        "comment": "",
+        "key": "Workouts from Apple Health will appear here",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 286
+        }
+      },
+      {
+        "comment": "",
+        "key": "cal",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 366
+        }
+      }
+    ]
+  },
+  "version": 1
+}

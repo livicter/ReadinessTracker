@@ -1,0 +1,368 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Today",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 11
+        }
+      },
+      {
+        "comment": "",
+        "key": "History",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 17
+        }
+      },
+      {
+        "comment": "",
+        "key": "Heart",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Activity",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "More",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "More",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 72
+        }
+      },
+      {
+        "comment": "",
+        "key": "Daily Check-in",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 57
+        }
+      },
+      {
+        "comment": "",
+        "key": "AI Health Coach",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "Journal",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 65
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "History",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Source",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Trends",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data for trends",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 117
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 171
+        }
+      },
+      {
+        "comment": "",
+        "key": "Score",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 172
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 178
+        }
+      },
+      {
+        "comment": "",
+        "key": "Score",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@h",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 221
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lldms",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 222
+        }
+      },
+      {
+        "comment": "",
+        "key": "D:%lld%%",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 224
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eff: %lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 239
+        }
+      },
+      {
+        "comment": "",
+        "key": "Settings",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 446
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Tracking",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 267
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep before %@ counts toward the previous day. This prevents zero sleep after late nights.",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 302
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use Custom Day Start",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 271
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day Starts At",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 284
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 287
+        }
+      },
+      {
+        "comment": "",
+        "key": "Data Sources",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 314
+        }
+      },
+      {
+        "comment": "",
+        "key": "HealthKit",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 319
+        }
+      },
+      {
+        "comment": "",
+        "key": "Fitbit",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connect Fitbit",
+        "location": {
+          "startingColumn": 51,
+          "startingLine": 343
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sync",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 354
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import 30 Days",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 362
+        }
+      },
+      {
+        "comment": "",
+        "key": "Disconnect",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 370
+        }
+      },
+      {
+        "comment": "",
+        "key": "Actions",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 392
+        }
+      },
+      {
+        "comment": "",
+        "key": "Refresh Health Data",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 402
+        }
+      },
+      {
+        "comment": "",
+        "key": "Export CSV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 415
+        }
+      },
+      {
+        "comment": "",
+        "key": "About",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 426
+        }
+      },
+      {
+        "comment": "",
+        "key": "Version",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 431
+        }
+      },
+      {
+        "comment": "",
+        "key": "1.0.0",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 434
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connected",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not Connected",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 460
+        }
+      }
+    ]
+  },
+  "version": 1
+}

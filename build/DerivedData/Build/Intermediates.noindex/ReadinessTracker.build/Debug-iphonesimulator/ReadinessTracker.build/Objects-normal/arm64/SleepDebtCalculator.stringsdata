@@ -1,0 +1,104 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepDebtCalculator.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Sleep Debt",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cumulative vs %@h need",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "h",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "Zero",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Debt",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Debt",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 111
+        }
+      },
+      {
+        "comment": "",
+        "key": "Debt",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 112
+        }
+      },
+      {
+        "comment": "",
+        "key": "h",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 123
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 161
+        }
+      }
+    ]
+  },
+  "version": 1
+}

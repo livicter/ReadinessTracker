@@ -1,0 +1,32 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SyncStatusView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Syncing...",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sync",
+        "location": {
+          "startingColumn": 57,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 118
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,48 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/BreathingView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "HRV Coherence",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "Breathe to improve your heart rate variability",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "%llds",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Stop",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start",
+        "location": {
+          "startingColumn": 53,
+          "startingLine": 110
+        }
+      }
+    ]
+  },
+  "version": 1
+}

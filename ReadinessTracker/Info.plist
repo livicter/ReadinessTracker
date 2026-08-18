@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.victor.readinesstracker</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>readinesstracker</string>
+            </array>
+        </dict>
+    </array>
+    <key>CFBundleDisplayName</key>
+    <string>Readiness</string>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Readiness needs access to your health data to calculate your readiness score.</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>Readiness needs access to your health data to calculate your readiness score.</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+    </array>
+    <key>BGTaskSchedulerPermittedIdentifiers</key>
+    <array>
+        <string>com.readinesstracker.refresh</string>
+    </array>
+</dict>
+</plist>

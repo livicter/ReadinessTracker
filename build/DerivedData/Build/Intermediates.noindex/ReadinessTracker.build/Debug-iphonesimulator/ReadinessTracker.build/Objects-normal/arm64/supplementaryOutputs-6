@@ -1,0 +1,65 @@
+{
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Services/HeartAnalyzer.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/HeartAnalyzer-ed2b8c52c8c80eb78dc4c8742f32e63e.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/HeartAnalyzer-ed2b8c52c8c80eb78dc4c8742f32e63e.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/HeartAnalyzer-ed2b8c52c8c80eb78dc4c8742f32e63e.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/HeartAnalyzer-ed2b8c52c8c80eb78dc4c8742f32e63e.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/HeartAnalyzer-ed2b8c52c8c80eb78dc4c8742f32e63e.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Services/WorkoutManager.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutManager-a66009c5c2d3c9158bc35d77b5cffda4.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutManager-a66009c5c2d3c9158bc35d77b5cffda4.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutManager-a66009c5c2d3c9158bc35d77b5cffda4.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutManager-a66009c5c2d3c9158bc35d77b5cffda4.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutManager-a66009c5c2d3c9158bc35d77b5cffda4.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/AIHealthAdvisorView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/AIHealthAdvisorView-f293fc33db8493d21e09173a97db77d2.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/AIHealthAdvisorView-f293fc33db8493d21e09173a97db77d2.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/AIHealthAdvisorView-f293fc33db8493d21e09173a97db77d2.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/AIHealthAdvisorView-f293fc33db8493d21e09173a97db77d2.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/AIHealthAdvisorView-f293fc33db8493d21e09173a97db77d2.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/ReadinessDetailView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/ReadinessDetailView.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/ReadinessDetailView.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/ReadinessDetailView.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/ReadinessDetailView.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/ReadinessDetailView.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/RecoveryStrainDetailView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RecoveryStrainDetailView.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RecoveryStrainDetailView.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RecoveryStrainDetailView.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RecoveryStrainDetailView.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RecoveryStrainDetailView.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SleepTabView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepTabView-85a5dc31c78e0c2af60270281b8efa58.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepTabView-85a5dc31c78e0c2af60270281b8efa58.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepTabView-85a5dc31c78e0c2af60270281b8efa58.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepTabView-85a5dc31c78e0c2af60270281b8efa58.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepTabView-85a5dc31c78e0c2af60270281b8efa58.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/TrendDetailView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/TrendDetailView.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/TrendDetailView.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/TrendDetailView.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/TrendDetailView.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/TrendDetailView.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WorkoutDetailView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutDetailView-192a4aa1e9105aaa23677774d8a762c6.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutDetailView-192a4aa1e9105aaa23677774d8a762c6.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutDetailView-192a4aa1e9105aaa23677774d8a762c6.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutDetailView-192a4aa1e9105aaa23677774d8a762c6.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutDetailView-192a4aa1e9105aaa23677774d8a762c6.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WorkoutListView.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutListView-4d33a025689153a60622166f695ad89b.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutListView-4d33a025689153a60622166f695ad89b.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutListView-4d33a025689153a60622166f695ad89b.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutListView-4d33a025689153a60622166f695ad89b.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/WorkoutListView-4d33a025689153a60622166f695ad89b.swiftdeps"
+  }
+}

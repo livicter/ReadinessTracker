@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget-primary.dia",
+    "emit-module-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget-primary-emit-module.dia",
+    "pch" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget-primary.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Models/WidgetDataTypes.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.dia",
+    "index-unit-output-path" : "/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.o",
+    "llvm-bc" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.bc",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes.swiftdeps",
+    "swiftmodule" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/WidgetDataTypes~partial.swiftmodule"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTrackerWidget/ReadinessTrackerWidget.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.dia",
+    "index-unit-output-path" : "/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.o",
+    "llvm-bc" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.bc",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget.swiftdeps",
+    "swiftmodule" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerWidget.build/Objects-normal/arm64/ReadinessTrackerWidget~partial.swiftmodule"
+  }
+}

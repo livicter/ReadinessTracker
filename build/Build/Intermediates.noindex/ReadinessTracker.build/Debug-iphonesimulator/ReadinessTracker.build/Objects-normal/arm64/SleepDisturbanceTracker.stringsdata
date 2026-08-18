@@ -1,0 +1,96 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepDisturbanceTracker.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Sleep Disturbances",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 43
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld interruptions",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "· %@min awake",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 52
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 63
+        }
+      },
+      {
+        "comment": "",
+        "key": "Efficiency",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "Awake Periods",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 80
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Long",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ - %@",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ minutes",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Timeline",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 135
+        }
+      }
+    ]
+  },
+  "version": 1
+}

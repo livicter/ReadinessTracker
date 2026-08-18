@@ -1,0 +1,39 @@
+{
+  "" : {
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests-primary.dia",
+    "emit-module-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests-primary-emit-module.dia",
+    "pch" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests-primary.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTrackerTests/HeartAnalyzerTests.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.dia",
+    "index-unit-output-path" : "/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.o",
+    "llvm-bc" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.bc",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests.swiftdeps",
+    "swiftmodule" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/HeartAnalyzerTests~partial.swiftmodule"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTrackerTests/ReadinessTrackerTests.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.dia",
+    "index-unit-output-path" : "/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.o",
+    "llvm-bc" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.bc",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests.swiftdeps",
+    "swiftmodule" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/ReadinessTrackerTests~partial.swiftmodule"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTrackerTests/StrainCalculatorTests.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.dia",
+    "index-unit-output-path" : "/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.o",
+    "llvm-bc" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.bc",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests.swiftdeps",
+    "swiftmodule" : "/Users/victor/Projects/ReadinessTracker/build-DD/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTrackerTests.build/Objects-normal/x86_64/StrainCalculatorTests~partial.swiftmodule"
+  }
+}

@@ -1,0 +1,319 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B101 /* ReadinessTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F101 /* ReadinessTrackerApp.swift */; };
+		B102 /* HealthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F102 /* HealthData.swift */; };
+		B103 /* ReadinessCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F103 /* ReadinessCalculator.swift */; };
+		B104 /* BaselineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F104 /* BaselineManager.swift */; };
+		B105 /* SleepData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F105 /* SleepData.swift */; };
+		B106 /* UserMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = F106 /* UserMetadata.swift */; };
+		B107 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F107 /* HealthKitManager.swift */; };
+		B108 /* FitbitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F108 /* FitbitManager.swift */; };
+		B109 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F109 /* DataStore.swift */; };
+		B110 /* MetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F110 /* MetadataStore.swift */; };
+		B111 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F111 /* ContentView.swift */; };
+		B112 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F112 /* DashboardView.swift */; };
+		B113 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F113 /* CheckInView.swift */; };
+		B201 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F201 /* Theme.swift */; };
+		B202 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = F202 /* Components.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		P101 /* ReadinessTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadinessTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F101 /* ReadinessTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadinessTrackerApp.swift; sourceTree = "<group>"; };
+		F102 /* HealthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthData.swift; sourceTree = "<group>"; };
+		F103 /* ReadinessCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadinessCalculator.swift; sourceTree = "<group>"; };
+		F104 /* BaselineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineManager.swift; sourceTree = "<group>"; };
+		F105 /* SleepData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepData.swift; sourceTree = "<group>"; };
+		F106 /* UserMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMetadata.swift; sourceTree = "<group>"; };
+		F107 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		F108 /* FitbitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitbitManager.swift; sourceTree = "<group>"; };
+		F109 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		F110 /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
+		F111 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F112 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		F113 /* CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInView.swift; sourceTree = "<group>"; };
+		F201 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F202 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BP201 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		G001 = {
+			isa = PBXGroup;
+			children = (
+				G002 /* ReadinessTracker */,
+				G003 /* Products */
+			);
+			sourceTree = "<group>";
+		};
+		G003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				P101 /* ReadinessTracker.app */
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		G002 /* ReadinessTracker */ = {
+			isa = PBXGroup;
+			children = (
+				F101 /* ReadinessTrackerApp.swift */,
+				G004 /* Models */,
+				G005 /* Services */,
+				G007 /* Design */,
+				G006 /* Views */
+			);
+			path = ReadinessTracker;
+			sourceTree = "<group>";
+		};
+		G004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F102 /* HealthData.swift */,
+				F106 /* UserMetadata.swift */,
+				F103 /* ReadinessCalculator.swift */,
+				F104 /* BaselineManager.swift */,
+				F105 /* SleepData.swift */
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		G005 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F107 /* HealthKitManager.swift */,
+				F108 /* FitbitManager.swift */,
+				F109 /* DataStore.swift */,
+				F110 /* MetadataStore.swift */
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		G006 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F111 /* ContentView.swift */,
+				F112 /* DashboardView.swift */,
+				F113 /* CheckInView.swift */
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		G007 /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				F201 /* Theme.swift */,
+				F202 /* Components.swift */
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T101 /* ReadinessTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CL201 /* Build configuration list for PBXNativeTarget "ReadinessTracker" */;
+			buildPhases = (
+				BP301 /* Sources */,
+				BP201 /* Frameworks */,
+				BP401 /* Resources */
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReadinessTracker;
+			productName = ReadinessTracker;
+			productReference = P101 /* ReadinessTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PR101 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = CL101 /* Build configuration list for PBXProject "ReadinessTracker" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base
+			);
+			mainGroup = G001;
+			productRefGroup = G003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				T101 /* ReadinessTracker */
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BP401 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BP301 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B101 /* ReadinessTrackerApp.swift in Sources */,
+				B102 /* HealthData.swift in Sources */,
+				B103 /* ReadinessCalculator.swift in Sources */,
+				B104 /* BaselineManager.swift in Sources */,
+				B105 /* SleepData.swift in Sources */,
+				B106 /* UserMetadata.swift in Sources */,
+				B107 /* HealthKitManager.swift in Sources */,
+				B108 /* FitbitManager.swift in Sources */,
+				B109 /* DataStore.swift in Sources */,
+				B110 /* MetadataStore.swift in Sources */,
+				B111 /* ContentView.swift in Sources */,
+				B112 /* DashboardView.swift in Sources */,
+				B113 /* CheckInView.swift in Sources */
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+				B201 /* Theme.swift in Sources */,
+				B202 /* Components.swift in Sources */,
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CF101 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CF102 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CF201 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ReadinessTracker needs access to your health data to calculate your readiness score.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "ReadinessTracker needs access to your health data to calculate your readiness score.";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CF202 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ReadinessTracker needs access to your health data to calculate your readiness score.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "ReadinessTracker needs access to your health data to calculate your readiness score.";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CL101 /* Build configuration list for PBXProject "ReadinessTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF101 /* Debug */,
+				CF102 /* Release */
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CL201 /* Build configuration list for PBXNativeTarget "ReadinessTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF201 /* Debug */,
+				CF202 /* Release */
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = PR101 /* Project object */;
+}

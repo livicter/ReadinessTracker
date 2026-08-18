@@ -1,0 +1,887 @@
+import SwiftUI
+import Charts
+
+struct DashboardView: View {
+    @StateObject private var healthKit = HealthKitManager.shared
+    @StateObject private var fitbit = FitbitManager.shared
+    @StateObject private var dataStore = DataStore.shared
+    @StateObject private var metadataStore = MetadataStore.shared
+    @State private var selectedSource: DataSource = .appleWatch
+    @State private var trendPeriod: TrendPeriod = .week
+    @State private var quickTrendWindow: Int = 7
+    @State private var isRefreshing = false
+    @State private var lastSyncDate: Date?
+    @State private var isWeeklyReportPresented = false
+    
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppBackground()
+                
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: AppleTheme.sectionSpacing) {
+                        sourcePicker
+                        
+                        // Sync status bar
+                        SyncStatusView(
+                            lastSync: lastSyncDate,
+                            isSyncing: isRefreshing,
+                            sourceName: selectedSource == .appleWatch ? healthKit.dataSource : "Fitbit",
+                            onSync: {
+                                Haptic.press()
+                                Task {
+                                    isRefreshing = true
+                                    await refreshData()
+                                    isRefreshing = false
+                                    lastSyncDate = Date()
+                                    Haptic.success()
+                                }
+                            }
+                        )
+                        
+                        if let data = dataStore.latest(for: selectedSource) {
+                            let history = dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
+                            let longHistory = dataStore.dataForSource(selectedSource, days: 180)
+                            let metadata = metadataStore.metadataFor(date: Date(), timeOfDay: .morning)
+                            let dualScores = ReadinessCalculator.calculateDualScores(from: data, history: history, metadata: metadata)
+                            
+                            // Apply strain decay and cognitive lag
+                            let yesterdayMetadata = metadataStore.previousEveningMetadata()
+                            let strainAdjusted = ReadinessCalculator.applyStrainDecay(
+                                to: dualScores.gym,
+                                previousRPE: yesterdayMetadata?.workoutRPE,
+                                daysSinceWorkout: 1
+                            )
+                            let cognitiveAdjusted = ReadinessCalculator.applyCognitiveLag(
+                                to: dualScores.cognitive,
+                                previousMentalFatigue: yesterdayMetadata?.mentalFatigue,
+                                previousWorkloadStress: yesterdayMetadata?.workloadStress,
+                                daysSince: 1
+                            )
+                            
+                            let finalScores = DualReadinessScores(
+                                general: dualScores.general,
+                                cognitive: cognitiveAdjusted,
+                                gym: strainAdjusted,
+                                breakdown: dualScores.breakdown
+                            )
+                            
+                            heroSection(scores: finalScores)
+                            recommendationsSection(scores: finalScores)
+                            checkInSection
+                            journalButton
+                            whoopSection(data: data, history: history, scores: finalScores)
+                            metricsSection(data: data, history: history)
+                            quickTrendsSection(history: longHistory)
+                            sleepSection(data: data)
+                            breakdownSection(breakdown: dualScores.breakdown, data: data, history: history)
+                            trendSection(history: history)
+                        } else {
+                            noDataView
+                        }
+                    }
+                    .padding(.horizontal, AppleTheme.horizontalMargin)
+                    .padding(.vertical, 12)
+                }
+                .refreshable {
+                    isRefreshing = true
+                    Haptic.press()
+                    await refreshData()
+                    isRefreshing = false
+                    lastSyncDate = Date()
+                    Haptic.success()
+                }
+            }
+            .navigationTitle("Readiness")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(RTColor.background, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isWeeklyReportPresented = true
+                    } label: {
+                        Image(systemName: "doc.text")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
+            .sheet(isPresented: $isWeeklyReportPresented) {
+                if let report = WeeklyReportGenerator.shared.generateReport(for: selectedSource) {
+                    NavigationStack {
+                        WeeklyReportView(report: report)
+                    }
+                } else {
+                    Text("Need at least 3 days of data for a weekly report")
+                        .foregroundStyle(RTColor.secondaryText)
+                        .padding()
+                }
+            }
+            .onAppear {
+                Haptic.prepare()
+                lastSyncDate = dataStore.latest(for: selectedSource)?.date
+            }
+        }
+    }
+    
+    // MARK: - Source Picker
+    private var sourcePicker: some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 8) {
+                ForEach(DataSource.allCases, id: \.self) { source in
+                    Button(action: {
+                        Haptic.selectionChanged()
+                        selectedSource = source
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: source == .appleWatch ? "heart.fill" : "figure.walk")
+                                .font(.system(size: 12))
+                            Text(source.rawValue)
+                                .font(.subheadline.weight(.medium))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(selectedSource == source ? RTColor.surfaceHighlight : Color.clear)
+                        .foregroundStyle(selectedSource == source ? .white : RTColor.secondaryText)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                }
+                
+                Spacer()
+            }
+            .padding(4)
+            .background(RTColor.surface)
+            .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusSmall, style: .continuous))
+            
+            // Data source indicator
+            if selectedSource == .appleWatch {
+                HStack(spacing: 4) {
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 6))
+                        .foregroundStyle(healthKit.isAuthorized ? RTColor.optimal : .gray)
+                    Text(healthKit.dataSource)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+                .padding(.horizontal, 8)
+            }
+        }
+    }
+    
+    // MARK: - Hero Section (Triple Ring)
+    private func heroSection(scores: DualReadinessScores) -> some View {
+        NavigationLink(destination: ReadinessDetailView(
+            scores: scores,
+            data: dataStore.latest(for: selectedSource)!,
+            history: dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
+        )) {
+            NativeCard {
+                VStack(spacing: 20) {
+                    // Triple ring
+                    TripleRingHero(
+                        gymScore: scores.gym,
+                        workScore: scores.cognitive,
+                        sleepScore: scores.breakdown.sleepScore,
+                        size: 200
+                    )
+                    
+                    // Legend
+                    RingLegend(
+                        gymScore: scores.gym,
+                        workScore: scores.cognitive,
+                        sleepScore: scores.breakdown.sleepScore
+                    )
+                    
+                    // Recommendation
+                    Text(scores.recommendation())
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(RTColor.secondaryText)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+            }
+            .overlay(
+                HStack {
+                    Spacer()
+                    VStack {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                            .padding(12)
+                        Spacer()
+                    }
+                }
+            )
+        }
+        .buttonStyle(.plain)
+    }
+    
+    // MARK: - Recommendations Section
+    private func recommendationsSection(scores: DualReadinessScores) -> some View {
+        let recs = AIRecommendationEngine.shared.generateRecommendations(for: selectedSource)
+            .prefix(2)
+
+        return Group {
+            if !recs.isEmpty {
+                NativeCard {
+                    VStack(alignment: .leading, spacing: AppleTheme.cardPadding) {
+                        SectionHeader(title: "Recommendations")
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(Array(recs.enumerated()), id: \.offset) { _, rec in
+                                HStack(alignment: .top, spacing: 12) {
+                                    Image(systemName: "lightbulb.fill")
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(Color(hex: rec.priority.color))
+                                        .frame(width: 32, height: 32)
+                                        .background(Color(hex: rec.priority.color).opacity(0.12))
+                                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(rec.title)
+                                            .font(.subheadline.weight(.semibold))
+                                            .foregroundStyle(.white)
+
+                                        Text(rec.description)
+                                            .font(.caption)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .multilineTextAlignment(.leading)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Check-in Section
+    private var checkInSection: some View {
+        HStack(spacing: 12) {
+            CheckInStatusCard(
+                label: "Morning",
+                icon: "sunrise.fill",
+                isDone: metadataStore.hasCheckedInToday(.morning),
+                color: RTColor.caution
+            )
+            CheckInStatusCard(
+                label: "Evening",
+                icon: "sunset.fill",
+                isDone: metadataStore.hasCheckedInToday(.evening),
+                color: RTColor.sleep
+            )
+        }
+    }
+    
+    // MARK: - Journal Button
+    private var journalButton: some View {
+        NavigationLink(destination: JournalView()) {
+            NativeCard {
+                HStack(spacing: 12) {
+                    Image(systemName: "book.closed.fill")
+                        .font(.system(size: 18))
+                        .foregroundStyle(RTColor.optimal)
+                        .frame(width: 36, height: 36)
+                        .background(RTColor.optimal.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Journal")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                        Text("Track behaviors affecting recovery")
+                            .font(.caption)
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    // MARK: - Metrics Section
+    private func metricsSection(data: DailyHealthData, history: [DailyHealthData]) -> some View {
+        let hrvHistory = history.map { Double($0.hrv) }
+        let rhrHistory = history.map { Double($0.restingHeartRate) }
+        let sleepHistory = history.map { $0.sleepHours }
+        
+        let hrvBase = BaselineManager.hrvBaseline(from: history, matchesRMSSD: data.hrvIsRMSSD)
+        let rhrBase = BaselineManager.rhrBaseline(from: history)
+        
+        return VStack(spacing: AppleTheme.cardPadding) {
+            SectionHeader(title: "Metrics")
+            
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                MetricCard(
+                    title: "Sleep",
+                    value: String(format: "%.1f", data.sleepHours),
+                    unit: "h",
+                    icon: "bed.double.fill",
+                    color: RTColor.sleep,
+                    trend: trendFor(data.sleepHours, baseline: BaselineManager.sleepBaseline(from: history), higherIsBetter: true),
+                    sparklineData: sleepHistory,
+                    metricType: .sleep,
+                    currentValue: data.sleepHours,
+                    history: history,
+                    source: selectedSource
+                )
+                
+                MetricCard(
+                    title: data.hrvIsRMSSD ? "RMSSD" : "HRV",
+                    value: "\(Int(data.hrv))",
+                    unit: "ms",
+                    icon: "waveform.path.ecg",
+                    color: RTColor.hrv,
+                    trend: trendFor(Double(data.hrv), baseline: hrvBase, higherIsBetter: true),
+                    sparklineData: hrvHistory,
+                    metricType: .hrv,
+                    currentValue: data.hrv,
+                    history: history,
+                    source: selectedSource
+                )
+                
+                MetricCard(
+                    title: "Resting HR",
+                    value: "\(Int(data.restingHeartRate))",
+                    unit: "bpm",
+                    icon: "heart.fill",
+                    color: RTColor.strain,
+                    trend: trendFor(Double(data.restingHeartRate), baseline: rhrBase, higherIsBetter: false),
+                    sparklineData: rhrHistory,
+                    metricType: .restingHR,
+                    currentValue: data.restingHeartRate,
+                    history: history,
+                    source: selectedSource
+                )
+                
+                MetricCard(
+                    title: "Active Cals",
+                    value: "\(Int(data.activeCalories))",
+                    unit: "cal",
+                    icon: "flame.fill",
+                    color: RTColor.caution,
+                    trend: .flat,
+                    sparklineData: history.map { Double($0.activeCalories) },
+                    metricType: .activeCalories,
+                    currentValue: data.activeCalories,
+                    history: history,
+                    source: selectedSource
+                )
+            }
+        }
+    }
+    
+    // MARK: - Quick Trends Section
+    private func quickTrendsSection(history: [DailyHealthData]) -> some View {
+        VStack(spacing: AppleTheme.cardPadding) {
+            HStack {
+                SectionHeader(title: "Quick Trends")
+                Spacer()
+
+                Picker("", selection: $quickTrendWindow) {
+                    Text("7D").tag(7)
+                    Text("30D").tag(30)
+                    Text("90D").tag(90)
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 150)
+            }
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    QuickTrendCard(metric: .sleep, history: history, window: quickTrendWindow)
+                        .frame(width: 160)
+
+                    QuickTrendCard(metric: .hrv, history: history, window: quickTrendWindow)
+                        .frame(width: 160)
+
+                    QuickTrendCard(metric: .restingHR, history: history, window: quickTrendWindow)
+                        .frame(width: 160)
+
+                    QuickTrendCard(metric: .activeCalories, history: history, window: quickTrendWindow)
+                        .frame(width: 160)
+                }
+            }
+        }
+    }
+
+    // MARK: - Sleep Section
+    private func sleepSection(data: DailyHealthData) -> some View {
+        NavigationLink(destination: SleepAnalysisView(
+            data: data,
+            history: dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
+        )) {
+            NativeCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        SectionHeader(title: "Sleep Stages")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    
+                    SleepStageBar(stages: [
+                        ("Deep", data.deepSleepPercent, RTColor.sleep),
+                        ("REM", data.remSleepPercent, RTColor.consistency),
+                        ("Light", data.lightSleepPercent, RTColor.sleep.opacity(0.5)),
+                        ("Awake", data.awakePercent, RTColor.tertiaryText)
+                    ])
+                    
+                    HStack(spacing: 16) {
+                        StageLabel(label: "Deep", percent: data.deepSleepPercent, optimal: "15-20%", isOptimal: SleepData.optimalDeep.contains(data.deepSleepPercent))
+                        StageLabel(label: "REM", percent: data.remSleepPercent, optimal: "20-25%", isOptimal: SleepData.optimalRem.contains(data.remSleepPercent))
+                        StageLabel(label: "Efficiency", percent: data.sleepEfficiency, optimal: ">85%", isOptimal: data.sleepEfficiency >= 0.85)
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    // MARK: - WHOOP-Style Section
+    private func whoopSection(data: DailyHealthData, history: [DailyHealthData], scores: DualReadinessScores) -> some View {
+        let strainValue = scores.breakdown.strainScoreValue
+        
+        return NavigationLink(destination: RecoveryStrainDetailView(
+            data: data,
+            history: history,
+            scores: scores
+        )) {
+            VStack(spacing: AppleTheme.cardPadding) {
+                HStack {
+                    SectionHeader(title: "Recovery & Strain")
+                    Spacer()
+                    Text(String(format: "%.1f", strainValue))
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .foregroundStyle(RTColor.caution)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                
+                // Strain/Recovery Wheel
+                NativeCard {
+                    StrainRecoveryWheel(
+                        strainScore: strainValue,
+                        recoveryScore: Double(scores.general),
+                        day: "TODAY"
+                    )
+                    .frame(maxWidth: .infinity)
+                }
+                
+                // Sleep Performance
+                SleepPerformanceScore(
+                    sleepNeeded: BaselineManager.sleepBaseline(from: history) * 1.1,
+                    sleepObtained: data.sleepHours,
+                    efficiency: data.sleepEfficiency * 100,
+                    consistency: calculateSleepConsistency(history: history)
+                )
+
+                StrainRecoveryBalanceCard(balance: scores.balance)
+                
+                // Advanced metrics row
+                HStack(spacing: 12) {
+                    if let respRate = data.respiratoryRate {
+                        RespiratoryRateCard(
+                            currentRate: respRate,
+                            history: history.compactMap { d in
+                                d.respiratoryRate.map { (d.date, $0) }
+                            },
+                            baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
+                        )
+                    }
+                    
+                    if let skinTemp = data.skinTemperature {
+                        let tempHistory = history.compactMap { d in
+                            d.skinTemperature.map { (date: d.date, value: $0) }
+                        }
+                        let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
+                        SkinTemperatureCard(
+                            currentTemp: skinTemp,
+                            baselineTemp: baseline > 0 ? baseline : skinTemp,
+                            history: tempHistory
+                        )
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
+        guard history.count >= 3 else { return 50 }
+        let sleepHours = history.map { $0.sleepHours }
+        let mean = sleepHours.reduce(0, +) / Double(sleepHours.count)
+        let variance = sleepHours.map { pow($0 - mean, 2) }.reduce(0, +) / Double(sleepHours.count)
+        let stdDev = sqrt(variance)
+        // Lower stdDev = higher consistency (100 - normalized stdDev * factor)
+        return max(0, min(100, 100 - stdDev * 30))
+    }
+    
+    // MARK: - Breakdown Section
+    private func breakdownSection(breakdown: ReadinessBreakdown, data: DailyHealthData, history: [DailyHealthData]) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 16) {
+                SectionHeader(title: "Breakdown")
+                
+                VStack(spacing: 14) {
+                    BreakdownBar(label: "Sleep", score: breakdown.sleepScore, color: RTColor.sleep, weight: "25%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: selectedSource)
+                    BreakdownBar(label: "HRV", score: breakdown.hrvScore, color: RTColor.hrv, weight: "25%", metricType: .hrv, currentValue: data.hrv, history: history, source: selectedSource)
+                    BreakdownBar(label: "Recovery", score: breakdown.recoveryScore, color: RTColor.recovery, weight: "20%", metricType: .restingHR, currentValue: data.restingHeartRate, history: history, source: selectedSource)
+                    BreakdownBar(label: "SpO2", score: breakdown.spo2Score, color: RTColor.optimal, weight: "5%", metricType: .bloodOxygen, currentValue: (data.bloodOxygen ?? 0) > 1.0 ? (data.bloodOxygen ?? 0) : (data.bloodOxygen ?? 0) * 100.0, history: history, source: selectedSource)
+                    BreakdownBar(label: "Strain", score: breakdown.strainScore, color: RTColor.strain, weight: "15%", metricType: .activeCalories, currentValue: data.activeCalories, history: history, source: selectedSource)
+                    BreakdownBar(label: "Consistency", score: breakdown.consistencyScore, color: RTColor.consistency, weight: "10%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: selectedSource)
+                }
+                
+                Divider()
+                    .background(RTColor.divider)
+                
+                HStack {
+                    Text("Total")
+                        .font(RTFont.headline)
+                    Spacer()
+                    Text("\(breakdown.totalScore)")
+                        .font(RTFont.metricValue)
+                        .foregroundStyle(ScoreZone(score: breakdown.totalScore).color)
+                }
+            }
+        }
+    }
+    
+    // MARK: - Trend Section (Multi-metric)
+    private func trendSection(history: [DailyHealthData]) -> some View {
+        NavigationLink(destination: TrendDetailView(history: history)) {
+            NativeCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        SectionHeader(title: "Trends")
+                        Spacer()
+                        TrendPeriodSelector(period: $trendPeriod)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    
+                    if history.count >= 2 {
+                        // Precompute chart points once so calculateBreakdown is not
+                        // called per point per render (O(n^2) -> O(n) work).
+                        let points: [TrendChartPoint] = history.map { data in
+                            TrendChartPoint(
+                                date: data.date,
+                                readinessScore: ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore,
+                                hrvNormalized: min(100, Double(data.hrv) * 2),
+                                rhrNormalized: max(0, 100 - Double(data.restingHeartRate - 40) * 2)
+                            )
+                        }
+
+                        // Multi-metric chart
+                        Chart(points) { point in
+                            // Readiness score line
+                            LineMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("Score", point.readinessScore)
+                            )
+                            .foregroundStyle(RTColor.optimal)
+                            .interpolationMethod(.catmullRom)
+                            .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+                            // HRV line (scaled to 0-100)
+                            LineMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("HRV", point.hrvNormalized)
+                            )
+                            .foregroundStyle(RTColor.hrv.opacity(0.6))
+                            .interpolationMethod(.catmullRom)
+                            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 4]))
+
+                            // RHR line (scaled: lower is better, invert)
+                            LineMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("RHR", point.rhrNormalized)
+                            )
+                            .foregroundStyle(RTColor.strain.opacity(0.6))
+                            .interpolationMethod(.catmullRom)
+                            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [2, 2]))
+
+                            AreaMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("Score", point.readinessScore)
+                            )
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [RTColor.optimal.opacity(0.2), RTColor.optimal.opacity(0.0)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .interpolationMethod(.catmullRom)
+                        }
+                        .frame(height: 200)
+                        .chartYScale(domain: 0...100)
+                        
+                        // Legend
+                        HStack(spacing: 16) {
+                            LegendDot(label: "Readiness", color: RTColor.optimal, style: .solid)
+                            LegendDot(label: "HRV", color: RTColor.hrv, style: .dashed)
+                            LegendDot(label: "RHR", color: RTColor.strain, style: .dotted)
+                        }
+                        .padding(.top, 8)
+                    } else {
+                        Text("Need more data")
+                            .font(.subheadline)
+                            .foregroundStyle(RTColor.secondaryText)
+                            .frame(height: 200)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+    
+    // MARK: - No Data
+    private var noDataView: some View {
+        VStack(spacing: 24) {
+            Image(systemName: "arrow.down.heart.fill")
+                .font(.system(size: 64))
+                .foregroundStyle(RTColor.surfaceHighlight)
+            
+            VStack(spacing: 8) {
+                Text("No data yet")
+                    .font(RTFont.title)
+                    .foregroundStyle(.white)
+                
+                Text(selectedSource == .appleWatch
+                     ? "Pull down to refresh your HealthKit data"
+                     : "Connect your Fitbit account")
+                    .font(.subheadline)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button(action: {
+                Haptic.press()
+                Task {
+                    if selectedSource == .appleWatch {
+                        await healthKit.requestAuthorization()
+                    }
+                }
+            }) {
+                Label(selectedSource == .appleWatch ? "Grant HealthKit Access" : "Connect Fitbit",
+                      systemImage: "link")
+                .font(.subheadline.weight(.semibold))
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(RTColor.optimal)
+                .foregroundStyle(.black)
+                .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+            }
+        }
+        .padding(.top, 80)
+    }
+    
+    // MARK: - Helpers
+    private func refreshData() async {
+        if selectedSource == .appleWatch {
+            await healthKit.fetchTodayData()
+            // Also refresh historical data in case new data appeared in HealthKit
+            await healthKit.fetchHistoricalData(days: 30)
+        } else {
+            await fitbit.fetchTodayData()
+        }
+    }
+    
+    private func trendFor(_ value: Double, baseline: Double, higherIsBetter: Bool) -> TrendDirection {
+        let threshold = baseline * 0.05
+        if abs(value - baseline) < threshold { return .flat }
+        let isUp = value > baseline
+        return (isUp && higherIsBetter) || (!isUp && !higherIsBetter) ? .up : .down
+    }
+}
+
+// MARK: - Supporting Views
+
+struct CheckInStatusCard: View {
+    let label: String
+    let icon: String
+    let isDone: Bool
+    let color: Color
+    
+    var body: some View {
+        NativeCard {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 16))
+                    .foregroundStyle(isDone ? color : RTColor.tertiaryText)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(label)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.white)
+                    Text(isDone ? "Done" : "Pending")
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(isDone ? color : RTColor.tertiaryText)
+                }
+
+                Spacer()
+
+                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20))
+                    .foregroundStyle(isDone ? color : RTColor.surfaceHighlight)
+            }
+        }
+    }
+}
+
+struct BreakdownBar: View {
+    let label: String
+    let score: Int
+    let color: Color
+    let weight: String
+    let metricType: MetricType
+    let currentValue: Double
+    let history: [DailyHealthData]
+    let source: DataSource
+    
+    var body: some View {
+        NavigationLink(destination: AdvancedMetricDetailView(
+            metric: metricType,
+            currentValue: currentValue,
+            history: history,
+            source: source
+        )) {
+            HStack(spacing: 12) {
+                Text(label)
+                    .font(RTFont.body)
+                    .foregroundStyle(.white)
+                    .frame(width: 70, alignment: .leading)
+                
+                Text(weight)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(RTColor.tertiaryText)
+                    .frame(width: 30)
+                
+                AnimatedProgressBar(
+                    progress: Double(score) / 100,
+                    color: color,
+                    height: 8
+                )
+                
+                Text("\(score)")
+                    .font(RTFont.metricValue)
+                    .foregroundStyle(color)
+                    .frame(minWidth: 28, idealWidth: 36, maxWidth: 50, alignment: .trailing)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct StageLabel: View {
+    let label: String
+    let percent: Double
+    let optimal: String
+    let isOptimal: Bool
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(label)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(RTColor.secondaryText)
+            
+            Text("\(Int(percent * 100))%")
+                .font(RTFont.metricValue)
+                .foregroundStyle(.white)
+            
+            Text(optimal)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(isOptimal ? RTColor.optimal : RTColor.tertiaryText)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Trend Chart Point
+/// Precomputed trend chart point so readiness/strain/recovery values are
+/// calculated once per render instead of per chart mark evaluation.
+struct TrendChartPoint: Identifiable {
+    var id: Date { date }
+    let date: Date
+    let readinessScore: Int
+    let hrvNormalized: Double
+    let rhrNormalized: Double
+}
+
+// MARK: - Legend Dot
+struct LegendDot: View {
+    let label: String
+    let color: Color
+    let style: LineStyle
+
+    enum LineStyle {
+        case solid, dashed, dotted
+    }
+    
+    var body: some View {
+        HStack(spacing: 6) {
+            Rectangle()
+                .fill(color)
+                .frame(width: 16, height: style == .solid ? 3 : 2)
+                .overlay(
+                    Rectangle()
+                        .stroke(color, style: style == .dashed ? StrokeStyle(lineWidth: 2, dash: [3, 3]) : style == .dotted ? StrokeStyle(lineWidth: 2, dash: [2, 2]) : StrokeStyle())
+                )
+            
+            Text(label)
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(RTColor.secondaryText)
+        }
+    }
+}
+
+// MARK: - Dual Score Card
+struct DualScoreCard: View {
+    let label: String
+    let score: Int
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        NativeCard {
+            VStack(spacing: 8) {
+                HStack(spacing: 6) {
+                    Image(systemName: icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(color)
+                    Text(label)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+
+                Text("\(score)")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundStyle(ScoreZone(score: score).color)
+                    .monospacedDigit()
+
+                Text(ScoreZone(score: score).label)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+}

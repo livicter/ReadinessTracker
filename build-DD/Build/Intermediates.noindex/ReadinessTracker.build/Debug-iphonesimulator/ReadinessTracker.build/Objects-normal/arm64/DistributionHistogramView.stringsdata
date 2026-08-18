@@ -1,0 +1,32 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/DistributionHistogramView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Not enough data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 54
+        }
+      },
+      {
+        "comment": "",
+        "key": "Range",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "Count",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 63
+        }
+      }
+    ]
+  },
+  "version": 1
+}

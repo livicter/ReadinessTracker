@@ -1,0 +1,120 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/RespiratoryRateCard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Respiratory Rate",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 28
+        }
+      },
+      {
+        "comment": "",
+        "key": "bpm",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 38
+        }
+      },
+      {
+        "comment": "",
+        "key": "· %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 42
+        }
+      },
+      {
+        "comment": "",
+        "key": "vs baseline",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "%",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rate",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 85
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rate",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Baseline",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 98
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rate",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 106
+        }
+      },
+      {
+        "comment": "",
+        "key": "Elevated respiratory rate may indicate your body is working harder to recover.",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 136
+        }
+      },
+      {
+        "comment": "",
+        "key": "Lower than usual respiratory rate. This can be positive if you feel well-rested.",
+        "location": {
+          "startingColumn": 32,
+          "startingLine": 137
+        }
+      }
+    ]
+  },
+  "version": 1
+}

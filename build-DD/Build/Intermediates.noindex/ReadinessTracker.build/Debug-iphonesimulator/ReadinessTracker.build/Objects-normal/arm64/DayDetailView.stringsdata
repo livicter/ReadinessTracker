@@ -1,0 +1,240 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/DayDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Total Sleep",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "hours",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 163
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Efficiency",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 189
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Sleep Analysis",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 226
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more historical data for context",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 484
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Trend",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 361
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 367
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 368
+        }
+      },
+      {
+        "comment": "",
+        "key": "Goal",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 373
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV Trend",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 396
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 402
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 403
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 410
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 411
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 423
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 424
+        }
+      },
+      {
+        "comment": "",
+        "key": "Resting HR Trend",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 448
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 454
+        }
+      },
+      {
+        "comment": "",
+        "key": "RHR",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 455
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 462
+        }
+      },
+      {
+        "comment": "",
+        "key": "RHR",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 463
+        }
+      },
+      {
+        "comment": "",
+        "key": "Awake for %lld minutes total",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 523
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Disturbances",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 516
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld episodes",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 519
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%% · %@h · Optimal: %@",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 556
+        }
+      },
+      {
+        "comment": "",
+        "key": "No previous day data for comparison",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 613
+        }
+      },
+      {
+        "comment": "",
+        "key": "vs Previous Day",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 597
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%@ %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 635
+        }
+      }
+    ]
+  },
+  "version": 1
+}

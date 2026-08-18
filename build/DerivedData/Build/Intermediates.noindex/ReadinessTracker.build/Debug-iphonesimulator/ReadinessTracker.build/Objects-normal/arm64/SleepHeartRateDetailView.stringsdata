@@ -1,0 +1,264 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SleepHeartRateDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Sleep Heart Rate",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 112
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld samples · Nocturnal dip: %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 160
+        }
+      },
+      {
+        "comment": "",
+        "key": "Lowest HR",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 132
+        }
+      },
+      {
+        "comment": "",
+        "key": "Average",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Overnight Drop",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "No heart rate data for selected range",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 297
+        }
+      },
+      {
+        "comment": "",
+        "key": "Heart Rate During Sleep",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 206
+        }
+      },
+      {
+        "comment": "",
+        "key": "bpm",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 217
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 228
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 235
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 236
+        }
+      },
+      {
+        "comment": "",
+        "key": "Resting",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 248
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 253
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 264
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep HR",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 308
+        }
+      },
+      {
+        "comment": "",
+        "key": "Resting HR baseline",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 314
+        }
+      },
+      {
+        "comment": "",
+        "key": "Nocturnal Dip Analysis",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 374
+        }
+      },
+      {
+        "comment": "",
+        "key": "Lowest",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 377
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 386
+        }
+      },
+      {
+        "comment": "",
+        "key": "Resting",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 389
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not enough data for minute view",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 490
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minute-by-Minute",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 441
+        }
+      },
+      {
+        "comment": "",
+        "key": "1-min buckets",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 445
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minute",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 455
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "Resting",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 461
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 471
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected Point",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 514
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 531
+        }
+      },
+      {
+        "comment": "",
+        "key": "What This Means",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 557
+        }
+      }
+    ]
+  },
+  "version": 1
+}

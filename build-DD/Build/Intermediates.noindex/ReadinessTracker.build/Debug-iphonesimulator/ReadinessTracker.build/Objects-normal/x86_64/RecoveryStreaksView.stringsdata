@@ -1,0 +1,232 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/RecoveryStreaksView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Recovery Streaks",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 141
+        }
+      },
+      {
+        "comment": "",
+        "key": "Current Streak",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 189
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "days",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 183
+        }
+      },
+      {
+        "comment": "",
+        "key": "Best: %lld days",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "Streak Breakdown",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 223
+        }
+      },
+      {
+        "comment": "",
+        "key": "Milestones",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 271
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 277
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld left",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 311
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld day streak",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 299
+        }
+      },
+      {
+        "comment": "",
+        "key": "Readiness Streaks",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 336
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld left",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 370
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld days ≥80 readiness",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 358
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last 30 Days",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 388
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 405
+        }
+      },
+      {
+        "comment": "",
+        "key": "≥80",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 431
+        }
+      },
+      {
+        "comment": "",
+        "key": "60-79",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 440
+        }
+      },
+      {
+        "comment": "",
+        "key": "<60",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 449
+        }
+      },
+      {
+        "comment": "",
+        "key": "PixelPet Boost",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 471
+        }
+      },
+      {
+        "comment": "",
+        "key": "Month Master: +50 XP/day",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 492
+        }
+      },
+      {
+        "comment": "",
+        "key": "Week Warrior: +25 XP/day",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 496
+        }
+      },
+      {
+        "comment": "",
+        "key": "3-Day Streak: +10 XP/day",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 500
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start a streak to earn bonus XP",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 504
+        }
+      },
+      {
+        "comment": "",
+        "key": "Streak XP Bonus",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 480
+        }
+      },
+      {
+        "comment": "",
+        "key": "+%lld XP/day",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 486
+        }
+      },
+      {
+        "comment": "",
+        "key": "Visit PixelPet",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 518
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 584
+        }
+      }
+    ]
+  },
+  "version": 1
+}

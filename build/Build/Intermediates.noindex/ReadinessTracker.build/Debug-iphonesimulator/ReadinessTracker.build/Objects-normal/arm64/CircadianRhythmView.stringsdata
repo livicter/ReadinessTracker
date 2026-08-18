@@ -1,0 +1,64 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/CircadianRhythmView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Circadian Rhythm",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep timing alignment",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 65
+        }
+      },
+      {
+        "comment": "",
+        "key": "Your sleep timing varies significantly. Try to keep bedtime and wake time within 30 minutes each day to strengthen your circadian rhythm.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 127
+        }
+      },
+      {
+        "comment": "",
+        "key": "24h",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 225
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Window",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 237
+        }
+      },
+      {
+        "comment": "",
+        "key": "--:--",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 329
+        }
+      },
+      {
+        "comment": "",
+        "key": "Target: %@ · %@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 336
+        }
+      }
+    ]
+  },
+  "version": 1
+}

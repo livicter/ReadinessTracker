@@ -1,0 +1,16 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SmartInsightsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Not enough data for insights",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 124
+        }
+      }
+    ]
+  },
+  "version": 1
+}

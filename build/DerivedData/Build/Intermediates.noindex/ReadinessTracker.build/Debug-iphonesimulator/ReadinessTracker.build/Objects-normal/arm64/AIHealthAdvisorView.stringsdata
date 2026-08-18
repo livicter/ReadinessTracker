@@ -1,0 +1,512 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/AIHealthAdvisorView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "AI Health Coach",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate a rich, structured prompt with all your health data. Copy and paste it into ChatGPT, Claude, Gemini, or your local LLM.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 91
+        }
+      },
+      {
+        "comment": "",
+        "key": "AI Health Coach",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 74
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy prompt to any LLM",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 78
+        }
+      },
+      {
+        "comment": "",
+        "key": "AI Response",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 140
+        }
+      },
+      {
+        "comment": "",
+        "key": "Just now",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy Full Response",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 167
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generated Prompt",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 188
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld chars",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap 'Generate Prompt' to create a structured prompt with all your health data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 210
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 231
+        }
+      },
+      {
+        "comment": "",
+        "key": "View Full",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 246
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate Prompt",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 276
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copy Prompt to Clipboard",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 294
+        }
+      },
+      {
+        "comment": "",
+        "key": "Calling API...",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 313
+        }
+      },
+      {
+        "comment": "",
+        "key": "Call API Directly",
+        "location": {
+          "startingColumn": 65,
+          "startingLine": 313
+        }
+      },
+      {
+        "comment": "",
+        "key": "Data Being Analyzed",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 330
+        }
+      },
+      {
+        "comment": "",
+        "key": "Morning check-in included",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 350
+        }
+      },
+      {
+        "comment": "",
+        "key": "Weekly sleep cycles included",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 360
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld days of history",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 369
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copied to clipboard",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 388
+        }
+      },
+      {
+        "comment": "",
+        "key": "Full Prompt",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 471
+        }
+      },
+      {
+        "comment": "",
+        "key": "Copied to clipboard",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 456
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 475
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ready",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 539
+        }
+      },
+      {
+        "comment": "",
+        "key": "Disabled",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 539
+        }
+      },
+      {
+        "comment": "",
+        "key": "AI Coach Settings",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 722
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connection Test",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 729
+        }
+      },
+      {
+        "comment": "",
+        "key": "Provider",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 563
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connection",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 573
+        }
+      },
+      {
+        "comment": "",
+        "key": "Parameters",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 679
+        }
+      },
+      {
+        "comment": "",
+        "key": "System Prompt",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 704
+        }
+      },
+      {
+        "comment": "",
+        "key": "About",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 710
+        }
+      },
+      {
+        "comment": "",
+        "key": "Provider",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 564
+        }
+      },
+      {
+        "comment": "",
+        "key": "Enabled",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 570
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paste your Gemini API key here",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 590
+        }
+      },
+      {
+        "comment": "",
+        "key": "API Key",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 577
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not set",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 580
+        }
+      },
+      {
+        "comment": "",
+        "key": "✓ Set",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 584
+        }
+      },
+      {
+        "comment": "",
+        "key": "Use Default Key",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 604
+        }
+      },
+      {
+        "comment": "",
+        "key": "Clear Key",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 615
+        }
+      },
+      {
+        "comment": "",
+        "key": "Model",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 624
+        }
+      },
+      {
+        "comment": "",
+        "key": "",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 626
+        }
+      },
+      {
+        "comment": "",
+        "key": "gemini-2.5-flash",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 627
+        }
+      },
+      {
+        "comment": "",
+        "key": "gemini-2.5-pro",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 628
+        }
+      },
+      {
+        "comment": "",
+        "key": "gemini-2.0-flash",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 629
+        }
+      },
+      {
+        "comment": "",
+        "key": "Endpoint",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 635
+        }
+      },
+      {
+        "comment": "",
+        "key": "URL",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 637
+        }
+      },
+      {
+        "comment": "",
+        "key": "Model",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 646
+        }
+      },
+      {
+        "comment": "",
+        "key": "Model name",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 648
+        }
+      },
+      {
+        "comment": "",
+        "key": "API Key",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 658
+        }
+      },
+      {
+        "comment": "",
+        "key": "Optional",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 660
+        }
+      },
+      {
+        "comment": "",
+        "key": "Test Connection",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 674
+        }
+      },
+      {
+        "comment": "",
+        "key": "Temperature",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 682
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 684
+        }
+      },
+      {
+        "comment": "",
+        "key": "Max Tokens",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 692
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 694
+        }
+      },
+      {
+        "comment": "",
+        "key": "Download Ollama",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 716
+        }
+      },
+      {
+        "comment": "",
+        "key": "Get Free API Key",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 718
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 726
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 730
+        }
+      },
+      {
+        "comment": "",
+        "key": "Successfully connected to %@!",
+        "location": {
+          "startingColumn": 36,
+          "startingLine": 732
+        }
+      },
+      {
+        "comment": "",
+        "key": "Failed to connect. Check your endpoint URL and ensure the service is running.",
+        "location": {
+          "startingColumn": 105,
+          "startingLine": 732
+        }
+      }
+    ]
+  },
+  "version": 1
+}

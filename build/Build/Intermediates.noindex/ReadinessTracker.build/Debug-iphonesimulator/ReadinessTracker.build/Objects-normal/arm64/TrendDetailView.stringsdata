@@ -1,0 +1,168 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/TrendDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Trends",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Multi-Metric Trend",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 145
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 222
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Readiness",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 165
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 175
+        }
+      },
+      {
+        "comment": "",
+        "key": "HRV",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 176
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 186
+        }
+      },
+      {
+        "comment": "",
+        "key": "RHR",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 187
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "Calories",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 198
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep vs Recovery",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 312
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 318
+        }
+      },
+      {
+        "comment": "",
+        "key": "Readiness",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 319
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep (hours)",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 333
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 379
+        }
+      },
+      {
+        "comment": "",
+        "key": "Best",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 390
+        }
+      }
+    ]
+  },
+  "version": 1
+}

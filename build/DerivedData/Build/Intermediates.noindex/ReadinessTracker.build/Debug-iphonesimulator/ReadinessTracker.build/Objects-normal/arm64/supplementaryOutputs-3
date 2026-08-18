@@ -1,0 +1,23 @@
+{
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepConsistencyTracker.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepConsistencyTracker.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepConsistencyTracker.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepConsistencyTracker.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepConsistencyTracker.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepConsistencyTracker.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepDebtCalculator.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepDebtCalculator.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepDebtCalculator.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepDebtCalculator.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepDebtCalculator.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepDebtCalculator.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepStageBreakdown.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepStageBreakdown.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepStageBreakdown.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepStageBreakdown.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepStageBreakdown.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepStageBreakdown.swiftdeps"
+  }
+}

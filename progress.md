@@ -1,0 +1,124 @@
+# Progress
+
+## 2026-07-12 — Phase 1 verification + Phase 2 scoping
+
+- Re-ran full test suite on `feature/whoop-strain-recovery-model`.
+- Result: **TEST SUCCEEDED** — 5 tests, 0 failures.
+- Read current `DashboardView.swift`, `RecoveryStrainDetailView.swift`, approved Phase 1 plan/design.
+- Updated `task_plan.md` with Phase 1 completion and proposed Phase 2 options.
+
+## 2026-07-12 — Phase 2A design (RMSSD)
+
+- User approved doing all four phases in order 2A → 2B → 2C → 2D.
+- User approved Approach A: heartbeat-series RMSSD.
+- Read `HealthKitManager.swift`, `RecoveryCalculator.swift`, `HealthData.swift`, `HRVFrequencyAnalysis.swift`.
+- Wrote `docs/superpowers/specs/2026-07-12-rmssd-design.md`.
+- Spec self-review: fixed heartbeat-series RR extraction to compute differences between cumulative timestamps and discard gaps.
+
+## 2026-07-13 — Phase 2A implementation complete
+
+- Subagent-driven development executed all 7 implementation tasks + final verification.
+- Final review found mixed HRV baseline issue; fixed by filtering `BaselineManager.hrvBaseline` by `hrvIsRMSSD` with fallback.
+- Added `BaselineManagerTests` for RMSSD/SDNN baseline filtering.
+- Final test run: **TEST SUCCEEDED** — 12 tests, 0 failures.
+- Phase 2A complete.
+
+## 2026-07-13 — Phase 2B design + implementation (workout-level strain)
+
+- Wrote `docs/superpowers/specs/2026-07-13-workout-strain-design.md`.
+- Wrote `docs/superpowers/plans/2026-07-13-workout-strain-implementation-plan.md`.
+- Subagent-driven development executed 7 implementation tasks.
+- Task 3 review found missing test for `trimp(for:using:)`; added via fix subagent.
+- Final review found: HRV fallback should be 0, missing `enrichSessions`, history-aware score inconsistency, contribution scaling by daily strain, duration fallback. All fixed via fix subagents.
+- Final test run: **TEST SUCCEEDED** — 21 tests, 0 failures.
+- Phase 2B complete; ready for Phase 2C design.
+
+## 2026-07-13 — Phase 2C design (SpO2 + nutrition + menstrual cycle)
+
+- Design spec and implementation plan written.
+- Planning docs committed: 77e0aef.
+
+## 2026-07-15 — Phase 2C implementation complete
+
+- Subagent-driven development executed Tasks 1-8 + final verification.
+- Fixes applied: target membership (Task 2), historical `hasData` guard (Task 5), readiness weight integration (Task 6), UserSettings teardown (Task 8), menstrual penalty in `ReadinessCalculator`, SpO2 display normalization, `.bloodOxygen` `MetricType` case (final review).
+- Final test run: **TEST SUCCEEDED** — 26 tests, 0 failures.
+- Head: abb4e3d.
+
+## 2026-07-15 — Phase 2D implementation complete
+
+- Design spec and implementation plan written and committed.
+- Subagent-driven development executed Tasks 1-5 + final verification.
+- Added `StrainRecoveryBalance`, Dashboard/recovery balance card, `WeeklyReportView`, strain/workout AI rules, and `QuickTrendCard` 7/30/90-day row.
+- Final test run: **TEST SUCCEEDED** — 38 tests, 0 failures.
+- Head: a78d5a2.
+
+## 2026-08-01 — Glassy UI redesign complete
+
+- New branch `feature/glassy-ui-redesign`.
+- Design system updated: glass tokens, `NativeCard` → `.ultraThinMaterial`, `GlassRow`, `GlassBackground`.
+- All views updated via AgentSwarm: Dashboard, detail views, history, sleep, analytics, weekly report, trend cards, WHOOP features, journal, check-in, breathing, sync status.
+- Final test run: **TEST SUCCEEDED** — 38 tests, 0 failures.
+- Head: f3f00f3.
+
+## 2026-08-01 — Apple Health native UI redesign complete
+
+- Design system rebuilt to Apple Health patterns: solid `NativeCard`, `AppBackground`, `AppIconTile`, `AppListRow`, `AppSectionHeader`, `AppSegmentedControl`, `AppStatPill`, `AppButton`.
+- All 33 view files converted via AgentSwarm.
+- Glassmorphism remnants removed.
+- Final test run: **TEST SUCCEEDED** — 38 tests, 0 failures.
+- Head: 4993fd8.
+
+## 2026-07-14 — Phase 2C final whole-branch review fixes
+
+- Applied menstrual readiness penalty in `ReadinessCalculator.calculateBreakdown` (mirrors `RecoveryCalculator`).
+- Normalized legacy SpO2 fraction display in `ReadinessDetailView` SpO2 `ComponentRow`.
+- Added `.bloodOxygen` case to `MetricType` with icon, unit, color, zones, and `higherIsBetter`.
+- Updated SpO2 `BreakdownBar` to use `metricType: .bloodOxygen`.
+- Fixed exhaustive `switch metric` statements across views/engine after new case addition.
+- Removed redundant `trackMenstrualCycle` reset in `testMenstrualAdjustment` (teardown already covers it).
+- Build: **BUILD SUCCEEDED**.
+- Tests: **TEST SUCCEEDED** — 26 tests, 0 failures.
+- Committed: `fix: final review — menstrual readiness penalty, SpO2 display, bloodOxygen MetricType`.
+
+## 2026-07-14 — Phase 2D Task 2: strain/recovery balance card
+
+- Added `DualReadinessScores.balance` in `ReadinessCalculator.swift`.
+- Created `StrainRecoveryBalanceCard.swift` and added it to the app target.
+- Wired card into `DashboardView.whoopSection` and `RecoveryStrainDetailView` (replacing inline indicator + adding 7-day balance chart section).
+- Build: **BUILD SUCCEEDED**.
+- Committed: `feat: expose strain/recovery balance card in Dashboard and detail` (68912f7).
+- Report written to `.superpowers/sdd/task-2-report.md`.
+
+## 2026-07-15 — Phase 2D final whole-branch review fixes
+
+- Applied quick-trend prior-window fix (180-day `longHistory`) in `DashboardView.swift`.
+- Added `recommendationsSection` showing top 2 `AIRecommendationEngine` recommendations in `DashboardView.swift`.
+- Deduplicated AI recommendations by title with `uniqueByTitle()` in `AIRecommendations.swift`.
+- Fixed 7-Day Balance chart to use `history.suffix(7)` in `RecoveryStrainDetailView.swift`.
+- Fixed weekly report `avgRPE` to average only valid RPE values.
+- Fixed weekly report `avgReadiness` to use history-aware `ReadinessCalculator.calculateBreakdown(...).totalScore`.
+- Build: **BUILD SUCCEEDED**.
+- Tests: **TEST SUCCEEDED** — 38 tests, 0 failures.
+- Committed: `fix: final review — quick-trend window, AI UI, dedupe, report math` (a78d5a2).
+- Report written to `.superpowers/sdd/final-fix-report.md`.
+
+## 2026-07-14 — Phase 2D Task 3: WeeklyReportView + wiring
+
+- Added `avgStrain` to `WeeklyReport` and `WeeklyReportGenerator`.
+- Created `WeeklyReportView.swift` and added it to the app target.
+- Wired `WeeklyReportView` from `DashboardView` (toolbar button + sheet).
+- Wired `WeeklyReportView` from `HistoryView` (top-row button + sheet).
+- Added `WeeklyReportGenerator.swift` to the app target; marked generator `@MainActor`.
+- Made `TrendDirection` conform to `Codable`.
+- Build: **BUILD SUCCEEDED**.
+- Tests: **TEST SUCCEEDED** — 31 tests, 0 failures.
+- Committed: `feat: add WeeklyReportView and wire from Dashboard and History` (265b9b1).
+- Report written to `.superpowers/sdd/task-3-report.md`.
+
+## 2026-08-02 — Post-merge audit and bug fixes
+
+- AgentSwarm audited theme and features across all views/models.
+- Fixed: BreathingView added to target + `BreathingStatItem` rename; journal entries persisted; check-in pre-population + save confirmation + time-of-day scoped saves; real sleep stage data in Dashboard/DayDetail/SleepAnalysis; breakdown weights match ReadinessCalculator + SpO2 row; ReadinessDetailView source/SpO2 normalization; fallback strain breakdown reconciled; MetricDetailView trend inversion; MetricCorrelationView trend line + nil SpO2; QuickTrendCard nil SpO2 + prior window; WeeklyReportView trend indicator; SleepConsistencyTracker midnight wrap; BaselineManager consistencyScore uses sleepStartTime; AIRecommendations Rule 5 guard; dead See All buttons; AnimatedNumber zero crash; AppBackground consistency; AdvancedMetricDetailView wired into navigation.
+- Final test run: **TEST SUCCEEDED** — 38 tests, 0 failures.
+- Head: 0bb50db.

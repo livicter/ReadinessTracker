@@ -1,0 +1,272 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SleepConsistencyDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Sleep Consistency",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 153
+        }
+      },
+      {
+        "comment": "",
+        "key": "Grade",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 195
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bedtime",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 206
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 216
+        }
+      },
+      {
+        "comment": "",
+        "key": "Wake Time",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 219
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg bedtime: %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 231
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg wake: %@",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 240
+        }
+      },
+      {
+        "comment": "",
+        "key": "Bedtime Trend",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 258
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld nights",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 264
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 277
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 278
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 284
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 285
+        }
+      },
+      {
+        "comment": "",
+        "key": "Wake Time Trend",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 347
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld mornings",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 353
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 365
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 366
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 372
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 373
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Window Heatmap",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 433
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last 14 nights — darker = more consistent",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 437
+        }
+      },
+      {
+        "comment": "",
+        "key": "→",
+        "location": {
+          "startingColumn": 50,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld-Day Consistency Trend",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 499
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 506
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 516
+        }
+      },
+      {
+        "comment": "",
+        "key": "Consistency",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 517
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 523
+        }
+      },
+      {
+        "comment": "",
+        "key": "Consistency",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 524
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 535
+        }
+      },
+      {
+        "comment": "",
+        "key": "Recommendations",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 562
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not Enough Sleep Data",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 596
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep consistency tracking requires at least 3 nights with sleep start/end times. Ensure your sleep data includes bedtime and wake time information.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 600
+        }
+      }
+    ]
+  },
+  "version": 1
+}

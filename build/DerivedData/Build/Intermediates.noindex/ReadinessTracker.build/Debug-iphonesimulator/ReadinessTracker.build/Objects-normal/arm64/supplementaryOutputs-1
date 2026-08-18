@@ -1,0 +1,23 @@
+{
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Design/Components.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/Components.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/Components.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/Components.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/Components.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/Components.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/RespiratoryRateCard.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RespiratoryRateCard.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RespiratoryRateCard.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RespiratoryRateCard.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RespiratoryRateCard.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/RespiratoryRateCard.swiftdeps"
+  },
+  "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/WhoopFeatures/SleepPerformanceScore.swift" : {
+    "const-values" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepPerformanceScore.swiftconstvalues",
+    "dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepPerformanceScore.d",
+    "diagnostics" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepPerformanceScore.dia",
+    "object" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepPerformanceScore.o",
+    "swift-dependencies" : "/Users/victor/Projects/ReadinessTracker/build/DerivedData/Build/Intermediates.noindex/ReadinessTracker.build/Debug-iphonesimulator/ReadinessTracker.build/Objects-normal/arm64/SleepPerformanceScore.swiftdeps"
+  }
+}

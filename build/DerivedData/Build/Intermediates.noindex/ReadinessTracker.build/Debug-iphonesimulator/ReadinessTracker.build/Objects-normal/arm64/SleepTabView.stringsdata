@@ -1,0 +1,488 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/SleepTabView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Sleep",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 133
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last Night",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 189
+        }
+      },
+      {
+        "comment": "",
+        "key": "hours",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 219
+        }
+      },
+      {
+        "comment": "",
+        "key": "%",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 234
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld wakes",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 243
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap for full analysis",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 290
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 355
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Duration",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 309
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg %@h",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 316
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 325
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 326
+        }
+      },
+      {
+        "comment": "",
+        "key": "Average",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 332
+        }
+      },
+      {
+        "comment": "",
+        "key": "Goal",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 337
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Quality Trends",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 369
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 414
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 379
+        }
+      },
+      {
+        "comment": "",
+        "key": "Efficiency",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 380
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 387
+        }
+      },
+      {
+        "comment": "",
+        "key": "Efficiency",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 388
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sleep Timing",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 468
+        }
+      },
+      {
+        "comment": "",
+        "key": "Stage Balance",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 540
+        }
+      },
+      {
+        "comment": "",
+        "key": "Need more data",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 578
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 550
+        }
+      },
+      {
+        "comment": "",
+        "key": "Deep",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 551
+        }
+      },
+      {
+        "comment": "",
+        "key": "Date",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 557
+        }
+      },
+      {
+        "comment": "",
+        "key": "REM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 558
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 611
+        }
+      },
+      {
+        "comment": "",
+        "key": "avg",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 614
+        }
+      },
+      {
+        "comment": "",
+        "key": "In range",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 622
+        }
+      },
+      {
+        "comment": "",
+        "key": "Off target",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 622
+        }
+      },
+      {
+        "comment": "",
+        "key": "Period Summary",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 637
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@h",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 734
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Sleep Data",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 763
+        }
+      },
+      {
+        "comment": "",
+        "key": "Connect Apple Watch or Fitbit to track your sleep.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 767
+        }
+      },
+      {
+        "comment": "",
+        "key": "Weekly Cycles",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 849
+        }
+      },
+      {
+        "comment": "",
+        "key": "90-min cycle tracking",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 852
+        }
+      },
+      {
+        "comment": "",
+        "key": "/ %lld cycles",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 875
+        }
+      },
+      {
+        "comment": "",
+        "key": "Min: %lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 889
+        }
+      },
+      {
+        "comment": "",
+        "key": "Ideal: %lld",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 893
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tonight: aim for %lld cycles (%@h)",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 939
+        }
+      },
+      {
+        "comment": "",
+        "key": "Weekday vs Weekend",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1076
+        }
+      },
+      {
+        "comment": "",
+        "key": "+%@h weekend",
+        "location": {
+          "startingColumn": 41,
+          "startingLine": 1084
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@h weekend",
+        "location": {
+          "startingColumn": 87,
+          "startingLine": 1084
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 1100
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 1101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Type",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 1107
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 1108
+        }
+      },
+      {
+        "comment": "",
+        "key": "Large weekend sleep shift detected. This can cause 'social jetlag' and disrupt circadian rhythm.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1128
+        }
+      },
+      {
+        "comment": "",
+        "key": "Wkd: %@%@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1146
+        }
+      },
+      {
+        "comment": "",
+        "key": "Wke: %@%@",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1149
+        }
+      },
+      {
+        "comment": "",
+        "key": "This Week vs Last Week",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 1206
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%%",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 1218
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 1231
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 1232
+        }
+      },
+      {
+        "comment": "",
+        "key": "Day",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 1247
+        }
+      },
+      {
+        "comment": "",
+        "key": "Hours",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 1248
+        }
+      },
+      {
+        "comment": "",
+        "key": "This Week",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1293
+        }
+      },
+      {
+        "comment": "",
+        "key": "Last Week",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 1299
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 1315
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@%@%%",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 1319
+        }
+      }
+    ]
+  },
+  "version": 1
+}

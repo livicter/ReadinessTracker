@@ -1,0 +1,208 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Views/HeartRateSessionDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld samples · %lldm duration",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 185
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg BPM",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 157
+        }
+      },
+      {
+        "comment": "",
+        "key": "Peak BPM",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 168
+        }
+      },
+      {
+        "comment": "",
+        "key": "Low BPM",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 179
+        }
+      },
+      {
+        "comment": "",
+        "key": "No heart rate data for selected range",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 316
+        }
+      },
+      {
+        "comment": "",
+        "key": "Heart Rate",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 230
+        }
+      },
+      {
+        "comment": "",
+        "key": "bpm",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 241
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 251
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 252
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 259
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 260
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected",
+        "location": {
+          "startingColumn": 48,
+          "startingLine": 272
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 283
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time in Zones",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 342
+        }
+      },
+      {
+        "comment": "",
+        "key": "Not enough data for minute view",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 441
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minute-by-Minute",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 392
+        }
+      },
+      {
+        "comment": "",
+        "key": "1-min buckets",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 396
+        }
+      },
+      {
+        "comment": "",
+        "key": "Minute",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 406
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg BPM",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 407
+        }
+      },
+      {
+        "comment": "",
+        "key": "Avg",
+        "location": {
+          "startingColumn": 44,
+          "startingLine": 412
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 422
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected Point",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 475
+        }
+      },
+      {
+        "comment": "",
+        "key": "BPM at this moment",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 492
+        }
+      },
+      {
+        "comment": "",
+        "key": "into session",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 503
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@ · %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 513
+        }
+      }
+    ]
+  },
+  "version": 1
+}

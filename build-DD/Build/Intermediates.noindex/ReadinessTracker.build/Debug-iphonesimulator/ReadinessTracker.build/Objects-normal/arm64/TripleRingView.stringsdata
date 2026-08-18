@@ -1,0 +1,24 @@
+{
+  "source": "/Users/victor/Projects/ReadinessTracker/ReadinessTracker/Design/TripleRingView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "READY",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 66
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 168
+        }
+      }
+    ]
+  },
+  "version": 1
+}

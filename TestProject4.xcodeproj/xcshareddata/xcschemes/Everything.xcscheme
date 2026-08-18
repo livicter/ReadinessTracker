@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1700"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DBB2DEFAD9F00C71907"
+               BuildableName = "Everything"
+               BlueprintName = "Everything"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6840BDDE2DEFA29A00AE2B5D"
+               BuildableName = "Volume-MTL3-Full.app"
+               BlueprintName = "Volume-MTL3-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DBF2DEFADA800C71907"
+               BuildableName = "Volume-MTL3-Mixed.app"
+               BlueprintName = "Volume-MTL3-Mixed"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DCD2DEFADA900C71907"
+               BuildableName = "Volume-MTL3-Progressive.app"
+               BlueprintName = "Volume-MTL3-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DF72DEFADA900C71907"
+               BuildableName = "Volume-MTL4-Progressive.app"
+               BlueprintName = "Volume-MTL4-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DDB2DEFADA900C71907"
+               BuildableName = "Volume-MTL4-Full.app"
+               BlueprintName = "Volume-MTL4-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E052DEFADAA00C71907"
+               BuildableName = "Window-MTL3-Full.app"
+               BlueprintName = "Window-MTL3-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E2F2DEFADAC00C71907"
+               BuildableName = "Window-MTL4-Full.app"
+               BlueprintName = "Window-MTL4-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E212DEFADAC00C71907"
+               BuildableName = "Window-MTL3-Progressive.app"
+               BlueprintName = "Window-MTL3-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E4B2DEFADAC00C71907"
+               BuildableName = "Window-MTL4-Progressive.app"
+               BlueprintName = "Window-MTL4-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3DE92DEFADA900C71907"
+               BuildableName = "Volume-MTL4-Mixed.app"
+               BlueprintName = "Volume-MTL4-Mixed"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E3D2DEFADAC00C71907"
+               BuildableName = "Window-MTL4-Mixed.app"
+               BlueprintName = "Window-MTL4-Mixed"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "683D3E132DEFADAC00C71907"
+               BuildableName = "Window-MTL3-Mixed.app"
+               BlueprintName = "Window-MTL3-Mixed"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "689A0BF42DFCD03100844A09"
+               BuildableName = "macOS-MTL3-Full.app"
+               BlueprintName = "macOS-MTL3-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "689A0C242DFCD05100844A09"
+               BuildableName = "macOS-MTL4-Progressive.app"
+               BlueprintName = "macOS-MTL4-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "689A0C142DFCD04800844A09"
+               BuildableName = "macOS-MTL4-Full.app"
+               BlueprintName = "macOS-MTL4-Full"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "689A0C042DFCD04300844A09"
+               BuildableName = "macOS-MTL3-Progressive.app"
+               BlueprintName = "macOS-MTL3-Progressive"
+               ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES"
+      internalIOSLaunchStyle = "3">
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "683D3DBB2DEFAD9F00C71907"
+            BuildableName = "Everything"
+            BlueprintName = "Everything"
+            ReferencedContainer = "container:CompositorServices_XcodeTemplates.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+   <InstallAction
+      buildConfiguration = "Release">
+   </InstallAction>
+</Scheme>
