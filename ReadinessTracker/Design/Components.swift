@@ -51,7 +51,7 @@ struct MetricCard: View {
                     HStack(alignment: .lastTextBaseline, spacing: 3) {
                         Text(value)
                             .font(AppleTheme.cardValue)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Text(unit)
                             .font(.callout.weight(.medium))
                             .foregroundStyle(RTColor.secondaryText)
@@ -287,7 +287,7 @@ struct AppListRow: View {
             AppIconTile(systemName: icon, color: color)
             Text(label)
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
             Spacer()
             Text(value)
                 .font(.subheadline.weight(.semibold))

@@ -161,7 +161,7 @@ struct InsightRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(insight.title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
 
                 Text(insight.detail)
                     .font(.caption)

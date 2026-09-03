@@ -63,7 +63,7 @@ struct JournalEntryView: View {
                 HStack {
                     Text("Journal Entry")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Spacer()
                     
@@ -110,7 +110,7 @@ struct JournalEntryView: View {
                     
                     TextEditor(text: $notes)
                         .font(.subheadline)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                         .frame(height: 80)
                         .padding(8)
                         .background(RTColor.surfaceHighlight)

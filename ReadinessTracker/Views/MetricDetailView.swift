@@ -130,7 +130,7 @@ struct MetricDetailView: View {
                         HStack(alignment: .lastTextBaseline, spacing: 4) {
                             Text(formattedValue(currentValue))
                                 .font(.system(size: 48, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
+                                .foregroundColor(RTColor.primaryText)
 
                             Text(metric.unit)
                                 .font(RTFont.headline)
@@ -185,7 +185,7 @@ struct MetricDetailView: View {
                 HStack {
                     Text("Trend")
                         .font(RTFont.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(RTColor.primaryText)
 
                     Spacer()
 
@@ -285,7 +285,7 @@ struct MetricDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Statistics")
                     .font(RTFont.headline)
-                    .foregroundColor(.white)
+                    .foregroundColor(RTColor.primaryText)
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     StatItem(label: "Average", value: formattedValue(baseline), unit: metric.unit)
@@ -307,7 +307,7 @@ struct MetricDetailView: View {
 
                     Text("Why can't I see older data?")
                         .font(RTFont.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(RTColor.primaryText)
                 }
 
                 Text("HealthKit only stores data from when you first granted permission. Apple does not retroactively backfill historical health data when you install a new app.")
@@ -384,7 +384,7 @@ struct StatItem: View {
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(RTColor.primaryText)
 
                 Text(unit)
                     .font(RTFont.captionSmall)

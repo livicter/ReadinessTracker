@@ -138,7 +138,7 @@ struct TrendDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Multi-Metric Trend")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if filteredHistory.count >= 2 {
                     Chart(filteredHistory) { day in
@@ -309,7 +309,7 @@ struct TrendDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sleep vs Recovery")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 Chart(filteredHistory) { day in
                     PointMark(
@@ -363,7 +363,7 @@ private struct TrendStatCard: View {
                 HStack(alignment: .lastTextBaseline, spacing: 3) {
                     Text(formatted(current))
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     Text(unit)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)
@@ -376,7 +376,7 @@ private struct TrendStatCard: View {
                             .foregroundStyle(RTColor.tertiaryText)
                         Text(formatted(avg))
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                     }
                     
                     VStack(alignment: .leading, spacing: 2) {

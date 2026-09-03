@@ -125,7 +125,7 @@ struct DashboardView: View {
                     } label: {
                         Image(systemName: "doc.text")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                     }
                 }
             }
@@ -358,7 +358,7 @@ struct DashboardView: View {
                                     VStack(alignment: .leading, spacing: 2) {
                                         Text(rec.title)
                                             .font(.subheadline.weight(.semibold))
-                                            .foregroundStyle(.white)
+                                            .foregroundStyle(RTColor.primaryText)
 
                                         Text(rec.description)
                                             .font(.caption)
@@ -407,7 +407,7 @@ struct DashboardView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Journal")
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Text("Track behaviors affecting recovery")
                             .font(.caption)
                             .foregroundStyle(RTColor.secondaryText)
@@ -820,7 +820,7 @@ struct DashboardView: View {
             VStack(spacing: 8) {
                 Text("No data yet")
                     .font(RTFont.title)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
 
                 Text(selectedSource == .appleWatch
                      ? "Pull down to refresh your HealthKit data"
@@ -907,7 +907,7 @@ struct CheckInStatusCard: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     Text(isDone ? "Done" : "Pending")
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(isDone ? color : RTColor.tertiaryText)
@@ -943,7 +943,7 @@ struct BreakdownBar: View {
             HStack(spacing: 12) {
                 Text(label)
                     .font(RTFont.body)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                     .frame(width: 70, alignment: .leading)
 
                 Text(weight)
@@ -983,7 +983,7 @@ struct StageLabel: View {
 
             Text("\(Int(percent * 100))%")
                 .font(RTFont.metricValue)
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
 
             Text(optimal)
                 .font(.caption2.weight(.medium))

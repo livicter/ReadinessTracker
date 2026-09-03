@@ -56,7 +56,7 @@ struct CoachingView: View {
 
             Text("No coaching insights yet")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
 
             Text("Sync a few days of health data and the coaching feed will explain your trends and suggest actions.")
                 .font(.subheadline)
@@ -108,7 +108,7 @@ private struct CoachingCard: View {
 
                     Text(insight.title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Spacer(minLength: 0)
@@ -134,7 +134,7 @@ private struct CoachingCard: View {
 
                     Text(insight.action)
                         .font(.caption.weight(.medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(10)

@@ -1,0 +1,8 @@
+ts	phase	decision	why	evidence	result
+2026-09-03T18:36:00Z	frame	Done predicate: light preferredColorScheme, Apple Health bright RTColor tokens, no dark-only hardcodes, 58 tests green, simulator screenshot of bright dashboard	falsifiable gate for loop-until-complete	.audit/bright-apple-design.tsv	open
+2026-09-03T18:36:30Z	frame	Redesign RTColor as bright Apple Health palette instead of dark-invert	user asked bright mode + latest Apple style; tokens are the foundation	ReadinessTracker/Design/Theme.swift	open
+2026-09-03T18:36:45Z	architect	architect skipped: light Apple Health surfaces/typography already concrete	not a one-way door needing competing prototypes	poteto feature playbook	skipped
+2026-09-03T18:40:00Z	u1-tokens	Switched RTColor to Apple Health light palette and preferredColorScheme.light; softened card shadow and hairline border	bright mode must be foundational not inverted dark	Theme.swift,ReadinessTrackerApp.swift,AppleNativeTheme.swift	landed
+2026-09-03T18:48:00Z	u3-views	Codemod replaced 113 dark-mode .white foregrounds with RTColor.primaryText; kept 3 on accent fills	light cards need dark label text	scripts/bright_white_codemod.py	landed
+2026-09-03T18:48:30Z	u4-verify	Started xcodebuild test on iPhone 17 Pro OS 26.5 for bright branch	prove-it-works gate	/tmp/ReadinessTracker-BrightDD	running
+2026-09-03T18:50:00Z	u4-verify	xcodebuild test green on bright branch; light simulator screenshot saved	prove-it-works against real simulator	58 tests 0 failures; .audit/bright-dashboard.png	VERIFIED

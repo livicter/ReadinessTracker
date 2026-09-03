@@ -93,7 +93,7 @@ struct SleepAnalysisView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(data.date, style: .date)
                         .font(.title3.weight(.bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     HStack(spacing: 12) {
                         Label("\(String(format: "%.1f", data.sleepHours))h", systemImage: "bed.double.fill")
@@ -121,7 +121,7 @@ struct SleepAnalysisView: View {
                     VStack(spacing: 0) {
                         Text("\(sleepScore)")
                             .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Text("Score")
                             .font(.caption2)
                             .foregroundStyle(RTColor.secondaryText)
@@ -139,7 +139,7 @@ struct SleepAnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sleep Timeline")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 // Horizontal bar showing sleep stages over time
                 GeometryReader { geo in
@@ -234,7 +234,7 @@ struct SleepAnalysisView: View {
                     if width > 30 {
                         Text(label)
                             .font(.system(size: 9, weight: .semibold))
-                            .foregroundColor(.white)
+                            .foregroundColor(RTColor.primaryText)
                     }
                 }
             )
@@ -251,7 +251,7 @@ struct SleepAnalysisView: View {
                     .foregroundStyle(RTColor.secondaryText)
                 Text(value)
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
             }
         }
     }
@@ -262,7 +262,7 @@ struct SleepAnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sleep Stages")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 VStack(spacing: 14) {
                     stageBar(
@@ -314,7 +314,7 @@ struct SleepAnalysisView: View {
             HStack {
                 Text(label)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 Spacer()
                 
@@ -362,7 +362,7 @@ struct SleepAnalysisView: View {
                 HStack {
                     Text("Sleep Cycles")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Spacer()
                     
@@ -423,7 +423,7 @@ struct SleepAnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sleep Timing")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     timingCard(
@@ -475,7 +475,7 @@ struct SleepAnalysisView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(value)
                         .font(.subheadline.weight(.bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     Text(label)
                         .font(.caption2)
                         .foregroundStyle(RTColor.secondaryText)
@@ -494,7 +494,7 @@ struct SleepAnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Sleep Quality Factors")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 VStack(spacing: 12) {
                     qualityRow(
@@ -547,13 +547,13 @@ struct SleepAnalysisView: View {
             .overlay(
                 Text("\(score)")
                     .font(.system(size: 10, weight: .bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
             )
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 Text(detail)
                     .font(.caption)
                     .foregroundStyle(RTColor.secondaryText)
@@ -573,7 +573,7 @@ struct SleepAnalysisView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("7-Day Stage Trends")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if history.count >= 2 {
                     Chart(history.suffix(7)) { day in
@@ -628,7 +628,7 @@ struct SleepAnalysisView: View {
                 HStack {
                     Text("Sleep Debt")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Spacer()
                     

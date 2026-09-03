@@ -165,7 +165,7 @@ struct RecoveryStrainDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("7-Day Balance")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
 
                 if balanceHistory.count >= 2 {
                     Chart(balanceHistory, id: \.date) { item in
@@ -200,7 +200,7 @@ struct RecoveryStrainDetailView: View {
                 HStack {
                     Text("Strain Breakdown")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Spacer()
                     
@@ -249,7 +249,7 @@ struct RecoveryStrainDetailView: View {
                     HStack {
                         Text("Total Strain")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Spacer()
                         Text("\(String(format: "%.1f", strainScore)) / 21")
                             .font(.subheadline.weight(.semibold))
@@ -289,7 +289,7 @@ struct RecoveryStrainDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Recovery Factors")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 VStack(spacing: 12) {
                     RecoveryFactorRow(
@@ -330,7 +330,7 @@ struct RecoveryStrainDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Nutrition")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if data.nutrition.isEmpty {
                     Text("No nutrition data")
@@ -391,7 +391,7 @@ struct RecoveryStrainDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Workouts")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if data.strainSessions.isEmpty {
                     Text("No recorded workouts")
@@ -415,7 +415,7 @@ struct RecoveryStrainDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Strain vs Recovery")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if historicalStrainData.count >= 2 {
                     Chart(historicalStrainData, id: \.date) { item in

@@ -41,7 +41,7 @@ struct StrainRecoveryWheel: View {
                     
                     Text("\(Int(recoveryScore))%")
                         .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                 }
             }
             .frame(width: 180, height: 180)

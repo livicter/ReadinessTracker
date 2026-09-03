@@ -129,3 +129,13 @@
 - Wave 2: integrator wired cross-file seams (pushSnapshot+widget export in DataStore.persist, dark scheme, sheet Done buttons); micro-interactions sweep (haptics, staggered slideIn, Reduce Motion support, chart tap-to-inspect).
 - Final verification: TEST SUCCEEDED — 58 tests, 0 failures.
 - Note: user committed mid-run as 85c6f2e; working tree still has uncommitted changes. App Group `group.com.readinesstracker` needs Apple Developer portal registration for device builds.
+
+## 2026-09-04 — Bright Apple Health design
+
+- Switched app to `.preferredColorScheme(.light)`.
+- Redesigned `RTColor` for Apple Health light surfaces (#F2F2F7 / white cards / dark labels).
+- Softened NativeCard shadow + hairline border for light mode.
+- Codemod: 113 dark-only `.white` foregrounds → `RTColor.primaryText` (kept 3 on accent fills).
+- Verification: TEST SUCCEEDED — 58 tests, 0 failures; screenshot `.audit/bright-dashboard.png`.
+- Branch: `feature/bright-apple-design`.
+

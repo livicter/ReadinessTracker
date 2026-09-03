@@ -44,7 +44,7 @@ struct BreathingView: View {
                 VStack(spacing: 8) {
                     Text("HRV Coherence")
                         .font(RTFont.title)
-                        .foregroundColor(.white)
+                        .foregroundColor(RTColor.primaryText)
                     
                     Text("Breathe to improve your heart rate variability")
                         .font(RTFont.body)
@@ -82,7 +82,7 @@ struct BreathingView: View {
                     VStack(spacing: 8) {
                         Text(breathPhase.rawValue)
                             .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(RTColor.primaryText)
                         
                         if isBreathing {
                             Text("\(Int(breathPhase.duration - (elapsedTime.truncatingRemainder(dividingBy: breathPhase.duration))))s")
@@ -196,7 +196,7 @@ struct BreathingStatItem: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 24, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
+                .foregroundColor(RTColor.primaryText)
             
             Text(label)
                 .font(.system(size: 12, weight: .medium))

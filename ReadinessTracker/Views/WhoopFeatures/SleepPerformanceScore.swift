@@ -38,7 +38,7 @@ struct SleepPerformanceScore: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Performance")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Text("\(Int(performancePercent))% · \(performanceLabel)")
                             .font(.subheadline)
@@ -59,7 +59,7 @@ struct SleepPerformanceScore: View {
                         
                         Text("\(Int(performancePercent))")
                             .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                     }
                     .frame(width: 56, height: 56)
                 }
@@ -73,7 +73,7 @@ struct SleepPerformanceScore: View {
                         Spacer()
                         Text("\(String(format: "%.1f", sleepNeeded))h")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                     }
                     
                     GeometryReader { geo in

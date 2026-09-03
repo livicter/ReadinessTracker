@@ -28,7 +28,7 @@ struct SleepQualityTrend: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Quality Trend")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("Avg: \(Int(averageScore))")
@@ -44,7 +44,7 @@ struct SleepQualityTrend: View {
                     // 7-day avg badge
                     Text("7D")
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Color.white.opacity(0.08))
@@ -129,7 +129,7 @@ struct SleepQualityTrend: View {
                                     
                                     Text("\(day.sleepScore)")
                                         .font(.system(size: 9, weight: .bold))
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(RTColor.primaryText)
                                 }
                                 
                                 Text("\(String(format: "%.1f", day.sleepHours))h")

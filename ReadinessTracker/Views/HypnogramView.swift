@@ -154,7 +154,7 @@ struct HypnogramView: View {
                 .frame(width: 10, height: 10)
             Text(interval.stage.label)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
             Text("\(interval.startDate, format: .dateTime.hour().minute()) – \(interval.endDate, format: .dateTime.hour().minute())")
                 .font(.caption)
                 .foregroundStyle(RTColor.secondaryText)

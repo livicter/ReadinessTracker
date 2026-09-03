@@ -27,12 +27,12 @@ struct SkinTemperatureCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Skin Temperature")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("\(String(format: "%.2f", currentTemp))°C")
                                 .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
                             
                             Text("· \(status.label)")
                                 .font(.subheadline)

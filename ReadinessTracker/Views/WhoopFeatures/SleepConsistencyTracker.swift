@@ -46,7 +46,7 @@ struct SleepConsistencyTracker: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Consistency")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Text("Bedtime & wake time regularity")
                             .font(.subheadline)
@@ -209,7 +209,7 @@ private struct ConsistencyMetric: View {
 
                 Text("\(Int(score))%")
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
             }
             .frame(maxWidth: .infinity)
         }

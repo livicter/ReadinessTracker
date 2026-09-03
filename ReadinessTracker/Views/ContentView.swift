@@ -141,7 +141,7 @@ struct HistoryView: View {
 
             Text("No Data for \(selectedSource.rawValue)")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
 
             Text("Sync your device to start building history")
                 .font(.caption)
@@ -159,7 +159,7 @@ struct HistoryView: View {
 
             Text("Not Enough Data")
                 .font(.headline)
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
 
             Text("Need at least 3 days of data for a weekly report")
                 .font(.subheadline)

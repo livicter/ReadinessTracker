@@ -51,7 +51,7 @@ struct JournalView: View {
                                 
                                 Text("No journal entries yet")
                                     .font(.headline)
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(RTColor.primaryText)
                                 
                                 Text("Track behaviors like alcohol, caffeine, stress, and recovery activities to see how they affect your readiness over time.")
                                     .font(.subheadline)
@@ -104,7 +104,7 @@ struct JournalView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Behavior Impact")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 // Group entries by behavior and calculate avg readiness
                 let behaviorScores = calculateBehaviorImpact()
@@ -121,7 +121,7 @@ struct JournalView: View {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(item.behavior)
                                 .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
                             
                             Text("\(item.count) entries · avg readiness \(Int(item.avgScore))")
                                 .font(.caption)
@@ -210,7 +210,7 @@ struct JournalEntryRow: View {
                 HStack {
                     Text(entry.date, style: .date)
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Spacer()
                     

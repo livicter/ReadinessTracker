@@ -70,7 +70,7 @@ struct DayDetailView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(data.date, style: .date)
                     .font(.title2.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 Text(data.date, style: .time)
                     .font(.subheadline)
@@ -108,7 +108,7 @@ struct DayDetailView: View {
                     VStack(spacing: 4) {
                         Text("\(readinessScore)")
                             .font(.system(size: 52, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Text(ScoreZone(score: readinessScore).label)
                             .font(.subheadline.weight(.medium))
@@ -141,7 +141,7 @@ struct DayDetailView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Total Sleep")
                                 .font(.headline.weight(.semibold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
                             
                             HStack(alignment: .lastTextBaseline, spacing: 4) {
                                 Text(String(format: "%.1f", data.sleepHours))
@@ -231,7 +231,7 @@ struct DayDetailView: View {
 
                         Text("No Sleep Data")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
 
                         Text("No sleep was recorded for this day")
                             .font(.subheadline)
@@ -348,7 +348,7 @@ struct DayDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Sleep Trend")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Chart(sevenDayWindow) { day in
                             BarMark(
@@ -383,7 +383,7 @@ struct DayDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("HRV Trend")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Chart(sevenDayWindow) { day in
                             LineMark(
@@ -435,7 +435,7 @@ struct DayDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Resting HR Trend")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Chart(sevenDayWindow) { day in
                             LineMark(
@@ -526,7 +526,7 @@ struct DayDetailView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     
                     Text("\(Int(percent * 100))% · \(String(format: "%.1f", hours))h · Optimal: \(optimalRange)")
                         .font(.subheadline)
@@ -577,7 +577,7 @@ struct DayDetailView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("vs Previous Day")
                                     .font(.headline.weight(.semibold))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(RTColor.primaryText)
                                 
                                 let hrvChange = data.hrv - prevDay.hrv
                                 let sleepChange = data.sleepHours - prevDay.sleepHours
@@ -647,7 +647,7 @@ struct DetailMetricItem: View {
                 HStack(alignment: .lastTextBaseline, spacing: 3) {
                     Text(value)
                         .font(.system(size: 24, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     if !unit.isEmpty {
                         Text(unit)

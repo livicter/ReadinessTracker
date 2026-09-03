@@ -16,7 +16,7 @@ struct SleepCycleView: View {
                 HStack {
                     Text("Sleep Cycles")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                     Spacer()
                     Text("\(cycles.count) \(cycles.count == 1 ? "cycle" : "cycles") · avg \(Int(averageMinutes)) min")
                         .font(.subheadline.weight(.medium))
@@ -45,7 +45,7 @@ struct SleepCycleView: View {
             HStack {
                 Text("Cycle \(index)")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 Text("\(cycle.startDate, format: .dateTime.hour().minute())")
                     .font(.caption2)
                     .foregroundStyle(RTColor.tertiaryText)
