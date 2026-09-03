@@ -139,3 +139,10 @@
 - Verification: TEST SUCCEEDED — 58 tests, 0 failures; screenshot `.audit/bright-dashboard.png`.
 - Branch: `feature/bright-apple-design`.
 
+## 2026-09-04 — CI verification pipeline
+
+- Added `.github/workflows/ci.yml` (macos-15, `xcodebuild test` on PRs + main).
+- Added `scripts/ci-verify.sh` for Mac-mini / local parity with CI.
+- Added `.cursor/skills/verify-readiness-tracker` agent verification skill + feature map.
+- Next loops must pass `./scripts/ci-verify.sh` (and CI on PR) before merge.
+
