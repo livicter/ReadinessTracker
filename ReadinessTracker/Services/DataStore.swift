@@ -67,29 +67,9 @@ class DataStore: ObservableObject {
         if let encoded = try? JSONEncoder().encode(history) {
             defaults.set(encoded, forKey: key)
         }
-        
-        // Update widget data
-        updateWidgetData()
-    }
-    
-    private func updateWidgetData() {
-        guard let latest = history.first else { return }
-        let source = latest.source
-        let history30 = dataForSource(source, days: 30)
-        let breakdown = ReadinessCalculator.calculateBreakdown(from: latest, history: history30)
-        let metadata = MetadataStore.shared.metadataFor(date: Date(), timeOfDay: .morning)
-        let dualScores = ReadinessCalculator.calculateDualScores(from: latest, history: history30, metadata: metadata)
-        
-        let sharedDefaults = UserDefaults(suiteName: "group.com.readinesstracker")
-        sharedDefaults?.set(dualScores.general, forKey: "readinessScore")
-        sharedDefaults?.set(dualScores.gym, forKey: "gymScore")
-        sharedDefaults?.set(dualScores.cognitive, forKey: "workScore")
-        sharedDefaults?.set(breakdown.sleepScore, forKey: "sleepScore")
-        sharedDefaults?.set(latest.hrv, forKey: "hrv")
-        sharedDefaults?.set(latest.restingHeartRate, forKey: "rhr")
-        sharedDefaults?.set(latest.sleepHours, forKey: "sleepHours")
-        sharedDefaults?.set(Date(), forKey: "lastUpdate")
-        
-        WidgetCenter.shared.reloadTimelines(ofKind: "ReadinessTrackerWidget")
+
+        // Widget + watch snapshots after every data write (health sync, check-in)
+        WidgetDataExporter.export(from: self)
+        WatchConnectivityManager.shared.pushSnapshot()
     }
 }

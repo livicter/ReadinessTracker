@@ -15,18 +15,23 @@ struct ReadinessDetailView: View {
             VStack(spacing: AppleTheme.sectionSpacing) {
                 // Triple score hero
                 tripleScoreHero
+                    .slideIn(delay: 0)
                 
                 // Score breakdown bars
                 scoreBreakdown
+                    .slideIn(delay: 0.08)
                 
                 // Score history chart
                 scoreHistoryChart
+                    .slideIn(delay: 0.16)
                 
                 // Component breakdown
                 componentBreakdown
+                    .slideIn(delay: 0.24)
                 
                 // Recommendation
                 recommendationCard
+                    .slideIn(delay: 0.32)
             }
             .padding(.horizontal, AppleTheme.horizontalMargin)
             .padding(.vertical, 12)

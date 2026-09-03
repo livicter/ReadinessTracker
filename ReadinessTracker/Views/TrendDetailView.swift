@@ -64,19 +64,24 @@ struct TrendDetailView: View {
             VStack(spacing: AppleTheme.sectionSpacing) {
                 // Period selector
                 periodSelector
+                    .slideIn(delay: 0)
                 
                 // Metric toggles
                 metricToggles
+                    .slideIn(delay: 0.05)
                 
                 // Main multi-metric chart
                 mainChart
+                    .slideIn(delay: 0.1)
                 
                 // Individual metric cards
                 metricCards
+                    .slideIn(delay: 0.15)
                 
                 // Correlation matrix
                 if filteredHistory.count >= 5 {
                     correlationSection
+                        .slideIn(delay: 0.2)
                 }
             }
             .padding(.horizontal, AppleTheme.horizontalMargin)

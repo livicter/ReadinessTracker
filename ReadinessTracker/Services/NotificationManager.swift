@@ -133,22 +133,21 @@ final class NotificationManager: NSObject {
             if fireDate == nil || fireDate! <= now {
                 fireDate = now.addingTimeInterval(60)
             }
-            guard let lowRecoveryFireDate = fireDate,
-                  !isInQuietHours(hour: calendar.component(.hour, from: lowRecoveryFireDate), settings: settings) else {
-                return requests
+            if let lowRecoveryFireDate = fireDate,
+               !isInQuietHours(hour: calendar.component(.hour, from: lowRecoveryFireDate), settings: settings) {
+                let baseline = readinessBaseline(from: sorted) ?? 0
+                let content = UNMutableNotificationContent()
+                content.title = "Low Recovery"
+                content.body = "Readiness \(score) is \(Int(baseline) - score) points below your baseline. Prioritize rest today."
+                content.sound = .default
+                let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: lowRecoveryFireDate)
+                let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
+                requests.append(UNNotificationRequest(
+                    identifier: NotificationType.lowRecovery.identifier,
+                    content: content,
+                    trigger: trigger
+                ))
             }
-            let baseline = readinessBaseline(from: sorted) ?? 0
-            let content = UNMutableNotificationContent()
-            content.title = "Low Recovery"
-            content.body = "Readiness \(score) is \(Int(baseline) - score) points below your baseline. Prioritize rest today."
-            content.sound = .default
-            let triggerComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: lowRecoveryFireDate)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: triggerComponents, repeats: false)
-            requests.append(UNNotificationRequest(
-                identifier: NotificationType.lowRecovery.identifier,
-                content: content,
-                trigger: trigger
-            ))
         }
 
         // 3. Bedtime reminder — repeating daily, lead time before typical bedtime.

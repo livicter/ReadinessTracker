@@ -28,24 +28,31 @@ struct DayDetailView: View {
             VStack(spacing: RTLayout.sectionSpacing) {
                 // Date header
                 dateHeader
+                    .slideIn(delay: 0)
                 
                 // Readiness score hero
                 readinessHero
+                    .slideIn(delay: 0.05)
                 
                 // Sleep deep-dive section
                 sleepDeepDive
+                    .slideIn(delay: 0.1)
                 
                 // All metrics grid
                 allMetricsGrid
+                    .slideIn(delay: 0.15)
                 
                 // 7-day context charts
                 sevenDayContext
+                    .slideIn(delay: 0.2)
                 
                 // Sleep stage analysis
                 sleepStageAnalysis
+                    .slideIn(delay: 0.25)
                 
                 // Recovery context
                 recoveryContext
+                    .slideIn(delay: 0.3)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
@@ -91,13 +98,12 @@ struct DayDetailView: View {
                     Circle()
                         .stroke(RTColor.surfaceHighlight, lineWidth: 16)
                     
-                    Circle()
-                        .trim(from: 0, to: Double(readinessScore) / 100)
-                        .stroke(
-                            ScoreZone(score: readinessScore).color,
-                            style: StrokeStyle(lineWidth: 16, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
+                    AnimatedRing(
+                        progress: Double(readinessScore) / 100,
+                        color: ScoreZone(score: readinessScore).color,
+                        lineWidth: 16,
+                        size: 160
+                    )
                     
                     VStack(spacing: 4) {
                         Text("\(readinessScore)")

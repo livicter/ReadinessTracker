@@ -11,7 +11,7 @@ import SwiftUI
 struct ReadinessTrackerWatchApp: App {
     var body: some Scene {
         WindowGroup {
-            WatchDashboardView()
+            ContentView()
         }
     }
 }

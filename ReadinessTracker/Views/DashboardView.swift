@@ -130,14 +130,25 @@ struct DashboardView: View {
                 }
             }
             .sheet(isPresented: $isWeeklyReportPresented) {
-                if let report = WeeklyReportGenerator.shared.generateReport(for: selectedSource) {
-                    NavigationStack {
+                NavigationStack {
+                    if let report = WeeklyReportGenerator.shared.generateReport(for: selectedSource) {
                         WeeklyReportView(report: report)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") { isWeeklyReportPresented = false }
+                                }
+                            }
+                    } else {
+                        Text("Need at least 3 days of data for a weekly report")
+                            .foregroundStyle(RTColor.secondaryText)
+                            .padding()
+                            .navigationTitle("Weekly Report")
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button("Done") { isWeeklyReportPresented = false }
+                                }
+                            }
                     }
-                } else {
-                    Text("Need at least 3 days of data for a weekly report")
-                        .foregroundStyle(RTColor.secondaryText)
-                        .padding()
                 }
             }
             .onAppear {

@@ -30,14 +30,16 @@ struct JournalView: View {
                             saveEntries()
                             showingNewEntry = false
                         }
+                        .slideIn(delay: 0)
                         
                         // Recent entries
                         if !entries.isEmpty {
                             SectionHeader(title: "Recent Entries")
                             
                             VStack(spacing: 12) {
-                                ForEach(entries.prefix(7)) { entry in
+                                ForEach(Array(entries.prefix(7).enumerated()), id: \.element.id) { index, entry in
                                     JournalEntryRow(entry: entry)
+                                        .slideIn(delay: 0.1 + Double(index) * 0.05)
                                 }
                             }
                         } else {
@@ -64,6 +66,7 @@ struct JournalView: View {
                         // Behavior impact summary (when we have enough data)
                         if entries.count >= 3 {
                             behaviorImpactSection
+                                .slideIn(delay: 0.2)
                         }
                     }
                     .padding(.horizontal, AppleTheme.horizontalMargin)

@@ -83,7 +83,10 @@ struct CheckInView: View {
                 }
             }
             .onAppear(perform: loadExisting)
-            .onChange(of: selectedTime) { _ in loadExisting() }
+            .onChange(of: selectedTime) { _ in
+                Haptic.selectionChanged()
+                loadExisting()
+            }
         }
     }
     
@@ -204,6 +207,7 @@ struct CheckInView: View {
         HStack {
             ForEach(1...5, id: \.self) { i in
                 Button {
+                    Haptic.tap()
                     withAnimation(.easeInOut(duration: 0.15)) {
                         binding.wrappedValue = i
                     }
@@ -285,6 +289,7 @@ struct CheckInView: View {
             )
         }
         metadataStore.save(metadata)
+        Haptic.success()
 
         // Tab context: nothing to dismiss, show a brief confirmation instead.
         showSavedConfirmation = true

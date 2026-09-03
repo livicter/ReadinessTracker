@@ -8,6 +8,7 @@ struct BreathingView: View {
     @State private var breathCount = 0
     @State private var hrvReading: Double? = nil
     @State private var showHRV = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     private let breathCycle: TimeInterval = 10 // 4-7-8 breathing: 4 inhale, 7 hold, 8 exhale
     private let totalDuration: TimeInterval = 300 // 5 minutes
@@ -122,6 +123,7 @@ struct BreathingView: View {
     }
     
     private func toggleBreathing() {
+        // Haptic.press() fires from AppButton
         isBreathing.toggle()
         
         if isBreathing {
@@ -132,15 +134,19 @@ struct BreathingView: View {
     private func startBreathingCycle() {
         guard isBreathing else { return }
         
-        // Animate through phases
-        withAnimation(.easeInOut(duration: breathPhase.duration)) {
-            switch breathPhase {
-            case .inhale:
-                circleScale = 1.3
-            case .hold:
-                circleScale = 1.3
-            case .exhale:
-                circleScale = 1.0
+        // Animate through phases (skip circle motion when Reduce Motion is on)
+        if reduceMotion {
+            circleScale = 1.0
+        } else {
+            withAnimation(.easeInOut(duration: breathPhase.duration)) {
+                switch breathPhase {
+                case .inhale:
+                    circleScale = 1.3
+                case .hold:
+                    circleScale = 1.3
+                case .exhale:
+                    circleScale = 1.0
+                }
             }
         }
         
@@ -158,6 +164,9 @@ struct BreathingView: View {
                 breathPhase = .inhale
                 breathCount += 1
             }
+            
+            // Gentle phase-change cue so users can follow with eyes closed
+            Haptic.soft()
             
             elapsedTime += breathPhase.duration
             

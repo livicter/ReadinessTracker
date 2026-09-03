@@ -27,8 +27,9 @@ struct CoachingView: View {
                         if feed.isEmpty {
                             emptyState
                         } else {
-                            ForEach(feed) { insight in
+                            ForEach(Array(feed.enumerated()), id: \.element.id) { index, insight in
                                 CoachingCard(insight: insight)
+                                    .slideIn(delay: Double(index) * 0.08)
                             }
                         }
                     }

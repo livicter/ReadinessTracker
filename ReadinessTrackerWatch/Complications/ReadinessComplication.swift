@@ -1,3 +1,8 @@
+#if os(watchOS)
+// NOTE: This complication was written against the iOS app target's stores
+// (DataStore/MetadataStore) and a duplicate @main, so it cannot compile in this
+// iOS wrapper target. It belongs in a watchOS widget extension target fed by
+// WatchConnectivity snapshots. Excluded from compilation until migrated.
 import WidgetKit
 import SwiftUI
 
@@ -347,3 +352,4 @@ struct ReadinessComplication: Widget {
         ])
     }
 }
+#endif

@@ -46,27 +46,35 @@ struct SleepAnalysisView: View {
             VStack(spacing: AppleTheme.sectionSpacing) {
                 // Header with score
                 sleepHeader
+                    .slideIn(delay: 0)
                 
                 // Sleep timeline visualization
                 sleepTimeline
+                    .slideIn(delay: 0.05)
                 
                 // Detailed stage breakdown
                 stageBreakdown
+                    .slideIn(delay: 0.1)
                 
                 // Sleep cycles estimate
                 sleepCyclesSection
+                    .slideIn(delay: 0.15)
                 
                 // Sleep timing analysis
                 timingAnalysis
+                    .slideIn(delay: 0.2)
                 
                 // Sleep quality metrics
                 qualityMetrics
+                    .slideIn(delay: 0.25)
                 
                 // 7-day stage trend
                 stageTrendChart
+                    .slideIn(delay: 0.3)
                 
                 // Sleep debt
                 sleepDebtSection
+                    .slideIn(delay: 0.35)
             }
             .padding(.horizontal, AppleTheme.horizontalMargin)
             .padding(.vertical, 12)

@@ -214,6 +214,7 @@ struct AdvancedMetricChartView: View {
                         selectedPoint = analyzedData.min(by: {
                             abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
                         })
+                        Haptic.selectionChanged()
                     }
                 }
         }

@@ -122,3 +122,10 @@
 - Fixed: BreathingView added to target + `BreathingStatItem` rename; journal entries persisted; check-in pre-population + save confirmation + time-of-day scoped saves; real sleep stage data in Dashboard/DayDetail/SleepAnalysis; breakdown weights match ReadinessCalculator + SpO2 row; ReadinessDetailView source/SpO2 normalization; fallback strain breakdown reconciled; MetricDetailView trend inversion; MetricCorrelationView trend line + nil SpO2; QuickTrendCard nil SpO2 + prior window; WeeklyReportView trend indicator; SleepConsistencyTracker midnight wrap; BaselineManager consistencyScore uses sleepStartTime; AIRecommendations Rule 5 guard; dead See All buttons; AnimatedNumber zero crash; AppBackground consistency; AdvancedMetricDetailView wired into navigation.
 - Final test run: **TEST SUCCEEDED** — 38 tests, 0 failures.
 - Head: 0bb50db.
+
+## 2026-08-25 — AgentSwarm UI/UX + features (8 workstreams)
+
+- Wave 1 (7 parallel agents): design-system polish (contrast, Dynamic Type, VoiceOver, AppleTheme canonical), dashboard redesign (hero, shimmer loading, error banner, auto-load), navigation/empty states, smart notifications (NotificationManager + settings UI, quiet hours), watch companion app (WatchConnectivity, 3 pages + Crown check-in), home-screen widget (target, App Group, WidgetDataExporter), coaching feed (CoachingEngine + CoachingView + 6 tests).
+- Wave 2: integrator wired cross-file seams (pushSnapshot+widget export in DataStore.persist, dark scheme, sheet Done buttons); micro-interactions sweep (haptics, staggered slideIn, Reduce Motion support, chart tap-to-inspect).
+- Final verification: TEST SUCCEEDED — 58 tests, 0 failures.
+- Note: user committed mid-run as 85c6f2e; working tree still has uncommitted changes. App Group `group.com.readinesstracker` needs Apple Developer portal registration for device builds.

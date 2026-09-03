@@ -34,6 +34,7 @@ struct ContentView: View {
         }
         .tint(RTColor.optimal)
         .toolbarBackground(RTColor.surface, for: .tabBar)
+        .onChange(of: selectedTab) { _ in Haptic.selectionChanged() }
     }
 }
 
@@ -54,6 +55,7 @@ struct HistoryView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .onChange(of: selectedSource) { _ in Haptic.selectionChanged() }
                 
                 Button {
                     showWeeklyReport = true
@@ -294,6 +296,7 @@ struct SettingsView: View {
 
                 Section("Actions") {
                     Button {
+                        Haptic.press()
                         Task {
                             await healthKit.fetchTodayData()
                         }
@@ -303,6 +306,7 @@ struct SettingsView: View {
                     .disabled(!healthKit.isAuthorized)
                     
                     Button {
+                        Haptic.press()
                         exportText = DataStore.shared.exportCSV()
                         showingExportSheet = true
                     } label: {

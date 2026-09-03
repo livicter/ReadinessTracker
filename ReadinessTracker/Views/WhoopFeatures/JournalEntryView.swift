@@ -146,7 +146,10 @@ private struct BehaviorToggle: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            Haptic.tap()
+            action()
+        }) {
             HStack(spacing: 6) {
                 Image(systemName: behavior.icon)
                     .font(.system(size: 12))

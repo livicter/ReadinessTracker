@@ -56,14 +56,18 @@ struct RecoveryStrainDetailView: View {
             VStack(spacing: AppleTheme.sectionSpacing) {
                 // Strain/Recovery wheel
                 wheelSection
+                    .slideIn(delay: 0)
 
                 balanceChartSection
+                    .slideIn(delay: 0.05)
                 
                 // Strain detail
                 strainDetail
+                    .slideIn(delay: 0.1)
                 
                 // Recovery detail
                 recoveryDetail
+                    .slideIn(delay: 0.15)
                 
                 // Sleep performance
                 SleepPerformanceScore(
@@ -72,18 +76,23 @@ struct RecoveryStrainDetailView: View {
                     efficiency: data.sleepEfficiency * 100,
                     consistency: sleepConsistency
                 )
+                .slideIn(delay: 0.2)
                 
                 // Nutrition
                 nutritionSection
+                    .slideIn(delay: 0.25)
                 
                 // Advanced metrics
                 advancedMetrics
+                    .slideIn(delay: 0.3)
                 
                 // Workouts
                 workoutSection
+                    .slideIn(delay: 0.35)
                 
                 // Strain vs Recovery history
                 strainRecoveryHistory
+                    .slideIn(delay: 0.4)
             }
             .padding(.horizontal, AppleTheme.horizontalMargin)
             .padding(.vertical, 12)

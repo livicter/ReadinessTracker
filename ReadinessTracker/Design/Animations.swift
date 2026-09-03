@@ -5,6 +5,7 @@ struct AnimatedNumber: View {
     let value: Int
     let font: Font
     let color: Color
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var displayValue: Int = 0
     
     var body: some View {
@@ -16,7 +17,11 @@ struct AnimatedNumber: View {
             .onAppear {
                 // Only animate on first appear, not on re-appear
                 if displayValue == 0 {
-                    animateCount()
+                    if reduceMotion {
+                        displayValue = value
+                    } else {
+                        animateCount()
+                    }
                 }
             }
     }
@@ -48,6 +53,7 @@ struct AnimatedRing: View {
     let color: Color
     let lineWidth: CGFloat
     let size: CGFloat
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var animatedProgress: Double = 0
     
     var body: some View {
@@ -65,8 +71,12 @@ struct AnimatedRing: View {
             .onAppear {
                 // Only animate on first appear
                 if animatedProgress == 0 {
-                    withAnimation(.easeOut(duration: 1.0)) {
+                    if reduceMotion {
                         animatedProgress = progress
+                    } else {
+                        withAnimation(.easeOut(duration: 1.0)) {
+                            animatedProgress = progress
+                        }
                     }
                 }
             }
@@ -87,6 +97,13 @@ struct ExpandableCard<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             content
+                .accessibilityAddTraits(.isButton)
+                .accessibilityHint(isExpanded ? "Double tap to collapse" : "Double tap to expand")
+                .accessibilityAction {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                        isExpanded.toggle()
+                    }
+                }
                 .onTapGesture {
                     withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
                         isExpanded.toggle()
@@ -108,6 +125,7 @@ struct ExpandableCard<Content: View>: View {
 
 // MARK: - Shimmer Loading Effect
 struct ShimmerModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var phase: CGFloat = 0
     
     func body(content: Content) -> some View {
@@ -129,8 +147,8 @@ struct ShimmerModifier: ViewModifier {
                 .mask(content)
             )
             .onAppear {
-                // Prevent re-triggering shimmer
-                if phase == 0 {
+                // Prevent re-triggering shimmer; skip looping motion when Reduce Motion is on
+                if phase == 0, !reduceMotion {
                     withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
                         phase = 1
                     }
@@ -147,6 +165,7 @@ extension View {
 
 // MARK: - Pulse Effect
 struct PulseModifier: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var scale: CGFloat = 1.0
     @State private var opacity: Double = 0.6
     let color: Color
@@ -160,8 +179,8 @@ struct PulseModifier: ViewModifier {
                     .opacity(opacity)
             )
             .onAppear {
-                // Prevent re-triggering pulse
-                if scale == 1.0 {
+                // Prevent re-triggering pulse; skip looping motion when Reduce Motion is on
+                if scale == 1.0, !reduceMotion {
                     withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
                         scale = 1.3
                         opacity = 0
@@ -181,6 +200,7 @@ extension View {
 // Use explicit .animation(value:) instead of this modifier
 struct SlideInModifier: ViewModifier {
     let delay: Double
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isVisible: Bool = false
     @State private var hasAnimated: Bool = false
     
@@ -192,8 +212,12 @@ struct SlideInModifier: ViewModifier {
                 // Only animate once
                 if !hasAnimated {
                     hasAnimated = true
-                    withAnimation(.easeOut(duration: 0.5).delay(delay)) {
+                    if reduceMotion {
                         isVisible = true
+                    } else {
+                        withAnimation(.easeOut(duration: 0.5).delay(delay)) {
+                            isVisible = true
+                        }
                     }
                 } else {
                     isVisible = true
@@ -213,6 +237,7 @@ struct AnimatedProgressBar: View {
     let progress: Double
     let color: Color
     let height: CGFloat
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var animatedProgress: Double = 0
     
     var body: some View {
@@ -229,11 +254,18 @@ struct AnimatedProgressBar: View {
             }
         }
         .frame(height: height)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Progress")
+        .accessibilityValue("\(Int(min(max(progress, 0), 1) * 100)) percent")
         .onAppear {
             // Only animate on first appear
             if animatedProgress == 0 {
-                withAnimation(.easeOut(duration: 0.8).delay(0.2)) {
+                if reduceMotion {
                     animatedProgress = progress
+                } else {
+                    withAnimation(.easeOut(duration: 0.8).delay(0.2)) {
+                        animatedProgress = progress
+                    }
                 }
             }
         }
@@ -244,6 +276,7 @@ struct AnimatedProgressBar: View {
 struct AnimatedSparkline: View {
     let data: [Double]
     let color: Color
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var trimEnd: CGFloat = 0
     
     private var normalized: [Double] {
@@ -273,11 +306,16 @@ struct AnimatedSparkline: View {
             .trim(from: 0, to: trimEnd)
             .stroke(color.opacity(0.8), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
         }
+        .accessibilityHidden(true)
         .onAppear {
             // Only animate on first appear
             if trimEnd == 0 {
-                withAnimation(.easeOut(duration: 1.0)) {
+                if reduceMotion {
                     trimEnd = 1
+                } else {
+                    withAnimation(.easeOut(duration: 1.0)) {
+                        trimEnd = 1
+                    }
                 }
             }
         }
@@ -296,6 +334,7 @@ struct BounceButtonStyle: ButtonStyle {
 
 // MARK: - Refresh Spinner
 struct RefreshSpinner: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isAnimating = false
     
     var body: some View {
@@ -303,7 +342,8 @@ struct RefreshSpinner: View {
             .font(.system(size: 20, weight: .semibold))
             .foregroundColor(RTColor.secondaryText)
             .rotationEffect(.degrees(isAnimating ? 360 : 0))
-            .animation(.linear(duration: 1.0).repeatForever(autoreverses: false), value: isAnimating)
+            .animation(reduceMotion ? nil : .linear(duration: 1.0).repeatForever(autoreverses: false), value: isAnimating)
+            .accessibilityLabel("Refreshing")
             .onAppear { 
                 // Prevent re-triggering
                 if !isAnimating {

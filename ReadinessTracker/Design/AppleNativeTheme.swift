@@ -397,7 +397,10 @@ struct AppButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            Haptic.press()
+            action()
+        }) {
             Label(title, systemImage: systemImage)
                 .font(.subheadline.weight(.semibold))
                 .padding()
@@ -406,6 +409,7 @@ struct AppButton: View {
                 .foregroundStyle(.black)
                 .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
         }
+        .buttonStyle(BounceButtonStyle())
     }
 }
 

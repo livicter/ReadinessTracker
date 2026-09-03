@@ -44,15 +44,19 @@ struct MetricDetailView: View {
             VStack(spacing: RTLayout.sectionSpacing) {
                 // Hero value
                 heroSection
+                    .slideIn(delay: 0)
 
                 // Period selector
                 periodSelector
+                    .slideIn(delay: 0.05)
 
                 // Main trend chart
                 trendChart
+                    .slideIn(delay: 0.1)
 
                 // Stats grid
                 statsSection
+                    .slideIn(delay: 0.15)
 
                 // Smart Insights
                 if values.count >= 3 {
@@ -61,6 +65,7 @@ struct MetricDetailView: View {
                         history: values,
                         currentValue: currentValue
                     )
+                    .slideIn(delay: 0.2)
                 }
 
                 // Recovery Trajectory
@@ -69,6 +74,7 @@ struct MetricDetailView: View {
                         history: values,
                         metric: metric
                     )
+                    .slideIn(delay: 0.25)
                 }
 
                 // Weekly Pattern
@@ -77,6 +83,7 @@ struct MetricDetailView: View {
                         history: values,
                         metric: metric
                     )
+                    .slideIn(delay: 0.3)
                 }
 
                 // Metric Correlation (HRV vs Sleep for sleep metric, etc)
@@ -87,11 +94,13 @@ struct MetricDetailView: View {
                         xMetric: correlationPair.x,
                         yMetric: correlationPair.y
                     )
+                    .slideIn(delay: 0.35)
                 }
 
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
+                        .slideIn(delay: 0.4)
                 }
             }
             .padding(.horizontal, 16)
@@ -166,6 +175,7 @@ struct MetricDetailView: View {
     // MARK: - Period Selector
     private var periodSelector: some View {
         AppSegmentedControl(options: TrendPeriod.allCases, selection: $selectedPeriod) { $0.label }
+            .onChange(of: selectedPeriod) { _ in Haptic.selectionChanged() }
     }
 
     // MARK: - Trend Chart
@@ -222,6 +232,21 @@ struct MetricDetailView: View {
                         AxisMarks(values: .stride(by: selectedPeriod == .week ? .day : .weekOfYear)) { value in
                             AxisGridLine()
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                        }
+                    }
+                    .chartOverlay { proxy in
+                        GeometryReader { _ in
+                            Rectangle()
+                                .fill(Color.clear)
+                                .contentShape(Rectangle())
+                                .onTapGesture { location in
+                                    if let date = proxy.value(atX: location.x, as: Date.self) {
+                                        selectedDataPoint = filteredHistory.min(by: {
+                                            abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
+                                        })
+                                        Haptic.selectionChanged()
+                                    }
+                                }
                         }
                     }
                 } else {
