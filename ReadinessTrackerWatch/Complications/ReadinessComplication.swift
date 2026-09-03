@@ -231,7 +231,7 @@ struct GraphicCircularComplication: View {
             VStack(spacing: 0) {
                 Text("\(score)")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                 
                 Text(zoneLabel(score))
                     .font(.system(size: 11, weight: .medium))

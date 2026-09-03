@@ -146,3 +146,9 @@
 - Added `.cursor/skills/verify-readiness-tracker` agent verification skill + feature map.
 - Next loops must pass `./scripts/ci-verify.sh` (and CI on PR) before merge.
 
+## 2026-09-04 — Bright widget + Watch complication
+
+- Home Screen widget: removed black canvas; `systemBackground` container; primary/secondary labels; Apple system score colors.
+- Watch graphic-circular complication score uses `.primary` instead of hard white.
+- Gate: `./scripts/ci-verify.sh` before merge (CI on PR).
+
