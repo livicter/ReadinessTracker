@@ -31,12 +31,12 @@ struct SleepHRVCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep HRV")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("\(Int(currentHRV)) ms")
                                 .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
                             
                             let status = recoveryStatus
                             Text("· \(status.label)")
@@ -126,7 +126,7 @@ struct SleepHRVCard: View {
                         )
                         Text("HRV Trend")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Spacer()
                         Text(hRVDeviation > 0 ? "Rising" : "Falling")
                             .font(.subheadline.weight(.semibold))
@@ -145,7 +145,7 @@ struct SleepHRVCard: View {
                         )
                         Text("Sleep Quality")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         Spacer()
                         Text("\(Int(sleepQuality * 100))%")
                             .font(.subheadline.weight(.semibold))

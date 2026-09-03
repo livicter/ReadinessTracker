@@ -48,7 +48,7 @@ struct DepthTimelineChart: View {
             HStack {
                 Text(title)
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 Spacer()
                 if let i = selectedIndex, filteredPoints.indices.contains(i) {
                     Text("\(filteredPoints[i].date, format: .dateTime.month().day()): \(formatted(filteredPoints[i].value)) \(unit)")

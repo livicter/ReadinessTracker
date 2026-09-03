@@ -43,7 +43,7 @@ struct TripleRingHero: View {
                 // Fixed size by design — lives inside a fixed-size ring; Dynamic Type would break the layout
                 Text("\(overallScore)")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(RTColor.primaryText)
                 
                 Text("READY")
                     .font(.caption2.weight(.semibold))
@@ -155,7 +155,7 @@ struct LegendItem: View {
             
             Text("\(score)")
                 .font(.system(.title3, design: .rounded).weight(.bold))
-                .foregroundColor(.white)
+                .foregroundColor(RTColor.primaryText)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)

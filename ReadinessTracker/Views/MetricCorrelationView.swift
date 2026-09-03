@@ -45,7 +45,7 @@ struct MetricCorrelationView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(xMetric.title) vs \(yMetric.title)")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("r = \(String(format: "%.2f", correlation))")

@@ -39,7 +39,7 @@ struct SleepDebtCalculator: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Debt")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Text("Cumulative vs \(String(format: "%.1f", sleepNeed))h need")
                             .font(.subheadline)
@@ -149,7 +149,7 @@ struct SleepDebtCalculator: View {
                                 
                                 Text("\(String(format: "%.1f", item.dailyHours))")
                                     .font(.system(size: 9, weight: .medium))
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(RTColor.primaryText)
                             }
                             .frame(maxWidth: .infinity)
                         }

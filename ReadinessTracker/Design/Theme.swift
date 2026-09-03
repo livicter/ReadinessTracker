@@ -1,36 +1,37 @@
 import SwiftUI
 
-// MARK: - Color Palette (Dark Mode First)
+// MARK: - Color Palette (Bright / Apple Health Light)
 enum RTColor {
-    static let background = Color(hex: "0A0A0A")
-    static let surface = Color(hex: "1C1C1E")
-    static let surfaceElevated = Color(hex: "2C2C2E")
-    static let surfaceHighlight = Color(hex: "3A3A3C")
-    static let surfaceBorder = Color.white.opacity(0.06)
+    // systemGroupedBackground / secondarySystemGroupedBackground
+    static let background = Color(hex: "F2F2F7")
+    static let surface = Color.white
+    static let surfaceElevated = Color(hex: "FFFFFF")
+    static let surfaceHighlight = Color(hex: "E5E5EA")
+    static let surfaceBorder = Color.black.opacity(0.08)
     
-    static let primaryText = Color.white
-    static let secondaryText = Color(hex: "98989D")
-    // iOS systemGray (dark) — 4.9:1 on `surface`, meets WCAG AA for small caption text
-    static let tertiaryText = Color(hex: "8E8E93")
+    static let primaryText = Color(hex: "1C1C1E")
+    static let secondaryText = Color(hex: "8E8E93")
+    // systemGray — readable on white cards (WCAG AA for captions)
+    static let tertiaryText = Color(hex: "AEAEB2")
     
-    // Zone colors - Apple system colors
-    static let optimal = Color(hex: "30D158")
-    static let good = Color(hex: "5AE88A")
-    static let caution = Color(hex: "FF9F0A")
-    static let warning = Color(hex: "FF453A")
+    // Zone colors - Apple system colors (light)
+    static let optimal = Color(hex: "34C759")
+    static let good = Color(hex: "30D158")
+    static let caution = Color(hex: "FF9500")
+    static let warning = Color(hex: "FF3B30")
     
     // Metric accent colors
-    static let sleep = Color(hex: "5E5CE6")
-    static let hrv = Color(hex: "30D158")
-    static let recovery = Color(hex: "FF9F0A")
-    static let strain = Color(hex: "FF453A")
-    static let consistency = Color(hex: "BF5AF2")
+    static let sleep = Color(hex: "5856D6")
+    static let hrv = Color(hex: "34C759")
+    static let recovery = Color(hex: "FF9500")
+    static let strain = Color(hex: "FF3B30")
+    static let consistency = Color(hex: "AF52DE")
     
-    static let divider = Color.white.opacity(0.06)
+    static let divider = Color.black.opacity(0.08)
     
-    // App background gradient tokens (Apple Health style)
-    static let appBackgroundTop = Color.black
-    static let appBackgroundBottom = RTColor.background
+    // App background (Apple Health grouped light)
+    static let appBackgroundTop = Color(hex: "F2F2F7")
+    static let appBackgroundBottom = Color(hex: "F2F2F7")
 }
 
 // MARK: - Typography

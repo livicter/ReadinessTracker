@@ -41,9 +41,9 @@ enum AppleTheme {
     static let badgeVPadding: CGFloat = 6
     
     // Card shadow tokens (Apple Health soft shadow)
-    static let cardShadowOpacity: Double = 0.15
-    static let cardShadowRadius: CGFloat = 8
-    static let cardShadowY: CGFloat = 4
+    static let cardShadowOpacity: Double = 0.08
+    static let cardShadowRadius: CGFloat = 12
+    static let cardShadowY: CGFloat = 2
 }
 
 // MARK: - Native Card Style (Apple Health solid card)
@@ -58,13 +58,7 @@ struct NativeCard<Content: View>: View {
                     .fill(RTColor.surface)
                     .overlay(
                         RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusLarge, style: .continuous)
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.03), .clear],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
+                            .stroke(RTColor.surfaceBorder, lineWidth: 0.5)
                     )
                     .shadow(color: .black.opacity(AppleTheme.cardShadowOpacity), radius: AppleTheme.cardShadowRadius, x: 0, y: AppleTheme.cardShadowY)
             )
@@ -168,7 +162,7 @@ struct OutlierCallout: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(type.title)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 Text("\(value) · \(date) · \(deviation)")
                     .font(.caption)
@@ -218,7 +212,7 @@ struct ChartTooltip: View {
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.callout.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 Text(unit)
                     .font(.caption2)
                     .foregroundStyle(RTColor.secondaryText)
@@ -267,7 +261,7 @@ struct StatGridItem: View {
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 Text(unit)
                     .font(.caption)
                     .foregroundStyle(RTColor.secondaryText)
@@ -306,7 +300,7 @@ struct AppSectionHeader: View {
         HStack {
             Text(title)
                 .font(AppleTheme.sectionHeader)
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
                 .accessibilityAddTraits(.isHeader)
             Spacer()
             if let action {

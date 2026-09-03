@@ -152,7 +152,7 @@ struct StatMini: View {
                 .foregroundStyle(RTColor.secondaryText)
             Text(value)
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(RTColor.primaryText)
         }
         .frame(maxWidth: .infinity)
     }

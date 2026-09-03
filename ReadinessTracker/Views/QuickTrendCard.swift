@@ -46,7 +46,7 @@ struct QuickTrendCard: View {
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
                     Text(formattedAverage(trend.average))
                         .font(AppleTheme.cardValue)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     Text(metric.unit)
                         .font(.callout.weight(.medium))

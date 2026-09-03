@@ -42,7 +42,7 @@ struct SleepDisturbanceTracker: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Disturbances")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("\(disturbanceCount) interruptions")
@@ -97,7 +97,7 @@ struct SleepDisturbanceTracker: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("\(period.start, format: .dateTime.hour().minute()) - \(period.end, format: .dateTime.hour().minute())")
                                         .font(.subheadline.weight(.medium))
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(RTColor.primaryText)
                                     
                                     Text("\(String(format: "%.0f", duration)) minutes")
                                         .font(.caption)

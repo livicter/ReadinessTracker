@@ -33,7 +33,7 @@ struct StrainRecoveryBalanceCard: View {
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
                     Text("\(balance.score)")
                         .font(AppleTheme.heroValue)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     Text("/ 100")
                         .font(.callout.weight(.medium))

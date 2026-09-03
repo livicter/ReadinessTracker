@@ -51,7 +51,7 @@ struct WeeklyReportView: View {
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
                     Text("\(Int(report.avgReadiness))")
                         .font(AppleTheme.heroValue)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     Text("% avg readiness")
                         .font(.callout.weight(.medium))
@@ -93,7 +93,7 @@ struct WeeklyReportView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Highlights")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(report.highlights, id: \.self) { highlight in
@@ -115,7 +115,7 @@ struct WeeklyReportView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Recommendations")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
 
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(report.recommendations, id: \.self) { rec in

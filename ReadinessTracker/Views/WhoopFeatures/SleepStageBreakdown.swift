@@ -30,7 +30,7 @@ struct SleepStageBreakdown: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Sleep Stages")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         Text("\(String(format: "%.1f", sleepHours))h total sleep")
                             .font(.subheadline)
@@ -70,7 +70,7 @@ struct SleepStageBreakdown: View {
                                         if pct > 0.08 {
                                             Image(systemName: stage.icon)
                                                 .font(.system(size: 10, weight: .semibold))
-                                                .foregroundColor(.white)
+                                                .foregroundColor(RTColor.primaryText)
                                         }
                                     }
                                 )

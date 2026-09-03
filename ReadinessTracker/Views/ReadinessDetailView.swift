@@ -71,7 +71,7 @@ struct ReadinessDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Score Breakdown")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 VStack(spacing: 14) {
                     BreakdownBar(label: "Sleep", score: scores.breakdown.sleepScore, color: RTColor.sleep, weight: "25%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: data.source)
@@ -103,7 +103,7 @@ struct ReadinessDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Score History")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 if history.count >= 2 {
                     Chart(history) { day in
@@ -166,7 +166,7 @@ struct ReadinessDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Component Detail")
                     .font(.headline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                 
                 VStack(spacing: 12) {
                     ComponentRow(
@@ -256,7 +256,7 @@ struct ReadinessDetailView: View {
                     
                     Text("Recommendation")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                 }
                 
                 Text(scores.recommendation())
@@ -312,7 +312,7 @@ private struct ComponentRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
                     .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
 
                 Text("\(value) \(unit)")
                     .font(.caption)

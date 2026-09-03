@@ -27,12 +27,12 @@ struct RespiratoryRateCard: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Respiratory Rate")
                             .font(.headline.weight(.semibold))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(RTColor.primaryText)
                         
                         HStack(spacing: 4) {
                             Text("\(String(format: "%.1f", currentRate)) bpm")
                                 .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
                             
                             Text("· \(status.label)")
                                 .font(.subheadline)

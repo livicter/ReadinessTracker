@@ -100,7 +100,7 @@ struct AdvancedMetricDetailView: View {
 
                             Text("Not Enough Data")
                                 .font(.headline.weight(.semibold))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(RTColor.primaryText)
 
                             Text("Need at least 2 days of data in this period for analysis")
                                 .font(.caption)
@@ -187,7 +187,7 @@ struct AdvancedMetricDetailView: View {
             HStack(alignment: .lastTextBaseline, spacing: 6) {
                 Text(formattedValue(currentValue))
                     .font(AppleTheme.heroValue)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(RTColor.primaryText)
                     .minimumScaleFactor(0.5)
                 
                 Text(metric.unit)
@@ -345,7 +345,7 @@ struct AdvancedMetricDetailView: View {
                     
                     Text("About This Data")
                         .font(.headline.weight(.semibold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(RTColor.primaryText)
                 }
                 
                 Text("HealthKit only stores data from when you first granted permission. Apple does not retroactively backfill historical health data when you install a new app.")
