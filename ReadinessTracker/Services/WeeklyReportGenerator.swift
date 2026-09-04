@@ -13,6 +13,7 @@ struct WeeklyReport: Codable {
     let totalWorkouts: Int
     let avgWorkoutRPE: Double
     let sleepConsistency: Double
+    let avgSleepCycles: Double?
     let readinessTrend: TrendDirection
     let recommendations: [String]
     let highlights: [String]
@@ -107,6 +108,20 @@ class WeeklyReportGenerator {
         if avgWork < 60 {
             recommendations.append("Mental fatigue is elevated. Consider stress management techniques.")
         }
+
+        // Sleep cycle summary when stage intervals are available
+        let daysWithStages = history.filter { !$0.sleepStages.isEmpty }
+        var avgSleepCycles: Double? = nil
+        if !daysWithStages.isEmpty {
+            let cycleCounts = daysWithStages.map { SleepCycleDetector.detectCycles(in: $0.sleepStages).count }
+            avgSleepCycles = Double(cycleCounts.reduce(0, +)) / Double(cycleCounts.count)
+            if let avg = avgSleepCycles {
+                highlights.append(String(format: "Averaged %.1f sleep cycles across %d nights with stage data.", avg, daysWithStages.count))
+                if avg < 4 {
+                    recommendations.append("Sleep cycle count was low this week. Aim for an earlier bedtime to complete 4–6 cycles.")
+                }
+            }
+        }
         
         let weekStart = history.first?.date ?? Date()
         let weekEnd = history.last?.date ?? Date()
@@ -124,6 +139,7 @@ class WeeklyReportGenerator {
             totalWorkouts: totalWorkouts,
             avgWorkoutRPE: avgRPE,
             sleepConsistency: sleepConsistency,
+            avgSleepCycles: avgSleepCycles,
             readinessTrend: trend,
             recommendations: recommendations,
             highlights: highlights
@@ -148,6 +164,9 @@ class WeeklyReportGenerator {
         text += "- **Average Strain:** \(String(format: "%.1f", report.avgStrain)) / 21\n"
         text += "- **Workouts:** \(report.totalWorkouts) (avg RPE: \(Int(report.avgWorkoutRPE)))\n"
         text += "- **Sleep Consistency:** \(Int(report.sleepConsistency))%\n"
+        if let cycles = report.avgSleepCycles {
+            text += String(format: "- **Avg Sleep Cycles:** %.1f\n", cycles)
+        }
         text += "- **Trend:** \(report.readinessTrend == .up ? "Improving" : report.readinessTrend == .down ? "Declining" : "Stable")\n\n"
         
         if !report.highlights.isEmpty {

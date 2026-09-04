@@ -214,6 +214,20 @@ class AIRecommendationEngine {
             }
         }
         
+        // Rule 14: Few detected cycles despite adequate sleep duration → earlier bedtime
+        if !latest.sleepStages.isEmpty {
+            let cycles = SleepCycleDetector.detectCycles(in: latest.sleepStages)
+            if cycles.count < 4 && latest.sleepHours > 5 {
+                recommendations.append(TrainingRecommendation(
+                    type: .sleepOptimization,
+                    title: "Earlier Bedtime for More Cycles",
+                    description: "Only \(cycles.count) sleep cycles detected last night despite \(String(format: "%.1f", latest.sleepHours))h of sleep. Aim for an earlier bedtime to complete 4–6 full cycles and improve sleep quality.",
+                    confidence: 0.82,
+                    priority: .high
+                ))
+            }
+        }
+
         recommendations = recommendations.uniqueByTitle()
 
         // Sort by priority

@@ -484,6 +484,18 @@ struct DayDetailView: View {
             if data.sleepHours > 0 {
                 SectionHeader(title: "Sleep Stage Analysis")
 
+                // Compact hypnogram from real stage intervals
+                if !data.sleepStages.isEmpty {
+                    NativeCard {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Sleep Timeline")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                            HypnogramView(intervals: data.sleepStages, interactive: false)
+                        }
+                    }
+                }
+
                 // Use the new Whoop-style SleepStageBreakdown
                 SleepStageBreakdown(
                     sleepHours: data.sleepHours,

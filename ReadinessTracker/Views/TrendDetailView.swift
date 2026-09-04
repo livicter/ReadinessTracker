@@ -73,6 +73,10 @@ struct TrendDetailView: View {
                 // Main multi-metric chart
                 mainChart
                     .slideIn(delay: 0.1)
+
+                // Depth timeline for primary metric
+                depthTimelineSection
+                    .slideIn(delay: 0.12)
                 
                 // Individual metric cards
                 metricCards
@@ -233,6 +237,50 @@ struct TrendDetailView: View {
         }
     }
     
+    // MARK: - Depth Timeline
+    private var primaryDepthMetric: MetricToggle {
+        // Prefer readiness when selected; otherwise first selected toggle.
+        if selectedMetrics.contains(.readiness) { return .readiness }
+        return MetricToggle.allCases.first { selectedMetrics.contains($0) } ?? .readiness
+    }
+
+    private var depthTimelinePoints: [(date: Date, value: Double)] {
+        switch primaryDepthMetric {
+        case .readiness:
+            return filteredHistory.map { ($0.date, Double(readinessScores[$0.id] ?? 0)) }
+        case .sleep:
+            return filteredHistory.map { ($0.date, $0.sleepHours) }
+        case .hrv:
+            return filteredHistory.map { ($0.date, Double($0.hrv)) }
+        case .rhr:
+            return filteredHistory.map { ($0.date, Double($0.restingHeartRate)) }
+        case .calories:
+            return filteredHistory.map { ($0.date, $0.activeCalories) }
+        }
+    }
+
+    private var depthTimelineUnit: String {
+        switch primaryDepthMetric {
+        case .readiness: return "%"
+        case .sleep: return "h"
+        case .hrv: return "ms"
+        case .rhr: return "bpm"
+        case .calories: return "kcal"
+        }
+    }
+
+    private var depthTimelineSection: some View {
+        NativeCard {
+            DepthTimelineChart(
+                title: "\(primaryDepthMetric.rawValue) Depth Timeline",
+                unit: depthTimelineUnit,
+                color: primaryDepthMetric.color,
+                points: depthTimelinePoints,
+                period: selectedPeriod
+            )
+        }
+    }
+
     // MARK: - Metric Cards
     private var metricCards: some View {
         VStack(spacing: AppleTheme.cardPadding) {
