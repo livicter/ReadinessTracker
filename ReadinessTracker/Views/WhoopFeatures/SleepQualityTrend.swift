@@ -81,14 +81,14 @@ struct SleepQualityTrend: View {
                         
                         // Average line
                         RuleMark(y: .value("Average", averageScore))
-                            .foregroundStyle(.white.opacity(0.3))
+                            .foregroundStyle(RTColor.primaryText.opacity(0.3))
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                     }
                     .frame(height: 140)
                     .chartYScale(domain: 0...100)
                     .chartYAxis {
                         AxisMarks { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel {
                                 Text("pts")
                                     .font(.system(size: 9))
@@ -98,7 +98,7 @@ struct SleepQualityTrend: View {
                     }
                     .chartXAxis {
                         AxisMarks(values: .stride(by: .day)) { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                                 .foregroundStyle(RTColor.secondaryText)
                         }

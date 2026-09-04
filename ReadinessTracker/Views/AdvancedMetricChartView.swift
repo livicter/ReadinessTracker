@@ -63,14 +63,14 @@ struct AdvancedMetricChartView: View {
         .chartYScale(domain: yDomain)
         .chartXAxis {
             AxisMarks(values: .stride(by: analyzedData.count <= 14 ? .day : .weekOfYear)) { _ in
-                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                AxisGridLine().foregroundStyle(RTColor.divider)
                 AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                     .foregroundStyle(RTColor.secondaryText)
             }
         }
         .chartYAxis {
             AxisMarks { _ in
-                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                AxisGridLine().foregroundStyle(RTColor.divider)
                 AxisValueLabel()
                     .foregroundStyle(RTColor.secondaryText)
             }
@@ -166,14 +166,14 @@ struct AdvancedMetricChartView: View {
     @ChartContentBuilder
     private var baselineRule: some ChartContent {
         RuleMark(y: .value("Baseline", baseline))
-            .foregroundStyle(.white.opacity(0.2))
+            .foregroundStyle(RTColor.primaryText.opacity(0.2))
             .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
     }
     
     @ChartContentBuilder
     private func selectionRule(for selected: AnalyzedDataPoint) -> some ChartContent {
         RuleMark(x: .value("Selected", selected.date))
-            .foregroundStyle(.white.opacity(0.3))
+            .foregroundStyle(RTColor.primaryText.opacity(0.3))
             .lineStyle(StrokeStyle(lineWidth: 1))
     }
     

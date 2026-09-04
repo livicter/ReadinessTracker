@@ -66,14 +66,14 @@ struct DistributionHistogramView: View {
                 .frame(height: 160)
                 .chartYAxis {
                     AxisMarks(position: .leading) { _ in
-                        AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                        AxisGridLine().foregroundStyle(RTColor.divider)
                         AxisValueLabel()
                             .foregroundStyle(RTColor.secondaryText)
                     }
                 }
                 .chartXAxis {
                     AxisMarks { value in
-                        AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                        AxisGridLine().foregroundStyle(RTColor.divider)
                         AxisValueLabel {
                             if let text = value.as(String.self) {
                                 Text(text)

@@ -152,3 +152,10 @@
 - Watch graphic-circular complication score uses `.primary` instead of hard white.
 - Gate: `./scripts/ci-verify.sh` before merge (CI on PR).
 
+
+## 2026-09-04 — Sleep disturbance wiring + light chart contrast
+
+- `DayDetailView` now feeds `SleepCycleDetector.awakePeriods(from: data.sleepStages)` into `SleepDisturbanceTracker` (was hard-coded `[]`).
+- Replaced chart/grid `.white.opacity(...)` styles with `RTColor.divider` / `RTColor.primaryText.opacity(...)` so baselines and axes read on bright cards.
+- Gate: `./scripts/ci-verify.sh` + CI on PR.
+

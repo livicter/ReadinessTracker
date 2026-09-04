@@ -1,0 +1,3 @@
+ts	phase	decision	why	evidence	result
+2026-09-04T11:40:00Z	frame	Wire SleepDisturbanceTracker to SleepCycleDetector.awakePeriods; retoken white chart gridlines for light mode	empty awakePeriods made disturbance UI dead; white.opacity grids invisible on bright cards	DayDetailView + chart codemod	open
+2026-09-04T11:42:00Z	implement	DayDetailView uses real awakePeriods; chart white.opacity retokened across 14 view files	fix root cause of dead disturbance UI + invisible light grids	DayDetailView.swift + chart views	landed

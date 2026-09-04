@@ -92,14 +92,14 @@ struct RecoveryTrajectoryView: View {
                 .chartYAxisLabel("% Change", position: .trailing)
                 .chartYAxis {
                     AxisMarks { _ in
-                        AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                        AxisGridLine().foregroundStyle(RTColor.divider)
                         AxisValueLabel()
                             .foregroundStyle(RTColor.secondaryText)
                     }
                 }
                 .chartXAxis {
                     AxisMarks { _ in
-                        AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                        AxisGridLine().foregroundStyle(RTColor.divider)
                         AxisValueLabel()
                             .foregroundStyle(RTColor.secondaryText)
                     }

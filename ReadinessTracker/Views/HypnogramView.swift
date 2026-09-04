@@ -82,7 +82,7 @@ struct HypnogramView: View {
         .chartXScale(domain: visibleDomain ?? Date()...Date())
         .chartXAxis {
             AxisMarks { _ in
-                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                AxisGridLine().foregroundStyle(RTColor.divider)
                 AxisValueLabel(format: .dateTime.hour().minute())
                     .foregroundStyle(RTColor.secondaryText)
             }

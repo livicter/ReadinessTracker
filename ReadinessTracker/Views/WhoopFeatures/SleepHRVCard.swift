@@ -62,7 +62,7 @@ struct SleepHRVCard: View {
                 if hrvHistory.count >= 2 {
                     Chart(hrvHistory, id: \.date) { point in
                         RuleMark(y: .value("Baseline", baselineHRV))
-                            .foregroundStyle(.white.opacity(0.2))
+                            .foregroundStyle(RTColor.primaryText.opacity(0.2))
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         
                         // HRV line
@@ -100,7 +100,7 @@ struct SleepHRVCard: View {
                     .frame(height: 120)
                     .chartYAxis {
                         AxisMarks { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel {
                                 Text("ms")
                                     .font(.system(size: 9))
@@ -110,7 +110,7 @@ struct SleepHRVCard: View {
                     }
                     .chartXAxis {
                         AxisMarks(values: .stride(by: .day)) { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                                 .foregroundStyle(RTColor.secondaryText)
                         }

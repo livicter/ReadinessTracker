@@ -94,14 +94,14 @@ struct MetricCorrelationView: View {
                     .frame(height: 180)
                     .chartXAxis {
                         AxisMarks { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel()
                                 .foregroundStyle(RTColor.secondaryText)
                         }
                     }
                     .chartYAxis {
                         AxisMarks { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel()
                                 .foregroundStyle(RTColor.secondaryText)
                         }

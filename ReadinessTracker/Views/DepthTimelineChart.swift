@@ -71,7 +71,7 @@ struct DepthTimelineChart: View {
                     }
 
                     RuleMark(y: .value("Baseline", stats.baseline))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(RTColor.primaryText.opacity(0.25))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
 
                     ForEach(Array(filteredPoints.enumerated()), id: \.offset) { i, point in
@@ -105,7 +105,7 @@ struct DepthTimelineChart: View {
                                 x: .value("Date", point.date, unit: .day),
                                 y: .value("MA7", ma7[i - 6])
                             )
-                            .foregroundStyle(.white.opacity(0.7))
+                            .foregroundStyle(RTColor.primaryText.opacity(0.7))
                             .symbol(.circle)
                             .symbolSize(12)
                         }
@@ -114,7 +114,7 @@ struct DepthTimelineChart: View {
                 .chartYScale(domain: domain)
                 .chartYAxis {
                     AxisMarks(position: .leading) { _ in
-                        AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                        AxisGridLine().foregroundStyle(RTColor.divider)
                         AxisValueLabel().foregroundStyle(RTColor.secondaryText)
                     }
                 }

@@ -322,7 +322,7 @@ struct TrendDetailView: View {
                     // Trend line approximation
                     let avgReadiness = filteredHistory.map { readinessScores[$0.id] ?? 0 }.reduce(0, +) / filteredHistory.count
                     RuleMark(y: .value("Avg", avgReadiness))
-                        .foregroundStyle(.white.opacity(0.1))
+                        .foregroundStyle(RTColor.primaryText.opacity(0.12))
                         .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                 }
                 .frame(height: 200)
