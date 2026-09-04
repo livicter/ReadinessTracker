@@ -44,7 +44,7 @@ struct CoachingView: View {
             .navigationTitle("Coaching")
             .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(RTColor.background, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
         }
     }
 

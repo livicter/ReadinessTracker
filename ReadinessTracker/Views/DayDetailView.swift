@@ -61,7 +61,7 @@ struct DayDetailView: View {
         .navigationTitle(data.date.formatted(date: .abbreviated, time: .omitted))
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
     
     // MARK: - Date Header
@@ -483,6 +483,18 @@ struct DayDetailView: View {
         VStack(spacing: AppleTheme.cardPadding) {
             if data.sleepHours > 0 {
                 SectionHeader(title: "Sleep Stage Analysis")
+
+                // Compact hypnogram from real stage intervals
+                if !data.sleepStages.isEmpty {
+                    NativeCard {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Sleep Timeline")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                            HypnogramView(intervals: data.sleepStages, interactive: false)
+                        }
+                    }
+                }
 
                 // Use the new Whoop-style SleepStageBreakdown
                 SleepStageBreakdown(

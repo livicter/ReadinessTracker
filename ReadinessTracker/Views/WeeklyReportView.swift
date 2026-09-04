@@ -35,7 +35,7 @@ struct WeeklyReportView: View {
         .navigationTitle("Weekly Report")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
         .sheet(isPresented: $isSharePresented) {
             ShareSheet(activityItems: [WeeklyReportGenerator.shared.formattedReport(report)])
         }
@@ -78,6 +78,9 @@ struct WeeklyReportView: View {
             StatGridItem(label: "Gym", value: "\(Int(report.avgGymScore))", unit: "%", trend: nil)
             StatGridItem(label: "Work", value: "\(Int(report.avgWorkScore))", unit: "%", trend: nil)
             StatGridItem(label: "Sleep", value: "\(Int(report.avgSleepScore))", unit: "%", trend: nil)
+            if let cycles = report.avgSleepCycles {
+                StatGridItem(label: "Cycles", value: String(format: "%.1f", cycles), unit: "avg", trend: nil)
+            }
             StatGridItem(label: "HRV", value: "\(Int(report.avgHRV))", unit: "ms", trend: nil)
             StatGridItem(label: "RHR", value: "\(Int(report.avgRHR))", unit: "bpm", trend: nil)
             StatGridItem(label: "Strain", value: String(format: "%.1f", report.avgStrain), unit: "/21", trend: nil)

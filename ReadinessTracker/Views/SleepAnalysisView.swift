@@ -37,10 +37,6 @@ struct SleepAnalysisView: View {
         data.sleepHours / max(data.sleepEfficiency, 0.01)
     }
     
-    private var estimatedCycles: Int {
-        Int(data.sleepHours / 1.5)
-    }
-    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: AppleTheme.sectionSpacing) {
@@ -56,9 +52,13 @@ struct SleepAnalysisView: View {
                 stageBreakdown
                     .slideIn(delay: 0.1)
                 
-                // Sleep cycles estimate
+                // Detected sleep cycles
                 sleepCyclesSection
                     .slideIn(delay: 0.15)
+                
+                // Sleep disturbances from stage intervals
+                sleepDisturbanceSection
+                    .slideIn(delay: 0.18)
                 
                 // Sleep timing analysis
                 timingAnalysis
@@ -83,7 +83,7 @@ struct SleepAnalysisView: View {
         .navigationTitle("Sleep Analysis")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
     
     // MARK: - Sleep Header
@@ -140,106 +140,12 @@ struct SleepAnalysisView: View {
                 Text("Sleep Timeline")
                     .font(.headline.weight(.semibold))
                     .foregroundStyle(RTColor.primaryText)
-                
-                // Horizontal bar showing sleep stages over time
-                GeometryReader { geo in
-                    let width = geo.size.width
-                    let totalMinutes = timeInBed * 60
-                    
-                    VStack(spacing: 4) {
-                        // Timeline bar
-                        HStack(spacing: 1) {
-                            // Awake (onset is already included in awakePercent)
-                            timelineSegment(
-                                width: width * CGFloat((awakeHours * 60) / max(totalMinutes, 1)),
-                                color: RTColor.warning,
-                                label: "Awake"
-                            )
-                            
-                            // Light sleep
-                            timelineSegment(
-                                width: width * CGFloat((lightSleepHours * 60) / max(totalMinutes, 1)),
-                                color: Color.blue.opacity(0.5),
-                                label: "Light"
-                            )
-                            
-                            // Deep sleep
-                            timelineSegment(
-                                width: width * CGFloat((deepSleepHours * 60) / max(totalMinutes, 1)),
-                                color: RTColor.sleep,
-                                label: "Deep"
-                            )
-                            
-                            // REM
-                            timelineSegment(
-                                width: width * CGFloat((remSleepHours * 60) / max(totalMinutes, 1)),
-                                color: Color.cyan,
-                                label: "REM"
-                            )
-                        }
-                        .frame(height: 28)
-                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                        
-                        // Time markers
-                        HStack {
-                            if let start = data.sleepStartTime {
-                                Text(start, style: .time)
-                                    .font(.caption2)
-                                    .foregroundStyle(RTColor.tertiaryText)
-                            } else {
-                                Text("Bedtime")
-                                    .font(.caption2)
-                                    .foregroundStyle(RTColor.tertiaryText)
-                            }
-                            
-                            Spacer()
-                            
-                            Text("\(String(format: "%.1f", timeInBed))h in bed")
-                                .font(.caption2.weight(.medium))
-                                .foregroundStyle(RTColor.secondaryText)
-                            
-                            Spacer()
-                            
-                            if let end = data.sleepEndTime {
-                                Text(end, style: .time)
-                                    .font(.caption2)
-                                    .foregroundStyle(RTColor.tertiaryText)
-                            } else {
-                                Text("Wake")
-                                    .font(.caption2)
-                                    .foregroundStyle(RTColor.tertiaryText)
-                            }
-                        }
-                    }
-                }
-                .frame(height: 50)
-                
-                // Legend
-                HStack(spacing: 16) {
-                    legendItem(color: RTColor.sleep, label: "Deep", value: "\(String(format: "%.1f", deepSleepHours))h")
-                    legendItem(color: Color.cyan, label: "REM", value: "\(String(format: "%.1f", remSleepHours))h")
-                    legendItem(color: Color.blue.opacity(0.5), label: "Light", value: "\(String(format: "%.1f", lightSleepHours))h")
-                    legendItem(color: RTColor.warning, label: "Awake", value: "\(String(format: "%.1f", awakeHours))h")
-                }
+
+                HypnogramView(intervals: data.sleepStages)
             }
         }
     }
-    
-    private func timelineSegment(width: CGFloat, color: Color, label: String) -> some View {
-        Rectangle()
-            .fill(color)
-            .frame(width: max(width, 4))
-            .overlay(
-                Group {
-                    if width > 30 {
-                        Text(label)
-                            .font(.system(size: 9, weight: .semibold))
-                            .foregroundColor(RTColor.primaryText)
-                    }
-                }
-            )
-    }
-    
+
     private func legendItem(color: Color, label: String, value: String) -> some View {
         HStack(spacing: 6) {
             Circle()
@@ -357,66 +263,19 @@ struct SleepAnalysisView: View {
     
     // MARK: - Sleep Cycles
     private var sleepCyclesSection: some View {
-        NativeCard {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text("Sleep Cycles")
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(RTColor.primaryText)
-                    
-                    Spacer()
-                    
-                    Text("~\(estimatedCycles) cycles")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(RTColor.secondaryText)
-                }
-                
-                Text("Each cycle lasts ~90 min: Light → Deep → REM. You completed approximately \(estimatedCycles) full cycles.")
-                    .font(.caption)
-                    .foregroundStyle(RTColor.secondaryText)
-                    .lineLimit(2)
-                
-                // Cycle visualization
-                HStack(spacing: 4) {
-                    ForEach(0..<min(estimatedCycles, 6), id: \.self) { i in
-                        VStack(spacing: 2) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(RTColor.surfaceHighlight)
-                                    .frame(width: 36, height: 48)
-                                
-                                VStack(spacing: 1) {
-                                    Rectangle()
-                                        .fill(Color.blue.opacity(0.5))
-                                        .frame(width: 32, height: 12)
-                                    Rectangle()
-                                        .fill(RTColor.sleep)
-                                        .frame(width: 32, height: 10)
-                                    Rectangle()
-                                        .fill(Color.cyan)
-                                        .frame(width: 32, height: 14)
-                                }
-                                .clipShape(RoundedRectangle(cornerRadius: 3))
-                            }
-                            
-                            Text("\(i + 1)")
-                                .font(.caption2)
-                                .foregroundStyle(RTColor.tertiaryText)
-                        }
-                    }
-                    
-                    if estimatedCycles > 6 {
-                        Text("+\(estimatedCycles - 6) more")
-                            .font(.caption)
-                            .foregroundStyle(RTColor.secondaryText)
-                            .padding(.leading, 8)
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-        }
+        SleepCycleView(cycles: SleepCycleDetector.detectCycles(in: data.sleepStages))
     }
-    
+
+    // MARK: - Sleep Disturbances
+    private var sleepDisturbanceSection: some View {
+        SleepDisturbanceTracker(
+            awakePeriods: SleepCycleDetector.awakePeriods(from: data.sleepStages),
+            totalSleepHours: data.sleepHours,
+            sleepStart: data.sleepStartTime,
+            sleepEnd: data.sleepEndTime
+        )
+    }
+
     // MARK: - Timing Analysis
     private var timingAnalysis: some View {
         NativeCard {

@@ -54,6 +54,10 @@ struct MetricDetailView: View {
                 trendChart
                     .slideIn(delay: 0.1)
 
+                // Depth timeline (baseline band + MA7)
+                depthTimelineSection
+                    .slideIn(delay: 0.12)
+
                 // Stats grid
                 statsSection
                     .slideIn(delay: 0.15)
@@ -110,7 +114,7 @@ struct MetricDetailView: View {
         .navigationTitle(metric.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
 
     // MARK: - Hero Section
@@ -176,6 +180,19 @@ struct MetricDetailView: View {
     private var periodSelector: some View {
         AppSegmentedControl(options: TrendPeriod.allCases, selection: $selectedPeriod) { $0.label }
             .onChange(of: selectedPeriod) { _ in Haptic.selectionChanged() }
+    }
+
+    // MARK: - Depth Timeline
+    private var depthTimelineSection: some View {
+        NativeCard {
+            DepthTimelineChart(
+                title: "\(metric.title) Depth Timeline",
+                unit: metric.unit,
+                color: metric.color,
+                points: values,
+                period: selectedPeriod
+            )
+        }
     }
 
     // MARK: - Trend Chart

@@ -159,3 +159,13 @@
 - Replaced chart/grid `.white.opacity(...)` styles with `RTColor.divider` / `RTColor.primaryText.opacity(...)` so baselines and axes read on bright cards.
 - Gate: `./scripts/ci-verify.sh` + CI on PR.
 
+## 2026-09-04 — Wire sleep timeline components
+
+- `SleepAnalysisView`: real `HypnogramView(intervals:)`, `SleepCycleView` via `SleepCycleDetector.detectCycles`, `SleepDisturbanceTracker` via `awakePeriods`; toolbar `.light`.
+- `DayDetailView`: compact non-interactive hypnogram above `SleepStageBreakdown`.
+- `TrendDetailView` + `MetricDetailView`: `DepthTimelineChart` sections from filtered history / metric series.
+- `WeeklyReportGenerator`: average sleep-cycle summary when stage data present; `WeeklyReportView` Cycles stat.
+- `AIRecommendations` Rule 14: cycles < 4 and sleepHours > 5 → earlier bedtime / sleep quality.
+- Branch: `feature/wire-sleep-timeline-components`.
+- Gate: `DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' ./scripts/ci-verify.sh`.
+
