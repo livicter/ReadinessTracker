@@ -68,7 +68,7 @@ struct SleepDebtCalculator: View {
                     Chart(debtData, id: \.date) { point in
                         // Zero line
                         RuleMark(y: .value("Zero", 0))
-                            .foregroundStyle(.white.opacity(0.2))
+                            .foregroundStyle(RTColor.primaryText.opacity(0.2))
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         
                         // Area fill (green above zero, red below)
@@ -110,7 +110,7 @@ struct SleepDebtCalculator: View {
                     .frame(height: 140)
                     .chartYAxis {
                         AxisMarks { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel {
                                 Text("h")
                                     .font(.system(size: 9))
@@ -120,7 +120,7 @@ struct SleepDebtCalculator: View {
                     }
                     .chartXAxis {
                         AxisMarks(values: .stride(by: .day)) { _ in
-                            AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                            AxisGridLine().foregroundStyle(RTColor.divider)
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                                 .foregroundStyle(RTColor.secondaryText)
                         }

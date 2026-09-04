@@ -359,13 +359,13 @@ struct DayDetailView: View {
                             .cornerRadius(4, style: .continuous)
                             
                             RuleMark(y: .value("Goal", 7.5))
-                                .foregroundStyle(.white.opacity(0.2))
+                                .foregroundStyle(RTColor.primaryText.opacity(0.2))
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                         }
                         .frame(height: 140)
                         .chartYAxis {
                             AxisMarks { _ in
-                                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                                AxisGridLine().foregroundStyle(RTColor.divider)
                                 AxisValueLabel().foregroundStyle(RTColor.secondaryText)
                             }
                         }
@@ -417,7 +417,7 @@ struct DayDetailView: View {
                         .frame(height: 140)
                         .chartYAxis {
                             AxisMarks { _ in
-                                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                                AxisGridLine().foregroundStyle(RTColor.divider)
                                 AxisValueLabel().foregroundStyle(RTColor.secondaryText)
                             }
                         }
@@ -456,7 +456,7 @@ struct DayDetailView: View {
                         .frame(height: 140)
                         .chartYAxis {
                             AxisMarks { _ in
-                                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                                AxisGridLine().foregroundStyle(RTColor.divider)
                                 AxisValueLabel().foregroundStyle(RTColor.secondaryText)
                             }
                         }
@@ -495,7 +495,7 @@ struct DayDetailView: View {
 
                 // Sleep disturbance tracker — real bed/wake times, no synthetic awake period
                 SleepDisturbanceTracker(
-                    awakePeriods: [],
+                    awakePeriods: SleepCycleDetector.awakePeriods(from: data.sleepStages),
                     totalSleepHours: data.sleepHours,
                     sleepStart: data.sleepStartTime,
                     sleepEnd: data.sleepEndTime

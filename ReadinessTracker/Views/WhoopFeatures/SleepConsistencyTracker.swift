@@ -116,7 +116,7 @@ struct SleepConsistencyTracker: View {
         .frame(height: 100)
         .chartYAxis {
             AxisMarks { value in
-                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                AxisGridLine().foregroundStyle(RTColor.divider)
                 AxisValueLabel {
                     if let mins = value.as(Double.self) {
                         let h = Int(mins) / 60
@@ -130,7 +130,7 @@ struct SleepConsistencyTracker: View {
         }
         .chartXAxis {
             AxisMarks(values: .stride(by: .day)) { _ in
-                AxisGridLine().foregroundStyle(.white.opacity(0.05))
+                AxisGridLine().foregroundStyle(RTColor.divider)
                 AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                     .foregroundStyle(RTColor.secondaryText)
             }
