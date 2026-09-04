@@ -8,14 +8,52 @@ class FitbitManager: ObservableObject {
     @Published var latestData: DailyHealthData?
     @Published var errorMessage: String?
     
-    private let clientId = "YOUR_FITBIT_CLIENT_ID"
+    private let clientId: String
+    private let clientSecret: String
     private let redirectUri = "readinesstracker://oauth"
     private var accessToken: String?
     private var refreshToken: String?
     
-    private init() {}
+    private init() {
+        let id = (Bundle.main.object(forInfoDictionaryKey: "FITBIT_CLIENT_ID") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let secret = (Bundle.main.object(forInfoDictionaryKey: "FITBIT_CLIENT_SECRET") as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        self.clientId = id
+        self.clientSecret = secret
+        if !Self.areCredentialsConfigured(clientId: id, clientSecret: secret) {
+            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+        }
+    }
+
+    private static func areCredentialsConfigured(clientId: String, clientSecret: String) -> Bool {
+        guard !clientId.isEmpty, !clientSecret.isEmpty else { return false }
+        let placeholders = [
+            "YOUR_FITBIT_CLIENT_ID",
+            "YOUR_FITBIT_CLIENT_SECRET",
+            "YOUR_CLIENT_SECRET",
+            "$(FITBIT_CLIENT_ID)",
+            "$(FITBIT_CLIENT_SECRET)"
+        ]
+        if placeholders.contains(clientId) || placeholders.contains(clientSecret) {
+            return false
+        }
+        if clientId.hasPrefix("YOUR_") || clientSecret.hasPrefix("YOUR_") {
+            return false
+        }
+        return true
+    }
+
+    private var hasValidCredentials: Bool {
+        Self.areCredentialsConfigured(clientId: clientId, clientSecret: clientSecret)
+    }
     
+    /// Builds the Fitbit OAuth URL, or nil when credentials are missing/placeholder.
     var authURL: URL? {
+        guard hasValidCredentials else {
+            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+            return nil
+        }
         var components = URLComponents(string: "https://www.fitbit.com/oauth2/authorize")!
         components.queryItems = [
             URLQueryItem(name: "response_type", value: "code"),
@@ -44,7 +82,11 @@ class FitbitManager: ObservableObject {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        let credentials = "\(clientId):YOUR_CLIENT_SECRET".data(using: .utf8)!.base64EncodedString()
+        guard hasValidCredentials else {
+            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+            return
+        }
+        let credentials = "\(clientId):\(clientSecret)".data(using: .utf8)!.base64EncodedString()
         request.setValue("Basic \(credentials)", forHTTPHeaderField: "Authorization")
         
         let body = "grant_type=authorization_code&code=\(code)&redirect_uri=\(redirectUri)"

@@ -21,18 +21,29 @@
    - **Client ID**: Copy this
    - **Client Secret**: Copy this (click to reveal)
 
-## 2. Update the Code
-Open `ReadinessTracker/Services/FitbitManager.swift` and replace:
-```swift
-private let clientId = "YOUR_FITBIT_CLIENT_ID"
-```
-with your actual Client ID.
+## 2. Configure credentials locally (do not edit Swift with secrets)
 
-Also replace in `exchangeCodeForToken`:
-```swift
-let credentials = "\(clientId):YOUR_CLIENT_SECRET".data(using: .utf8)!.base64EncodedString()
-```
-with your actual Client Secret.
+Secrets must **not** live in git or in `FitbitManager.swift`.
+
+1. Copy `Secrets.xcconfig.example` to `Secrets.xcconfig` (already gitignored):
+   ```bash
+   cp Secrets.xcconfig.example Secrets.xcconfig
+   ```
+2. Fill in:
+   ```
+   FITBIT_CLIENT_ID = your_client_id_here
+   FITBIT_CLIENT_SECRET = your_client_secret_here
+   ```
+3. Ensure Xcode passes them into Info.plist:
+   - `ReadinessTracker/Info.plist` maps:
+     - `FITBIT_CLIENT_ID` → `$(FITBIT_CLIENT_ID)`
+     - `FITBIT_CLIENT_SECRET` → `$(FITBIT_CLIENT_SECRET)`
+   - Set those build settings on the ReadinessTracker target (user-defined), **or** point the target’s base configuration at `Secrets.xcconfig` for Debug and Release.
+4. Clean + rebuild.
+
+`FitbitManager` reads `FITBIT_CLIENT_ID` / `FITBIT_CLIENT_SECRET` from `Bundle.main`. If they are missing or still placeholders (`YOUR_FITBIT_*`), it sets a clear `errorMessage` and will **not** start OAuth.
+
+Also see `docs/DEVICE_SETUP.md` for App Group + credential wiring.
 
 ## 3. Important Notes
 - Fitbit "Personal" apps are limited to 150 users max (fine for personal use)
