@@ -117,7 +117,7 @@ struct DashboardView: View {
             .navigationTitle("Readiness")
             .navigationBarTitleDisplayMode(.large)
             .toolbarBackground(RTColor.background, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {

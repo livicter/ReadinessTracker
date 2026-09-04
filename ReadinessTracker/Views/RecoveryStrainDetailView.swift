@@ -101,7 +101,7 @@ struct RecoveryStrainDetailView: View {
         .navigationTitle("Recovery & Strain")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
     
     // MARK: - Wheel Section
