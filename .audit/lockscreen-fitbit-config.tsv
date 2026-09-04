@@ -1,0 +1,3 @@
+ts	phase	decision	why	evidence	result
+2026-09-04T18:32:00Z	frame	Lock Screen accessory widgets + Fitbit secrets via Info.plist/xcconfig	Remaining product reqs; no secrets in git	feature/lockscreen-fitbit-config	open
+2026-09-04T18:40:00Z	implement	Accessory circular/rectangular; FitbitManager Bundle keys; Secrets.xcconfig.example; DEVICE_SETUP + FITBIT_SETUP	iOS 16+ families; empty plist defaults always build	Widget + FitbitManager + Info.plist + docs	landed

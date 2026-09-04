@@ -169,3 +169,12 @@
 - Branch: `feature/wire-sleep-timeline-components`.
 - Gate: `DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' ./scripts/ci-verify.sh`.
 
+
+## 2026-09-05 — Lock Screen widgets + Fitbit config (no secrets in git)
+
+- Added `AccessoryCircularWidgetView` / `AccessoryRectangularWidgetView` (system primary/secondary colors); extended `supportedFamilies` + `ReadinessWidgetView` switch (iOS 16+).
+- `FitbitManager` reads `FITBIT_CLIENT_ID` / `FITBIT_CLIENT_SECRET` from Info.plist; rejects missing/placeholder and skips OAuth.
+- `Secrets.xcconfig.example` + gitignore `Secrets.xcconfig`; Info.plist `$(FITBIT_*)` keys; `INFOPLIST_FILE` wired on app target.
+- Docs: `docs/DEVICE_SETUP.md`; `FITBIT_SETUP.md` no longer instructs pasting secrets into Swift.
+- Branch: `feature/lockscreen-fitbit-config`.
+- Gate: `DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' ./scripts/ci-verify.sh`.

@@ -215,6 +215,69 @@ struct MetricMini: View {
     }
 }
 
+
+// MARK: - Accessory Circular (Lock Screen)
+@available(iOSApplicationExtension 16.0, *)
+struct AccessoryCircularWidgetView: View {
+    let entry: ReadinessEntry
+
+    var body: some View {
+        Gauge(value: Double(entry.readinessScore), in: 0...100) {
+            Text("Readiness")
+        } currentValueLabel: {
+            Text("\(entry.readinessScore)")
+                .font(.system(.body, design: .rounded).weight(.bold))
+                .monospacedDigit()
+        }
+        .gaugeStyle(.accessoryCircularCapacity)
+        .tint(WidgetTone.score(entry.readinessScore))
+    }
+}
+
+// MARK: - Accessory Rectangular (Lock Screen)
+@available(iOSApplicationExtension 16.0, *)
+struct AccessoryRectangularWidgetView: View {
+    let entry: ReadinessEntry
+
+    var body: some View {
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Readiness")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(Color.secondary)
+                Text("\(entry.readinessScore)")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                    .monospacedDigit()
+            }
+            Spacer(minLength: 4)
+            VStack(alignment: .trailing, spacing: 2) {
+                AccessoryMini(label: "Gym", score: entry.gymScore)
+                AccessoryMini(label: "Work", score: entry.workScore)
+                AccessoryMini(label: "Sleep", score: entry.sleepScore)
+            }
+        }
+    }
+}
+
+@available(iOSApplicationExtension 16.0, *)
+private struct AccessoryMini: View {
+    let label: String
+    let score: Int
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.secondary)
+            Text("\(score)")
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
+                .monospacedDigit()
+        }
+    }
+}
+
 // MARK: - Widget Configuration
 @main
 struct ReadinessTrackerWidget: Widget {
@@ -234,7 +297,13 @@ struct ReadinessTrackerWidget: Widget {
         }
         .configurationDisplayName("Readiness Score")
         .description("Track your daily readiness for gym and work.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies({
+            if #available(iOSApplicationExtension 16.0, *) {
+                return [.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular]
+            } else {
+                return [.systemSmall, .systemMedium]
+            }
+        }())
     }
 }
 
@@ -248,6 +317,18 @@ struct ReadinessWidgetView: View {
             SmallWidgetView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+        case .accessoryCircular:
+            if #available(iOSApplicationExtension 16.0, *) {
+                AccessoryCircularWidgetView(entry: entry)
+            } else {
+                SmallWidgetView(entry: entry)
+            }
+        case .accessoryRectangular:
+            if #available(iOSApplicationExtension 16.0, *) {
+                AccessoryRectangularWidgetView(entry: entry)
+            } else {
+                SmallWidgetView(entry: entry)
+            }
         default:
             SmallWidgetView(entry: entry)
         }

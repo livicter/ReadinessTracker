@@ -27,5 +27,9 @@
     <array>
         <string>com.readinesstracker.refresh</string>
     </array>
+    <key>FITBIT_CLIENT_ID</key>
+    <string>$(FITBIT_CLIENT_ID)</string>
+    <key>FITBIT_CLIENT_SECRET</key>
+    <string>$(FITBIT_CLIENT_SECRET)</string>
 </dict>
 </plist>

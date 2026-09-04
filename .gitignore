@@ -4,3 +4,5 @@ build/
 build-DD/
 *.xcuserstate
 xcuserdata/
+Secrets.xcconfig
+Config/Secrets.xcconfig
