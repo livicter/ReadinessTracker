@@ -4,7 +4,7 @@
 Ship bright Apple Health UI (readable chips, real taps, no nested-link collisions) plus WHOOP product surfaces via HealthKit and Google Health breadth metrics, verified by `./scripts/ci-verify.sh` and `.audit/verify-dashboard.png`.
 
 ## Current Phase
-Phase 1 (P0 contrast + taps)
+Phase 5 (landed, visual WHOOP below fold still INCONCLUSIVE)
 
 ## Exit predicate (all must be true)
 - `./scripts/ci-verify.sh` prints `TEST SUCCEEDED`
@@ -25,25 +25,19 @@ Phase 1 (P0 contrast + taps)
 - **Status:** complete
 
 ### Phase 1: P0 contrast + taps
-- `AppChip` + segmented/source/trend/journal/toggle chips
-- Chart hairlines
-- Check-in navigation
-- Split whoop NavigationLink
-- Hero uses in-scope data
-- Settings Connect / Refresh
-- **Status:** in_progress
+- **Status:** complete
 
 ### Phase 2: History / Settings chrome + empty state
-- **Status:** pending
+- **Status:** complete
 
 ### Phase 3: WHOOP product surfaces
-- **Status:** pending
+- **Status:** complete (screenshot below fold INCONCLUSIVE)
 
 ### Phase 4: Google Health breadth
-- **Status:** pending
+- **Status:** complete
 
 ### Phase 5: Verify + feature map
-- **Status:** pending
+- **Status:** complete for tests + above-fold screenshot
 
 ## Decisions
 | Decision | Why |

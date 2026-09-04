@@ -5,3 +5,6 @@ ts	phase	decision	why	evidence	result
 2026-09-04T20:59:42Z	verify	ci-verify TEST SUCCEEDED, 59 passed, 0 failed	prove it works on the real suite not compile-only	.audit/ci-result.xcresult	VERIFIED
 2026-09-04T20:59:42Z	verify	Today screenshot shows dark text on selected Apple Watch chip	P0 contrast evidence	.audit/verify-dashboard.png	VERIFIED
 2026-09-04T20:59:42Z	verify	could not swipe Simulator for WHOOP cards below the fold	Accessibility not granted to osascript/cliclick	open	INCONCLUSIVE
+2026-09-04T21:02:16Z	whoop	wired SleepHRV Debt Quality Consistency, wheel uses RecoveryCalculator, sleep need is 14-night average	product parity without fake WHOOP OAuth	DashboardView.swift RecoveryCalculator.swift BaselineManager.swift	code VERIFIED screenshot INCONCLUSIVE
+2026-09-04T21:02:16Z	google	Body and activity card plus Settings cycle toggle	HealthKit breadth not Google Fit REST	DashboardView.bodyActivitySection ContentView SettingsView	code VERIFIED
+2026-09-04T21:02:16Z	settings	Connect Reconnect Disconnect Refresh for Apple Health and Fitbit	status-only rows were P0 dead taps	ContentView.swift FitbitManager.disconnect	code VERIFIED
