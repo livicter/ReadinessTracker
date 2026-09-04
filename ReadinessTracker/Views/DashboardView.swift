@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UIKit
 
 struct DashboardView: View {
     @StateObject private var healthKit = HealthKitManager.shared
@@ -13,6 +14,7 @@ struct DashboardView: View {
     @State private var lastSyncDate: Date?
     @State private var dismissedError: String?
     @State private var isWeeklyReportPresented = false
+    @Environment(\.openURL) private var openURL
 
     private var latestData: DailyHealthData? {
         dataStore.latest(for: selectedSource)
@@ -64,7 +66,7 @@ struct DashboardView: View {
                                 breakdown: dualScores.breakdown
                             )
 
-                            heroSection(scores: finalScores)
+                            heroSection(scores: finalScores, data: data, history: history)
                                 .slideIn(delay: 0)
 
                             syncStatusBar
@@ -83,6 +85,8 @@ struct DashboardView: View {
                                 .slideIn(delay: 0.16)
                             whoopSection(data: data, history: history, scores: finalScores)
                                 .slideIn(delay: 0.2)
+                            bodyActivitySection(data: data)
+                                .slideIn(delay: 0.22)
                             metricsSection(data: data, history: history)
                                 .slideIn(delay: 0.24)
                             quickTrendsSection(history: longHistory)
@@ -184,7 +188,7 @@ struct DashboardView: View {
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(selectedSource == source ? RTColor.surfaceHighlight : Color.clear)
-                        .foregroundStyle(selectedSource == source ? .white : RTColor.secondaryText)
+                        .foregroundStyle(selectedSource == source ? RTColor.primaryText : RTColor.secondaryText)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     }
                     .buttonStyle(.plain)
@@ -202,7 +206,7 @@ struct DashboardView: View {
                     Image(systemName: "circle.fill")
                         .font(.system(size: 6))
                         .foregroundStyle(healthKit.isAuthorized ? RTColor.optimal : .gray)
-                    Text(healthKit.dataSource)
+                    Text(Self.healthKitSourceLabel(healthKit.dataSource))
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)
                 }
@@ -265,13 +269,13 @@ struct DashboardView: View {
     }
 
     // MARK: - Hero Section (Triple Ring)
-    private func heroSection(scores: DualReadinessScores) -> some View {
+    private func heroSection(scores: DualReadinessScores, data: DailyHealthData, history: [DailyHealthData]) -> some View {
         let zone = ScoreZone(score: scores.general)
 
         return NavigationLink(destination: ReadinessDetailView(
             scores: scores,
-            data: dataStore.latest(for: selectedSource)!,
-            history: dataStore.dataForSource(selectedSource, days: trendPeriod.rawValue)
+            data: data,
+            history: history
         )) {
             NativeCard {
                 VStack(spacing: 20) {
@@ -332,6 +336,7 @@ struct DashboardView: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("Readiness detail")
     }
 
     // MARK: - Recommendations Section
@@ -377,18 +382,27 @@ struct DashboardView: View {
     // MARK: - Check-in Section
     private var checkInSection: some View {
         HStack(spacing: 12) {
-            CheckInStatusCard(
-                label: "Morning",
-                icon: "sunrise.fill",
-                isDone: metadataStore.hasCheckedInToday(.morning),
-                color: RTColor.caution
-            )
-            CheckInStatusCard(
-                label: "Evening",
-                icon: "sunset.fill",
-                isDone: metadataStore.hasCheckedInToday(.evening),
-                color: RTColor.sleep
-            )
+            NavigationLink(destination: CheckInView(initialTime: .morning, embedsNavigationStack: false)) {
+                CheckInStatusCard(
+                    label: "Morning",
+                    icon: "sunrise.fill",
+                    isDone: metadataStore.hasCheckedInToday(.morning),
+                    color: RTColor.caution
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Morning check-in")
+
+            NavigationLink(destination: CheckInView(initialTime: .evening, embedsNavigationStack: false)) {
+                CheckInStatusCard(
+                    label: "Evening",
+                    icon: "sunset.fill",
+                    isDone: metadataStore.hasCheckedInToday(.evening),
+                    color: RTColor.sleep
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Evening check-in")
         }
     }
 
@@ -567,71 +581,105 @@ struct DashboardView: View {
     // MARK: - WHOOP-Style Section
     private func whoopSection(data: DailyHealthData, history: [DailyHealthData], scores: DualReadinessScores) -> some View {
         let strainValue = scores.breakdown.strainScoreValue
+        let sleepNeed = BaselineManager.sleepNeed(from: history)
+        let recoveryScore = RecoveryCalculator.dashboardWheelScore(from: data, history: history)
 
-        return NavigationLink(destination: RecoveryStrainDetailView(
-            data: data,
-            history: history,
-            scores: scores
-        )) {
-            VStack(spacing: AppleTheme.cardPadding) {
-                HStack {
-                    SectionHeader(title: "Recovery & Strain")
-                    Spacer()
-                    Text(String(format: "%.1f", strainValue))
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundStyle(RTColor.caution)
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(RTColor.tertiaryText)
-                }
-
-                // Strain/Recovery Wheel
-                NativeCard {
-                    StrainRecoveryWheel(
-                        strainScore: strainValue,
-                        recoveryScore: Double(scores.general),
-                        day: "TODAY"
-                    )
-                    .frame(maxWidth: .infinity)
-                }
-
-                // Sleep Performance
-                SleepPerformanceScore(
-                    sleepNeeded: BaselineManager.sleepBaseline(from: history) * 1.1,
-                    sleepObtained: data.sleepHours,
-                    efficiency: data.sleepEfficiency * 100,
-                    consistency: calculateSleepConsistency(history: history)
-                )
-
-                StrainRecoveryBalanceCard(balance: scores.balance)
-
-                // Advanced metrics row
-                HStack(spacing: 12) {
-                    if let respRate = data.respiratoryRate {
-                        RespiratoryRateCard(
-                            currentRate: respRate,
-                            history: history.compactMap { d in
-                                d.respiratoryRate.map { (d.date, $0) }
-                            },
-                            baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
-                        )
+        return VStack(spacing: AppleTheme.cardPadding) {
+            NavigationLink(destination: RecoveryStrainDetailView(
+                data: data,
+                history: history,
+                scores: scores
+            )) {
+                VStack(spacing: AppleTheme.cardPadding) {
+                    HStack {
+                        SectionHeader(title: "Recovery & Strain")
+                        Spacer()
+                        Text(String(format: "%.1f", strainValue))
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
+                            .foregroundStyle(RTColor.caution)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
                     }
 
-                    if let skinTemp = data.skinTemperature {
-                        let tempHistory = history.compactMap { d in
-                            d.skinTemperature.map { (date: d.date, value: $0) }
-                        }
-                        let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
-                        SkinTemperatureCard(
-                            currentTemp: skinTemp,
-                            baselineTemp: baseline > 0 ? baseline : skinTemp,
-                            history: tempHistory
+                    NativeCard {
+                        StrainRecoveryWheel(
+                            strainScore: strainValue,
+                            recoveryScore: recoveryScore,
+                            day: "TODAY"
                         )
+                        .frame(maxWidth: .infinity)
                     }
                 }
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Recovery and strain detail")
+
+            SleepPerformanceScore(
+                sleepNeeded: sleepNeed,
+                sleepObtained: data.sleepHours,
+                efficiency: data.sleepEfficiency * 100,
+                consistency: calculateSleepConsistency(history: history)
+            )
+
+            if data.hrv > 0 {
+                SleepHRVCard(
+                    currentHRV: data.hrv,
+                    hrvHistory: history.filter { $0.hrv > 0 }.map { ($0.date, $0.hrv) },
+                    baselineHRV: BaselineManager.hrvBaseline(from: history, matchesRMSSD: data.hrvIsRMSSD),
+                    sleepQuality: data.sleepEfficiency
+                )
+            } else {
+                MissingMetricRow(title: "Sleep HRV")
+            }
+
+            if history.contains(where: { $0.sleepHours > 0 }) {
+                SleepDebtCalculator(
+                    history: history.map { ($0.date, $0.sleepHours) },
+                    sleepNeed: sleepNeed
+                )
+                SleepQualityTrend(
+                    history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) }
+                )
+                SleepConsistencyTracker(
+                    history: history.map { ($0.date, $0.sleepStartTime, $0.sleepEndTime, $0.sleepHours) }
+                )
+            } else {
+                MissingMetricRow(title: "Sleep Debt")
+                MissingMetricRow(title: "Sleep Quality Trend")
+                MissingMetricRow(title: "Sleep Consistency")
+            }
+
+            StrainRecoveryBalanceCard(balance: scores.balance)
+
+            HStack(spacing: 12) {
+                if let respRate = data.respiratoryRate {
+                    RespiratoryRateCard(
+                        currentRate: respRate,
+                        history: history.compactMap { d in
+                            d.respiratoryRate.map { (d.date, $0) }
+                        },
+                        baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
+                    )
+                } else {
+                    MissingMetricRow(title: "Respiratory Rate")
+                }
+
+                if let skinTemp = data.skinTemperature {
+                    let tempHistory = history.compactMap { d in
+                        d.skinTemperature.map { (date: d.date, value: $0) }
+                    }
+                    let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
+                    SkinTemperatureCard(
+                        currentTemp: skinTemp,
+                        baselineTemp: baseline > 0 ? baseline : skinTemp,
+                        history: tempHistory
+                    )
+                } else {
+                    MissingMetricRow(title: "Skin Temperature")
+                }
+            }
         }
-        .buttonStyle(.plain)
     }
 
     private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
@@ -652,7 +700,7 @@ struct DashboardView: View {
 
                 VStack(spacing: 14) {
                     BreakdownBar(label: "Sleep", score: breakdown.sleepScore, color: RTColor.sleep, weight: "25%", metricType: .sleep, currentValue: data.sleepHours, history: history, source: selectedSource)
-                    BreakdownBar(label: "HRV", score: breakdown.hrvScore, color: RTColor.hrv, weight: "25%", metricType: .hrv, currentValue: data.hrv, history: history, source: selectedSource)
+                    BreakdownBar(label: data.hrvIsRMSSD ? "RMSSD" : "HRV", score: breakdown.hrvScore, color: RTColor.hrv, weight: "25%", metricType: .hrv, currentValue: data.hrv, history: history, source: selectedSource)
                     BreakdownBar(label: "Recovery", score: breakdown.recoveryScore, color: RTColor.recovery, weight: "20%", metricType: .restingHR, currentValue: data.restingHeartRate, history: history, source: selectedSource)
                     BreakdownBar(label: "SpO2", score: breakdown.spo2Score, color: RTColor.optimal, weight: "5%", metricType: .bloodOxygen, currentValue: (data.bloodOxygen ?? 0) > 1.0 ? (data.bloodOxygen ?? 0) : (data.bloodOxygen ?? 0) * 100.0, history: history, source: selectedSource)
                     BreakdownBar(label: "Strain", score: breakdown.strainScore, color: RTColor.strain, weight: "15%", metricType: .activeCalories, currentValue: data.activeCalories, history: history, source: selectedSource)
@@ -815,7 +863,7 @@ struct DashboardView: View {
         VStack(spacing: 24) {
             Image(systemName: "arrow.down.heart.fill")
                 .font(.system(size: 64))
-                .foregroundStyle(RTColor.surfaceHighlight)
+                .foregroundStyle(RTColor.tertiaryText)
 
             VStack(spacing: 8) {
                 Text("No data yet")
@@ -836,6 +884,8 @@ struct DashboardView: View {
                     if selectedSource == .appleWatch {
                         await healthKit.requestAuthorization()
                         await performRefresh()
+                    } else if let url = fitbit.authURL {
+                        openURL(url)
                     }
                 }
             }) {
@@ -866,6 +916,7 @@ struct DashboardView: View {
         isRefreshing = true
         Haptic.press()
         await refreshData()
+        dismissedError = nil
         isRefreshing = false
         lastSyncDate = latestData?.date ?? Date()
         Haptic.success()
@@ -879,6 +930,77 @@ struct DashboardView: View {
         } else {
             await fitbit.fetchTodayData()
         }
+    }
+
+    private func bodyActivitySection(data: DailyHealthData) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 14) {
+                SectionHeader(title: "Body & activity")
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    bodyStat(title: "Steps", value: "\(data.steps)", icon: "figure.walk")
+                    bodyStat(title: "Activity", value: "\(data.workoutMinutes) min", icon: "flame.fill")
+                    bodyStat(title: "Calories", value: "\(Int(data.activeCalories))", icon: "bolt.fill")
+                    bodyStat(
+                        title: "SpO2",
+                        value: spo2Display(data.bloodOxygen),
+                        icon: "lungs.fill"
+                    )
+                    bodyStat(
+                        title: "Water",
+                        value: data.nutrition.waterLiters.map { String(format: "%.1f L", $0) } ?? "—",
+                        icon: "drop.fill"
+                    )
+                    bodyStat(
+                        title: "Caffeine",
+                        value: data.nutrition.caffeineMg.map { "\(Int($0)) mg" } ?? "—",
+                        icon: "cup.and.saucer.fill"
+                    )
+                    bodyStat(
+                        title: "Protein",
+                        value: data.nutrition.proteinGrams.map { "\(Int($0)) g" } ?? "—",
+                        icon: "fork.knife"
+                    )
+                    if UserSettings.load().trackMenstrualCycle {
+                        bodyStat(
+                            title: "Cycle",
+                            value: data.menstrualFlow ? "Flow reported" : "No flow",
+                            icon: "circle.lefthalf.filled"
+                        )
+                    }
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Body and activity")
+    }
+
+    private func bodyStat(title: String, value: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Text(title)
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Text(value)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(RTColor.primaryText)
+                .monospacedDigit()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func spo2Display(_ value: Double?) -> String {
+        guard let value, value > 0 else { return "—" }
+        let percent = value > 1.0 ? value : value * 100
+        return String(format: "%.0f%%", percent)
+    }
+
+    static func healthKitSourceLabel(_ raw: String) -> String {
+        raw.localizedCaseInsensitiveContains("whoop") ? "WHOOP via Apple Health" : raw
     }
 
     private func trendFor(_ value: Double, baseline: Double, higherIsBetter: Bool) -> TrendDirection {

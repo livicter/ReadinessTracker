@@ -44,6 +44,11 @@ enum BaselineManager {
     static func sleepBaseline(from history: [DailyHealthData], window: Int = 7) -> Double {
         baseline(for: history.map(\.sleepHours), window: window) ?? 7.5
     }
+
+    /// Personal sleep need: 14-night average of recorded hours. Fallback 7.5h.
+    static func sleepNeed(from history: [DailyHealthData]) -> Double {
+        sleepBaseline(from: history, window: 14)
+    }
     
     static func respiratoryRateBaseline(from history: [DailyHealthData], window: Int = 14) -> Double {
         baseline(for: history.compactMap(\.respiratoryRate), window: window) ?? 16.0

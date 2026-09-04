@@ -6,3 +6,6 @@ build-DD/
 xcuserdata/
 Secrets.xcconfig
 Config/Secrets.xcconfig
+
+.audit/*.xcresult/
+.audit/ci-result.xcresult/

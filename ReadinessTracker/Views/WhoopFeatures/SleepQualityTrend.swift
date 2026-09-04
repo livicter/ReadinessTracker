@@ -47,7 +47,7 @@ struct SleepQualityTrend: View {
                         .foregroundStyle(RTColor.primaryText)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.white.opacity(0.08))
+                        .background(RTColor.divider.opacity(0.4))
                         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                 }
                 

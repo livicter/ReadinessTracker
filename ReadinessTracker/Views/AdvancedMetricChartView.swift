@@ -229,7 +229,7 @@ struct AdvancedMetricChartView: View {
                 legendItem(color: metric.color.opacity(0.5), label: "7-day MA", dashed: true)
             }
             if showBaselineBands {
-                legendItem(color: .white.opacity(0.3), label: "Baseline", dashed: true)
+                legendItem(color: RTColor.tertiaryText, label: "Baseline", dashed: true)
             }
             if showOutliers {
                 HStack(spacing: 4) {

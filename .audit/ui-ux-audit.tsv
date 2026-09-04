@@ -1,0 +1,24 @@
+screen	element	expected	actual	severity	fix
+Today	source chips	selected readable	white on #E5E5EA	P0	AppChip dark-on-highlight
+Global	AppSegmentedControl	selected readable	white on surfaceHighlight	P0	AppChip
+Trends	metric chips	selected readable	white on metric.color	P0	AppChip filled
+Advanced metric	ToggleChip	selected readable	white on optimal 15%	P0	dark text on tint
+Journal	habit chips	selected readable	white on behavior.color	P0	filled accent
+Charts	Poincare/TripleRing/SleepQualityTrend	grid visible	white.opacity hairlines	P0	RTColor.divider
+History	TrendChart	ScoreZone colors	Color.green	P1	RTColor.optimal
+Today	Morning/Evening cards	open Check-in	display-only	P0	NavigationLink
+Today	whoopSection	independent child taps	one NavigationLink	P0	split destinations
+Today	hero	safe nav	force-unwrap latest	P0	pass in-scope data
+Today	WHOOP cards	HRV/debt/quality/consistency	unwired	P1	mount in whoopSection
+Today	StrainRecoveryWheel	recovery 0-100	scores.general	P1	RecoveryCalculator.calculate
+Today	Sleep Performance need	documented model	baseline * 1.1	P1	14-night average
+Settings	HealthKit/Fitbit rows	Connect	status only	P0	authorize / OAuth
+Settings	Refresh	HK + Fitbit + history	HK today only	P0	mirror Dashboard
+History	row score colors	ScoreZone	raw UIColor	P1	ScoreZone
+History	empty glyph	tertiaryText	surfaceHighlight	P1	tertiaryText
+Settings	list chrome	AppBackground	plain List	P1	AppBackground
+Settings	version	bundle	hardcoded 1.0.0	P1	CFBundleShortVersionString
+Today	error Retry	reshow after sync	dismissedError hides same message	P2	clear after refresh
+Today	Body & activity	steps/activity/SpO2/nutrition	missing	P1	new NativeCard
+Settings	WHOOP badge	WHOOP via Apple Health	raw dataSource	P1	map Whoop label
+Settings	Cycle toggle	privacy flag	no UI	P1	Settings toggle

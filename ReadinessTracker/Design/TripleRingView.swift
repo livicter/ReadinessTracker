@@ -11,7 +11,7 @@ struct TripleRingHero: View {
         ZStack {
             // Outer glow effect
             Circle()
-                .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                .stroke(RTColor.divider, lineWidth: 1)
                 .frame(width: size + 20, height: size + 20)
             
             // Sleep ring (outermost)

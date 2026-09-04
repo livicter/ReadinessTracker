@@ -334,7 +334,7 @@ struct AppSegmentedControl<Option: Hashable>: View {
                 } label: {
                     Text(label(option))
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(selection == option ? .white : RTColor.secondaryText)
+                        .foregroundStyle(selection == option ? RTColor.primaryText : RTColor.secondaryText)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background {
@@ -351,6 +351,92 @@ struct AppSegmentedControl<Option: Hashable>: View {
         .padding(4)
         .background(RTColor.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusSmall, style: .continuous))
+    }
+}
+
+// MARK: - App Chip
+/// Selected: dark text on surfaceHighlight, or white on a filled accent.
+/// Never white on a light fill.
+struct AppChip: View {
+    let title: String
+    var icon: String? = nil
+    let selected: Bool
+    var fill: Color? = nil
+
+    var body: some View {
+        HStack(spacing: 6) {
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 12))
+            }
+            Text(title)
+                .font(.subheadline.weight(.medium))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .foregroundStyle(foreground)
+        .background(background)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private var foreground: Color {
+        guard selected else { return RTColor.secondaryText }
+        if let fill { return fill.contrastingTextColor }
+        return RTColor.primaryText
+    }
+
+    private var background: Color {
+        guard selected else { return .clear }
+        return fill ?? RTColor.surfaceHighlight
+    }
+}
+
+struct AppEmptyState: View {
+    let systemImage: String
+    let title: String
+    let message: String
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .font(.system(size: 40))
+                .foregroundStyle(RTColor.tertiaryText)
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(RTColor.primaryText)
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(RTColor.secondaryText)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+    }
+}
+
+struct MissingMetricRow: View {
+    let title: String
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(RTColor.primaryText)
+            Spacer()
+            Text("Not recorded last night")
+                .font(.caption)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(.horizontal, AppleTheme.cardPadding)
+        .padding(.vertical, 12)
+        .background(RTColor.surface)
+        .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                .stroke(RTColor.surfaceBorder, lineWidth: 0.5)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), not recorded last night")
     }
 }
 

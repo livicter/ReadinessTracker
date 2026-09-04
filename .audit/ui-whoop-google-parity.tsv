@@ -1,0 +1,7 @@
+ts	phase	decision	why	evidence	result
+2026-09-04T20:50:53Z	frame	branched feature/ui-whoop-google-parity off main	overnight loop needs an isolated branch and a checkable predicate	979105c	open
+2026-09-04T20:50:53Z	inventory	wrote ui-ux-audit.tsv from source walk	Phase 0 must exist before production code	.audit/ui-ux-audit.tsv	VERIFIED
+2026-09-04T20:55:34Z	p0	AppChip dark-on-highlight, split whoop link, check-in nav, settings connect	P0 contrast and dead taps were the blocking UX bugs	DashboardView.swift AppleNativeTheme.swift ContentView.swift	in progress
+2026-09-04T20:59:42Z	verify	ci-verify TEST SUCCEEDED, 59 passed, 0 failed	prove it works on the real suite not compile-only	.audit/ci-result.xcresult	VERIFIED
+2026-09-04T20:59:42Z	verify	Today screenshot shows dark text on selected Apple Watch chip	P0 contrast evidence	.audit/verify-dashboard.png	VERIFIED
+2026-09-04T20:59:42Z	verify	could not swipe Simulator for WHOOP cards below the fold	Accessibility not granted to osascript/cliclick	open	INCONCLUSIVE

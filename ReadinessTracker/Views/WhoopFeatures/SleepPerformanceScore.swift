@@ -2,10 +2,11 @@ import SwiftUI
 
 /// Whoop-style sleep performance score comparing sleep needed vs sleep obtained
 struct SleepPerformanceScore: View {
-    let sleepNeeded: Double      // Hours needed (based on baseline)
+    let sleepNeeded: Double      // Hours needed (14-night average)
     let sleepObtained: Double    // Actual hours slept
     let efficiency: Double       // Sleep efficiency %
     let consistency: Double      // Sleep consistency score 0-100
+    var needCaption: String = "Need is your 14-night average."
     
     private var performancePercent: Double {
         guard sleepNeeded > 0 else { return 0 }
@@ -70,6 +71,9 @@ struct SleepPerformanceScore: View {
                         Text("Sleep Needed")
                             .font(.caption)
                             .foregroundStyle(RTColor.secondaryText)
+                        Text(needCaption)
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
                         Spacer()
                         Text("\(String(format: "%.1f", sleepNeeded))h")
                             .font(.caption.weight(.semibold))

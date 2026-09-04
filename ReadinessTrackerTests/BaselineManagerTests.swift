@@ -31,4 +31,17 @@ final class BaselineManagerTests: XCTestCase {
         // Only 2 RMSSD points, so fallback to all history: (5*50 + 2*30) / 7 ≈ 44.3
         XCTAssertEqual(baseline, 44.3, accuracy: 0.1)
     }
+
+    func testSleepNeedIs14NightAverageNotTenPercentFudge() {
+        let nights = (0..<14).map { offset in
+            DailyHealthData(
+                date: Calendar.current.date(byAdding: .day, value: -offset, to: Date())!,
+                source: .appleWatch,
+                sleepHours: 8
+            )
+        }
+        let need = BaselineManager.sleepNeed(from: nights)
+        XCTAssertEqual(need, 8.0, accuracy: 0.01)
+        XCTAssertNotEqual(need, 8.0 * 1.1, accuracy: 0.01)
+    }
 }

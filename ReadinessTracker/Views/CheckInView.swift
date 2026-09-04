@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CheckInView: View {
+    var initialTime: CheckInTime = .morning
+    var embedsNavigationStack: Bool = true
+
     @StateObject private var metadataStore = MetadataStore.shared
 
     @State private var selectedTime: CheckInTime = .morning
@@ -31,7 +34,16 @@ struct CheckInView: View {
     private let intensities = ["Light", "Moderate", "Heavy"]
     
     var body: some View {
-        NavigationStack {
+        Group {
+            if embedsNavigationStack {
+                NavigationStack { checkInContent }
+            } else {
+                checkInContent
+            }
+        }
+    }
+
+    private var checkInContent: some View {
             ZStack {
                 AppBackground()
 
@@ -82,12 +94,14 @@ struct CheckInView: View {
                     Button("Save") { saveCheckIn() }
                 }
             }
-            .onAppear(perform: loadExisting)
+            .onAppear {
+                selectedTime = initialTime
+                loadExisting()
+            }
             .onChange(of: selectedTime) { _ in
                 Haptic.selectionChanged()
                 loadExisting()
             }
-        }
     }
     
     private var morningSection: some View {

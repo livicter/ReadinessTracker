@@ -24,7 +24,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let wakeEpisodes: Int
     let sleepStages: [SleepStageInterval]
     
-    // HRV - stored as SDNN (HealthKit native). RMSSD can be derived or computed from RR intervals
+    // HRV: RMSSD when `hrvIsRMSSD` is true (recovery path). Otherwise HealthKit SDNN.
     let hrv: Double
     let hrvIsRMSSD: Bool // false = SDNN, true = RMSSD
     

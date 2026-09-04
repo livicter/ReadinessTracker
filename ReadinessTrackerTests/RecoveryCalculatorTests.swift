@@ -13,6 +13,11 @@ final class RecoveryCalculatorTests: XCTestCase {
         let history = [data]
         let score = RecoveryCalculator.calculate(from: data, history: history)
         XCTAssertGreaterThan(score, 80)
+        XCTAssertEqual(
+            RecoveryCalculator.dashboardWheelScore(from: data, history: history),
+            Double(score),
+            accuracy: 0.01
+        )
     }
 
     func testPoorRecovery() {

@@ -64,6 +64,14 @@ class FitbitManager: ObservableObject {
         return components.url
     }
     
+    func disconnect() {
+        accessToken = nil
+        refreshToken = nil
+        isAuthenticated = false
+        latestData = nil
+        errorMessage = nil
+    }
+
     func handleCallback(url: URL) {
         guard let code = URLComponents(url: url, resolvingAgainstBaseURL: false)?
             .queryItems?.first(where: { $0.name == "code" })?.value else {
