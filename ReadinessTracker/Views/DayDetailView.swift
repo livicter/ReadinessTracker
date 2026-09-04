@@ -61,7 +61,7 @@ struct DayDetailView: View {
         .navigationTitle(data.date.formatted(date: .abbreviated, time: .omitted))
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
     
     // MARK: - Date Header

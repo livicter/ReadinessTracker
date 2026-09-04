@@ -35,7 +35,7 @@ struct WeeklyReportView: View {
         .navigationTitle("Weekly Report")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
         .sheet(isPresented: $isSharePresented) {
             ShareSheet(activityItems: [WeeklyReportGenerator.shared.formattedReport(report)])
         }

@@ -114,7 +114,7 @@ struct MetricDetailView: View {
         .navigationTitle(metric.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
     }
 
     // MARK: - Hero Section
