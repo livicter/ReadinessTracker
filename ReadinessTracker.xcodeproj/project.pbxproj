@@ -100,6 +100,7 @@
 		FDC45AD0F97C44F885A19103 /* JournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A4299792EB44CCA8AB0233 /* JournalView.swift */; };
 		FFB6CF2934E34F20A8F38CD3 /* PoincarePlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */; };
 		FFE0A71E2C3B44234AB22B3E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8F6449F83F9046308CEE1BB /* Assets.xcassets */; };
+		C1A1F1080000000000000001 /* SurfacesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1F1010000000000000001 /* SurfacesUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -123,6 +124,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 11BCE63BA2721C8EB6DC5A97;
 			remoteInfo = ReadinessTrackerWidget;
+		};
+		C1A1F10A0000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 390C8C7D7247342CD8100F2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 51D820C5C3EF80053A88AE39;
+			remoteInfo = ReadinessTracker;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -250,6 +258,8 @@
 		F87A8CE12792788BABA32946 /* MetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataStore.swift; sourceTree = "<group>"; };
 		F8F6449F83F9046308CEE1BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F9975446B618A947B5BE1069 /* QuickTrendTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QuickTrendTests.swift; sourceTree = "<group>"; };
+		C1A1F1010000000000000001 /* SurfacesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfacesUITests.swift; sourceTree = "<group>"; };
+		C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReadinessTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -317,6 +327,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1A1F1060000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -373,6 +390,7 @@
 				8E4F6EAC342FC231B7B08716 /* Products */,
 				57A5F0C52FCA0BAC0061C07C /* Recovered References */,
 				A9BEC5E3B9915C5F4854B822 /* ReadinessTrackerTests */,
+				C1A1F1020000000000000001 /* ReadinessTrackerUITests */,
 				0D2E13630F4F605C2F8DB7A1 /* Frameworks */,
 				23AA9304A9F63484AE35CE53 /* ReadinessTrackerWidget */,
 			);
@@ -440,6 +458,7 @@
 				57A5F0CA2FCA0C260061C07C /* ReadinessTrackerWatch.app */,
 				57A5F0D62FCA0C280061C07C /* ReadinessTrackerWatch Watch App.app */,
 				2A77F1EB943BD413A146320A /* ReadinessTrackerTests.xctest */,
+				C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */,
 				2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */,
 			);
 			name = Products;
@@ -508,6 +527,14 @@
 				F8F6449F83F9046308CEE1BB /* Assets.xcassets */,
 			);
 			path = ReadinessTracker;
+			sourceTree = "<group>";
+		};
+		C1A1F1020000000000000001 /* ReadinessTrackerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				C1A1F1010000000000000001 /* SurfacesUITests.swift */,
+			);
+			path = ReadinessTrackerUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -609,6 +636,24 @@
 			productReference = 2A77F1EB943BD413A146320A /* ReadinessTrackerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		C1A1F1040000000000000001 /* ReadinessTrackerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C1A1F10D0000000000000001 /* Build configuration list for PBXNativeTarget "ReadinessTrackerUITests" */;
+			buildPhases = (
+				C1A1F1050000000000000001 /* Sources */,
+				C1A1F1060000000000000001 /* Frameworks */,
+				C1A1F1070000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C1A1F1090000000000000001 /* PBXTargetDependency */,
+			);
+			name = ReadinessTrackerUITests;
+			productName = ReadinessTrackerUITests;
+			productReference = C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -624,6 +669,10 @@
 						CreatedOnToolsVersion = 26.5;
 					};
 					B58574B0B3BD6FDD527B3530 = {
+						CreatedOnToolsVersion = 1600;
+						TestTargetID = 51D820C5C3EF80053A88AE39;
+					};
+					C1A1F1040000000000000001 = {
 						CreatedOnToolsVersion = 1600;
 						TestTargetID = 51D820C5C3EF80053A88AE39;
 					};
@@ -646,6 +695,7 @@
 				57A5F0C92FCA0C260061C07C /* ReadinessTrackerWatch */,
 				57A5F0D52FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
 				B58574B0B3BD6FDD527B3530 /* ReadinessTrackerTests */,
+				C1A1F1040000000000000001 /* ReadinessTrackerUITests */,
 				11BCE63BA2721C8EB6DC5A97 /* ReadinessTrackerWidget */,
 			);
 		};
@@ -682,6 +732,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		ED80C7CE8EAA7696767004CB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1A1F1070000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -812,6 +869,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C1A1F1050000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1A1F1080000000000000001 /* SurfacesUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -831,6 +896,12 @@
 			name = ReadinessTracker;
 			target = 51D820C5C3EF80053A88AE39 /* ReadinessTracker */;
 			targetProxy = 44FD52B81DCFFC0241B5B41B /* PBXContainerItemProxy */;
+		};
+		C1A1F1090000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ReadinessTracker;
+			target = 51D820C5C3EF80053A88AE39 /* ReadinessTracker */;
+			targetProxy = C1A1F10A0000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1370,6 +1441,50 @@
 			};
 			name = Release;
 		};
+		C1A1F10B0000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTrackerUITests;
+				PRODUCT_NAME = ReadinessTrackerUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ReadinessTracker;
+			};
+			name = Debug;
+		};
+		C1A1F10C0000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGNING_ALLOWED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.readiness.ReadinessTrackerUITests;
+				PRODUCT_NAME = ReadinessTrackerUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ReadinessTracker;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1423,6 +1538,15 @@
 			buildConfigurations = (
 				03241E752210A924798EF86D /* Debug */,
 				43F27CF2D0613031DCB5D8D2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C1A1F10D0000000000000001 /* Build configuration list for PBXNativeTarget "ReadinessTrackerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C1A1F10B0000000000000001 /* Debug */,
+				C1A1F10C0000000000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

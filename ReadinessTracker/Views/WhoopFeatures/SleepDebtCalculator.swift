@@ -158,5 +158,6 @@ struct SleepDebtCalculator: View {
                 }
             }
         }
+        .accessibilityIdentifier(SurfaceID.sleepDebtCard)
     }
 }

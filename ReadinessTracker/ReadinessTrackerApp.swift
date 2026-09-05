@@ -4,7 +4,7 @@ import BackgroundTasks
 @main
 struct ReadinessTrackerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -25,11 +25,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             await NotificationManager.shared.rescheduleAll()
         }
 
-        // Auto-request HealthKit authorization on first launch
-        Task {
-            await HealthKitManager.shared.requestAuthorization()
-            // After auth, fetch historical data from Apple Health (past 30 days)
-            await HealthKitManager.shared.fetchHistoricalData(days: 30)
+        if !ProcessInfo.processInfo.arguments.contains("-ui-fixture") {
+            Task {
+                await HealthKitManager.shared.requestAuthorization()
+                await HealthKitManager.shared.fetchHistoricalData(days: 30)
+            }
         }
         
         // Register background refresh

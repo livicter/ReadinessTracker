@@ -88,6 +88,7 @@ struct SleepConsistencyTracker: View {
                 }
             }
         }
+        .accessibilityIdentifier(SurfaceID.sleepConsistency)
     }
     
     private var bedtimeChart: some View {

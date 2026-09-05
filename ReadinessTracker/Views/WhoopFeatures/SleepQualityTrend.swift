@@ -142,6 +142,7 @@ struct SleepQualityTrend: View {
                 }
             }
         }
+        .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
     }
     
     private func scoreColor(_ score: Int) -> Color {

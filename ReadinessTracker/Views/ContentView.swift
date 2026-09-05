@@ -35,6 +35,7 @@ struct ContentView: View {
         }
         .tint(RTColor.optimal)
         .toolbarBackground(RTColor.surface, for: .tabBar)
+        .onAppear { UIFixture.installIfRequested() }
         .onChange(of: selectedTab) { _ in Haptic.selectionChanged() }
     }
 }
@@ -276,7 +277,9 @@ struct SettingsView: View {
                                 }
                             }
                         }
+                        .accessibilityIdentifier(SurfaceID.settingsHealthKitConnect)
                     }
+                    .accessibilityIdentifier(SurfaceID.settingsDataSources)
 
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
@@ -300,6 +303,7 @@ struct SettingsView: View {
                                     }
                                 }
                             }
+                            .accessibilityIdentifier(SurfaceID.settingsFitbitConnect)
                             if fitbit.isAuthenticated {
                                 Button("Disconnect", role: .destructive) {
                                     Haptic.press()

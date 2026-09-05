@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Local parity with GitHub Actions CI: build + unit tests on iOS Simulator.
+# Capture Today, WHOOP stack, Body & activity, and Settings via XCUITest scroll.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -7,17 +7,15 @@ cd "$ROOT"
 
 PROJECT="ReadinessTracker.xcodeproj"
 SCHEME="ReadinessTracker"
-DERIVED="${DERIVED_DATA_PATH:-/tmp/ReadinessTracker-CI-DD}"
-RESULT_BUNDLE="${RESULT_BUNDLE_PATH:-$ROOT/.audit/ci-result.xcresult}"
-
-mkdir -p "$(dirname "$RESULT_BUNDLE")" .audit
+DERIVED="${DERIVED_DATA_PATH:-/tmp/ReadinessTracker-UI-DD}"
+SHOT_SRC="/tmp/rt-audit"
+SHOT_DST="$ROOT/.audit"
 
 pick_destination() {
   if [[ -n "${DESTINATION:-}" ]]; then
     printf '%s\n' "$DESTINATION"
     return
   fi
-  # Prefer an available iPhone simulator; fall back to generic latest iPhone.
   local name
   name="$(xcrun simctl list devices available | awk -F'[()]' '/iPhone/ && /Booted|Shutdown/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); print $1; exit}')"
   if [[ -n "$name" ]]; then
@@ -29,22 +27,25 @@ pick_destination() {
 
 DEST="$(pick_destination)"
 echo "==> Destination: $DEST"
-echo "==> DerivedData: $DERIVED"
-xcodebuild -version
+rm -rf "$SHOT_SRC"
+mkdir -p "$SHOT_SRC" "$SHOT_DST"
 
-rm -rf "$RESULT_BUNDLE"
-
-set -x
 xcodebuild test \
   -project "$PROJECT" \
   -scheme "$SCHEME" \
   -destination "$DEST" \
   -derivedDataPath "$DERIVED" \
-  -resultBundlePath "$RESULT_BUNDLE" \
-  -only-testing:ReadinessTrackerTests \
+  -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO \
   -quiet
-set +x
 
-echo "==> TEST SUCCEEDED"
-echo "==> Result bundle: $RESULT_BUNDLE"
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png; do
+  if [[ ! -s "$SHOT_SRC/$f" ]]; then
+    echo "missing $SHOT_SRC/$f" >&2
+    exit 1
+  fi
+  cp "$SHOT_SRC/$f" "$SHOT_DST/$f"
+  echo "==> $SHOT_DST/$f"
+done
+
+echo "==> SURFACES CAPTURED"

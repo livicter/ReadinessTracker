@@ -34,6 +34,20 @@
                ReferencedContainer = "container:ReadinessTracker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C1A1F1040000000000000001"
+               BuildableName = "ReadinessTrackerUITests.xctest"
+               BlueprintName = "ReadinessTrackerUITests"
+               ReferencedContainer = "container:ReadinessTracker.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -58,6 +72,16 @@
                BlueprintIdentifier = "B58574B0B3BD6FDD527B3530"
                BuildableName = "ReadinessTrackerTests.xctest"
                BlueprintName = "ReadinessTrackerTests"
+               ReferencedContainer = "container:ReadinessTracker.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C1A1F1040000000000000001"
+               BuildableName = "ReadinessTrackerUITests.xctest"
+               BlueprintName = "ReadinessTrackerUITests"
                ReferencedContainer = "container:ReadinessTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>

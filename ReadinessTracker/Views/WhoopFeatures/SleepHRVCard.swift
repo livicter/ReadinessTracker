@@ -177,6 +177,7 @@ struct SleepHRVCard: View {
                 }
             }
         }
+        .accessibilityIdentifier(SurfaceID.sleepHRVCard)
     }
     
     private var hRVInsight: String {
