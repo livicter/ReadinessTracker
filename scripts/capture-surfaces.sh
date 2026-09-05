@@ -8,8 +8,8 @@ cd "$ROOT"
 PROJECT="ReadinessTracker.xcodeproj"
 SCHEME="ReadinessTracker"
 DERIVED="${DERIVED_DATA_PATH:-/tmp/ReadinessTracker-UI-DD}"
-SHOT_SRC="/tmp/rt-audit"
-SHOT_DST="$ROOT/.audit"
+SHOT_SRC="${SHOT_SRC:-/tmp/rt-audit}"
+SHOT_DST="${SHOT_DST:-$ROOT/.audit}"
 
 pick_destination() {
   if [[ -n "${DESTINATION:-}" ]]; then

@@ -11,12 +11,26 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
+  tree-guard:
+    name: Tree guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard tracked tree
+        run: ./scripts/ci-guard-tree.sh
+
   ios-tests:
     name: iOS unit tests
+    needs: tree-guard
     runs-on: macos-15
     timeout-minutes: 45
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +45,6 @@ jobs:
         id: dest
         run: |
           set -euo pipefail
-          # Pick the first available iPhone; prefer Pro models when present.
           NAME="$(xcrun simctl list devices available \
             | awk -F'[()]' '/iPhone/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); print $1}' \
             | grep -E 'iPhone (16|17)' \
@@ -59,6 +72,56 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: xcresult
+          name: xcresult-unit
           path: ${{ runner.temp }}/ci-result.xcresult
+          if-no-files-found: ignore
+
+  ios-ui:
+    name: iOS UI surfaces
+    needs: tree-guard
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Resolve simulator destination
+        id: dest
+        run: |
+          set -euo pipefail
+          NAME="$(xcrun simctl list devices available \
+            | awk -F'[()]' '/iPhone/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); print $1}' \
+            | grep -E 'iPhone (16|17)' \
+            | head -1 || true)"
+          if [[ -z "$NAME" ]]; then
+            NAME="$(xcrun simctl list devices available \
+              | awk -F'[()]' '/iPhone/ {gsub(/^[[:space:]]+|[[:space:]]+$/, "", $1); print $1; exit}')"
+          fi
+          if [[ -z "$NAME" ]]; then
+            echo "No iPhone simulator available" >&2
+            exit 1
+          fi
+          DEST="platform=iOS Simulator,name=${NAME}"
+          echo "destination=${DEST}" >> "$GITHUB_OUTPUT"
+          echo "Using: $DEST"
+
+      - name: Run UI surface tests
+        env:
+          DESTINATION: ${{ steps.dest.outputs.destination }}
+          DERIVED_DATA_PATH: ${{ runner.temp }}/UI-DerivedData
+          SHOT_SRC: ${{ runner.temp }}/rt-audit
+          SHOT_DST: ${{ runner.temp }}/rt-audit-out
+        run: ./scripts/capture-surfaces.sh
+
+      - name: Upload surface screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-surfaces
+          path: ${{ runner.temp }}/rt-audit-out/*.png
           if-no-files-found: ignore
