@@ -1,4 +1,0 @@
-Target dependency graph (2 targets)
-Target 'ReadinessTrackerTests' in project 'ReadinessTracker'
-➜ Explicit dependency on target 'ReadinessTracker' in project 'ReadinessTracker'
-Target 'ReadinessTracker' in project 'ReadinessTracker' (no dependencies)
