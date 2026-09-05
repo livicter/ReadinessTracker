@@ -64,9 +64,20 @@ struct JournalView: View {
                         }
                         
                         // Behavior impact summary (when we have enough data)
-                        if entries.count >= 3 {
+                        if entries.count >= 7 {
                             behaviorImpactSection
                                 .slideIn(delay: 0.2)
+                        } else {
+                            NativeCard {
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "chart.bar")
+                                        .foregroundStyle(RTColor.secondaryText)
+                                    Text("Log 7 days to see how habits line up with next-day readiness.")
+                                        .font(.subheadline)
+                                        .foregroundStyle(RTColor.secondaryText)
+                                }
+                            }
+                            .slideIn(delay: 0.2)
                         }
                     }
                     .padding(.horizontal, AppleTheme.horizontalMargin)
