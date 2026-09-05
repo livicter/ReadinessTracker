@@ -16,6 +16,13 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dashboard.png")
     }
 
+    func testTodayRingsGeometry() throws {
+        XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["Gym"].exists)
+        Thread.sleep(forTimeInterval: 1.4)
+        saveShot("verify-rings.png")
+    }
+
     func testWhoopStackVisibleAfterScroll() throws {
         revealText("Sleep HRV")
         XCTAssertTrue(app.staticTexts["Sleep Debt"].exists)

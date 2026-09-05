@@ -1,108 +1,75 @@
 import SwiftUI
 
-// MARK: - Triple Ring Hero (Apple Watch Activity-style)
 struct TripleRingHero: View {
     let gymScore: Int
     let workScore: Int
     let sleepScore: Int
     let size: CGFloat
-    
+
+    private let lineWidth: CGFloat = 14
+    private let gap: CGFloat = 4
+
     var body: some View {
+        let middle = size - 2 * (lineWidth + gap)
+        let inner = size - 4 * (lineWidth + gap)
         ZStack {
-            // Outer glow effect
-            Circle()
-                .stroke(RTColor.divider, lineWidth: 1)
-                .frame(width: size + 20, height: size + 20)
-            
-            // Sleep ring (outermost)
             ActivityRing(
                 progress: Double(sleepScore) / 100,
                 color: RTColor.sleep,
-                lineWidth: 14,
+                lineWidth: lineWidth,
                 size: size
             )
-            
-            // Work ring (middle)
             ActivityRing(
                 progress: Double(workScore) / 100,
                 color: RTColor.hrv,
-                lineWidth: 14,
-                size: size * 0.72
+                lineWidth: lineWidth,
+                size: middle
             )
-            
-            // Gym ring (innermost)
             ActivityRing(
                 progress: Double(gymScore) / 100,
                 color: RTColor.strain,
-                lineWidth: 14,
-                size: size * 0.44
+                lineWidth: lineWidth,
+                size: inner
             )
-            
-            // Center score display
             VStack(spacing: 2) {
-                // Fixed size by design — lives inside a fixed-size ring; Dynamic Type would break the layout
                 Text("\(overallScore)")
                     .font(.system(size: 42, weight: .bold, design: .rounded))
                     .foregroundColor(RTColor.primaryText)
-                
                 Text("READY")
                     .font(.caption2.weight(.semibold))
                     .foregroundColor(RTColor.secondaryText)
                     .tracking(2)
             }
         }
-        .frame(width: size + 20, height: size + 20)
+        .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Readiness score")
         .accessibilityValue("\(overallScore) out of 100. Sleep \(sleepScore), work \(workScore), gym \(gymScore)")
         .accessibilityAddTraits(.isSummaryElement)
+        .accessibilityIdentifier("today.rings")
     }
-    
+
     private var overallScore: Int {
         Int((Double(gymScore) + Double(workScore) + Double(sleepScore)) / 3.0)
     }
 }
 
-// MARK: - Activity Ring (Apple Watch style)
 struct ActivityRing: View {
     let progress: Double
     let color: Color
     let lineWidth: CGFloat
     let size: CGFloat
-    
+
     @State private var animatedProgress: Double = 0
-    
+
     var body: some View {
         ZStack {
-            // Background track
             Circle()
                 .stroke(color.opacity(0.15), lineWidth: lineWidth)
-            
-            // Progress ring with gradient
             Circle()
                 .trim(from: 0, to: min(animatedProgress, 1.0))
-                .stroke(
-                    AngularGradient(
-                        colors: [color, color.opacity(0.7)],
-                        center: .center,
-                        startAngle: .degrees(-90),
-                        endAngle: .degrees(270)
-                    ),
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .round)
-                )
+                .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-            
-            // Glow at the tip
-            if animatedProgress > 0.05 {
-                Circle()
-                    .fill(color)
-                    .frame(width: lineWidth * 0.8, height: lineWidth * 0.8)
-                    .offset(
-                        x: cos((min(animatedProgress, 1.0) * 360 - 90) * .pi / 180) * (size / 2 - lineWidth / 2),
-                        y: sin((min(animatedProgress, 1.0) * 360 - 90) * .pi / 180) * (size / 2 - lineWidth / 2)
-                    )
-                    .shadow(color: color, radius: 6)
-            }
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
@@ -121,12 +88,11 @@ struct ActivityRing: View {
     }
 }
 
-// MARK: - Ring Legend
 struct RingLegend: View {
     let gymScore: Int
     let workScore: Int
     let sleepScore: Int
-    
+
     var body: some View {
         HStack(spacing: 20) {
             LegendItem(label: "Gym", score: gymScore, color: RTColor.strain, icon: "dumbbell.fill")
@@ -141,7 +107,7 @@ struct LegendItem: View {
     let score: Int
     let color: Color
     let icon: String
-    
+
     var body: some View {
         VStack(spacing: 6) {
             HStack(spacing: 4) {
@@ -152,7 +118,6 @@ struct LegendItem: View {
                     .font(.caption.weight(.medium))
                     .foregroundColor(RTColor.secondaryText)
             }
-            
             Text("\(score)")
                 .font(.system(.title3, design: .rounded).weight(.bold))
                 .foregroundColor(RTColor.primaryText)
