@@ -114,8 +114,6 @@ jobs:
         env:
           DESTINATION: ${{ steps.dest.outputs.destination }}
           DERIVED_DATA_PATH: ${{ runner.temp }}/UI-DerivedData
-          SHOT_SRC: ${{ runner.temp }}/rt-audit
-          SHOT_DST: ${{ runner.temp }}/rt-audit-out
         run: ./scripts/capture-surfaces.sh
 
       - name: Upload surface screenshots
@@ -123,5 +121,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-surfaces
-          path: ${{ runner.temp }}/rt-audit-out/*.png
+          path: /tmp/rt-audit/*.png
           if-no-files-found: ignore

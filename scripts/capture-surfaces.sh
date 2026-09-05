@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Capture Today, WHOOP stack, Body & activity, and Settings via XCUITest scroll.
+# Capture Today, WHOOP stack, Body & activity, Settings, and rings via XCUITest.
+# UITests write PNGs to /tmp/rt-audit. This script copies them into .audit/.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -8,7 +9,7 @@ cd "$ROOT"
 PROJECT="ReadinessTracker.xcodeproj"
 SCHEME="ReadinessTracker"
 DERIVED="${DERIVED_DATA_PATH:-/tmp/ReadinessTracker-UI-DD}"
-SHOT_SRC="${SHOT_SRC:-/tmp/rt-audit}"
+SHOT_SRC="/tmp/rt-audit"
 SHOT_DST="${SHOT_DST:-$ROOT/.audit}"
 
 pick_destination() {
@@ -30,6 +31,11 @@ echo "==> Destination: $DEST"
 rm -rf "$SHOT_SRC"
 mkdir -p "$SHOT_SRC" "$SHOT_DST"
 
+quiet=()
+if [[ -z "${CI:-}" ]]; then
+  quiet=(-quiet)
+fi
+
 xcodebuild test \
   -project "$PROJECT" \
   -scheme "$SCHEME" \
@@ -37,7 +43,7 @@ xcodebuild test \
   -derivedDataPath "$DERIVED" \
   -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO \
-  -quiet
+  "${quiet[@]}"
 
 for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
