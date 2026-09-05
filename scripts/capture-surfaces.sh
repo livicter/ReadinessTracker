@@ -31,19 +31,13 @@ echo "==> Destination: $DEST"
 rm -rf "$SHOT_SRC"
 mkdir -p "$SHOT_SRC" "$SHOT_DST"
 
-quiet=()
-if [[ -z "${CI:-}" ]]; then
-  quiet=(-quiet)
-fi
-
 xcodebuild test \
   -project "$PROJECT" \
   -scheme "$SCHEME" \
   -destination "$DEST" \
   -derivedDataPath "$DERIVED" \
   -only-testing:ReadinessTrackerUITests \
-  CODE_SIGNING_ALLOWED=NO \
-  "${quiet[@]}"
+  CODE_SIGNING_ALLOWED=NO
 
 for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
