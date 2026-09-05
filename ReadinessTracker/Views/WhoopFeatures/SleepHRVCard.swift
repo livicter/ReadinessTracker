@@ -118,40 +118,54 @@ struct SleepHRVCard: View {
                 }
                 
                 // Recovery correlation insight
-                HStack(spacing: 12) {
-                    HStack(spacing: 12) {
+                HStack(spacing: 8) {
+                    HStack(spacing: 8) {
                         AppIconTile(
                             systemName: hRVDeviation > 0 ? "arrow.up.forward" : "arrow.down.forward",
-                            color: recoveryStatus.color
+                            color: recoveryStatus.color,
+                            size: 24
                         )
                         Text("HRV Trend")
-                            .font(.subheadline.weight(.medium))
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(RTColor.primaryText)
-                        Spacer()
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .layoutPriority(1)
+                        Spacer(minLength: 4)
                         Text(hRVDeviation > 0 ? "Rising" : "Falling")
-                            .font(.subheadline.weight(.semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(RTColor.secondaryText)
+                            .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
                     }
-                    .padding(12)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                             .fill(RTColor.surfaceHighlight)
                     )
 
-                    HStack(spacing: 12) {
+                    HStack(spacing: 8) {
                         AppIconTile(
                             systemName: "bed.double.fill",
-                            color: sleepQuality > 0.8 ? RTColor.optimal : (sleepQuality > 0.6 ? RTColor.caution : RTColor.warning)
+                            color: sleepQuality > 0.8 ? RTColor.optimal : (sleepQuality > 0.6 ? RTColor.caution : RTColor.warning),
+                            size: 24
                         )
                         Text("Sleep Quality")
-                            .font(.subheadline.weight(.medium))
+                            .font(.caption.weight(.medium))
                             .foregroundStyle(RTColor.primaryText)
-                        Spacer()
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .layoutPriority(1)
+                        Spacer(minLength: 4)
                         Text("\(Int(sleepQuality * 100))%")
-                            .font(.subheadline.weight(.semibold))
+                            .font(.caption.weight(.semibold))
                             .foregroundStyle(RTColor.secondaryText)
+                            .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
                     }
-                    .padding(12)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
                     .background(
                         RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                             .fill(RTColor.surfaceHighlight)
