@@ -572,6 +572,16 @@ struct DashboardView: View {
                         StageLabel(label: "REM", percent: data.remSleepPercent, optimal: "20-25%", isOptimal: SleepData.optimalRem.contains(data.remSleepPercent))
                         StageLabel(label: "Efficiency", percent: data.sleepEfficiency, optimal: ">85%", isOptimal: data.sleepEfficiency >= 0.85)
                     }
+
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundStyle(data.wakeEpisodes <= 2 ? RTColor.optimal : RTColor.caution)
+                        Text(data.wakeEpisodes == 1 ? "1 disturbance" : "\(data.wakeEpisodes) disturbances")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    .accessibilityLabel("Sleep disturbances")
                 }
             }
         }
