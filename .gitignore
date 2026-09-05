@@ -1,11 +1,27 @@
 .DS_Store
-DerivedData/
-build/
-build-DD/
-*.xcuserstate
-xcuserdata/
+*.swp
+
+# Secrets. Keep Secrets.xcconfig.example.
 Secrets.xcconfig
 Config/Secrets.xcconfig
 
+# Xcode user state. Keep xcshareddata schemes.
+xcuserdata/
+*.xcuserstate
+
+# Compiled products and DerivedData. Never the .app.
+DerivedData/
+build/
+build-DD/
+*.ipa
+*.app/
+*.appex/
+*.dSYM/
+*.xcarchive
+*.xcresult
 .audit/*.xcresult/
 .audit/ci-result.xcresult/
+ModuleCache.noindex/
+*.o
+*.d
+*.dia
