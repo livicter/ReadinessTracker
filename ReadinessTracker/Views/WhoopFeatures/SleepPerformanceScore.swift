@@ -130,8 +130,28 @@ private struct SleepMetricItem: View {
     let label: String
     let value: String
     let icon: String
-    
+
     var body: some View {
-        AppListRow(icon: icon, color: RTColor.secondaryText, label: label, value: value, showChevron: false)
+        HStack(spacing: 8) {
+            AppIconTile(systemName: icon, color: RTColor.secondaryText, size: 24)
+            Text(label)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(RTColor.primaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                .layoutPriority(1)
+            Spacer(minLength: 4)
+            Text(value)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(RTColor.secondaryText)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                .fill(RTColor.surface)
+        )
     }
 }
