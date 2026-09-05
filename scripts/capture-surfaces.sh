@@ -39,7 +39,7 @@ xcodebuild test \
   CODE_SIGNING_ALLOWED=NO \
   -quiet
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1
