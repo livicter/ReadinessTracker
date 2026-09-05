@@ -1,11 +1,10 @@
 # ReadinessTracker
 
-iOS readiness app. Bright Apple Health UI. Local HealthKit + optional Fitbit. WHOOP product surfaces via Apple Health — no unofficial WHOOP OAuth.
+iOS readiness app. Bright Apple Health UI. Local HealthKit + optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**main today:** `d2ae376` (PR #8 harness on top of PR #7).  
-**Stacked but not on main:** PR #9 (disturbances + journal strip) and PR #10 (Body above WHOOP) merged into `feature/body-above-whoop`. Open a PR from that branch onto `main` before treating those slices as shipped.
+**main today:** `ea79681` (PR #12). Body sits above the WHOOP stack. Today shows sleep disturbance count. Journal impact waits for 7 days.
 
-Screenshots below are live Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe + `-ui-fixture`, not VoiceOver). Re-run that script after landing #9/#10; do not enable Simulator Accessibility to prove these surfaces.
+Screenshots below are live Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe + `-ui-fixture`, not VoiceOver).
 
 ## Status
 
@@ -13,15 +12,15 @@ Screenshots below are live Simulator captures from `./scripts/capture-surfaces.s
 |---|---|---|
 | Today hero, Gym / Work / Sleep rings | Shipped on main | [verify-dashboard.png](.audit/verify-dashboard.png) |
 | Source chips + **WHOOP via Apple Health** | Shipped on main | dashboard frame |
-| Morning / Evening check-in cards | Shipped; sit under the hero (tab bar covers the bottom of the dashboard shot) | dashboard frame |
+| Morning / Evening check-in cards | Shipped. Tab bar covers them in the dashboard shot. Morning wraps on the half-card | dashboard + body frames |
 | Recovery / Strain wheel | Shipped on main | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
-| Sleep Performance (14-night need) | Shipped on main | whoop frame |
-| Sleep HRV (RMSSD) | Shipped on main | whoop frame, 58 ms fixture |
-| Sleep Debt | Shipped; only the header is in the whoop frame | whoop frame bottom edge |
-| Sleep Quality / Consistency cards | Present; further down. UITest asserts labels after swipe. One iPhone frame cannot hold Recovery → Consistency | UITest, not a single PNG |
-| Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped on main, **still below WHOOP** until PR #10 is on main | [verify-body-activity.png](.audit/verify-body-activity.png) |
-| Sleep disturbance count on Today sleep row | PR #9, not on main | code on `feature/whoop-today-completeness` |
-| Journal “log 7 days” strip | PR #9, not on main | same branch |
+| Sleep Performance (14-night need) | Shipped. Efficiency and Consistency are one line | whoop frame |
+| Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart, under the tab bar | whoop frame |
+| Sleep Debt | Present further down | UITest, not this PNG |
+| Sleep Quality / Consistency cards | Present further down. One iPhone frame cannot hold Recovery through Consistency | UITest |
+| Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped on main, **above** the WHOOP stack. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) |
+| Sleep disturbance count on Today sleep row | Shipped on main | `DashboardView` sleep card. Not in the four PNGs |
+| Journal “log 7 days” strip | Shipped on main | `JournalView`. Not in the four PNGs |
 | Settings connect / reconnect + cycle toggle off | Shipped on main | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
@@ -36,13 +35,13 @@ Bright grouped background, dark selected Apple Watch chip, WHOOP-via-Health capt
 
 ### Recovery, sleep performance, HRV
 
-Scrolled Today. Need caption is the 14-night average. Sleep Debt starts under the tab bar.
+Scrolled Today after Body. Need caption is the 14-night average. Efficiency and Consistency no longer wrap mid-word.
 
 ![WHOOP stack](.audit/verify-whoop-stack.png)
 
 ### Body and activity
 
-Google Health–style glance metrics. Label is **Activity**, not Heart Points. Protein row clips on this fixture width.
+Sits above Recovery & Strain. Label is **Activity**, not Heart Points. Protein row clips under the tab bar.
 
 ![Body and activity](.audit/verify-body-activity.png)
 
@@ -72,8 +71,6 @@ DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro' ./scripts/ci-verify.sh
 
 ## Honest gaps (next swarm)
 
-1. Land `feature/body-above-whoop` onto `main` (PRs #9 + #10).
-2. Recapture all four PNGs after the section reorder.
-3. Compact Sleep Performance / HRV sublabels so “Efficiency” and “Sleep Quality” do not wrap mid-word.
-4. Fifth capture frame for Sleep Quality + Consistency, or accept UITest-only proof for that slice.
-5. Tab bar is a floating overlay; keep check-in cards out from under it in the dashboard shot (scroll 40pt or shrink hero).
+1. Fifth capture frame for Sleep HRV chips plus Sleep Quality / Consistency cards, or keep UITest-only proof for that slice.
+2. Tab bar is a floating overlay. Check-in cards sit under it in the dashboard shot (scroll 40pt or shrink the hero).
+3. Morning wraps on the half-width check-in card.
