@@ -96,6 +96,18 @@ extension Color {
 }
 
 // MARK: - Score Zone Helpers
+enum SurfaceID {
+    static let whoopSection = "whoopSection"
+    static let sleepHRVCard = "sleepHRVCard"
+    static let sleepDebtCard = "sleepDebtCard"
+    static let sleepQualityTrend = "sleepQualityTrend"
+    static let sleepConsistency = "sleepConsistency"
+    static let bodyActivitySection = "bodyActivitySection"
+    static let settingsHealthKitConnect = "settings.healthkit.connect"
+    static let settingsFitbitConnect = "settings.fitbit.connect"
+    static let settingsDataSources = "settings.dataSources"
+}
+
 enum ScoreZone {
     case optimal, good, caution, warning
     

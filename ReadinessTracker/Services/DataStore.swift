@@ -63,6 +63,10 @@ class DataStore: ObservableObject {
         return csv
     }
     
+    func seedUIFixture() {
+        history = UIFixture.history()
+    }
+
     private func persist() {
         if let encoded = try? JSONEncoder().encode(history) {
             defaults.set(encoded, forKey: key)
@@ -71,5 +75,52 @@ class DataStore: ObservableObject {
         // Widget + watch snapshots after every data write (health sync, check-in)
         WidgetDataExporter.export(from: self)
         WatchConnectivityManager.shared.pushSnapshot()
+    }
+}
+
+enum UIFixture {
+    static var isRequested: Bool {
+        ProcessInfo.processInfo.arguments.contains("-ui-fixture")
+    }
+
+    @MainActor
+    static func installIfRequested() {
+        guard isRequested else { return }
+        DataStore.shared.seedUIFixture()
+        HealthKitManager.shared.dataSource = "Whoop"
+        HealthKitManager.shared.isAuthorized = true
+        HealthKitManager.shared.errorMessage = nil
+    }
+
+    static func history() -> [DailyHealthData] {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        return (0..<14).map { offset in
+            let date = cal.date(byAdding: .day, value: -offset, to: today)!
+            let previous = cal.date(byAdding: .day, value: -1, to: date)!
+            let sleepStart = cal.date(bySettingHour: 23, minute: 5 + (offset % 3), second: 0, of: previous)
+            let sleepEnd = cal.date(bySettingHour: 7, minute: 10 + (offset % 4), second: 0, of: date)
+            return DailyHealthData(
+                date: date,
+                source: .appleWatch,
+                sleepHours: 7.4,
+                sleepEfficiency: 0.90,
+                deepSleepPercent: 0.17,
+                remSleepPercent: 0.21,
+                sleepStartTime: sleepStart,
+                sleepEndTime: sleepEnd,
+                wakeEpisodes: 1,
+                hrv: 58,
+                hrvIsRMSSD: true,
+                restingHeartRate: 54,
+                activeCalories: 420,
+                steps: 8200,
+                workoutMinutes: 42,
+                skinTemperature: 36.4,
+                respiratoryRate: 15.2,
+                bloodOxygen: 97,
+                nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95)
+            )
+        }
     }
 }

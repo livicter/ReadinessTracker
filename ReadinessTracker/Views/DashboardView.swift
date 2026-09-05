@@ -629,8 +629,10 @@ struct DashboardView: View {
                     baselineHRV: BaselineManager.hrvBaseline(from: history, matchesRMSSD: data.hrvIsRMSSD),
                     sleepQuality: data.sleepEfficiency
                 )
+                .accessibilityIdentifier(SurfaceID.sleepHRVCard)
             } else {
                 MissingMetricRow(title: "Sleep HRV")
+                    .accessibilityIdentifier(SurfaceID.sleepHRVCard)
             }
 
             if history.contains(where: { $0.sleepHours > 0 }) {
@@ -638,16 +640,22 @@ struct DashboardView: View {
                     history: history.map { ($0.date, $0.sleepHours) },
                     sleepNeed: sleepNeed
                 )
+                .accessibilityIdentifier(SurfaceID.sleepDebtCard)
                 SleepQualityTrend(
                     history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) }
                 )
+                .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
                 SleepConsistencyTracker(
                     history: history.map { ($0.date, $0.sleepStartTime, $0.sleepEndTime, $0.sleepHours) }
                 )
+                .accessibilityIdentifier(SurfaceID.sleepConsistency)
             } else {
                 MissingMetricRow(title: "Sleep Debt")
+                    .accessibilityIdentifier(SurfaceID.sleepDebtCard)
                 MissingMetricRow(title: "Sleep Quality Trend")
+                    .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
                 MissingMetricRow(title: "Sleep Consistency")
+                    .accessibilityIdentifier(SurfaceID.sleepConsistency)
             }
 
             StrainRecoveryBalanceCard(balance: scores.balance)
@@ -680,6 +688,7 @@ struct DashboardView: View {
                 }
             }
         }
+        .accessibilityIdentifier(SurfaceID.whoopSection)
     }
 
     private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
@@ -973,6 +982,7 @@ struct DashboardView: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Body and activity")
+        .accessibilityIdentifier(SurfaceID.bodyActivitySection)
     }
 
     private func bodyStat(title: String, value: String, icon: String) -> some View {
