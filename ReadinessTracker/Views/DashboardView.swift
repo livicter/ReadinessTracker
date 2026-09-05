@@ -113,7 +113,9 @@ struct DashboardView: View {
                     }
                     .padding(.horizontal, AppleTheme.horizontalMargin)
                     .padding(.vertical, 12)
+                    .padding(.bottom, 80)
                 }
+                .padding(.bottom, 24)
                 .refreshable {
                     await performRefresh()
                 }
