@@ -412,7 +412,7 @@ struct ToggleChip: View {
                 
                 Text(label)
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(isOn ? .white : RTColor.secondaryText)
+                    .foregroundStyle(isOn ? RTColor.primaryText : RTColor.secondaryText)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)

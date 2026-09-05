@@ -156,7 +156,7 @@ private struct BehaviorToggle: View {
                 Text(behavior.rawValue)
                     .font(.system(size: 13, weight: .medium))
             }
-            .foregroundStyle(isSelected ? .white : RTColor.secondaryText)
+            .foregroundStyle(isSelected ? behavior.color.contrastingTextColor : RTColor.secondaryText)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(isSelected ? behavior.color : RTColor.surfaceHighlight)

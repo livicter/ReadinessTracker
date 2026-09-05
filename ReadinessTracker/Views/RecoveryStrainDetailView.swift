@@ -38,10 +38,6 @@ struct RecoveryStrainDetailView: View {
         StrainRecoveryBalance.compute(recovery: scores.general, strain: strainScore)
     }
     
-    private var sleepBaseline: Double {
-        BaselineManager.sleepBaseline(from: history)
-    }
-    
     private var sleepConsistency: Double {
         guard history.count >= 3 else { return 50 }
         let sleepHours = history.map { $0.sleepHours }
@@ -71,7 +67,7 @@ struct RecoveryStrainDetailView: View {
                 
                 // Sleep performance
                 SleepPerformanceScore(
-                    sleepNeeded: sleepBaseline * 1.1,
+                    sleepNeeded: BaselineManager.sleepNeed(from: history),
                     sleepObtained: data.sleepHours,
                     efficiency: data.sleepEfficiency * 100,
                     consistency: sleepConsistency

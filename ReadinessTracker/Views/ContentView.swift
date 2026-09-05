@@ -1,5 +1,6 @@
 import SwiftUI
 import Charts
+import UIKit
 
 struct ContentView: View {
     @State private var selectedTab = 0
@@ -135,37 +136,21 @@ struct HistoryView: View {
     // MARK: - Empty States
     private var emptyHistoryState: some View {
         VStack(spacing: 12) {
-            Image(systemName: "calendar.badge.clock")
-                .font(.system(size: 40))
-                .foregroundStyle(RTColor.surfaceHighlight)
-
-            Text("No Data for \(selectedSource.rawValue)")
-                .font(.headline)
-                .foregroundStyle(RTColor.primaryText)
-
-            Text("Sync your device to start building history")
-                .font(.caption)
-                .foregroundStyle(RTColor.secondaryText)
+            AppEmptyState(
+                systemImage: "calendar.badge.clock",
+                title: "No Data for \(selectedSource.rawValue)",
+                message: "Sync your device to start building history"
+            )
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
     }
 
     private var weeklyReportUnavailable: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "doc.text")
-                .font(.system(size: 40))
-                .foregroundStyle(RTColor.surfaceHighlight)
-
-            Text("Not Enough Data")
-                .font(.headline)
-                .foregroundStyle(RTColor.primaryText)
-
-            Text("Need at least 3 days of data for a weekly report")
-                .font(.subheadline)
-                .foregroundStyle(RTColor.secondaryText)
-                .multilineTextAlignment(.center)
-        }
+        AppEmptyState(
+            systemImage: "doc.text",
+            title: "Not Enough Data",
+            message: "Need at least 3 days of data for a weekly report"
+        )
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppBackground())
@@ -189,14 +174,14 @@ struct TrendChart: View {
                 x: .value("Date", data.date, unit: .day),
                 y: .value("Score", score)
             )
-            .foregroundStyle(Color.green)
+            .foregroundStyle(RTColor.optimal)
             .interpolationMethod(.catmullRom)
             
             PointMark(
                 x: .value("Date", data.date, unit: .day),
                 y: .value("Score", score)
             )
-            .foregroundStyle(Color.green)
+            .foregroundStyle(RTColor.optimal)
         }
         .chartYScale(domain: 0...100)
     }
@@ -249,12 +234,7 @@ struct HistoryRow: View {
     }
     
     private func scoreColor(_ score: Int) -> Color {
-        switch score {
-        case 80...100: return .green
-        case 60..<80: return .yellow
-        case 40..<60: return .orange
-        default: return .red
-        }
+        ScoreZone(score: score).color
     }
 }
 
@@ -263,22 +243,81 @@ struct SettingsView: View {
     @StateObject private var fitbit = FitbitManager.shared
     @State private var showingExportSheet = false
     @State private var exportText = ""
+    @State private var isRefreshing = false
+    @State private var settings = UserSettings.load()
+    @Environment(\.openURL) private var openURL
     
     var body: some View {
         NavigationStack {
+            ZStack {
+                AppBackground()
             List {
                 Section("Data Sources") {
-                    HStack {
-                        Label("HealthKit", systemImage: "heart.fill")
-                        Spacer()
-                        StatusBadge(isActive: healthKit.isAuthorized)
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Label("Apple Health", systemImage: "heart.fill")
+                            Spacer()
+                            StatusBadge(isActive: healthKit.isAuthorized)
+                        }
+                        Text(DashboardView.healthKitSourceLabel(healthKit.dataSource))
+                            .font(.caption)
+                            .foregroundStyle(RTColor.secondaryText)
+                        if healthKit.dataSource.localizedCaseInsensitiveContains("whoop") {
+                            Text("Official WHOOP API is not connected. Enable WHOOP → Apple Health sharing.")
+                                .font(.caption2)
+                                .foregroundStyle(RTColor.tertiaryText)
+                        }
+                        Button(healthKit.isAuthorized ? "Reconnect" : "Connect") {
+                            Haptic.press()
+                            Task {
+                                await healthKit.requestAuthorization()
+                                if !healthKit.isAuthorized, let url = URL(string: UIApplication.openSettingsURLString) {
+                                    openURL(url)
+                                }
+                            }
+                        }
                     }
-                    
-                    HStack {
-                        Label("Fitbit", systemImage: "figure.walk")
-                        Spacer()
-                        StatusBadge(isActive: fitbit.isAuthenticated)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Label("Fitbit", systemImage: "figure.walk")
+                            Spacer()
+                            StatusBadge(isActive: fitbit.isAuthenticated)
+                        }
+                        if let message = fitbit.errorMessage, !fitbit.isAuthenticated {
+                            Text(message)
+                                .font(.caption2)
+                                .foregroundStyle(RTColor.warning)
+                        }
+                        HStack {
+                            Button(fitbit.isAuthenticated ? "Refresh" : "Connect") {
+                                Haptic.press()
+                                Task {
+                                    if fitbit.isAuthenticated {
+                                        await fitbit.fetchTodayData()
+                                    } else if let url = fitbit.authURL {
+                                        openURL(url)
+                                    }
+                                }
+                            }
+                            if fitbit.isAuthenticated {
+                                Button("Disconnect", role: .destructive) {
+                                    Haptic.press()
+                                    fitbit.disconnect()
+                                }
+                            }
+                        }
                     }
+                }
+
+                Section("Privacy") {
+                    Toggle("Track menstrual cycle", isOn: $settings.trackMenstrualCycle)
+                        .onChange(of: settings.trackMenstrualCycle) { _ in
+                            settings.save()
+                        }
+                    Text("Off by default. When on, cycle data can appear on Today and adjust recovery.")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
                 }
                 
                 Section("Insights") {
@@ -297,13 +336,11 @@ struct SettingsView: View {
                 Section("Actions") {
                     Button {
                         Haptic.press()
-                        Task {
-                            await healthKit.fetchTodayData()
-                        }
+                        Task { await refreshAllSources() }
                     } label: {
-                        Label("Refresh Health Data", systemImage: "arrow.clockwise")
+                        Label(isRefreshing ? "Refreshing…" : "Refresh Health Data", systemImage: "arrow.clockwise")
                     }
-                    .disabled(!healthKit.isAuthorized)
+                    .disabled(isRefreshing)
                     
                     Button {
                         Haptic.press()
@@ -318,16 +355,34 @@ struct SettingsView: View {
                     HStack {
                         Text("Version")
                         Spacer()
-                        Text("1.0.0")
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                             .foregroundColor(.secondary)
                     }
+                    Text("Google Fit REST is not connected. Body & activity uses Apple Health.")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
                 }
+            }
+            .scrollContentBackground(.hidden)
             }
             .navigationTitle("Settings")
             .sheet(isPresented: $showingExportSheet) {
                 ShareSheet(activityItems: [exportText])
             }
         }
+    }
+
+    private func refreshAllSources() async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        if healthKit.isAuthorized {
+            await healthKit.fetchTodayData()
+            await healthKit.fetchHistoricalData(days: 30)
+        }
+        if fitbit.isAuthenticated {
+            await fitbit.fetchTodayData()
+        }
+        isRefreshing = false
     }
 }
 

@@ -56,7 +56,7 @@ struct PoincarePlotView: View {
                         
                         // Horizontal
                         Rectangle()
-                            .fill(Color.white.opacity(0.05))
+                            .fill(RTColor.divider.opacity(0.4))
                             .frame(height: 0.5)
                             .position(
                                 x: width / 2,
@@ -65,7 +65,7 @@ struct PoincarePlotView: View {
                         
                         // Vertical
                         Rectangle()
-                            .fill(Color.white.opacity(0.05))
+                            .fill(RTColor.divider.opacity(0.4))
                             .frame(width: 0.5)
                             .position(
                                 x: padding + plotWidth * pos,
@@ -84,7 +84,7 @@ struct PoincarePlotView: View {
                             y: padding + plotHeight * CGFloat(1 - (maxVal - minVal) / range)
                         )
                     )
-                    .stroke(Color.white.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    .stroke(RTColor.divider, style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
                     
                     // SD1 ellipse (perpendicular to line of identity)
                     if points.count >= 10 {

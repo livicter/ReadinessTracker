@@ -125,7 +125,7 @@ struct TrendDetailView: View {
                         Text(metric.rawValue)
                             .font(.caption.weight(.medium))
                     }
-                    .foregroundStyle(selectedMetrics.contains(metric) ? .white : RTColor.secondaryText)
+                    .foregroundStyle(selectedMetrics.contains(metric) ? metric.color.contrastingTextColor : RTColor.secondaryText)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(selectedMetrics.contains(metric) ? metric.color : RTColor.surface)

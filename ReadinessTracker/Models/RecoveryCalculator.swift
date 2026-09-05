@@ -14,6 +14,11 @@ enum RecoveryCalculator {
     static func calculate(from data: DailyHealthData, history: [DailyHealthData]) -> Int {
         calculateBreakdown(from: data, history: history).totalScore
     }
+
+    /// Score fed to the Recovery & Strain wheel. Recovery 0-100, not general readiness.
+    static func dashboardWheelScore(from data: DailyHealthData, history: [DailyHealthData]) -> Double {
+        Double(calculate(from: data, history: history))
+    }
     
     static func calculateBreakdown(from data: DailyHealthData, history: [DailyHealthData]) -> RecoveryBreakdown {
         let hrvScore = scoreHRV(data.hrv, history: history, data: data)
