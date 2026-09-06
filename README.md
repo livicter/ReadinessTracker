@@ -2,7 +2,7 @@
 
 iOS readiness app. Bright Apple Health UI. Local HealthKit plus optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**This branch (PR #15, includes #16):** Gym / Work / Sleep rings use Apple Activity radii. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
+**main:** Gym / Work / Sleep rings use Apple Activity radii. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
 
 Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe plus `-ui-fixture`, not VoiceOver).
 
@@ -77,15 +77,19 @@ Apple Health connected plus Reconnect. Fitbit Connect with missing-secrets error
 
 ## Verify
 
+Push and pull request to `main` run three required GitHub Actions jobs.
+
+1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
+2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Five XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+
 ```bash
-# Unit gate (CI)
+./scripts/ci-guard-tree.sh
+
 DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro' ./scripts/ci-verify.sh
 
-# Scrolled surfaces → .audit/verify-*.png
-./scripts/capture-surfaces.sh
+DESTINATION='platform=iOS Simulator,name=iPhone 17 Pro' ./scripts/capture-surfaces.sh
 ```
-
-`ci-verify.sh` runs `ReadinessTrackerTests` only. UI tests are `ReadinessTrackerUITests` (5 tests on iPhone 17 Pro, including `testTodayRingsGeometry`).
 
 Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The build recipe is `ReadinessTracker.xcodeproj` plus `scripts/*.sh`. There is no Makefile.
 
