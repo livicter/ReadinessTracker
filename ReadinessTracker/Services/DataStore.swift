@@ -98,8 +98,12 @@ enum UIFixture {
         return (0..<14).map { offset in
             let date = cal.date(byAdding: .day, value: -offset, to: today)!
             let previous = cal.date(byAdding: .day, value: -1, to: date)!
-            let sleepStart = cal.date(bySettingHour: 23, minute: 5 + (offset % 3), second: 0, of: previous)
-            let sleepEnd = cal.date(bySettingHour: 7, minute: 10 + (offset % 4), second: 0, of: date)
+            let sleepStart = cal.date(bySettingHour: 23, minute: 5 + (offset % 3), second: 0, of: previous)!
+            let sleepEnd = cal.date(bySettingHour: 7, minute: 10 + (offset % 4), second: 0, of: date)!
+            let stages = coherentSleepStages(sleepStart: sleepStart, sleepEnd: sleepEnd)
+            // Single source of truth: disturbance count matches awake periods in stages
+            // (Today "N disturbance(s)" and DayDetail/SleepAnalysis hypnogram stay coherent).
+            let wakeEpisodes = SleepCycleDetector.awakePeriods(from: stages).count
             return DailyHealthData(
                 date: date,
                 source: .appleWatch,
@@ -109,7 +113,8 @@ enum UIFixture {
                 remSleepPercent: 0.21,
                 sleepStartTime: sleepStart,
                 sleepEndTime: sleepEnd,
-                wakeEpisodes: 1,
+                wakeEpisodes: wakeEpisodes,
+                sleepStages: stages,
                 hrv: 58,
                 hrvIsRMSSD: true,
                 restingHeartRate: 54,
@@ -122,5 +127,30 @@ enum UIFixture {
                 nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95)
             )
         }
+    }
+
+    /// Fixture hypnogram night: contiguous stages from bed to wake with exactly one mid-sleep awake.
+    /// Keeps Today disturbance count aligned with `SleepCycleDetector.awakePeriods` / HypnogramView.
+    static func coherentSleepStages(sleepStart: Date, sleepEnd: Date) -> [SleepStageInterval] {
+        let total = sleepEnd.timeIntervalSince(sleepStart)
+        guard total >= 60 * 60 else { return [] }
+
+        func at(_ fraction: Double) -> Date {
+            sleepStart.addingTimeInterval(total * fraction)
+        }
+
+        // Proportions approximate a normal night; awake is short (~8 min on an 8h night)
+        // and sits mid-sleep so HealthKit-style wake counting and awakePeriods both equal 1.
+        return [
+            SleepStageInterval(stage: .light, startDate: at(0.00), endDate: at(0.12)),
+            SleepStageInterval(stage: .deep,  startDate: at(0.12), endDate: at(0.28)),
+            SleepStageInterval(stage: .light, startDate: at(0.28), endDate: at(0.40)),
+            SleepStageInterval(stage: .rem,   startDate: at(0.40), endDate: at(0.48)),
+            SleepStageInterval(stage: .awake, startDate: at(0.48), endDate: at(0.50)),
+            SleepStageInterval(stage: .light, startDate: at(0.50), endDate: at(0.62)),
+            SleepStageInterval(stage: .deep,  startDate: at(0.62), endDate: at(0.72)),
+            SleepStageInterval(stage: .rem,   startDate: at(0.72), endDate: at(0.88)),
+            SleepStageInterval(stage: .light, startDate: at(0.88), endDate: at(1.00))
+        ]
     }
 }

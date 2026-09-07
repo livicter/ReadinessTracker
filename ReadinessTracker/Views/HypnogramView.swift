@@ -61,8 +61,8 @@ struct HypnogramView: View {
             RectangleMark(
                 xStart: .value("Start", interval.startDate),
                 xEnd: .value("End", interval.endDate),
-                yStart: .value("Top", interval.stage.depthRank - 1),
-                yEnd: .value("Bottom", interval.stage.depthRank)
+                yStart: .value("Top", interval.stage.hypnogramYStart),
+                yEnd: .value("Bottom", interval.stage.hypnogramYEnd)
             )
             .foregroundStyle(interval.stage.color)
             .opacity(selected == nil || selected == interval ? 1.0 : 0.4)
@@ -183,7 +183,7 @@ struct HypnogramView: View {
     }
 
     private func rankLabel(for rank: Int) -> String {
-        // depthRank - 1 = y value; map back to stage name
+        // hypnogramYEnd band edge; map AxisMarks values back to stage name
         switch rank {
         case -1: return "Awake"
         case -2: return "REM"
