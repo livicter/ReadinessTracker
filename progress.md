@@ -1,16 +1,16 @@
 # Progress
 
-## 2026-09-07 — Self-hosted Mac mini CI
-
-- Registered `mac-mini` runner (labels `self-hosted,macOS,ARM64`); pointed `ios-tests` / `ios-ui` at it; docs in `docs/SELF_HOSTED_RUNNER.md`.
-
-
 ## 2026-09-07 — Sleep debt surface capture (Status-table gap)
 
-- Added `testSleepDebtSurfaceVisibleAfterScroll` to scroll Today to Sleep Debt (`sleepDebtCard`) and save `verify-sleep-debt.png`.
+- Added `testSleepDebtSurfaceVisibleAfterScroll` to scroll Today to Sleep Debt and save `verify-sleep-debt.png`.
 - Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-sleep-debt.png`.
 - README Status + App surfaces + Honest gaps: Sleep Debt shipped with evidence (post Honest #1–#3).
 - Branch: `feature/sleep-debt-surface-capture`.
+
+
+## 2026-09-07 — Self-hosted Mac mini CI
+
+- Registered `mac-mini` runner (labels `self-hosted,macOS,ARM64`); pointed `ios-tests` / `ios-ui` at it; docs in `docs/SELF_HOSTED_RUNNER.md`.
 
 
 ## 2026-09-07 — Triple-ring READY hole (Honest gap #3)
