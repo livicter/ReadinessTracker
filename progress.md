@@ -8,6 +8,11 @@
 - Branch: `feature/sleep-debt-surface-capture`.
 
 
+## 2026-09-07 — Self-hosted Mac mini CI
+
+- Registered `mac-mini` runner (labels `self-hosted,macOS,ARM64`); pointed `ios-tests` / `ios-ui` at it; docs in `docs/SELF_HOSTED_RUNNER.md`.
+
+
 ## 2026-09-07 — Triple-ring READY hole (Honest gap #3)
 
 - Verified center “90 READY” was overlay-only (did not set radius); hole was ~61% of outer from `lineWidth=14` / `gap=4`.
