@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-09-07 — Check-in card no-wrap (Honest gap #2)
+
+- Fixed `CheckInStatusCard` so Morning/Evening labels + Done/Pending stay on one line on half-width HStack cards (`lineLimit(1)`, `minimumScaleFactor(0.75)`, tighter spacing).
+- Updated README Status / Body caption / Honest gaps (gap #2 closed; #1 and #3 remain).
+- Gates: `./scripts/ci-guard-tree.sh`, `ci-verify.sh`, prefer `capture-surfaces.sh` for verify-body-activity.png.
+- Branch: `feature/checkin-card-no-wrap`.
+
+
 ## 2026-07-12 — Phase 1 verification + Phase 2 scoping
 
 - Re-ran full test suite on `feature/whoop-strain-recovery-model`.
