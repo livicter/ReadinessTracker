@@ -54,6 +54,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-debt.png")
     }
 
+    func testCheckInTabSurface() throws {
+        app.tabBars.buttons["Check-in"].tap()
+        // Daily Check-in: Morning/Evening segmented picker + Save chrome under -ui-fixture.
+        let morning = app.buttons["Morning"]
+        let evening = app.buttons["Evening"]
+        let save = app.buttons["Save"]
+        let physical = app.staticTexts["Physical State"]
+        XCTAssertTrue(
+            morning.waitForExistence(timeout: 8) ||
+            evening.waitForExistence(timeout: 8) ||
+            save.waitForExistence(timeout: 8) ||
+            physical.waitForExistence(timeout: 8)
+        )
+        XCTAssertTrue(morning.exists || evening.exists || save.exists || physical.exists)
+        _ = app.staticTexts["Daily Check-in"].exists
+        saveShot("verify-checkin.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
