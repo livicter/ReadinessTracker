@@ -113,6 +113,7 @@ enum SurfaceID {
     static let recoveryTrajectorySpark = "recovery.trajectory.spark"
     static let recommendationsSection = "recommendations.section"
     static let coachingFeed = "coaching.feed"
+    static let sleepPerformance = "sleep.performance"
 }
 
 enum ScoreZone {

@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-08 — Poteto: WHOOP Sleep Performance Need vs Got (Option A)
+
+- Elevated `SleepPerformanceScore`: side-by-side **Need | Got** dual metric (14-night average vs last night), clearer comparative bar with need marker, performance % ring retained.
+- Efficiency / Consistency stay compact one-liners (unchanged role).
+- `SurfaceID.sleepPerformance` (`sleep.performance`) + `sleep.performance.needGot`.
+- UITest: `testSleepPerformanceSurface` → `verify-sleep-performance.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #17.
+- Branch: `feature/poteto-sleep-performance-need-got`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: WHOOP-style Recommendations / Coaching cards (Option A)
 
 - Today Recommendations: `RecommendationActionCard` (title, reason, action cue) via `AIRecommendationEngine.morningActionableCards` — training rules first, coaching insights fill to 1–3 (no placeholder / lying UI).

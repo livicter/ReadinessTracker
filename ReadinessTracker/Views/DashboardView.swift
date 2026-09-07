@@ -653,6 +653,7 @@ struct DashboardView: View {
                 efficiency: data.sleepEfficiency * 100,
                 consistency: calculateSleepConsistency(history: history)
             )
+            .accessibilityIdentifier(SurfaceID.sleepPerformance)
 
             if data.hrv > 0 {
                 SleepHRVCard(
