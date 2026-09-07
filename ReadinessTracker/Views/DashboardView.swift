@@ -353,40 +353,25 @@ struct DashboardView: View {
 
     // MARK: - Recommendations Section
     private func recommendationsSection(scores: DualReadinessScores) -> some View {
-        let recs = AIRecommendationEngine.shared.generateRecommendations(for: selectedSource)
-            .prefix(2)
+        // WHOOP-style actionable cards: training rules first, coaching fill to 1–3.
+        let cards = AIRecommendationEngine.shared.morningActionableCards(for: selectedSource, limit: 3)
 
         return Group {
-            if !recs.isEmpty {
+            if !cards.isEmpty {
                 NativeCard {
                     VStack(alignment: .leading, spacing: AppleTheme.cardPadding) {
                         SectionHeader(title: "Recommendations")
 
-                        VStack(alignment: .leading, spacing: 12) {
-                            ForEach(Array(recs.enumerated()), id: \.offset) { _, rec in
-                                HStack(alignment: .top, spacing: 12) {
-                                    Image(systemName: "lightbulb.fill")
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(Color(hex: rec.priority.color))
-                                        .frame(width: 32, height: 32)
-                                        .background(Color(hex: rec.priority.color).opacity(0.12))
-                                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(rec.title)
-                                            .font(.subheadline.weight(.semibold))
-                                            .foregroundStyle(RTColor.primaryText)
-
-                                        Text(rec.description)
-                                            .font(.caption)
-                                            .foregroundStyle(RTColor.secondaryText)
-                                            .multilineTextAlignment(.leading)
-                                    }
-                                }
+                        VStack(alignment: .leading, spacing: 14) {
+                            ForEach(cards) { card in
+                                RecommendationActionCard(card: card)
                             }
                         }
                     }
                 }
+                .accessibilityElement(children: .contain)
+                .accessibilityLabel("Recommendations")
+                .accessibilityIdentifier(SurfaceID.recommendationsSection)
             }
         }
     }
@@ -1085,6 +1070,57 @@ struct DashboardView: View {
 }
 
 // MARK: - Supporting Views
+
+/// WHOOP-style morning recommendation: title, reason, concrete action cue.
+struct RecommendationActionCard: View {
+    let card: ActionableRecommendation
+
+    private var tint: Color { Color(hex: card.tintHex) }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: card.icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(tint)
+                    .frame(width: 32, height: 32)
+                    .background(tint.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
+                Text(card.title)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(RTColor.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Text(card.reason)
+                .font(.caption)
+                .foregroundStyle(RTColor.secondaryText)
+                .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "arrow.right.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.optimal)
+
+                Text(card.action)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RTColor.primaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                    .fill(RTColor.surfaceHighlight)
+            )
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(card.title). \(card.reason). Action: \(card.action)")
+    }
+}
 
 struct CheckInStatusCard: View {
     let label: String

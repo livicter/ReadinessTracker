@@ -313,6 +313,44 @@ final class SurfacesUITests: XCTestCase {
             || app.staticTexts["Strain Breakdown"].waitForExistence(timeout: 4)
     }
 
+    func testRecommendationsSurface() throws {
+        // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
+        revealText("Recommendations")
+        let section = app.descendants(matching: .any)["recommendations.section"].firstMatch
+        XCTAssertTrue(
+            section.waitForExistence(timeout: 8) ||
+            app.staticTexts["Recommendations"].exists,
+            "recommendations.section"
+        )
+        // Soft: action cue chrome / known titles from training or coaching bridge.
+        _ = app.staticTexts["Today's training guidance"].exists
+        _ = app.staticTexts["Protein intake is low"].exists
+        _ = app.staticTexts["Ready to Progress"].exists
+        _ = app.staticTexts["Progressive Overload Window"].exists
+        saveShot("verify-recommendations.png")
+    }
+
+    func testCoachingSurface() throws {
+        // Settings → Coaching: ranked insight cards under -ui-fixture (not empty state).
+        app.tabBars.buttons["Settings"].tap()
+        let coaching = app.staticTexts["Coaching"].exists ? app.staticTexts["Coaching"] : app.buttons["Coaching"]
+        XCTAssertTrue(coaching.waitForExistence(timeout: 8), "Coaching row")
+        coaching.tap()
+        XCTAssertTrue(
+            app.navigationBars["Coaching"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Coaching"].waitForExistence(timeout: 8)
+        )
+        XCTAssertFalse(app.staticTexts["No coaching insights yet"].exists)
+        let feed = app.descendants(matching: .any)["coaching.feed"].firstMatch
+        XCTAssertTrue(
+            feed.waitForExistence(timeout: 8) ||
+            app.staticTexts["Today's training guidance"].waitForExistence(timeout: 8) ||
+            app.descendants(matching: .any)["coaching.card"].firstMatch.waitForExistence(timeout: 8),
+            "coaching.feed"
+        )
+        saveShot("verify-coaching.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
