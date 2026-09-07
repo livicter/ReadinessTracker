@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-09-08 — Weekly Report surface capture (Status-table gap)
+
+- Added `testWeeklyReportSurface` to open History → Weekly Report sheet and save `verify-weekly-report.png` (report chrome under `-ui-fixture`).
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-weekly-report.png`.
+- README Status + App surfaces + Honest gaps: Weekly Report sheet shipped with evidence (post Sleep disturbance).
+- Branch: `feature/weekly-report-surface-capture`.
+
+
+
+
+
 ## 2026-09-08 — Sleep disturbance surface capture (Status-table gap)
 
 - Added `testSleepDisturbanceSurfaceVisibleAfterScroll` to scroll Today to Sleep Stages / “Sleep disturbances” and save `verify-sleep-disturbances.png`.
