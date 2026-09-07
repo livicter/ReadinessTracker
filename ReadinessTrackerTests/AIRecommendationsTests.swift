@@ -92,4 +92,31 @@ final class AIRecommendationsTests: XCTestCase {
         let recs = engine.generateRecommendations(for: .appleWatch)
         XCTAssertNotNil(recs.first { $0.title == "Recovery Warning" })
     }
+
+    func testUIFixtureMorningActionableCardsNonEmpty() {
+        // Under -ui-fixture data shape: history + journal → ≥1 WHOOP-style cards.
+        DataStore.shared.history = UIFixture.history()
+        UIFixture.seedJournalEntries()
+
+        let cards = engine.morningActionableCards(for: .appleWatch, limit: 3)
+        XCTAssertFalse(cards.isEmpty, "fixture should yield ≥1 morning recommendation cards")
+        XCTAssertLessThanOrEqual(cards.count, 3)
+        for card in cards {
+            XCTAssertFalse(card.title.isEmpty)
+            XCTAssertFalse(card.reason.isEmpty)
+            XCTAssertFalse(card.action.isEmpty)
+        }
+    }
+
+    func testTrainingRecommendationDefaultAction() {
+        let rec = TrainingRecommendation(
+            type: .restDay,
+            title: "Test",
+            description: "Reason",
+            confidence: 0.9,
+            priority: .high
+        )
+        XCTAssertEqual(rec.action, "Take a rest or active-recovery day.")
+    }
 }
+

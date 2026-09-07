@@ -2,7 +2,7 @@
 
 iOS readiness app. Bright Apple Health UI. Local HealthKit plus optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
+**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Recommendations use WHOOP-style actionable cards. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
 
 Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe plus `-ui-fixture`, not VoiceOver).
 
@@ -18,6 +18,8 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | History tab (Weekly Report + Trends) | Shipped. Dedicated capture opens the History tab (source picker, Weekly Report, Trends) | [verify-history.png](.audit/verify-history.png) |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
 | Strain / Recovery balance (Today) | Shipped. Side-by-side Recovery % \| Strain /21 with day-over-day deltas; tappable → Recovery & Strain detail; 7-day recovery spark under the wheel | [verify-strain-recovery.png](.audit/verify-strain-recovery.png) |
+| Recommendations (Today) | Shipped. WHOOP-style actionable cards (title, reason, action cue); training rules + coaching fill ≥1–3 under `-ui-fixture` | [verify-recommendations.png](.audit/verify-recommendations.png) |
+| Coaching (Settings) | Shipped. Ranked insight cards with explanation + action; dedicated capture from Settings → Coaching | [verify-coaching.png](.audit/verify-coaching.png) |
 | Sleep Performance (14-night need) | Shipped. Efficiency and Consistency are one line | whoop frame |
 | Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart | whoop + sleep-quality frames |
 | Sleep Debt | Shipped. Dedicated capture scrolls Today to the Sleep Debt card | [verify-sleep-debt.png](.audit/verify-sleep-debt.png) |
@@ -83,6 +85,18 @@ Scrolled Today after Body. Need caption is the 14-night average. Efficiency and 
 WHOOP-like Balance card on Today: Recovery % and Strain /21 side-by-side with day-over-day deltas, composite balance score, and tap-through to Recovery & Strain detail. A 7-day recovery spark sits under the wheel.
 
 ![Strain recovery balance](.audit/verify-strain-recovery.png)
+
+### Recommendations
+
+Scrolled Today to Recommendations (after Journal). WHOOP-style cards with title, reason, and a concrete action cue. Under `-ui-fixture`, training rules plus coaching insights fill 1–3 cards from real fixture data (no placeholder copy).
+
+![Recommendations](.audit/verify-recommendations.png)
+
+### Coaching
+
+Opened from Settings → Insights → Coaching. Ranked coaching feed cards (explanation + action) under `-ui-fixture` — not the empty “No coaching insights yet” state.
+
+![Coaching](.audit/verify-coaching.png)
 
 ### Sleep debt
 
@@ -200,3 +214,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 12. ~~Classic `MetricDetailView` primary Trend chart remained tap-only while Advanced had Health-style scrub.~~ Closed — `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on `MetricDetailView`; Metrics cards open classic detail; [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png).
 13. ~~Gym / Work / Sleep legend was display-only (no Fitness-style focused ring detail).~~ Closed — legend taps open `RingDetailView` sheet (score + color + 7-day sparkline/bars); [verify-ring-detail.png](.audit/verify-ring-detail.png) from `testRingDetailSurface`.
 15. ~~Today Balance card was a single abstract score (no side-by-side Strain vs Recovery, not tappable, no recovery spark under the wheel).~~ Closed — elevated `StrainRecoveryBalanceCard` + NavigationLink + 7-day spark; [verify-strain-recovery.png](.audit/verify-strain-recovery.png) from `testStrainRecoveryBalanceSurface`.
+16. ~~Today Recommendations were thin title+description only (easy to miss / empty under healthy fixture); Coaching had no dedicated PNG.~~ Closed — WHOOP-style actionable cards via `morningActionableCards` (training + coaching fill); [verify-recommendations.png](.audit/verify-recommendations.png) + [verify-coaching.png](.audit/verify-coaching.png).

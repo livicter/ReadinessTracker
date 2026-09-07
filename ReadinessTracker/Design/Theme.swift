@@ -111,6 +111,8 @@ enum SurfaceID {
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let recoveryTrajectorySpark = "recovery.trajectory.spark"
+    static let recommendationsSection = "recommendations.section"
+    static let coachingFeed = "coaching.feed"
 }
 
 enum ScoreZone {

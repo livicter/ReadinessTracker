@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-09-08 — Poteto: WHOOP-style Recommendations / Coaching cards (Option A)
+
+- Today Recommendations: `RecommendationActionCard` (title, reason, action cue) via `AIRecommendationEngine.morningActionableCards` — training rules first, coaching insights fill to 1–3 (no placeholder / lying UI).
+- `TrainingRecommendation.action` with sensible defaults; Coaching feed a11y ids.
+- UITest: `testRecommendationsSurface` → `verify-recommendations.png`; `testCoachingSurface` → `verify-coaching.png` (Settings → Coaching).
+- Unit: `testUIFixtureMorningActionableCardsNonEmpty`, `testTrainingRecommendationDefaultAction`.
+- Wired PNGs through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #16.
+- Branch: `feature/poteto-whoop-coaching-recs`.
+
+
+
+
+
 ## 2026-09-08 — Poteto: WHOOP-parity Strain/Recovery on Today (Option C)
 
 - Elevated `StrainRecoveryBalanceCard`: side-by-side Recovery % | Strain /21 with day-over-day deltas, balance score + status, chevron.

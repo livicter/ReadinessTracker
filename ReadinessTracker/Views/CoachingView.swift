@@ -35,6 +35,8 @@ struct CoachingView: View {
                     }
                     .padding(.horizontal, AppleTheme.horizontalMargin)
                     .padding(.vertical, 12)
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.coachingFeed)
                 }
                 .refreshable {
                     Haptic.press()
@@ -145,6 +147,9 @@ private struct CoachingCard: View {
                 )
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(insight.title). \(insight.explanation). Action: \(insight.action)")
+        .accessibilityIdentifier("coaching.card")
     }
 }
 
