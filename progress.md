@@ -1,5 +1,12 @@
 # Progress
 
+## 2026-09-07 — Triple-ring READY hole (Honest gap #3)
+
+- Verified center “90 READY” was overlay-only (did not set radius); hole was ~61% of outer from `lineWidth=14` / `gap=4`.
+- Packed rings toward Fitness Summary: `lineWidth = size/10`, `gap=2`, kept #15 concentric diameters; scaled center score + READY to fit the smaller hole.
+- Recaptured `verify-rings.png`; README Status + Honest gaps (gap #3 closed).
+- Branch: `feature/triple-ring-ready-hole`.
+
 ## 2026-09-07 — Sleep quality surface capture (Honest gap #1)
 
 - Added `testSleepQualitySurfaceVisibleAfterScroll` to scroll Today to Sleep Quality Trend + Sleep Consistency and save `verify-sleep-quality.png`.

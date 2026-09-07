@@ -6,8 +6,21 @@ struct TripleRingHero: View {
     let sleepScore: Int
     let size: CGFloat
 
-    private let lineWidth: CGFloat = 14
-    private let gap: CGFloat = 4
+    /// Activity-like stroke (~1/10 diameter) and tight inter-ring gap.
+    /// #15 locked the concentric diameters: size, size-2*(lw+gap), size-4*(lw+gap).
+    /// Center score is overlay-only — it never drove radius. We pack rings tighter
+    /// toward Fitness Summary and shrink typography so READY still fits in the hole.
+    private var lineWidth: CGFloat { max(12, size / 10) }
+    private let gap: CGFloat = 2
+
+    private var holeDiameter: CGFloat {
+        size - 4 * (lineWidth + gap) - lineWidth
+    }
+
+    private var scoreFontSize: CGFloat {
+        // Score + READY caption + small padding inside the hole
+        min(34, max(22, holeDiameter * 0.30))
+    }
 
     var body: some View {
         let middle = size - 2 * (lineWidth + gap)
@@ -31,15 +44,18 @@ struct TripleRingHero: View {
                 lineWidth: lineWidth,
                 size: inner
             )
-            VStack(spacing: 2) {
+            VStack(spacing: 1) {
                 Text("\(overallScore)")
-                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .font(.system(size: scoreFontSize, weight: .bold, design: .rounded))
                     .foregroundColor(RTColor.primaryText)
+                    .minimumScaleFactor(0.8)
+                    .lineLimit(1)
                 Text("READY")
-                    .font(.caption2.weight(.semibold))
+                    .font(.system(size: max(8, scoreFontSize * 0.28), weight: .semibold))
                     .foregroundColor(RTColor.secondaryText)
-                    .tracking(2)
+                    .tracking(1.5)
             }
+            .frame(width: holeDiameter * 0.85)
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
