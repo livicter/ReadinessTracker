@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-09-08 — Poteto: Apple Fitness–style ring detail (Option B)
+
+- Legend taps on Gym / Work / Sleep open `RingDetailView` sheet: score, matching color/label, 7-day sparkline + mini bars from `UIFixture` / `DailyHealthData` (Gym→`workoutMinutes`, Work→`hrv`, Sleep→`sleepHours`).
+- `RingKind` + detail live in `TripleRingView.swift`; Dashboard hero keeps NavigationLink on rings, legend outside for taps.
+- UITest: `testRingDetailSurface` → `verify-ring-detail.png`; wired through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #13.
+- Branch: `feature/poteto-ring-detail`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: MetricDetailView ChartScrubSelection scrub + tooltip
 
 - Applied Apple Health–style drag scrub to `MetricDetailView` primary Trend chart: `ChartScrubSelection` nearest-date map, RuleMark, `ChartTooltip` callout; clears on lift; Reduce Motion skips scrub haptics (parity with `AdvancedMetricChartView`).

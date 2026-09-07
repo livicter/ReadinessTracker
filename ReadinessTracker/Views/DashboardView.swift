@@ -14,6 +14,7 @@ struct DashboardView: View {
     @State private var lastSyncDate: Date?
     @State private var dismissedError: String?
     @State private var isWeeklyReportPresented = false
+    @State private var selectedRing: RingKind?
     @Environment(\.openURL) private var openURL
 
     private var latestData: DailyHealthData? {
@@ -274,71 +275,80 @@ struct DashboardView: View {
     private func heroSection(scores: DualReadinessScores, data: DailyHealthData, history: [DailyHealthData]) -> some View {
         let zone = ScoreZone(score: scores.general)
 
-        return NavigationLink(destination: ReadinessDetailView(
-            scores: scores,
-            data: data,
-            history: history
-        )) {
-            NativeCard {
-                VStack(spacing: 20) {
-                    // Eyebrow + zone badge
-                    HStack {
-                        Text("TODAY'S READINESS")
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(RTColor.secondaryText)
-                            .tracking(1.5)
+        return NativeCard {
+            VStack(spacing: 20) {
+                // Eyebrow + zone badge + rings → full readiness detail
+                NavigationLink(destination: ReadinessDetailView(
+                    scores: scores,
+                    data: data,
+                    history: history
+                )) {
+                    VStack(spacing: 20) {
+                        HStack {
+                            Text("TODAY'S READINESS")
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(RTColor.secondaryText)
+                                .tracking(1.5)
 
-                        Spacer()
+                            Spacer()
 
-                        Text(zone.label.uppercased())
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(zone.color)
-                            .padding(.horizontal, AppleTheme.badgeHPadding)
-                            .padding(.vertical, 4)
-                            .background(zone.color.opacity(AppleTheme.badgeBgOpacity))
-                            .clipShape(Capsule())
+                            Text(zone.label.uppercased())
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(zone.color)
+                                .padding(.horizontal, AppleTheme.badgeHPadding)
+                                .padding(.vertical, 4)
+                                .background(zone.color.opacity(AppleTheme.badgeBgOpacity))
+                                .clipShape(Capsule())
+                        }
+
+                        TripleRingHero(
+                            gymScore: scores.gym,
+                            workScore: scores.cognitive,
+                            sleepScore: scores.breakdown.sleepScore,
+                            size: 220
+                        )
                     }
-
-                    // Triple ring
-                    TripleRingHero(
-                        gymScore: scores.gym,
-                        workScore: scores.cognitive,
-                        sleepScore: scores.breakdown.sleepScore,
-                        size: 220
-                    )
-
-                    // Legend
-                    RingLegend(
-                        gymScore: scores.gym,
-                        workScore: scores.cognitive,
-                        sleepScore: scores.breakdown.sleepScore
-                    )
-
-                    // Recommendation
-                    Text(scores.recommendation())
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(RTColor.secondaryText)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 24)
+                .buttonStyle(.plain)
+
+                // Legend taps open Apple Fitness–style ring detail (outside NavigationLink).
+                RingLegend(
+                    gymScore: scores.gym,
+                    workScore: scores.cognitive,
+                    sleepScore: scores.breakdown.sleepScore,
+                    onSelect: { kind in
+                        selectedRing = kind
+                    }
+                )
+
+                Text(scores.recommendation())
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(RTColor.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
             }
-            .overlay(
-                HStack {
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
+        }
+        .overlay(
+            HStack {
+                Spacer()
+                VStack {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                        .padding(12)
                     Spacer()
-                    VStack {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(RTColor.tertiaryText)
-                            .padding(12)
-                        Spacer()
-                    }
                 }
+            }
+        )
+        .sheet(item: $selectedRing) { kind in
+            RingDetailView(
+                kind: kind,
+                score: kind.score(from: scores),
+                history: history
             )
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Readiness detail")
     }
 
     // MARK: - Recommendations Section

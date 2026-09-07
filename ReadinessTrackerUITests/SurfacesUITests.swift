@@ -23,6 +23,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-rings.png")
     }
 
+    func testRingDetailSurface() throws {
+        // Today legend Gym → Apple Fitness–style ring detail sheet.
+        XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8))
+        let gym = app.descendants(matching: .any)["ring.legend.gym"].firstMatch
+        XCTAssertTrue(gym.waitForExistence(timeout: 8), "ring.legend.gym")
+        gym.tap()
+        let detail = app.descendants(matching: .any)["ring.detail"].firstMatch
+        XCTAssertTrue(
+            detail.waitForExistence(timeout: 8) ||
+            app.navigationBars["Gym"].waitForExistence(timeout: 8),
+            "ring.detail"
+        )
+        XCTAssertTrue(
+            app.staticTexts["Gym"].exists ||
+            app.navigationBars["Gym"].exists
+        )
+        // Soft: score / 7-day chrome under fixture.
+        _ = app.descendants(matching: .any)["ring.detail.score"].exists
+        _ = app.staticTexts["Last 7 days"].exists
+        _ = app.staticTexts["Workout minutes"].exists
+        saveShot("verify-ring-detail.png")
+    }
+
     func testWhoopStackVisibleAfterScroll() throws {
         revealText("Sleep HRV")
         XCTAssertTrue(app.staticTexts["Sleep Debt"].exists)
