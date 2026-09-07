@@ -313,6 +313,22 @@ final class SurfacesUITests: XCTestCase {
             || app.staticTexts["Strain Breakdown"].waitForExistence(timeout: 4)
     }
 
+
+    func testSleepPerformanceSurface() throws {
+        // Today WHOOP stack: elevated Sleep Performance Need | Got dual metric + bar.
+        // Reveal title first — do not keep swiping for ids (overscrolls past the card).
+        revealText("Sleep Performance")
+        XCTAssertTrue(app.staticTexts["Sleep Performance"].exists)
+        XCTAssertTrue(app.staticTexts["Need"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Got"].exists)
+        // Soft: a11y + efficiency / consistency one-liners share the frame under -ui-fixture.
+        _ = app.descendants(matching: .any)["sleep.performance"].exists
+        _ = app.descendants(matching: .any)["sleep.performance.needGot"].exists
+        _ = app.staticTexts["Efficiency"].exists
+        _ = app.staticTexts["Consistency"].exists
+        saveShot("verify-sleep-performance.png")
+    }
+
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
         revealText("Recommendations")
