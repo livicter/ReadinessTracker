@@ -32,6 +32,11 @@ enum SleepStage: String, Codable, CaseIterable {
         case .deep: return 3
         }
     }
+
+    /// Chart Y band for HypnogramView (`chartYScale` domain -4...0).
+    /// Awake occupies (-1, 0], REM (-2, -1], Light (-3, -2], Deep (-4, -3].
+    var hypnogramYStart: Int { -(depthRank + 1) }
+    var hypnogramYEnd: Int { -depthRank }
 }
 
 struct SleepStageInterval: Codable, Hashable, Identifiable {

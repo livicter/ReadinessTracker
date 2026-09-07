@@ -58,4 +58,52 @@ final class SleepStageIntervalTests: XCTestCase {
         XCTAssertTrue(day.sleepStages.isEmpty)
         XCTAssertEqual(day.sleepHours, 7.5, accuracy: 0.001)
     }
+
+    func testUIFixtureCoherentSleepStagesMatchWakeEpisodes() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let previous = cal.date(byAdding: .day, value: -1, to: today)!
+        let start = cal.date(bySettingHour: 23, minute: 5, second: 0, of: previous)!
+        let end = cal.date(bySettingHour: 7, minute: 10, second: 0, of: today)!
+
+        let stages = UIFixture.coherentSleepStages(sleepStart: start, sleepEnd: end)
+        XCTAssertFalse(stages.isEmpty)
+        XCTAssertEqual(stages.filter { $0.stage == .awake }.count, 1)
+        XCTAssertEqual(stages.first?.startDate, start)
+        XCTAssertEqual(stages.last?.endDate, end)
+
+        let awake = SleepCycleDetector.awakePeriods(from: stages)
+        XCTAssertEqual(awake.count, 1)
+
+        let history = UIFixture.history()
+        XCTAssertEqual(history.count, 14)
+        for day in history {
+            XCTAssertFalse(day.sleepStages.isEmpty, "fixture day must seed stages for hypnogram honesty")
+            XCTAssertEqual(
+                day.wakeEpisodes,
+                SleepCycleDetector.awakePeriods(from: day.sleepStages).count,
+                "wakeEpisodes must match awake periods derived from stages"
+            )
+            XCTAssertEqual(day.wakeEpisodes, 1)
+        }
+    }
+
+    func testHypnogramYBandsMatchChartDomain() {
+        // chartYScale domain is -4...0; bands must sit inside it (not positive depthRank).
+        XCTAssertEqual(SleepStage.awake.hypnogramYStart, -1)
+        XCTAssertEqual(SleepStage.awake.hypnogramYEnd, 0)
+        XCTAssertEqual(SleepStage.rem.hypnogramYStart, -2)
+        XCTAssertEqual(SleepStage.rem.hypnogramYEnd, -1)
+        XCTAssertEqual(SleepStage.light.hypnogramYStart, -3)
+        XCTAssertEqual(SleepStage.light.hypnogramYEnd, -2)
+        XCTAssertEqual(SleepStage.deep.hypnogramYStart, -4)
+        XCTAssertEqual(SleepStage.deep.hypnogramYEnd, -3)
+        for stage in SleepStage.allCases {
+            XCTAssertLessThanOrEqual(stage.hypnogramYStart, 0)
+            XCTAssertGreaterThanOrEqual(stage.hypnogramYStart, -4)
+            XCTAssertLessThanOrEqual(stage.hypnogramYEnd, 0)
+            XCTAssertGreaterThanOrEqual(stage.hypnogramYEnd, -4)
+            XCTAssertEqual(stage.hypnogramYEnd - stage.hypnogramYStart, 1)
+        }
+    }
 }

@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-09-08 — Poteto: coherent UIFixture sleepStages (hypnogram honesty)
+
+- Fixed `HypnogramView` Y bands: stages used positive `depthRank` while `chartYScale` was `-4...0`, so only Awake rendered; now use `hypnogramYStart/End` (negated ranks).
+- Seeded `UIFixture.coherentSleepStages` (one mid-sleep awake) and derive `wakeEpisodes` from `SleepCycleDetector.awakePeriods` so Today disturbance count matches Sleep Analysis / Day Detail hypnogram.
+- Unit: `testUIFixtureCoherentSleepStagesMatchWakeEpisodes` in `SleepStageIntervalTests`.
+- UITest: `testSleepStagesSurface` opens Today → Sleep Stages → Sleep Analysis and saves `verify-sleep-stages.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #10.
+- Branch: `feature/poteto-coherent-sleep-stages-fixture`.
+
+
+
+
+
 ## 2026-09-08 — Weekly Report surface capture (Status-table gap)
 
 - Added `testWeeklyReportSurface` to open History → Weekly Report sheet and save `verify-weekly-report.png` (report chrome under `-ui-fixture`).

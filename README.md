@@ -24,6 +24,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Sleep disturbance count on Today sleep row | Shipped. Dedicated capture scrolls Today to Sleep Stages (“1 disturbance” under `-ui-fixture`) | [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) |
 | Journal “log 7 days” strip | Shipped. Dedicated capture opens Journal from Today (empty-state Log 7 days strip) | [verify-journal.png](.audit/verify-journal.png) |
 | Weekly Report sheet (History) | Shipped. Dedicated capture opens History → Weekly Report (≥3 fixture days) | [verify-weekly-report.png](.audit/verify-weekly-report.png) |
+| Sleep Analysis hypnogram (fixture stages) | Shipped. Fixture seeds coherent `sleepStages` (one awake) aligned with `wakeEpisodes`; capture opens Today → Sleep Stages → Sleep Analysis | [verify-sleep-stages.png](.audit/verify-sleep-stages.png) |
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
@@ -116,9 +117,15 @@ Opened from Today’s Journal row. Empty-state copy plus the “Log 7 days to se
 
 ### Sleep disturbances
 
-Scrolled Today to the Sleep Stages card. Fixture `wakeEpisodes: 1` shows “1 disturbance” (accessibility label “Sleep disturbances”).
+Scrolled Today to the Sleep Stages card. Fixture derives `wakeEpisodes` from one awake stage interval so “1 disturbance” matches hypnogram / Day Detail (accessibility label “Sleep disturbances”).
 
 ![Sleep disturbances](.audit/verify-sleep-disturbances.png)
+
+### Sleep stages hypnogram
+
+Opened from Today’s Sleep Stages card into Sleep Analysis. Under `-ui-fixture`, seeded stage intervals render the Sleep Timeline hypnogram (not the empty “No detailed stage data” state), with disturbance count derived from those stages.
+
+![Sleep stages hypnogram](.audit/verify-sleep-stages.png)
 
 ## Verify
 
@@ -126,7 +133,7 @@ Push and pull request to `main` run three required GitHub Actions jobs.
 
 1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
 2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
-3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Twelve XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Thirteen XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
 
 ```bash
 ./scripts/ci-guard-tree.sh
@@ -155,3 +162,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 7. ~~Journal “log 7 days” strip Status row cited `JournalView` with no PNG.~~ Closed — [verify-journal.png](.audit/verify-journal.png) from `testJournalSurface`.
 8. ~~Sleep disturbance count Status row cited `DashboardView` with no PNG.~~ Closed — [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) from `testSleepDisturbanceSurfaceVisibleAfterScroll`.
 9. ~~Weekly Report sheet had History row only (no PNG of the report itself).~~ Closed — [verify-weekly-report.png](.audit/verify-weekly-report.png) from `testWeeklyReportSurface`.
+10. ~~UIFixture set `wakeEpisodes: 1` with empty `sleepStages`, so Today showed “1 disturbance” while Sleep Analysis / Day Detail hypnogram and `awakePeriods(from:)` were empty; hypnogram Y also used positive `depthRank` outside `chartYScale` `-4...0`.~~ Closed — fixture seeds coherent stages (one awake) and derives `wakeEpisodes` from them; HypnogramView uses negated Y bands; [verify-sleep-stages.png](.audit/verify-sleep-stages.png) from `testSleepStagesSurface`.

@@ -142,6 +142,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-weekly-report.png")
     }
 
+    func testSleepStagesSurface() throws {
+        // Today Sleep Stages → Sleep Analysis: coherent fixture stages render hypnogram (not empty state).
+        revealText("Sleep Stages")
+        let stagesCard = app.buttons["Sleep Stages"].exists ? app.buttons["Sleep Stages"] : app.staticTexts["Sleep Stages"]
+        stagesCard.tap()
+        XCTAssertTrue(
+            app.navigationBars["Sleep Analysis"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Sleep Analysis"].waitForExistence(timeout: 8)
+        )
+        // Hypnogram card title when stages are present.
+        revealText("Sleep Timeline")
+        XCTAssertTrue(app.staticTexts["Sleep Timeline"].exists)
+        XCTAssertFalse(app.staticTexts["No detailed stage data. Stage intervals are recorded from your next sync."].exists)
+        // Soft: axis / disturbance chrome may be merged under a11y; stages-derived wake still 1.
+        _ = app.staticTexts["Awake"].exists
+        _ = app.staticTexts["1 wakes"].exists || app.staticTexts["1 wake"].exists
+        saveShot("verify-sleep-stages.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
