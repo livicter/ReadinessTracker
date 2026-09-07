@@ -86,6 +86,23 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-history.png")
     }
 
+    func testJournalSurface() throws {
+        // Journal: Today NavigationLink → JournalView with empty-state "Log 7 days…" strip.
+        revealText("Journal")
+        let journalRow = app.buttons["Journal"].exists ? app.buttons["Journal"] : app.staticTexts["Journal"]
+        journalRow.tap()
+        XCTAssertTrue(
+            app.navigationBars["Journal"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Journal"].waitForExistence(timeout: 8)
+        )
+        let log7Copy = "Log 7 days to see how habits line up with next-day readiness."
+        XCTAssertTrue(app.staticTexts[log7Copy].waitForExistence(timeout: 8))
+        // Entry form fills the first screen; scroll so the Log 7 days strip is in frame.
+        revealText(log7Copy)
+        _ = app.staticTexts["No journal entries yet"].exists
+        saveShot("verify-journal.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
