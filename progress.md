@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-08 — History tab surface capture (Status-table gap)
+
+- Added `testHistoryTabSurface` to open the History tab (Weekly Report + Trends + source picker) and save `verify-history.png`.
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-history.png`.
+- README Status + App surfaces + Honest gaps: History tab shipped with evidence (post Check-in).
+- Branch: `feature/history-surface-capture`.
+
+
+
+
 ## 2026-09-07 — Check-in tab surface capture (Status-table gap)
 
 - Added `testCheckInTabSurface` to open the Check-in tab (Morning/Evening picker + Save) and save `verify-checkin.png`.
