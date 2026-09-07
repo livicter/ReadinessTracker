@@ -106,6 +106,9 @@ enum SurfaceID {
     static let settingsHealthKitConnect = "settings.healthkit.connect"
     static let settingsFitbitConnect = "settings.fitbit.connect"
     static let settingsDataSources = "settings.dataSources"
+    static let metricChartScrub = "metric.chart.scrub"
+    static let metricChartSelection = "metric.chart.selection"
+    static let metricDetail = "metric.detail"
 }
 
 enum ScoreZone {

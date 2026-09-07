@@ -165,6 +165,7 @@ struct AdvancedMetricDetailView: View {
             .padding(.vertical, 12)
         }
         .background(AppBackground())
+        .accessibilityIdentifier(SurfaceID.metricDetail)
         .navigationTitle(metric.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)

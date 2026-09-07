@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-09-08 — Poteto: Apple Health–style chart scrub / value callout
+
+- Upgraded `AdvancedMetricChartView` (Today → metric detail) from tap-only to drag scrub with RuleMark + `ChartTooltip` callout; clears on lift (Health-like).
+- Extracted `ChartScrubSelection` helper (nearest date + fraction map + callout text); `DepthTimelineChart` shares it. Reduce Motion skips scrub haptics.
+- Unit: `ChartScrubSelectionTests`. UITest: `testMetricDetailChartScrubSurface` opens Sleep detail under `-ui-fixture`, asserts period selector + chart, saves `verify-metric-detail-scrub.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #11.
+- Branch: `feature/poteto-chart-scrub-callout`.
+
+
+
+
+
 ## 2026-09-08 — Poteto: coherent UIFixture sleepStages (hypnogram honesty)
 
 - Fixed `HypnogramView` Y bands: stages used positive `depthRank` while `chartYScale` was `-4...0`, so only Awake rendered; now use `hypnogramYStart/End` (negated ranks).
