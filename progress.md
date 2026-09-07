@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-09-07 — Sleep debt surface capture (Status-table gap)
+
+- Added `testSleepDebtSurfaceVisibleAfterScroll` to scroll Today to Sleep Debt and save `verify-sleep-debt.png`.
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-sleep-debt.png`.
+- README Status + App surfaces + Honest gaps: Sleep Debt shipped with evidence (post Honest #1–#3).
+- Branch: `feature/sleep-debt-surface-capture`.
+
+
 ## 2026-09-07 — Triple-ring READY hole (Honest gap #3)
 
 - Verified center “90 READY” was overlay-only (did not set radius); hole was ~61% of outer from `lineWidth=14` / `gap=4`.

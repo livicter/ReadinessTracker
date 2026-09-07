@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture Today, WHOOP stack, Body & activity, Settings, rings, and sleep quality via XCUITest.
+# Capture Today, WHOOP stack, Body & activity, Settings, rings, sleep quality, and sleep debt via XCUITest.
 # UITests write PNGs to /tmp/rt-audit. This script copies them into .audit/.
 set -euo pipefail
 
@@ -39,7 +39,7 @@ xcodebuild test \
   -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png verify-sleep-quality.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png verify-sleep-quality.png verify-sleep-debt.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1

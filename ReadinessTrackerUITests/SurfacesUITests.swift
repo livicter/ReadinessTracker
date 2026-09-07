@@ -46,6 +46,14 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-quality.png")
     }
 
+    func testSleepDebtSurfaceVisibleAfterScroll() throws {
+        revealText("Sleep Debt")
+        XCTAssertTrue(app.staticTexts["Sleep Debt"].exists)
+        // SleepDebtCalculator header; Sleep HRV / Quality may still be in frame depending on scroll depth.
+        _ = app.staticTexts["Sleep HRV"].exists
+        saveShot("verify-sleep-debt.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
