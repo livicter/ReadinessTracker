@@ -29,7 +29,7 @@ jobs:
   ios-tests:
     name: iOS unit tests
     needs: tree-guard
-    runs-on: macos-15
+    runs-on: [self-hosted, macOS, ARM64]
     timeout-minutes: 45
     steps:
       - name: Checkout
@@ -37,7 +37,7 @@ jobs:
 
       - name: Show Xcode
         run: |
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcode-select -p
           xcodebuild -version
           xcrun simctl list devices available | head -40
 
@@ -79,7 +79,7 @@ jobs:
   ios-ui:
     name: iOS UI surfaces
     needs: tree-guard
-    runs-on: macos-15
+    runs-on: [self-hosted, macOS, ARM64]
     timeout-minutes: 45
     steps:
       - name: Checkout
@@ -87,7 +87,7 @@ jobs:
 
       - name: Show Xcode
         run: |
-          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcode-select -p
           xcodebuild -version
 
       - name: Resolve simulator destination
