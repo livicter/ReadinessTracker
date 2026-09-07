@@ -38,7 +38,7 @@ if git grep -nE 'FITBIT_CLIENT_SECRET[[:space:]]*=[[:space:]]*[^[:space:]/$]' --
   fail "Fitbit client secret looks committed"
 fi
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png verify-sleep-quality.png; do
   [[ -s ".audit/$f" ]] || fail "missing .audit/$f"
 done
 

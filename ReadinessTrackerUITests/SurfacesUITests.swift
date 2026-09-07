@@ -35,6 +35,17 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-body-activity.png")
     }
 
+    func testSleepQualitySurfaceVisibleAfterScroll() throws {
+        revealText("Sleep Consistency")
+        XCTAssertTrue(app.staticTexts["Sleep Quality Trend"].exists)
+        XCTAssertTrue(app.staticTexts["Sleep Consistency"].exists)
+        // Sleep HRV chips (HRV Trend / Sleep Quality) may still be on screen depending on scroll depth.
+        _ = app.staticTexts["Sleep HRV"].exists
+        _ = app.staticTexts["HRV Trend"].exists
+        _ = app.staticTexts["Sleep Quality"].exists
+        saveShot("verify-sleep-quality.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
