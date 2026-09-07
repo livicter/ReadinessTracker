@@ -119,6 +119,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-journal.png")
     }
 
+    func testWeeklyReportSurface() throws {
+        // History → Weekly Report sheet: fixture seeds 14 appleWatch days (≥3 needed).
+        app.tabBars.buttons["History"].tap()
+        XCTAssertTrue(app.staticTexts["Weekly Report"].waitForExistence(timeout: 8))
+        let row = app.buttons["Weekly Report"].exists ? app.buttons["Weekly Report"] : app.staticTexts["Weekly Report"]
+        row.tap()
+        XCTAssertTrue(
+            app.navigationBars["Weekly Report"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 8)
+        )
+        // Report chrome (not the empty "Not Enough Data" state).
+        XCTAssertTrue(
+            app.staticTexts["% avg readiness"].waitForExistence(timeout: 8) ||
+            app.buttons["Share Report"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Share Report"].waitForExistence(timeout: 8)
+        )
+        XCTAssertFalse(app.staticTexts["Not Enough Data"].exists)
+        _ = app.staticTexts["Highlights"].exists
+        _ = app.staticTexts["Gym"].exists
+        _ = app.staticTexts["HRV"].exists
+        saveShot("verify-weekly-report.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
