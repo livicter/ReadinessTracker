@@ -2,7 +2,7 @@
 
 iOS readiness app. Bright Apple Health UI. Local HealthKit plus optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**main:** Gym / Work / Sleep rings use Apple Activity radii. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
+**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack.
 
 Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe plus `-ui-fixture`, not VoiceOver).
 
@@ -10,7 +10,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 
 | Surface | Status | Evidence |
 |---|---|---|
-| Today hero, Gym / Work / Sleep rings | Shipped. Concentric Activity geometry, one `-90` start, round caps, no tip dots, no hairline halo | [verify-rings.png](.audit/verify-rings.png) |
+| Today hero, Gym / Work / Sleep rings | Shipped. Concentric Activity geometry (`size/10` stroke, gap 2), packed center READY score, one `-90` start, round caps, no tip dots, no hairline halo | [verify-rings.png](.audit/verify-rings.png) |
 | Source chips + **WHOOP via Apple Health** | Shipped | [verify-dashboard.png](.audit/verify-dashboard.png) |
 | Morning / Evening check-in cards | Shipped. First screen ends at the sync bar. Scrolled Today shows both cards above the tab bar. Morning/Evening stay on one line on the half-card | dashboard + body frames |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
@@ -53,7 +53,7 @@ Bright grouped background. Dark selected Apple Watch chip. WHOOP-via-Health capt
 
 ### Triple rings
 
-Same first screen, captured for ring geometry. Inner ring is no longer `size * 0.44`.
+Same first screen, captured for ring geometry. Concentric Activity diameters; center READY typography packs into a Fitness-Summary-scale hole (no longer an oversized empty core).
 
 ![Today rings](.audit/verify-rings.png)
 
@@ -109,4 +109,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 
 1. ~~Fifth capture frame for Sleep HRV chips plus Sleep Quality / Consistency cards.~~ Closed — [verify-sleep-quality.png](.audit/verify-sleep-quality.png) from `testSleepQualitySurfaceVisibleAfterScroll`.
 2. ~~Morning wraps on the half-width check-in card.~~ Closed — Morning/Evening use `lineLimit(1)` + `minimumScaleFactor` on the half-width cards.
-3. Center “90 READY” makes a larger inner hole than Fitness Summary, which has no center score.
+3. ~~Center “90 READY” makes a larger inner hole than Fitness Summary, which has no center score.~~ Closed — tighter Activity packing (`size/10` stroke, gap 2) plus scaled center READY typography; see [verify-rings.png](.audit/verify-rings.png).
