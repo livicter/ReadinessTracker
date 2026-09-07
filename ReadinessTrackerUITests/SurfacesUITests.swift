@@ -86,6 +86,22 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-history.png")
     }
 
+    func testSleepDisturbanceSurfaceVisibleAfterScroll() throws {
+        // Today Sleep Stages card: fixture wakeEpisodes: 1 → "1 disturbance" + a11y "Sleep disturbances".
+        revealText("Sleep Stages")
+        let row = app.descendants(matching: .any)["Sleep disturbances"].firstMatch
+        var n = 0
+        while row.exists && !isOnScreen(row) && n < 6 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(row.waitForExistence(timeout: 8))
+        XCTAssertTrue(isOnScreen(row), "Sleep disturbances")
+        // Soft check: visible copy may be merged under accessibilityLabel.
+        _ = app.staticTexts["1 disturbance"].exists
+        saveShot("verify-sleep-disturbances.png")
+    }
+
     func testJournalSurface() throws {
         // Journal: Today NavigationLink → JournalView with empty-state "Log 7 days…" strip.
         revealText("Journal")

@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-08 — Sleep disturbance surface capture (Status-table gap)
+
+- Added `testSleepDisturbanceSurfaceVisibleAfterScroll` to scroll Today to Sleep Stages / “Sleep disturbances” and save `verify-sleep-disturbances.png`.
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-sleep-disturbances.png`.
+- README Status + App surfaces + Honest gaps: Sleep disturbance count shipped with evidence (post Journal).
+- Branch: `feature/sleep-disturbance-surface-capture`.
+
+
+
+
 ## 2026-09-08 — Journal surface capture (Status-table gap)
 
 - Added `testJournalSurface` to open Journal from Today’s NavigationLink and save `verify-journal.png` (Log 7 days strip).
