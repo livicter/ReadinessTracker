@@ -605,6 +605,15 @@ struct DashboardView: View {
         let strainValue = scores.breakdown.strainScoreValue
         let sleepNeed = BaselineManager.sleepNeed(from: history)
         let recoveryScore = RecoveryCalculator.dashboardWheelScore(from: data, history: history)
+        // history from dataForSource is oldest→newest; yesterday is second-to-last when present.
+        let yesterday = history.count >= 2 ? history[history.count - 2] : nil
+        let yesterdayRecovery = yesterday.map { RecoveryCalculator.dashboardWheelScore(from: $0, history: history) }
+        let yesterdayStrain = yesterday.map { StrainCalculator.calculate(from: $0, history: history) }
+        let recoveryDelta: Int? = yesterdayRecovery.map { Int(recoveryScore.rounded()) - Int($0.rounded()) }
+        let strainDelta: Double? = yesterdayStrain.map { strainValue - $0 }
+        let recoverySparkline: [Double] = history.suffix(7).map {
+            RecoveryCalculator.dashboardWheelScore(from: $0, history: history)
+        }
 
         return VStack(spacing: AppleTheme.cardPadding) {
             NavigationLink(destination: RecoveryStrainDetailView(
@@ -625,12 +634,28 @@ struct DashboardView: View {
                     }
 
                     NativeCard {
-                        StrainRecoveryWheel(
-                            strainScore: strainValue,
-                            recoveryScore: recoveryScore,
-                            day: "TODAY"
-                        )
-                        .frame(maxWidth: .infinity)
+                        VStack(spacing: 10) {
+                            StrainRecoveryWheel(
+                                strainScore: strainValue,
+                                recoveryScore: recoveryScore,
+                                day: "TODAY"
+                            )
+                            .frame(maxWidth: .infinity)
+
+                            // Compact 7-day recovery trajectory under the wheel (WHOOP-like glance).
+                            if recoverySparkline.count >= 2 {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("7-Day Recovery")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(RTColor.secondaryText)
+                                    AnimatedSparkline(data: recoverySparkline, color: RTColor.optimal)
+                                        .frame(height: 28)
+                                        .accessibilityIdentifier(SurfaceID.recoveryTrajectorySpark)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 8)
+                            }
+                        }
                     }
                 }
             }
@@ -680,7 +705,23 @@ struct DashboardView: View {
                     .accessibilityIdentifier(SurfaceID.sleepConsistency)
             }
 
-            StrainRecoveryBalanceCard(balance: scores.balance)
+            NavigationLink(destination: RecoveryStrainDetailView(
+                data: data,
+                history: history,
+                scores: scores
+            )) {
+                StrainRecoveryBalanceCard(
+                    balance: scores.balance,
+                    recovery: Int(recoveryScore.rounded()),
+                    strain: strainValue,
+                    recoveryDelta: recoveryDelta,
+                    strainDelta: strainDelta,
+                    showsChevron: true
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.strainRecoveryBalance)
+            .accessibilityLabel("Strain recovery balance detail")
 
             HStack(spacing: 12) {
                 if let respRate = data.respiratoryRate {

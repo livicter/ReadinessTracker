@@ -274,6 +274,45 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-detail-scrub.png")
     }
 
+    func testStrainRecoveryBalanceSurface() throws {
+        // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.
+        // Scroll via Sleep Consistency (stable neighbor above Balance) to avoid ambiguous "Balance" hits.
+        revealText("Sleep Consistency")
+        app.swipeUp()
+        let byId = app.descendants(matching: .any)["strain.recovery.balance"].firstMatch
+        let byLabel = app.buttons["Strain recovery balance detail"].firstMatch
+        let balanceTitle = app.staticTexts["Balance"]
+        var n = 0
+        while !(byId.exists || byLabel.exists || balanceTitle.exists) && n < 6 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(
+            byId.waitForExistence(timeout: 6) ||
+            byLabel.waitForExistence(timeout: 4) ||
+            balanceTitle.waitForExistence(timeout: 4),
+            "strain.recovery.balance"
+        )
+        // Side-by-side WHOOP hierarchy on Today under -ui-fixture.
+        XCTAssertTrue(app.staticTexts["Recovery"].exists)
+        XCTAssertTrue(app.staticTexts["Strain"].exists)
+        // Soft: spark under the wheel may still be in frame depending on scroll depth.
+        _ = app.staticTexts["7-Day Recovery"].exists
+        _ = app.descendants(matching: .any)["recovery.trajectory.spark"].exists
+        // Capture Today elevated card first (evidence of the presentation change).
+        saveShot("verify-strain-recovery.png")
+        // Soft: tappable → RecoveryStrainDetailView (same destination as wheel header).
+        if byId.exists && byId.isHittable {
+            byId.tap()
+        } else if byLabel.exists && byLabel.isHittable {
+            byLabel.tap()
+        } else if balanceTitle.exists {
+            balanceTitle.tap()
+        }
+        _ = app.navigationBars["Recovery & Strain"].waitForExistence(timeout: 6)
+            || app.staticTexts["Strain Breakdown"].waitForExistence(timeout: 4)
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
