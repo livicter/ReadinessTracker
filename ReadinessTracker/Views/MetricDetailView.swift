@@ -9,7 +9,9 @@ struct MetricDetailView: View {
 
     @State private var selectedPeriod: TrendPeriod = .week
     @State private var selectedDataPoint: DailyHealthData?
+    @State private var lastHapticID: DailyHealthData.ID?
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var filteredHistory: [DailyHealthData] {
         let days = selectedPeriod.rawValue
@@ -111,6 +113,7 @@ struct MetricDetailView: View {
             .padding(.vertical, 12)
         }
         .background(AppBackground())
+        .accessibilityIdentifier(SurfaceID.metricDetail)
         .navigationTitle(metric.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
@@ -206,42 +209,57 @@ struct MetricDetailView: View {
 
                     Spacer()
 
-                    if let selected = selectedDataPoint {
-                        Text("\(selected.date, format: .dateTime.month().day()): \(formattedValue(metricValue(for: selected))) \(metric.unit)")
+                    if selectedDataPoint == nil {
+                        Text("Drag to inspect")
                             .font(RTFont.captionSmall)
-                            .foregroundColor(RTColor.secondaryText)
+                            .foregroundColor(RTColor.tertiaryText)
                     }
                 }
 
                 if values.count >= 2 {
-                    Chart(values, id: \.date) { point in
-                        LineMark(
-                            x: .value("Date", point.date, unit: .day),
-                            y: .value("Value", point.value)
-                        )
-                        .foregroundStyle(metric.color)
-                        .interpolationMethod(.catmullRom)
-                        .lineStyle(StrokeStyle(lineWidth: 2.5))
-
-                        AreaMark(
-                            x: .value("Date", point.date, unit: .day),
-                            y: .value("Value", point.value)
-                        )
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [metric.color.opacity(0.2), metric.color.opacity(0.0)],
-                                startPoint: .top,
-                                endPoint: .bottom
+                    Chart {
+                        ForEach(filteredHistory) { point in
+                            LineMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("Value", metricValue(for: point))
                             )
-                        )
-                        .interpolationMethod(.catmullRom)
+                            .foregroundStyle(metric.color)
+                            .interpolationMethod(.catmullRom)
+                            .lineStyle(StrokeStyle(lineWidth: 2.5))
 
-                        PointMark(
-                            x: .value("Date", point.date, unit: .day),
-                            y: .value("Value", point.value)
-                        )
-                        .foregroundStyle(point.date.isToday ? metric.color : metric.color.opacity(0.5))
-                        .symbolSize(point.date.isToday ? 80 : 40)
+                            AreaMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("Value", metricValue(for: point))
+                            )
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [metric.color.opacity(0.2), metric.color.opacity(0.0)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .interpolationMethod(.catmullRom)
+
+                            PointMark(
+                                x: .value("Date", point.date, unit: .day),
+                                y: .value("Value", metricValue(for: point))
+                            )
+                            .foregroundStyle(point.date.isToday ? metric.color : metric.color.opacity(0.5))
+                            .symbolSize(point.date.isToday ? 80 : 40)
+                        }
+
+                        if let selected = selectedDataPoint {
+                            RuleMark(x: .value("Selected", selected.date))
+                                .foregroundStyle(RTColor.primaryText.opacity(0.35))
+                                .lineStyle(StrokeStyle(lineWidth: 1))
+
+                            PointMark(
+                                x: .value("Selected", selected.date, unit: .day),
+                                y: .value("Value", metricValue(for: selected))
+                            )
+                            .foregroundStyle(metric.color)
+                            .symbolSize(120)
+                        }
                     }
                     .frame(height: 220)
                     .chartYScale(domain: chartDomain)
@@ -251,21 +269,14 @@ struct MetricDetailView: View {
                             AxisValueLabel(format: .dateTime.month(.abbreviated).day())
                         }
                     }
-                    .chartOverlay { proxy in
-                        GeometryReader { _ in
-                            Rectangle()
-                                .fill(Color.clear)
-                                .contentShape(Rectangle())
-                                .onTapGesture { location in
-                                    if let date = proxy.value(atX: location.x, as: Date.self) {
-                                        selectedDataPoint = filteredHistory.min(by: {
-                                            abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
-                                        })
-                                        Haptic.selectionChanged()
-                                    }
-                                }
-                        }
+                    .chartBackground { proxy in
+                        classicAnnotationOverlay(proxy: proxy)
                     }
+                    .chartOverlay { proxy in
+                        classicScrubOverlay(proxy: proxy)
+                    }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricChartScrub)
                 } else {
                     VStack(spacing: 12) {
                         Image(systemName: "chart.line.uptrend.xyaxis")
@@ -283,6 +294,87 @@ struct MetricDetailView: View {
                     .frame(height: 220)
                     .frame(maxWidth: .infinity)
                 }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.metricDetail)
+    }
+
+    private func classicAnnotationOverlay(proxy: ChartProxy) -> some View {
+        GeometryReader { geometry in
+            if let selected = selectedDataPoint {
+                let xPos = proxy.position(forX: selected.date) ?? 0
+                let yPos = proxy.position(forY: metricValue(for: selected)) ?? 0
+                let valueText = formattedValue(metricValue(for: selected))
+                ChartTooltip(
+                    date: selected.date,
+                    value: valueText,
+                    unit: metric.unit,
+                    deviation: nil,
+                    isOutlier: false
+                )
+                .accessibilityIdentifier(SurfaceID.metricChartSelection)
+                .accessibilityLabel(
+                    ChartScrubSelection.calloutText(
+                        date: selected.date,
+                        value: valueText,
+                        unit: metric.unit
+                    )
+                )
+                .position(
+                    x: min(max(xPos, 80), geometry.size.width - 80),
+                    y: max(yPos - 70, 50)
+                )
+            }
+        }
+    }
+
+    /// Drag scrub (Apple Health / WHOOP). Parity with AdvancedMetricChartView.
+    private func classicScrubOverlay(proxy: ChartProxy) -> some View {
+        GeometryReader { geo in
+            Rectangle()
+                .fill(Color.clear)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            selectNearestClassic(at: value.location, proxy: proxy, geo: geo)
+                        }
+                        .onEnded { _ in
+                            selectedDataPoint = nil
+                            lastHapticID = nil
+                        }
+                )
+        }
+    }
+
+    private func selectNearestClassic(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy) {
+        let date: Date?
+        if #available(iOS 17.0, *) {
+            guard let plotFrame = proxy.plotFrame else { return }
+            let x = location.x - geo[plotFrame].origin.x
+            date = proxy.value(atX: x)
+        } else {
+            let width = geo.size.width
+            guard width > 0,
+                  let first = filteredHistory.first?.date,
+                  let last = filteredHistory.last?.date else { return }
+            date = ChartScrubSelection.date(
+                atFraction: location.x / width,
+                from: first,
+                to: last
+            )
+        }
+        guard let date,
+              let idx = ChartScrubSelection.nearestIndex(
+                in: filteredHistory.map(\.date),
+                to: date
+              ) else { return }
+        let point = filteredHistory[idx]
+        selectedDataPoint = point
+        if point.id != lastHapticID {
+            lastHapticID = point.id
+            if !reduceMotion {
+                Haptic.selectionChanged()
             }
         }
     }

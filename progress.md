@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-09-08 — Poteto: MetricDetailView ChartScrubSelection scrub + tooltip
+
+- Applied Apple Health–style drag scrub to `MetricDetailView` primary Trend chart: `ChartScrubSelection` nearest-date map, RuleMark, `ChartTooltip` callout; clears on lift; Reduce Motion skips scrub haptics (parity with `AdvancedMetricChartView`).
+- Today → Metrics cards open `MetricDetailView` (classic detail + Depth Timeline). Score breakdown bars still open `AdvancedMetricDetailView`.
+- UITest: `testMetricDetailChartScrubSurface` → classic PNG; `testAdvancedMetricDetailChartScrubSurface` via Breakdown `breakdown.Sleep` → Advanced scrub PNG.
+- Wired classic PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #12.
+- Branch: `feature/poteto-metric-detail-scrub`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: Apple Health–style chart scrub / value callout
 
 - Upgraded `AdvancedMetricChartView` (Today → metric detail) from tap-only to drag scrub with RuleMark + `ChartTooltip` callout; clears on lift (Health-like).
