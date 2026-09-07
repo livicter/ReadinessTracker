@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-08 — Poteto: WHOOP-parity Strain/Recovery on Today (Option C)
+
+- Elevated `StrainRecoveryBalanceCard`: side-by-side Recovery % | Strain /21 with day-over-day deltas, balance score + status, chevron.
+- Today balance card is tappable → `RecoveryStrainDetailView` (wheel header already was).
+- Compact 7-day recovery sparkline (`AnimatedSparkline`) under the Strain/Recovery wheel.
+- UITest: `testStrainRecoveryBalanceSurface` → `verify-strain-recovery.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #15.
+- Branch: `feature/poteto-strain-recovery-today`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: Journal Behavior Impact under UIFixture (Option D)
 
 - Seed ≥8 `JournalEntry` rows in `UIFixture.installIfRequested` → `UserDefaults` `journal_entries` (same key as `JournalView`), with varied habits + readiness scores so Behavior Impact is non-empty under `-ui-fixture`.

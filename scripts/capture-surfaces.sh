@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture Today, WHOOP stack, Body & activity, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, and sleep stages hypnogram, metric detail scrub, and classic MetricDetailView scrub via XCUITest.
+# Capture Today, WHOOP stack, Body & activity, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, sleep stages hypnogram, metric detail scrub, classic MetricDetailView scrub, and strain/recovery balance via XCUITest.
 # UITests write PNGs to /tmp/rt-audit. This script copies them into .audit/.
 set -euo pipefail
 
@@ -39,7 +39,7 @@ xcodebuild test \
   -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1

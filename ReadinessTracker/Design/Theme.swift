@@ -109,6 +109,8 @@ enum SurfaceID {
     static let metricChartScrub = "metric.chart.scrub"
     static let metricChartSelection = "metric.chart.selection"
     static let metricDetail = "metric.detail"
+    static let strainRecoveryBalance = "strain.recovery.balance"
+    static let recoveryTrajectorySpark = "recovery.trajectory.spark"
 }
 
 enum ScoreZone {

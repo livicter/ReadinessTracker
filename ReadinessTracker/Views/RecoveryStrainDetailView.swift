@@ -148,7 +148,11 @@ struct RecoveryStrainDetailView: View {
                     }
                 }
                 
-                StrainRecoveryBalanceCard(balance: balance)
+                StrainRecoveryBalanceCard(
+                    balance: balance,
+                    recovery: scores.general,
+                    strain: strainScore
+                )
             }
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
