@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-09-07 — Sleep quality surface capture (Honest gap #1)
+
+- Added `testSleepQualitySurfaceVisibleAfterScroll` to scroll Today to Sleep Quality Trend + Sleep Consistency and save `verify-sleep-quality.png`.
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-sleep-quality.png`.
+- README Status + Honest gaps: gap #1 closed with evidence; gap #3 (READY hole) remains.
+- Branch: `feature/sleep-quality-surface-capture`.
+
+
 ## 2026-09-07 — Check-in card no-wrap (Honest gap #2)
 
 - Fixed `CheckInStatusCard` so Morning/Evening labels + Done/Pending stay on one line on half-width HStack cards (`lineLimit(1)`, `minimumScaleFactor(0.75)`, tighter spacing).

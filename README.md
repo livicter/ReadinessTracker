@@ -15,9 +15,9 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Morning / Evening check-in cards | Shipped. First screen ends at the sync bar. Scrolled Today shows both cards above the tab bar. Morning/Evening stay on one line on the half-card | dashboard + body frames |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
 | Sleep Performance (14-night need) | Shipped. Efficiency and Consistency are one line | whoop frame |
-| Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart | whoop frame |
+| Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart | whoop + sleep-quality frames |
 | Sleep Debt | Present further down | UITest |
-| Sleep Quality / Consistency cards | Present further down. One iPhone frame cannot hold Recovery through Consistency | UITest |
+| Sleep Quality / Consistency cards | Shipped. Fifth capture scrolls to Sleep Quality Trend + Sleep Consistency | [verify-sleep-quality.png](.audit/verify-sleep-quality.png) |
 | Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped, **above** the WHOOP stack. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) |
 | Sleep disturbance count on Today sleep row | Shipped | `DashboardView` sleep card |
 | Journal “log 7 days” strip | Shipped | `JournalView` |
@@ -63,6 +63,12 @@ Scrolled Today after Body. Need caption is the 14-night average. Efficiency and 
 
 ![WHOOP stack](.audit/verify-whoop-stack.png)
 
+### Sleep quality and consistency
+
+Scrolled further on Today past Sleep Debt. Sleep Quality Trend and Sleep Consistency cards (Sleep HRV chips when still in frame).
+
+![Sleep quality](.audit/verify-sleep-quality.png)
+
 ### Body and activity
 
 Sits above Recovery and Strain. Label is **Activity**, not Heart Points. Morning and Evening are fully above the tab bar in this frame. Morning and Evening labels stay on one line.
@@ -81,7 +87,7 @@ Push and pull request to `main` run three required GitHub Actions jobs.
 
 1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
 2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
-3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Five XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Six XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
 
 ```bash
 ./scripts/ci-guard-tree.sh
@@ -101,6 +107,6 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 
 ## Honest gaps
 
-1. Fifth capture frame for Sleep HRV chips plus Sleep Quality / Consistency cards, or keep UITest-only proof for that slice.
+1. ~~Fifth capture frame for Sleep HRV chips plus Sleep Quality / Consistency cards.~~ Closed — [verify-sleep-quality.png](.audit/verify-sleep-quality.png) from `testSleepQualitySurfaceVisibleAfterScroll`.
 2. ~~Morning wraps on the half-width check-in card.~~ Closed — Morning/Evening use `lineLimit(1)` + `minimumScaleFactor` on the half-width cards.
 3. Center “90 READY” makes a larger inner hole than Fitness Summary, which has no center score.
