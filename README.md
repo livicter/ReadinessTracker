@@ -12,7 +12,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 |---|---|---|
 | Today hero, Gym / Work / Sleep rings | Shipped. Concentric Activity geometry, one `-90` start, round caps, no tip dots, no hairline halo | [verify-rings.png](.audit/verify-rings.png) |
 | Source chips + **WHOOP via Apple Health** | Shipped | [verify-dashboard.png](.audit/verify-dashboard.png) |
-| Morning / Evening check-in cards | Shipped. First screen ends at the sync bar. Scrolled Today shows both cards above the tab bar. Morning still wraps on the half-card | dashboard + body frames |
+| Morning / Evening check-in cards | Shipped. First screen ends at the sync bar. Scrolled Today shows both cards above the tab bar. Morning/Evening stay on one line on the half-card | dashboard + body frames |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
 | Sleep Performance (14-night need) | Shipped. Efficiency and Consistency are one line | whoop frame |
 | Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart | whoop frame |
@@ -65,7 +65,7 @@ Scrolled Today after Body. Need caption is the 14-night average. Efficiency and 
 
 ### Body and activity
 
-Sits above Recovery and Strain. Label is **Activity**, not Heart Points. Morning and Evening are fully above the tab bar in this frame. Morning still wraps.
+Sits above Recovery and Strain. Label is **Activity**, not Heart Points. Morning and Evening are fully above the tab bar in this frame. Morning and Evening labels stay on one line.
 
 ![Body and activity](.audit/verify-body-activity.png)
 
@@ -102,5 +102,5 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 ## Honest gaps
 
 1. Fifth capture frame for Sleep HRV chips plus Sleep Quality / Consistency cards, or keep UITest-only proof for that slice.
-2. Morning wraps on the half-width check-in card.
+2. ~~Morning wraps on the half-width check-in card.~~ Closed — Morning/Evening use `lineLimit(1)` + `minimumScaleFactor` on the half-width cards.
 3. Center “90 READY” makes a larger inner hole than Fitness Summary, which has no center score.

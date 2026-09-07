@@ -1043,24 +1043,30 @@ struct CheckInStatusCard: View {
 
     var body: some View {
         NativeCard {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 16))
+                    .font(.system(size: 15))
                     .foregroundStyle(isDone ? color : RTColor.tertiaryText)
+                    .frame(width: 18, alignment: .center)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(RTColor.primaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                     Text(isDone ? "Done" : "Pending")
                         .font(.caption2.weight(.medium))
                         .foregroundStyle(isDone ? color : RTColor.tertiaryText)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                 }
+                .layoutPriority(1)
 
-                Spacer()
+                Spacer(minLength: 4)
 
                 Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 20))
+                    .font(.system(size: 18))
                     .foregroundStyle(isDone ? color : RTColor.surfaceHighlight)
             }
         }
