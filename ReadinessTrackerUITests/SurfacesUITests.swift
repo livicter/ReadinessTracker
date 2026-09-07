@@ -162,7 +162,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testMetricDetailChartScrubSurface() throws {
-        // Today → Metrics → Sleep card → AdvancedMetricDetailView (period selector + scrub chart).
+        // Today → Metrics → Sleep card → MetricDetailView (period selector + ChartScrubSelection).
         revealText("Metrics")
         let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
         if sleepCard.waitForExistence(timeout: 6) {
@@ -182,14 +182,48 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["7D"].waitForExistence(timeout: 8)
         )
         _ = app.buttons["30D"].exists || app.staticTexts["30D"].exists
-        // Chart surface (scrub chrome may not stick after lift; assert detail + chart id).
+        // Classic primary chart scrub surface (RuleMark + tooltip via ChartScrubSelection).
+        let chart = app.otherElements["metric.chart.scrub"].firstMatch
+        XCTAssertTrue(
+            chart.waitForExistence(timeout: 8) ||
+            app.staticTexts["Trend"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Drag to inspect"].waitForExistence(timeout: 8)
+        )
+        // Soft: attempt a short drag on the chart plot if hittable (Charts + XCTest is flaky).
+        if chart.exists && chart.isHittable {
+            let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
+            let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5))
+            start.press(forDuration: 0.15, thenDragTo: end)
+            _ = app.otherElements["metric.chart.selection"].exists
+        }
+        saveShot("verify-metric-detail-classic-scrub.png")
+    }
+
+    func testAdvancedMetricDetailChartScrubSurface() throws {
+        // Today → Breakdown → Sleep row → AdvancedMetricDetailView (bands/MA scrub).
+        revealText("Breakdown")
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        if sleepRow.waitForExistence(timeout: 8) {
+            sleepRow.tap()
+        } else {
+            let fallback = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).firstMatch
+            XCTAssertTrue(fallback.waitForExistence(timeout: 8), "Breakdown Sleep row")
+            fallback.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8)
+        )
+        XCTAssertTrue(
+            app.buttons["7D"].waitForExistence(timeout: 8) ||
+            app.staticTexts["7D"].waitForExistence(timeout: 8)
+        )
         let chart = app.otherElements["metric.chart.scrub"].firstMatch
         XCTAssertTrue(
             chart.waitForExistence(timeout: 8) ||
             app.staticTexts["Actual"].waitForExistence(timeout: 8) ||
             app.staticTexts["Baseline Bands"].waitForExistence(timeout: 8)
         )
-        // Soft: attempt a short drag on the chart plot if hittable (Charts + XCTest is flaky).
         if chart.exists && chart.isHittable {
             let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
             let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5))

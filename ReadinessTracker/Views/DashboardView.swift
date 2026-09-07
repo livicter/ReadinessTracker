@@ -1116,6 +1116,7 @@ struct BreakdownBar: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("breakdown.\(metricType.rawValue)")
     }
 }
 

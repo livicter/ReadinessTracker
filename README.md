@@ -26,7 +26,8 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Weekly Report sheet (History) | Shipped. Dedicated capture opens History → Weekly Report (≥3 fixture days) | [verify-weekly-report.png](.audit/verify-weekly-report.png) |
 | Sleep Analysis hypnogram (fixture stages) | Shipped. Fixture seeds coherent `sleepStages` (one awake) aligned with `wakeEpisodes`; capture opens Today → Sleep Stages → Sleep Analysis | [verify-sleep-stages.png](.audit/verify-sleep-stages.png) |
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
-| Metric detail chart scrub (date + value callout) | Shipped. Drag scrub on `AdvancedMetricChartView` (Today → Sleep/HRV detail): RuleMark + tooltip; period selector 7D/30D/90D/1Y; Reduce Motion skips scrub haptics | [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) |
+| Metric detail chart scrub (date + value callout) | Shipped. Drag scrub on `AdvancedMetricChartView` (score breakdown → detail): RuleMark + tooltip; period selector 7D/30D/90D/1Y; Reduce Motion skips scrub haptics | [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) |
+| Classic `MetricDetailView` primary Trend scrub | Shipped. Today → Metrics cards open classic detail; `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on primary Trend chart (parity with Advanced) | [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
 
@@ -89,7 +90,9 @@ Sits above Recovery and Strain. Label is **Activity**, not Heart Points. Morning
 
 ### Metric detail chart scrub
 
-Today → Sleep (or HRV/RMSSD) metric card opens `AdvancedMetricDetailView`. Drag across the primary trend chart to inspect date + value (Apple Health / WHOOP style). Period selector matches Health-like 7D / 30D / 90D / 1Y controls.
+Today → Sleep (or HRV/RMSSD) metric card opens `MetricDetailView`. Drag across the primary Trend chart to inspect date + value (Apple Health / WHOOP style). Period selector matches Health-like 7D / 30D / 90D / 1Y controls. Score breakdown rows still open `AdvancedMetricDetailView` (bands / MA / outliers).
+
+![Classic MetricDetailView scrub](.audit/verify-metric-detail-classic-scrub.png)
 
 ![Metric detail scrub](.audit/verify-metric-detail-scrub.png)
 
@@ -141,7 +144,7 @@ Push and pull request to `main` run three required GitHub Actions jobs.
 
 1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
 2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
-3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Thirteen XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). UITests with `-ui-fixture` (including classic MetricDetailView scrub). PNGs upload as the `ui-surfaces` artifact.
 
 ```bash
 ./scripts/ci-guard-tree.sh
@@ -172,3 +175,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 9. ~~Weekly Report sheet had History row only (no PNG of the report itself).~~ Closed — [verify-weekly-report.png](.audit/verify-weekly-report.png) from `testWeeklyReportSurface`.
 10. ~~UIFixture set `wakeEpisodes: 1` with empty `sleepStages`, so Today showed “1 disturbance” while Sleep Analysis / Day Detail hypnogram and `awakePeriods(from:)` were empty; hypnogram Y also used positive `depthRank` outside `chartYScale` `-4...0`.~~ Closed — fixture seeds coherent stages (one awake) and derives `wakeEpisodes` from them; HypnogramView uses negated Y bands; [verify-sleep-stages.png](.audit/verify-sleep-stages.png) from `testSleepStagesSurface`.
 11. ~~Metric detail trend charts were tap-only (or no scrub callout) vs Apple Health / WHOOP drag-to-inspect.~~ Closed — `AdvancedMetricChartView` drag scrub + RuleMark/tooltip; [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) from `testMetricDetailChartScrubSurface`; unit tests cover `ChartScrubSelection`.
+12. ~~Classic `MetricDetailView` primary Trend chart remained tap-only while Advanced had Health-style scrub.~~ Closed — `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on `MetricDetailView`; Metrics cards open classic detail; [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png).

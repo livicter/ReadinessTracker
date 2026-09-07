@@ -25,7 +25,7 @@ struct MetricCard: View {
     }
 
     var body: some View {
-        NavigationLink(destination: AdvancedMetricDetailView(
+        NavigationLink(destination: MetricDetailView(
             metric: metricType,
             currentValue: currentValue,
             history: history,
