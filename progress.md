@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-09-08 — Journal surface capture (Status-table gap)
+
+- Added `testJournalSurface` to open Journal from Today’s NavigationLink and save `verify-journal.png` (Log 7 days strip).
+- Wired the new PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; committed `.audit/verify-journal.png`.
+- README Status + App surfaces + Honest gaps: Journal strip shipped with evidence (post History).
+- Branch: `feature/journal-surface-capture`.
+
+
+
+
+
 ## 2026-09-08 — History tab surface capture (Status-table gap)
 
 - Added `testHistoryTabSurface` to open the History tab (Weekly Report + Trends + source picker) and save `verify-history.png`.

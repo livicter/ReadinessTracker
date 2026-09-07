@@ -22,7 +22,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Sleep Quality / Consistency cards | Shipped. Fifth capture scrolls to Sleep Quality Trend + Sleep Consistency | [verify-sleep-quality.png](.audit/verify-sleep-quality.png) |
 | Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped, **above** the WHOOP stack. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) |
 | Sleep disturbance count on Today sleep row | Shipped | `DashboardView` sleep card |
-| Journal “log 7 days” strip | Shipped | `JournalView` |
+| Journal “log 7 days” strip | Shipped. Dedicated capture opens Journal from Today (empty-state Log 7 days strip) | [verify-journal.png](.audit/verify-journal.png) |
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
@@ -101,13 +101,19 @@ Dedicated History tab. Segmented Apple Watch / Fitbit source picker, Weekly Repo
 
 ![History tab](.audit/verify-history.png)
 
+### Journal
+
+Opened from Today’s Journal row. Empty-state copy plus the “Log 7 days to see how habits line up with next-day readiness.” strip under `-ui-fixture`.
+
+![Journal](.audit/verify-journal.png)
+
 ## Verify
 
 Push and pull request to `main` run three required GitHub Actions jobs.
 
 1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
 2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
-3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Nine XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Ten XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
 
 ```bash
 ./scripts/ci-guard-tree.sh
@@ -133,3 +139,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 4. ~~Sleep Debt Status row was “Present further down | UITest” with no dedicated frame.~~ Closed — [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
 5. ~~Check-in tab had no dedicated UITest/PNG (only Today Morning/Evening cards).~~ Closed — [verify-checkin.png](.audit/verify-checkin.png) from `testCheckInTabSurface`.
 6. ~~History tab had no dedicated UITest/PNG (only mentioned under Elsewhere).~~ Closed — [verify-history.png](.audit/verify-history.png) from `testHistoryTabSurface`.
+7. ~~Journal “log 7 days” strip Status row cited `JournalView` with no PNG.~~ Closed — [verify-journal.png](.audit/verify-journal.png) from `testJournalSurface`.
