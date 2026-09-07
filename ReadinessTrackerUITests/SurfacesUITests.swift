@@ -72,6 +72,20 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-checkin.png")
     }
 
+    func testHistoryTabSurface() throws {
+        app.tabBars.buttons["History"].tap()
+        // History: source picker + Weekly Report + Trends under -ui-fixture (14 appleWatch days).
+        XCTAssertTrue(
+            app.navigationBars["History"].waitForExistence(timeout: 8) ||
+            app.staticTexts["History"].waitForExistence(timeout: 8)
+        )
+        XCTAssertTrue(app.staticTexts["Weekly Report"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["Trends"].waitForExistence(timeout: 8))
+        _ = app.buttons["Apple Watch"].exists
+        _ = app.buttons["Fitbit"].exists
+        saveShot("verify-history.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))

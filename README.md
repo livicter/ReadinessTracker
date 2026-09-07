@@ -14,6 +14,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Source chips + **WHOOP via Apple Health** | Shipped | [verify-dashboard.png](.audit/verify-dashboard.png) |
 | Morning / Evening check-in cards | Shipped. First screen ends at the sync bar. Scrolled Today shows both cards above the tab bar. Morning/Evening stay on one line on the half-card | dashboard + body frames |
 | Check-in tab (Morning / Evening form) | Shipped. Dedicated capture opens the Check-in tab (segmented picker + Save) | [verify-checkin.png](.audit/verify-checkin.png) |
+| History tab (Weekly Report + Trends) | Shipped. Dedicated capture opens the History tab (source picker, Weekly Report, Trends) | [verify-history.png](.audit/verify-history.png) |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
 | Sleep Performance (14-night need) | Shipped. Efficiency and Consistency are one line | whoop frame |
 | Sleep HRV (RMSSD) | Shipped. Header and 58 ms in the whoop frame. Trend / Sleep Quality chips sit below the chart | whoop + sleep-quality frames |
@@ -94,13 +95,19 @@ Dedicated Check-in tab (not the Today Morning/Evening cards). Segmented Morning/
 
 ![Check-in tab](.audit/verify-checkin.png)
 
+### History tab
+
+Dedicated History tab. Segmented Apple Watch / Fitbit source picker, Weekly Report row, Trends section, and day list under `-ui-fixture` (14 seeded Apple Watch days).
+
+![History tab](.audit/verify-history.png)
+
 ## Verify
 
 Push and pull request to `main` run three required GitHub Actions jobs.
 
 1. Tree guard (`./scripts/ci-guard-tree.sh`). Fails if git tracks `build/`, `Readiness.app`, `Secrets.xcconfig`, `xcuserdata`, or `Heart Points` in Swift. Also fails if a committed `.audit/verify-*.png` is missing.
 2. iOS unit tests (`./scripts/ci-verify.sh`). `ReadinessTrackerTests` only.
-3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Eight XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
+3. iOS UI surfaces (`./scripts/capture-surfaces.sh`). Nine XCUITests with `-ui-fixture`. PNGs upload as the `ui-surfaces` artifact.
 
 ```bash
 ./scripts/ci-guard-tree.sh
@@ -125,3 +132,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 3. ~~Center “90 READY” makes a larger inner hole than Fitness Summary, which has no center score.~~ Closed — tighter Activity packing (`size/10` stroke, gap 2) plus scaled center READY typography; see [verify-rings.png](.audit/verify-rings.png).
 4. ~~Sleep Debt Status row was “Present further down | UITest” with no dedicated frame.~~ Closed — [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
 5. ~~Check-in tab had no dedicated UITest/PNG (only Today Morning/Evening cards).~~ Closed — [verify-checkin.png](.audit/verify-checkin.png) from `testCheckInTabSurface`.
+6. ~~History tab had no dedicated UITest/PNG (only mentioned under Elsewhere).~~ Closed — [verify-history.png](.audit/verify-history.png) from `testHistoryTabSurface`.
