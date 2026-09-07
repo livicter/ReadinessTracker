@@ -106,4 +106,16 @@ final class SleepStageIntervalTests: XCTestCase {
             XCTAssertEqual(stage.hypnogramYEnd - stage.hypnogramYStart, 1)
         }
     }
+
+    func testUIFixtureJournalEntriesSeedImpactThreshold() throws {
+        let entries = UIFixture.journalEntries()
+        XCTAssertGreaterThanOrEqual(entries.count, 7, "Journal impact chart needs ≥7 entries")
+        XCTAssertTrue(entries.allSatisfy { $0.readinessScore != nil })
+        XCTAssertTrue(entries.contains { $0.behaviors.contains(.alcohol) })
+        XCTAssertTrue(entries.contains { $0.behaviors.contains(.meditation) })
+        let data = try JSONEncoder().encode(entries)
+        let decoded = try JSONDecoder().decode([JournalEntry].self, from: data)
+        XCTAssertEqual(decoded.count, entries.count)
+        XCTAssertEqual(UIFixture.journalEntriesKey, "journal_entries")
+    }
 }

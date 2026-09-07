@@ -83,13 +83,48 @@ enum UIFixture {
         ProcessInfo.processInfo.arguments.contains("-ui-fixture")
     }
 
+    /// UserDefaults key shared with `JournalView` / `AIRecommendations`.
+    static let journalEntriesKey = "journal_entries"
+
     @MainActor
     static func installIfRequested() {
         guard isRequested else { return }
         DataStore.shared.seedUIFixture()
+        seedJournalEntries()
         HealthKitManager.shared.dataSource = "Whoop"
         HealthKitManager.shared.isAuthorized = true
         HealthKitManager.shared.errorMessage = nil
+    }
+
+    /// Seeds ≥7 journal entries so JournalView shows Behavior Impact (not the “Log 7 days” empty strip).
+    /// Real users with fewer than 7 entries still see that strip — fixture-only.
+    static func seedJournalEntries() {
+        let entries = journalEntries()
+        if let data = try? JSONEncoder().encode(entries) {
+            UserDefaults.standard.set(data, forKey: journalEntriesKey)
+        }
+    }
+
+    /// Habit ↔ readiness rows for the impact chart under `-ui-fixture`.
+    /// Varied behaviors + scores so alcohol/stress sit below overall avg and recovery habits above.
+    static func journalEntries() -> [JournalEntry] {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        // (daysAgo, behaviors, notes, readinessScore)
+        let specs: [(Int, [JournalEntryView.Behavior], String, Int)] = [
+            (7, [.alcohol], "Fixture: drinks after dinner", 48),
+            (6, [.caffeineLate, .screenTime], "Fixture: late coffee + phone", 55),
+            (5, [.meditation], "Fixture: evening sit", 82),
+            (4, [.alcohol, .stress], "Fixture: stress + drinks", 42),
+            (3, [.sauna], "Fixture: post-workout heat", 78),
+            (2, [.iceBath, .meditation], "Fixture: cold + calm", 88),
+            (1, [.screenTime], "Fixture: late scrolling", 60),
+            (0, [.massage], "Fixture: recovery day", 80),
+        ]
+        return specs.map { daysAgo, behaviors, notes, score in
+            let date = cal.date(byAdding: .day, value: -daysAgo, to: today)!
+            return JournalEntry(date: date, behaviors: behaviors, notes: notes, readinessScore: score)
+        }
     }
 
     static func history() -> [DailyHealthData] {
