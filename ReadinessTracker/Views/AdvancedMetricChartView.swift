@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 
 /// Advanced chart view showing real data science analysis on user's actual health data.
-/// Apple-native styling with a solid-surface tooltip and clean annotations.
+/// Apple Health–style drag scrubbing: RuleMark + solid-surface tooltip callout.
 struct AdvancedMetricChartView: View {
     let metric: MetricType
     let analyzedData: [AnalyzedDataPoint]
@@ -11,6 +11,8 @@ struct AdvancedMetricChartView: View {
     let showOutliers: Bool
     
     @State private var selectedPoint: AnalyzedDataPoint?
+    @State private var lastHapticID: AnalyzedDataPoint.ID?
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     private var baseline: Double {
         analyzedData.first?.baseline ?? 0
@@ -36,6 +38,8 @@ struct AdvancedMetricChartView: View {
             legendView
         }
         .background(AppBackground())
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricChartScrub)
     }
     
     // MARK: - Chart
@@ -78,8 +82,8 @@ struct AdvancedMetricChartView: View {
         .chartBackground { proxy in
             annotationOverlay(proxy: proxy)
         }
-        .chartBackground { proxy in
-            tapOverlay(proxy: proxy)
+        .chartOverlay { proxy in
+            scrubOverlay(proxy: proxy)
         }
     }
     
@@ -173,8 +177,15 @@ struct AdvancedMetricChartView: View {
     @ChartContentBuilder
     private func selectionRule(for selected: AnalyzedDataPoint) -> some ChartContent {
         RuleMark(x: .value("Selected", selected.date))
-            .foregroundStyle(RTColor.primaryText.opacity(0.3))
+            .foregroundStyle(RTColor.primaryText.opacity(0.35))
             .lineStyle(StrokeStyle(lineWidth: 1))
+        
+        PointMark(
+            x: .value("Selected", selected.date, unit: .day),
+            y: .value("Value", selected.rawValue)
+        )
+        .foregroundStyle(metric.color)
+        .symbolSize(120)
     }
     
     // MARK: - Overlays
@@ -196,6 +207,14 @@ struct AdvancedMetricChartView: View {
                     deviation: deviationStr,
                     isOutlier: selected.isOutlier
                 )
+                .accessibilityIdentifier(SurfaceID.metricChartSelection)
+                .accessibilityLabel(
+                    ChartScrubSelection.calloutText(
+                        date: selected.date,
+                        value: formattedValue(selected.rawValue),
+                        unit: metric.unit
+                    )
+                )
                 .position(
                     x: min(max(xPos, 80), geometry.size.width - 80),
                     y: max(yPos - 70, 50)
@@ -204,19 +223,55 @@ struct AdvancedMetricChartView: View {
         }
     }
     
-    private func tapOverlay(proxy: ChartProxy) -> some View {
-        GeometryReader { _ in
+    /// Drag scrub (Apple Health / WHOOP). iOS 16 deployment — DragGesture +
+    /// ChartProxy instead of `chartXSelection` (iOS 17+).
+    private func scrubOverlay(proxy: ChartProxy) -> some View {
+        GeometryReader { geo in
             Rectangle()
                 .fill(Color.clear)
                 .contentShape(Rectangle())
-                .onTapGesture { location in
-                    if let date = proxy.value(atX: location.x, as: Date.self) {
-                        selectedPoint = analyzedData.min(by: {
-                            abs($0.date.timeIntervalSince(date)) < abs($1.date.timeIntervalSince(date))
-                        })
-                        Haptic.selectionChanged()
-                    }
-                }
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            selectNearest(at: value.location, proxy: proxy, geo: geo)
+                        }
+                        .onEnded { _ in
+                            selectedPoint = nil
+                            lastHapticID = nil
+                        }
+                )
+        }
+    }
+    
+    private func selectNearest(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy) {
+        let date: Date?
+        if #available(iOS 17.0, *) {
+            guard let plotFrame = proxy.plotFrame else { return }
+            let x = location.x - geo[plotFrame].origin.x
+            date = proxy.value(atX: x)
+        } else {
+            let width = geo.size.width
+            guard width > 0,
+                  let first = analyzedData.first?.date,
+                  let last = analyzedData.last?.date else { return }
+            date = ChartScrubSelection.date(
+                atFraction: location.x / width,
+                from: first,
+                to: last
+            )
+        }
+        guard let date,
+              let idx = ChartScrubSelection.nearestIndex(
+                in: analyzedData.map(\.date),
+                to: date
+              ) else { return }
+        let point = analyzedData[idx]
+        selectedPoint = point
+        if point.id != lastHapticID {
+            lastHapticID = point.id
+            if !reduceMotion {
+                Haptic.selectionChanged()
+            }
         }
     }
     

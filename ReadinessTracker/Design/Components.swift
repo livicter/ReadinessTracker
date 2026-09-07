@@ -67,6 +67,7 @@ struct MetricCard: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("metric.card.\(metricType.rawValue)")
         .simultaneousGesture(
             TapGesture().onEnded { _ in
                 Haptic.press()

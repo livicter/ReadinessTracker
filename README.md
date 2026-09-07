@@ -26,6 +26,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Weekly Report sheet (History) | Shipped. Dedicated capture opens History → Weekly Report (≥3 fixture days) | [verify-weekly-report.png](.audit/verify-weekly-report.png) |
 | Sleep Analysis hypnogram (fixture stages) | Shipped. Fixture seeds coherent `sleepStages` (one awake) aligned with `wakeEpisodes`; capture opens Today → Sleep Stages → Sleep Analysis | [verify-sleep-stages.png](.audit/verify-sleep-stages.png) |
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
+| Metric detail chart scrub (date + value callout) | Shipped. Drag scrub on `AdvancedMetricChartView` (Today → Sleep/HRV detail): RuleMark + tooltip; period selector 7D/30D/90D/1Y; Reduce Motion skips scrub haptics | [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
 
@@ -84,6 +85,13 @@ Scrolled further on Today past Sleep Debt. Sleep Quality Trend and Sleep Consist
 Sits above Recovery and Strain. Label is **Activity**, not Heart Points. Morning and Evening are fully above the tab bar in this frame. Morning and Evening labels stay on one line.
 
 ![Body and activity](.audit/verify-body-activity.png)
+
+
+### Metric detail chart scrub
+
+Today → Sleep (or HRV/RMSSD) metric card opens `AdvancedMetricDetailView`. Drag across the primary trend chart to inspect date + value (Apple Health / WHOOP style). Period selector matches Health-like 7D / 30D / 90D / 1Y controls.
+
+![Metric detail scrub](.audit/verify-metric-detail-scrub.png)
 
 ### Settings, data sources
 
@@ -163,3 +171,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 8. ~~Sleep disturbance count Status row cited `DashboardView` with no PNG.~~ Closed — [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) from `testSleepDisturbanceSurfaceVisibleAfterScroll`.
 9. ~~Weekly Report sheet had History row only (no PNG of the report itself).~~ Closed — [verify-weekly-report.png](.audit/verify-weekly-report.png) from `testWeeklyReportSurface`.
 10. ~~UIFixture set `wakeEpisodes: 1` with empty `sleepStages`, so Today showed “1 disturbance” while Sleep Analysis / Day Detail hypnogram and `awakePeriods(from:)` were empty; hypnogram Y also used positive `depthRank` outside `chartYScale` `-4...0`.~~ Closed — fixture seeds coherent stages (one awake) and derives `wakeEpisodes` from them; HypnogramView uses negated Y bands; [verify-sleep-stages.png](.audit/verify-sleep-stages.png) from `testSleepStagesSurface`.
+11. ~~Metric detail trend charts were tap-only (or no scrub callout) vs Apple Health / WHOOP drag-to-inspect.~~ Closed — `AdvancedMetricChartView` drag scrub + RuleMark/tooltip; [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) from `testMetricDetailChartScrubSurface`; unit tests cover `ChartScrubSelection`.

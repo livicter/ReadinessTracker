@@ -140,19 +140,22 @@ struct DepthTimelineChart: View {
                                             date = proxy.value(atX: x)
                                         } else {
                                             // iOS 16: no plotFrame — map the touch onto the
-                                            // date range manually across the plot width.
+                                            // date range via ChartScrubSelection.
                                             let width = geo.size.width
                                             guard width > 0,
                                                   let first = filteredPoints.first?.date,
                                                   let last = filteredPoints.last?.date else { return }
-                                            let fraction = min(max(value.location.x / width, 0), 1)
-                                            date = first.addingTimeInterval(fraction * last.timeIntervalSince(first))
+                                            date = ChartScrubSelection.date(
+                                                atFraction: value.location.x / width,
+                                                from: first,
+                                                to: last
+                                            )
                                         }
                                         guard let date else { return }
-                                        selectedIndex = filteredPoints.indices.min(by: {
-                                            abs(filteredPoints[$0].date.timeIntervalSince(date)) <
-                                            abs(filteredPoints[$1].date.timeIntervalSince(date))
-                                        })
+                                        selectedIndex = ChartScrubSelection.nearestIndex(
+                                            in: filteredPoints.map(\.date),
+                                            to: date
+                                        )
                                     }
                                     .onEnded { _ in selectedIndex = nil }
                             )

@@ -45,6 +45,8 @@
 		57AA000A0000000000000001 /* HypnogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00090000000000000001 /* HypnogramView.swift */; };
 		57AA000C0000000000000001 /* SleepCycleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000B0000000000000001 /* SleepCycleView.swift */; };
 		57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA000D0000000000000001 /* DepthTimelineChart.swift */; };
+		57AA00120000000000000001 /* ChartScrubSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00110000000000000001 /* ChartScrubSelection.swift */; };
+		57AA00140000000000000001 /* ChartScrubSelectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00130000000000000001 /* ChartScrubSelectionTests.swift */; };
 		5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */; };
 		5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA60028BE763A221CC4030F9 /* NotificationManager.swift */; };
 		682DEC717507792EB4575DF9 /* StrainRecoveryBalanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B890012BCB6B39E045ACD28E /* StrainRecoveryBalanceTests.swift */; };
@@ -200,6 +202,8 @@
 		57AA00090000000000000001 /* HypnogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HypnogramView.swift; sourceTree = "<group>"; };
 		57AA000B0000000000000001 /* SleepCycleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleView.swift; sourceTree = "<group>"; };
 		57AA000D0000000000000001 /* DepthTimelineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthTimelineChart.swift; sourceTree = "<group>"; };
+		57AA00110000000000000001 /* ChartScrubSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartScrubSelection.swift; sourceTree = "<group>"; };
+		57AA00130000000000000001 /* ChartScrubSelectionTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ChartScrubSelectionTests.swift; sourceTree = "<group>"; };
 		5CCCDF3441063EDB71939BC3 /* RecoveryTrajectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecoveryTrajectoryView.swift; path = ReadinessTracker/Views/RecoveryTrajectoryView.swift; sourceTree = SOURCE_ROOT; };
 		60195A9C493E18B3114E43BF /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DayDetailView.swift; path = ReadinessTracker/Views/DayDetailView.swift; sourceTree = SOURCE_ROOT; };
 		62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRVFrequencyAnalysis.swift; path = ReadinessTracker/Models/HRVFrequencyAnalysis.swift; sourceTree = SOURCE_ROOT; };
@@ -425,6 +429,7 @@
 			isa = PBXGroup;
 			children = (
 				C0CB65267C349A3D15B1DBBD /* Theme.swift */,
+				57AA00110000000000000001 /* ChartScrubSelection.swift */,
 				8AF7EEDF89A57D2C8EE67CED /* Components.swift */,
 				7BA040C138E14DB7AE926B08 /* TripleRingView.swift */,
 				D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */,
@@ -477,6 +482,7 @@
 				0E147463102C064553F4F698 /* AIRecommendationsTests.swift */,
 				F9975446B618A947B5BE1069 /* QuickTrendTests.swift */,
 				57AA00030000000000000001 /* SleepStageIntervalTests.swift */,
+				57AA00130000000000000001 /* ChartScrubSelectionTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
 				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
 			);
@@ -762,6 +768,7 @@
 				F237C8BF45FE0ABD71A82E63 /* AIRecommendationsTests.swift in Sources */,
 				44844797585450E23D738EB9 /* QuickTrendTests.swift in Sources */,
 				57AA00040000000000000001 /* SleepStageIntervalTests.swift in Sources */,
+				57AA00140000000000000001 /* ChartScrubSelectionTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
 				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
 			);
@@ -860,6 +867,7 @@
 				57AA000A0000000000000001 /* HypnogramView.swift in Sources */,
 				57AA000C0000000000000001 /* SleepCycleView.swift in Sources */,
 				57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */,
+				57AA00120000000000000001 /* ChartScrubSelection.swift in Sources */,
 				88655F0BEB2B5D453C78C1F7 /* WidgetDataExporter.swift in Sources */,
 				37DC4839AE0C23214F42E6D5 /* CoachingInsight.swift in Sources */,
 				5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */,

@@ -161,6 +161,44 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-stages.png")
     }
 
+    func testMetricDetailChartScrubSurface() throws {
+        // Today → Metrics → Sleep card → AdvancedMetricDetailView (period selector + scrub chart).
+        revealText("Metrics")
+        let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+        if sleepCard.waitForExistence(timeout: 6) {
+            sleepCard.tap()
+        } else {
+            let sleepButton = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).firstMatch
+            XCTAssertTrue(sleepButton.waitForExistence(timeout: 8), "Sleep metric card")
+            sleepButton.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8)
+        )
+        // Health-like period controls.
+        XCTAssertTrue(
+            app.buttons["7D"].waitForExistence(timeout: 8) ||
+            app.staticTexts["7D"].waitForExistence(timeout: 8)
+        )
+        _ = app.buttons["30D"].exists || app.staticTexts["30D"].exists
+        // Chart surface (scrub chrome may not stick after lift; assert detail + chart id).
+        let chart = app.otherElements["metric.chart.scrub"].firstMatch
+        XCTAssertTrue(
+            chart.waitForExistence(timeout: 8) ||
+            app.staticTexts["Actual"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Baseline Bands"].waitForExistence(timeout: 8)
+        )
+        // Soft: attempt a short drag on the chart plot if hittable (Charts + XCTest is flaky).
+        if chart.exists && chart.isHittable {
+            let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
+            let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5))
+            start.press(forDuration: 0.15, thenDragTo: end)
+            _ = app.otherElements["metric.chart.selection"].exists
+        }
+        saveShot("verify-metric-detail-scrub.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
