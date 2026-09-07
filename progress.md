@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-09-08 — Poteto: Journal Behavior Impact under UIFixture (Option D)
+
+- Seed ≥8 `JournalEntry` rows in `UIFixture.installIfRequested` → `UserDefaults` `journal_entries` (same key as `JournalView`), with varied habits + readiness scores so Behavior Impact is non-empty under `-ui-fixture`.
+- Real users with <7 days still see the “Log 7 days…” empty strip (gate unchanged).
+- UITest: `testJournalSurface` asserts Recent Entries; `testJournalImpactSurface` → `verify-journal-impact.png`.
+- Unit: `testUIFixtureJournalEntriesSeedImpactThreshold` in `SleepStageIntervalTests`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #14.
+- Branch: `feature/poteto-journal-impact-fixture`.
+
+
+
+
+
 ## 2026-09-08 — Poteto: Apple Fitness–style ring detail (Option B)
 
 - Legend taps on Gym / Work / Sleep open `RingDetailView` sheet: score, matching color/label, 7-day sparkline + mini bars from `UIFixture` / `DailyHealthData` (Gym→`workoutMinutes`, Work→`hrv`, Sleep→`sleepHours`).

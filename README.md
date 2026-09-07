@@ -23,7 +23,8 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Sleep Quality / Consistency cards | Shipped. Fifth capture scrolls to Sleep Quality Trend + Sleep Consistency | [verify-sleep-quality.png](.audit/verify-sleep-quality.png) |
 | Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped, **above** the WHOOP stack. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) |
 | Sleep disturbance count on Today sleep row | Shipped. Dedicated capture scrolls Today to Sleep Stages (“1 disturbance” under `-ui-fixture`) | [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) |
-| Journal “log 7 days” strip | Shipped. Dedicated capture opens Journal from Today (empty-state Log 7 days strip) | [verify-journal.png](.audit/verify-journal.png) |
+| Journal (seeded entries under fixture) | Shipped. `-ui-fixture` seeds ≥7 journal entries; capture opens Journal from Today (Recent Entries) | [verify-journal.png](.audit/verify-journal.png) |
+| Journal Behavior Impact chart | Shipped. Fixture seed unlocks habit↔readiness impact (≥7 days); empty “Log 7 days” strip remains for real users with fewer entries | [verify-journal-impact.png](.audit/verify-journal-impact.png) |
 | Weekly Report sheet (History) | Shipped. Dedicated capture opens History → Weekly Report (≥3 fixture days) | [verify-weekly-report.png](.audit/verify-weekly-report.png) |
 | Sleep Analysis hypnogram (fixture stages) | Shipped. Fixture seeds coherent `sleepStages` (one awake) aligned with `wakeEpisodes`; capture opens Today → Sleep Stages → Sleep Analysis | [verify-sleep-stages.png](.audit/verify-sleep-stages.png) |
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
@@ -42,7 +43,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Scores.** Recovery 0-100 from `RecoveryCalculator`. Strain TRIMP 0-21. Sleep need is the 14-night average from `BaselineManager`. HRV is RMSSD. Wheel recovery uses `RecoveryCalculator.dashboardWheelScore`.
 
-**Check-in and journal.** Morning and Evening cards open Check-in for that time. Journal impact chart waits for 7 days of entries.
+**Check-in and journal.** Morning and Evening cards open Check-in for that time. Journal impact chart waits for 7 days of entries (seeded under `-ui-fixture`).
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
@@ -129,9 +130,15 @@ Opened from History’s Weekly Report row. Sheet shows avg readiness, trend, sta
 
 ### Journal
 
-Opened from Today’s Journal row. Empty-state copy plus the “Log 7 days to see how habits line up with next-day readiness.” strip under `-ui-fixture`.
+Opened from Today’s Journal row. Under `-ui-fixture`, ≥7 seeded entries show Recent Entries (real users with fewer than 7 days still see the empty “Log 7 days…” strip).
 
 ![Journal](.audit/verify-journal.png)
+
+### Journal Behavior Impact
+
+Same Journal screen scrolled to the Behavior Impact card. Fixture habits (alcohol, caffeine, recovery) line up with readiness scores so the chart is non-empty.
+
+![Journal Behavior Impact](.audit/verify-journal-impact.png)
 
 ### Sleep disturbances
 
@@ -177,7 +184,8 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 4. ~~Sleep Debt Status row was “Present further down | UITest” with no dedicated frame.~~ Closed — [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
 5. ~~Check-in tab had no dedicated UITest/PNG (only Today Morning/Evening cards).~~ Closed — [verify-checkin.png](.audit/verify-checkin.png) from `testCheckInTabSurface`.
 6. ~~History tab had no dedicated UITest/PNG (only mentioned under Elsewhere).~~ Closed — [verify-history.png](.audit/verify-history.png) from `testHistoryTabSurface`.
-7. ~~Journal “log 7 days” strip Status row cited `JournalView` with no PNG.~~ Closed — [verify-journal.png](.audit/verify-journal.png) from `testJournalSurface`.
+7. ~~Journal “log 7 days” strip Status row cited `JournalView` with no PNG.~~ Closed — [verify-journal.png](.audit/verify-journal.png) from `testJournalSurface` (fixture now seeds ≥7 entries; empty strip remains for real users with <7 days).
+14. ~~Journal Behavior Impact chart only showed after 7 real days; fixture permanently showed “Log 7 days…”.~~ Closed — `UIFixture.seedJournalEntries` (≥8 entries with readiness scores); [verify-journal-impact.png](.audit/verify-journal-impact.png) from `testJournalImpactSurface`.
 8. ~~Sleep disturbance count Status row cited `DashboardView` with no PNG.~~ Closed — [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) from `testSleepDisturbanceSurfaceVisibleAfterScroll`.
 9. ~~Weekly Report sheet had History row only (no PNG of the report itself).~~ Closed — [verify-weekly-report.png](.audit/verify-weekly-report.png) from `testWeeklyReportSurface`.
 10. ~~UIFixture set `wakeEpisodes: 1` with empty `sleepStages`, so Today showed “1 disturbance” while Sleep Analysis / Day Detail hypnogram and `awakePeriods(from:)` were empty; hypnogram Y also used positive `depthRank` outside `chartYScale` `-4...0`.~~ Closed — fixture seeds coherent stages (one awake) and derives `wakeEpisodes` from them; HypnogramView uses negated Y bands; [verify-sleep-stages.png](.audit/verify-sleep-stages.png) from `testSleepStagesSurface`.

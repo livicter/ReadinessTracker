@@ -126,7 +126,8 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testJournalSurface() throws {
-        // Journal: Today NavigationLink → JournalView with empty-state "Log 7 days…" strip.
+        // Journal: Today NavigationLink → JournalView with ≥7 seeded fixture entries (Recent Entries).
+        // Empty-state “Log 7 days…” remains for real users with <7 days; fixture seeds past that gate.
         revealText("Journal")
         let journalRow = app.buttons["Journal"].exists ? app.buttons["Journal"] : app.staticTexts["Journal"]
         journalRow.tap()
@@ -134,12 +135,29 @@ final class SurfacesUITests: XCTestCase {
             app.navigationBars["Journal"].waitForExistence(timeout: 8) ||
             app.staticTexts["Journal"].waitForExistence(timeout: 8)
         )
+        revealText("Recent Entries")
+        XCTAssertTrue(app.staticTexts["Recent Entries"].exists)
+        XCTAssertFalse(app.staticTexts["No journal entries yet"].exists)
         let log7Copy = "Log 7 days to see how habits line up with next-day readiness."
-        XCTAssertTrue(app.staticTexts[log7Copy].waitForExistence(timeout: 8))
-        // Entry form fills the first screen; scroll so the Log 7 days strip is in frame.
-        revealText(log7Copy)
-        _ = app.staticTexts["No journal entries yet"].exists
+        XCTAssertFalse(app.staticTexts[log7Copy].exists)
         saveShot("verify-journal.png")
+    }
+
+    func testJournalImpactSurface() throws {
+        // Journal Behavior Impact chart under -ui-fixture (≥7 seeded entries with readiness scores).
+        revealText("Journal")
+        let journalRow = app.buttons["Journal"].exists ? app.buttons["Journal"] : app.staticTexts["Journal"]
+        journalRow.tap()
+        XCTAssertTrue(
+            app.navigationBars["Journal"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Journal"].waitForExistence(timeout: 8)
+        )
+        revealText("Behavior Impact")
+        XCTAssertTrue(app.staticTexts["Behavior Impact"].exists)
+        // Soft: habit rows from fixture seed (alcohol / recovery).
+        _ = app.staticTexts["Alcohol"].exists
+        _ = app.staticTexts["Meditation"].exists
+        saveShot("verify-journal-impact.png")
     }
 
     func testWeeklyReportSurface() throws {
