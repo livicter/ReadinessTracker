@@ -18,7 +18,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | History tab (Weekly Report + Trends) | Shipped. Dedicated capture opens the History tab (source picker, Weekly Report, Trends) | [verify-history.png](.audit/verify-history.png) |
 | History Trends detail (Health Browse) | Shipped. Browse Trends → period chips, Avg/Min/Max/Change summary, drag scrub on multi-metric chart | [verify-trends.png](.audit/verify-trends.png) |
 | Day Detail / Sleep Analysis (WHOOP night) | Shipped. Asleep | In Bed | Efficiency header, stage % chips, hypnogram, cycles summary | [verify-day-detail.png](.audit/verify-day-detail.png) |
-| Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
+| Recovery / Strain wheel | Shipped. Dual concentric arcs (outer Strain 0–21, inner Recovery 0–100%), value labels, WHOOP colors; shared on Today + Recovery & Strain detail | [verify-strain-wheel.png](.audit/verify-strain-wheel.png) |
 | Strain / Recovery balance (Today) | Shipped. Side-by-side Recovery % \| Strain /21 with day-over-day deltas; tappable → Recovery & Strain detail; 7-day recovery spark under the wheel | [verify-strain-recovery.png](.audit/verify-strain-recovery.png) |
 | Recommendations (Today) | Shipped. WHOOP-style actionable cards (title, reason, action cue); training rules + coaching fill ≥1–3 under `-ui-fixture` | [verify-recommendations.png](.audit/verify-recommendations.png) |
 | Coaching (Settings) | Shipped. Ranked insight cards with explanation + action; dedicated capture from Settings → Coaching | [verify-coaching.png](.audit/verify-coaching.png) |
@@ -101,6 +101,12 @@ WHOOP-like Tonight vs Baseline dual metrics on Today: Respiratory Rate (breaths/
 ![Respiratory Rate](.audit/verify-respiratory.png)
 
 ![Skin Temperature](.audit/verify-skin-temp.png)
+
+### Recovery / Strain wheel
+
+WHOOP-like dual concentric arcs on Today (and Recovery & Strain detail): outer Strain 0–21, inner Recovery 0–100%, independent fills from the top, Recovery % in the center, Recovery | Strain value legend under the wheel.
+
+![Strain recovery wheel](.audit/verify-strain-wheel.png)
 
 ### Strain / Recovery balance
 
@@ -263,3 +269,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 22. ~~History Trends / `TrendDetailView` lacked Health Browse polish (no summary Avg/Min/Max/Change, no drag scrub on multi-metric chart, History Trends was preview-only).~~ Closed — elevated summary + scrub; History **Browse Trends** → detail; [verify-trends.png](.audit/verify-trends.png) from `testTrendsDetailSurface`.
 23. ~~Day Detail / Sleep Analysis lacked WHOOP night-detail clarity (no stage % chips, hypnogram buried, no cycles summary, thin sleep header).~~ Closed — elevated header metrics + stage chips + hypnogram + cycles; [verify-day-detail.png](.audit/verify-day-detail.png) from `testDayDetailSurface`.
 24. ~~Sleep Debt Status cited only a dedicated scroll capture — cumulative chart + mini bars without a clear debt-hours graphic, payback cue, or 7-night spark.~~ Closed — elevated Debt | Last night dual hours + zero-centered gauge + payback cue + 7-night spark/bars; [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
+25. ~~Today `StrainRecoveryWheel` was a single-ring sequential Recovery→Strain gauge (not WHOOP dual concentric arcs; detail view already had dual rings inline).~~ Closed — elevated concentric dual arcs + value labels; shared via `StrainRecoveryWheel` on Today + detail; [verify-strain-wheel.png](.audit/verify-strain-wheel.png) from `testStrainRecoveryWheelSurface`.

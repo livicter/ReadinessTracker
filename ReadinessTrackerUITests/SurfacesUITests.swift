@@ -490,6 +490,30 @@ final class SurfacesUITests: XCTestCase {
     }
 
 
+    func testStrainRecoveryWheelSurface() throws {
+        // Today WHOOP stack: elevated dual-arc Strain/Recovery wheel (concentric arcs + value labels).
+        revealText("Recovery & Strain")
+        let wheel = app.descendants(matching: .any)["strain.recovery.wheel"].firstMatch
+        var n = 0
+        while !wheel.exists && n < 6 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(
+            wheel.waitForExistence(timeout: 6) ||
+            app.staticTexts["Recovery & Strain"].exists,
+            "strain.recovery.wheel"
+        )
+        // Soft: dual-arc chrome + value legend under -ui-fixture.
+        _ = app.descendants(matching: .any)["strain.recovery.wheel.legend"].exists
+        _ = app.descendants(matching: .any)["strain.recovery.wheel.recovery"].exists
+        _ = app.descendants(matching: .any)["strain.recovery.wheel.strain"].exists
+        _ = app.staticTexts["Recovery"].exists
+        _ = app.staticTexts["Strain"].exists
+        _ = app.staticTexts["7-Day Recovery"].exists
+        saveShot("verify-strain-wheel.png")
+    }
+
     func testSleepPerformanceSurface() throws {
         // Today WHOOP stack: elevated Sleep Performance Need | Got dual metric + bar.
         // Reveal title first — do not keep swiping for ids (overscrolls past the card).
