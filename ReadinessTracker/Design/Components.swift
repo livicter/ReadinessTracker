@@ -501,13 +501,9 @@ struct BodyMetricTile: View {
                 }
                 Spacer(minLength: 0)
                 if let progress {
-                    ActivityRing(
-                        progress: progress,
-                        color: kind.color,
-                        lineWidth: 5,
-                        size: 36
-                    )
-                    .accessibilityHidden(true)
+                    // Static compact ring — avoid stacking ActivityRing onAppear animations on Today.
+                    BodyCompactProgressRing(progress: progress, color: kind.color, size: 36, lineWidth: 5)
+                        .accessibilityHidden(true)
                 }
             }
 
@@ -625,6 +621,26 @@ struct BodyMetricDetailView: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("body.detail")
         }
+    }
+}
+
+/// Non-animated progress ring for Body tiles (keeps Today scroll light).
+private struct BodyCompactProgressRing: View {
+    let progress: Double
+    let color: Color
+    let size: CGFloat
+    let lineWidth: CGFloat
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(color.opacity(0.15), lineWidth: lineWidth)
+            Circle()
+                .trim(from: 0, to: min(max(progress, 0), 1))
+                .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+        .frame(width: size, height: size)
     }
 }
 
