@@ -26,7 +26,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Sleep HRV (RMSSD) | Shipped. Tonight \| Baseline dual callout, delta, baseline band, 7-night sparkline; Sleep Quality one-liner | [verify-sleep-hrv.png](.audit/verify-sleep-hrv.png) |
 | Respiratory Rate | Shipped. Tonight \| Baseline dual callout, % delta, ±10% baseline band, 7-night sparkline | [verify-respiratory.png](.audit/verify-respiratory.png) |
 | Skin Temperature | Shipped. Tonight \| Baseline dual callout, °C delta, ±0.3°C baseline band, 7-night sparkline | [verify-skin-temp.png](.audit/verify-skin-temp.png) |
-| Sleep Debt | Shipped. Dedicated capture scrolls Today to the Sleep Debt card | [verify-sleep-debt.png](.audit/verify-sleep-debt.png) |
+| Sleep Debt | Shipped. Debt \| Last night dual hours, zero-centered gauge, payback cue, 7-night balance spark + daily vs need bars | [verify-sleep-debt.png](.audit/verify-sleep-debt.png) |
 | Sleep Quality / Consistency cards | Shipped. Elevated score rings, bedtime dots/bars, 7-day quality + consistency sparklines | [verify-sleep-quality.png](.audit/verify-sleep-quality.png) |
 | Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped, **above** the WHOOP stack. Elevated tiles: progress-to-goal + 7-day spark; tap → metric detail. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) · [verify-body-detail.png](.audit/verify-body-detail.png) |
 | Sleep disturbance count on Today sleep row | Shipped. Dedicated capture scrolls Today to Sleep Stages (“1 disturbance” under `-ui-fixture`) | [verify-sleep-disturbances.png](.audit/verify-sleep-disturbances.png) |
@@ -122,7 +122,7 @@ Opened from Settings → Insights → Coaching. Ranked coaching feed cards (expl
 
 ### Sleep debt
 
-Scrolled Today to the Sleep Debt card (cumulative vs need). Sits after Sleep HRV and before Sleep Quality Trend.
+Scrolled Today to the elevated Sleep Debt card (after Sleep HRV, before Sleep Quality Trend): Debt | Last night dual hours, zero-centered gauge, payback cue, 7-night balance spark, and daily vs need bars.
 
 ![Sleep debt](.audit/verify-sleep-debt.png)
 
@@ -262,3 +262,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 21. ~~Sleep Quality / Consistency Status cited only the fifth capture — thin badges/bars without a clear score ring, bedtime consistency dots/bars, or sparklines.~~ Closed — elevated score rings + bedtime-vs-average dots/bars + quality/consistency sparks; [verify-sleep-quality.png](.audit/verify-sleep-quality.png) from `testSleepQualitySurfaceVisibleAfterScroll`.
 22. ~~History Trends / `TrendDetailView` lacked Health Browse polish (no summary Avg/Min/Max/Change, no drag scrub on multi-metric chart, History Trends was preview-only).~~ Closed — elevated summary + scrub; History **Browse Trends** → detail; [verify-trends.png](.audit/verify-trends.png) from `testTrendsDetailSurface`.
 23. ~~Day Detail / Sleep Analysis lacked WHOOP night-detail clarity (no stage % chips, hypnogram buried, no cycles summary, thin sleep header).~~ Closed — elevated header metrics + stage chips + hypnogram + cycles; [verify-day-detail.png](.audit/verify-day-detail.png) from `testDayDetailSurface`.
+24. ~~Sleep Debt Status cited only a dedicated scroll capture — cumulative chart + mini bars without a clear debt-hours graphic, payback cue, or 7-night spark.~~ Closed — elevated Debt | Last night dual hours + zero-centered gauge + payback cue + 7-night spark/bars; [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.

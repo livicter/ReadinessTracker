@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-09 — Poteto: WHOOP Sleep Debt presentation parity (Option A)
+
+- Elevated `SleepDebtCalculator`: Debt | Last night dual hours, zero-centered debt/surplus gauge, payback cue (≈hours over N nights at +1.0h), 7-night balance `AnimatedSparkline`, daily vs need zero-centered bars.
+- `SurfaceID.sleepDebtHours` / `sleepDebtPayback` / `sleepDebtSpark` / `sleepDebtBars` (`sleep.debt.hours|payback|spark|bars`).
+- UITest: `testSleepDebtSurfaceVisibleAfterScroll` soft-checks elevated chrome → `verify-sleep-debt.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh` (existing name); README Status + App surfaces + Honest gap #24.
+- Branch: `feature/poteto-sleep-debt-whoop`.
+
+
+
+
+
+
+
 ## 2026-09-09 — Poteto: WHOOP/GH Day Detail / Sleep Analysis night-detail parity (Option A)
 
 - Elevated `DayDetailView` sleep section toward WHOOP night-detail: sleep score + **Asleep | In Bed | Efficiency** header, stage % chips (Deep/REM/Light/Awake), Sleep Timeline hypnogram, cycles summary; Full Sleep Analysis link retained.

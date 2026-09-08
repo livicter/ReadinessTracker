@@ -111,9 +111,20 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSleepDebtSurfaceVisibleAfterScroll() throws {
+        // Today WHOOP stack: elevated Sleep Debt (debt hours graphic, payback cue, 7-night spark/bars).
         revealText("Sleep Debt")
         XCTAssertTrue(app.staticTexts["Sleep Debt"].exists)
-        // SleepDebtCalculator header; Sleep HRV / Quality may still be in frame depending on scroll depth.
+        // Soft: elevated chrome under -ui-fixture.
+        _ = app.descendants(matching: .any)["sleepDebtCard"].exists
+        _ = app.descendants(matching: .any)["sleep.debt.hours"].exists
+        _ = app.descendants(matching: .any)["sleep.debt.payback"].exists
+        _ = app.descendants(matching: .any)["sleep.debt.spark"].exists
+        _ = app.descendants(matching: .any)["sleep.debt.bars"].exists
+        _ = app.staticTexts["7-Night Balance"].exists
+        _ = app.staticTexts["Daily vs need"].exists
+        _ = app.staticTexts["Debt"].exists || app.staticTexts["Banked"].exists
+        _ = app.staticTexts["Last night"].exists
+        // Neighbor cards may still be in frame depending on scroll depth.
         _ = app.staticTexts["Sleep HRV"].exists
         saveShot("verify-sleep-debt.png")
     }
