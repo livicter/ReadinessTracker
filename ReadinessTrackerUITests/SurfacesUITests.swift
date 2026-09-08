@@ -371,6 +371,22 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-performance.png")
     }
 
+    func testSleepHRVSurface() throws {
+        // Today WHOOP stack: elevated Sleep HRV Tonight | Baseline + 7-night spark + band.
+        // Reveal title first — do not keep swiping for ids (overscrolls past the card).
+        revealText("Sleep HRV")
+        XCTAssertTrue(app.staticTexts["Sleep HRV"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        // Soft: a11y + 7-night spark / Sleep Quality share the frame under -ui-fixture.
+        _ = app.descendants(matching: .any)["sleepHRVCard"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.baseline"].exists
+        _ = app.staticTexts["7-Night HRV"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.spark"].exists
+        _ = app.staticTexts["Sleep Quality"].exists
+        saveShot("verify-sleep-hrv.png")
+    }
+
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
         revealText("Recommendations")

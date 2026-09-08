@@ -150,7 +150,8 @@ enum UIFixture {
                 sleepEndTime: sleepEnd,
                 wakeEpisodes: wakeEpisodes,
                 sleepStages: stages,
-                hrv: 58,
+                // Vary older nights so Sleep HRV 7-night spark / chart show real shape; today stays 58.
+                hrv: offset == 0 ? 58 : 48 + Double((offset * 7) % 21),
                 hrvIsRMSSD: true,
                 restingHeartRate: 54,
                 // Vary older days so Body tiles show real sparklines; today stays glance-stable.

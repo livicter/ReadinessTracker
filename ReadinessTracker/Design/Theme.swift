@@ -114,6 +114,8 @@ enum SurfaceID {
     static let recommendationsSection = "recommendations.section"
     static let coachingFeed = "coaching.feed"
     static let sleepPerformance = "sleep.performance"
+    static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
+    static let sleepHRVSpark = "sleep.hrv.spark"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
 }

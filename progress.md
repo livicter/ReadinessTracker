@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-08 — Poteto: WHOOP Sleep HRV card/graphics parity (Option A)
+
+- Elevated `SleepHRVCard`: Tonight | Baseline dual metric (ms RMSSD), % delta badge, ±10% baseline band on trend chart, compact 7-night `AnimatedSparkline`, Sleep Quality one-liner.
+- `SurfaceID.sleepHRVBaselineCallout` / `sleepHRVSpark` (`sleep.hrv.baseline` / `sleep.hrv.spark`).
+- UIFixture varies older-night HRV so spark/chart show shape; today stays 58 ms.
+- UITest: `testSleepHRVSurface` → `verify-sleep-hrv.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #19.
+- Branch: `feature/poteto-sleep-hrv-whoop`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: Body & activity Google Health / Fitness tiles (Option A)
 
 - Elevated Body tiles: progress-to-goal rings (Steps 10k / Activity 30 min / Calories 500 / Water / Protein), 7-day sparklines, chevron.
