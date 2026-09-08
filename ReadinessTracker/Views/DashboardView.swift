@@ -710,32 +710,34 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.strainRecoveryBalance)
             .accessibilityLabel("Strain recovery balance detail")
 
-            HStack(spacing: 12) {
-                if let respRate = data.respiratoryRate {
-                    RespiratoryRateCard(
-                        currentRate: respRate,
-                        history: history.compactMap { d in
-                            d.respiratoryRate.map { (d.date, $0) }
-                        },
-                        baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
-                    )
-                } else {
-                    MissingMetricRow(title: "Respiratory Rate")
-                }
+            if let respRate = data.respiratoryRate {
+                RespiratoryRateCard(
+                    currentRate: respRate,
+                    history: history.compactMap { d in
+                        d.respiratoryRate.map { (d.date, $0) }
+                    },
+                    baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
+                )
+                .accessibilityIdentifier(SurfaceID.respiratoryCard)
+            } else {
+                MissingMetricRow(title: "Respiratory Rate")
+                    .accessibilityIdentifier(SurfaceID.respiratoryCard)
+            }
 
-                if let skinTemp = data.skinTemperature {
-                    let tempHistory = history.compactMap { d in
-                        d.skinTemperature.map { (date: d.date, value: $0) }
-                    }
-                    let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
-                    SkinTemperatureCard(
-                        currentTemp: skinTemp,
-                        baselineTemp: baseline > 0 ? baseline : skinTemp,
-                        history: tempHistory
-                    )
-                } else {
-                    MissingMetricRow(title: "Skin Temperature")
+            if let skinTemp = data.skinTemperature {
+                let tempHistory = history.compactMap { d in
+                    d.skinTemperature.map { (date: d.date, value: $0) }
                 }
+                let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
+                SkinTemperatureCard(
+                    currentTemp: skinTemp,
+                    baselineTemp: baseline > 0 ? baseline : skinTemp,
+                    history: tempHistory
+                )
+                .accessibilityIdentifier(SurfaceID.skinTempCard)
+            } else {
+                MissingMetricRow(title: "Skin Temperature")
+                    .accessibilityIdentifier(SurfaceID.skinTempCard)
             }
         }
         .accessibilityIdentifier(SurfaceID.whoopSection)

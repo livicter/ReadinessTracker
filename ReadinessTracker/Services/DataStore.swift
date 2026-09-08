@@ -158,8 +158,9 @@ enum UIFixture {
                 activeCalories: offset == 0 ? 420 : 280 + Double((offset * 53) % 280),
                 steps: offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500),
                 workoutMinutes: offset == 0 ? 42 : 15 + ((offset * 11) % 45),
-                skinTemperature: 36.4,
-                respiratoryRate: 15.2,
+                // Vary older nights so RR / Skin Temp 7-night spark / chart show real shape; today stays glance-stable.
+                skinTemperature: offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05,
+                respiratoryRate: offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25,
                 bloodOxygen: 97,
                 nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95)
             )

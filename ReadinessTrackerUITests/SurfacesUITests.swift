@@ -387,6 +387,35 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-hrv.png")
     }
 
+    func testRespiratoryRateSurface() throws {
+        // Today WHOOP stack: elevated Respiratory Rate Tonight | Baseline + 7-night spark + band.
+        // Reveal title first — do not keep swiping for ids (overscrolls past the card).
+        revealText("Respiratory Rate")
+        XCTAssertTrue(app.staticTexts["Respiratory Rate"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        // Soft: a11y + 7-night spark share the frame under -ui-fixture.
+        _ = app.descendants(matching: .any)["respiratory.card"].exists
+        _ = app.descendants(matching: .any)["respiratory.baseline"].exists
+        _ = app.staticTexts["7-Night RR"].exists
+        _ = app.descendants(matching: .any)["respiratory.spark"].exists
+        saveShot("verify-respiratory.png")
+    }
+
+    func testSkinTemperatureSurface() throws {
+        // Today WHOOP stack: elevated Skin Temperature Tonight | Baseline + 7-night spark + band.
+        revealText("Skin Temperature")
+        XCTAssertTrue(app.staticTexts["Skin Temperature"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        // Soft: a11y + 7-night spark share the frame under -ui-fixture.
+        _ = app.descendants(matching: .any)["skin.temp.card"].exists
+        _ = app.descendants(matching: .any)["skin.temp.baseline"].exists
+        _ = app.staticTexts["7-Night Temp"].exists
+        _ = app.descendants(matching: .any)["skin.temp.spark"].exists
+        saveShot("verify-skin-temp.png")
+    }
+
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
         revealText("Recommendations")
