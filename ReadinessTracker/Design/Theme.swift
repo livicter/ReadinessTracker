@@ -26,6 +26,8 @@ enum RTColor {
     static let recovery = Color(hex: "FF9500")
     static let strain = Color(hex: "FF3B30")
     static let consistency = Color(hex: "AF52DE")
+    static let respiratory = Color(hex: "64D2FF")
+    static let skinTemp = Color(hex: "FF9F0A")
     
     static let divider = Color.black.opacity(0.08)
     
@@ -116,6 +118,12 @@ enum SurfaceID {
     static let sleepPerformance = "sleep.performance"
     static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
     static let sleepHRVSpark = "sleep.hrv.spark"
+    static let respiratoryCard = "respiratory.card"
+    static let respiratoryBaselineCallout = "respiratory.baseline"
+    static let respiratorySpark = "respiratory.spark"
+    static let skinTempCard = "skin.temp.card"
+    static let skinTempBaselineCallout = "skin.temp.baseline"
+    static let skinTempSpark = "skin.temp.spark"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
 }

@@ -22,6 +22,8 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Coaching (Settings) | Shipped. Ranked insight cards with explanation + action; dedicated capture from Settings → Coaching | [verify-coaching.png](.audit/verify-coaching.png) |
 | Sleep Performance (14-night need) | Shipped. Need \| Got dual metric + comparative bar (14-night need); Efficiency and Consistency stay one line | [verify-sleep-performance.png](.audit/verify-sleep-performance.png) |
 | Sleep HRV (RMSSD) | Shipped. Tonight \| Baseline dual callout, delta, baseline band, 7-night sparkline; Sleep Quality one-liner | [verify-sleep-hrv.png](.audit/verify-sleep-hrv.png) |
+| Respiratory Rate | Shipped. Tonight \| Baseline dual callout, % delta, ±10% baseline band, 7-night sparkline | [verify-respiratory.png](.audit/verify-respiratory.png) |
+| Skin Temperature | Shipped. Tonight \| Baseline dual callout, °C delta, ±0.3°C baseline band, 7-night sparkline | [verify-skin-temp.png](.audit/verify-skin-temp.png) |
 | Sleep Debt | Shipped. Dedicated capture scrolls Today to the Sleep Debt card | [verify-sleep-debt.png](.audit/verify-sleep-debt.png) |
 | Sleep Quality / Consistency cards | Shipped. Fifth capture scrolls to Sleep Quality Trend + Sleep Consistency | [verify-sleep-quality.png](.audit/verify-sleep-quality.png) |
 | Body & activity (steps, Activity min, calories, SpO2, water, caffeine, protein) | Shipped, **above** the WHOOP stack. Elevated tiles: progress-to-goal + 7-day spark; tap → metric detail. Label is Activity, not Heart Points | [verify-body-activity.png](.audit/verify-body-activity.png) · [verify-body-detail.png](.audit/verify-body-detail.png) |
@@ -42,7 +44,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Data.** Apple Health (HealthKit) is the default source. Fitbit is optional OAuth via gitignored `Secrets.xcconfig`. WHOOP values appear when the user shares WHOOP into Apple Health. `DataSource` is appleWatch or fitbit only.
 
-**Today.** Readiness hero with Gym / Work / Sleep rings (`TripleRingHero`); legend opens Fitness-style ring detail. Morning and Evening check-in. Journal. Recommendations. Body and activity (steps, Activity minutes, calories, SpO2, water, caffeine, protein) with progress-to-goal tiles and tap-through detail. WHOOP stack (Recovery, Strain, Sleep Performance, Sleep HRV, Sleep Debt, Sleep Quality, Sleep Consistency). Sleep stages with disturbance count. Trends and score breakdown.
+**Today.** Readiness hero with Gym / Work / Sleep rings (`TripleRingHero`); legend opens Fitness-style ring detail. Morning and Evening check-in. Journal. Recommendations. Body and activity (steps, Activity minutes, calories, SpO2, water, caffeine, protein) with progress-to-goal tiles and tap-through detail. WHOOP stack (Recovery, Strain, Sleep Performance, Sleep HRV, Sleep Debt, Sleep Quality, Sleep Consistency, Respiratory Rate, Skin Temperature). Sleep stages with disturbance count. Trends and score breakdown.
 
 **Scores.** Recovery 0-100 from `RecoveryCalculator`. Strain TRIMP 0-21. Sleep need is the 14-night average from `BaselineManager`. HRV is RMSSD. Wheel recovery uses `RecoveryCalculator.dashboardWheelScore`.
 
@@ -89,6 +91,14 @@ WHOOP-like Sleep Performance card on Today: side-by-side **Need** and **Got** ho
 Tonight vs Baseline dual metric (ms RMSSD), % delta badge, ±10% baseline band on the trend chart, and a compact 7-night sparkline. Sleep Quality stays a one-liner. Metric-detail scrub for HRV already exists elsewhere.
 
 ![Sleep HRV](.audit/verify-sleep-hrv.png)
+
+### Respiratory Rate & Skin Temperature
+
+WHOOP-like Tonight vs Baseline dual metrics on Today: Respiratory Rate (breaths/min, % delta, ±10% band, 7-night spark) and Skin Temperature (°C delta, ±0.3°C band, 7-night spark). Full-width cards under the Strain/Recovery balance row.
+
+![Respiratory Rate](.audit/verify-respiratory.png)
+
+![Skin Temperature](.audit/verify-skin-temp.png)
 
 ### Strain / Recovery balance
 
@@ -234,3 +244,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 17. ~~Sleep Performance Status cited only “whoop frame” — Efficiency/Consistency one-liners without a clear Need vs Got morning glance or dedicated PNG.~~ Closed — elevated Need \| Got dual metric + comparative bar; [verify-sleep-performance.png](.audit/verify-sleep-performance.png) from `testSleepPerformanceSurface`.
 18. ~~Body & activity tiles were plain labels (no progress-to-goal, no sparkline, no tap-through detail) vs Google Health / Fitness glance.~~ Closed — elevated `BodyMetricTile` + `BodyMetricDetailView`; [verify-body-activity.png](.audit/verify-body-activity.png) + [verify-body-detail.png](.audit/verify-body-detail.png) from `testBodyActivityVisibleAfterScroll` / `testBodyDetailSurface`.
 19. ~~Sleep HRV Status cited only whoop/sleep-quality frames — thin header + chips without a clear Tonight vs Baseline glance, baseline band, 7-night spark, or dedicated PNG.~~ Closed — elevated Tonight \| Baseline dual callout + band + spark; [verify-sleep-hrv.png](.audit/verify-sleep-hrv.png) from `testSleepHRVSurface`.
+20. ~~Respiratory Rate / Skin Temperature Status cited only whoop stack — thin side-by-side cards without Tonight vs Baseline, baseline band, 7-night spark, or dedicated PNGs.~~ Closed — elevated full-width Tonight \| Baseline dual callouts + band + spark; [verify-respiratory.png](.audit/verify-respiratory.png) + [verify-skin-temp.png](.audit/verify-skin-temp.png) from `testRespiratoryRateSurface` / `testSkinTemperatureSurface`.

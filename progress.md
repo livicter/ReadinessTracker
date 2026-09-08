@@ -1,5 +1,20 @@
 # Progress
 
+## 2026-09-09 — Poteto: WHOOP Respiratory Rate + Skin Temperature card parity (Option A)
+
+- Elevated `RespiratoryRateCard` + `SkinTemperatureCard`: Tonight | Baseline dual metric, delta badge, baseline band on trend chart, compact 7-night `AnimatedSparkline`.
+- Full-width stack on Today (and Recovery & Strain detail) instead of cramped side-by-side half cards.
+- `SurfaceID.respiratory*` / `skinTemp*` (`respiratory.card|baseline|spark`, `skin.temp.card|baseline|spark`); `RTColor.respiratory` / `skinTemp`.
+- UIFixture varies older-night RR / skin temp so spark/chart show shape; today stays 15.2 bpm / 36.40°C.
+- UITest: `testRespiratoryRateSurface` → `verify-respiratory.png`; `testSkinTemperatureSurface` → `verify-skin-temp.png`.
+- Wired PNGs through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #20.
+- Branch: `feature/poteto-resp-skin-whoop`.
+
+
+
+
+
+
 ## 2026-09-08 — Poteto: WHOOP Sleep HRV card/graphics parity (Option A)
 
 - Elevated `SleepHRVCard`: Tonight | Baseline dual metric (ms RMSSD), % delta badge, ±10% baseline band on trend chart, compact 7-night `AnimatedSparkline`, Sleep Quality one-liner.
