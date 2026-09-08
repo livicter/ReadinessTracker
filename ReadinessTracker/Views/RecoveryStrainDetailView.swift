@@ -104,50 +104,14 @@ struct RecoveryStrainDetailView: View {
     private var wheelSection: some View {
         NativeCard {
             VStack(spacing: 20) {
-                ZStack {
-                    // Background rings
-                    Circle()
-                        .stroke(RTColor.surfaceHighlight, lineWidth: 20)
-                    Circle()
-                        .stroke(RTColor.surfaceHighlight, lineWidth: 14)
-                        .padding(20)
-                    
-                    // Strain ring fills proportionally to strain/21
-                    Circle()
-                        .trim(from: 0, to: CGFloat(min(strainScore / 21, 1.0)))
-                        .stroke(RTColor.caution, style: StrokeStyle(lineWidth: 20, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                    
-                    // Recovery ring fills proportionally to recovery/100
-                    Circle()
-                        .trim(from: 0, to: CGFloat(min(Double(scores.general) / 100, 1.0)))
-                        .stroke(RTColor.optimal, style: StrokeStyle(lineWidth: 14, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .padding(20)
-                }
-                .frame(width: 200, height: 200)
-                .padding(.vertical, 10)
-                
-                HStack(spacing: 24) {
-                    VStack(spacing: 4) {
-                        Text("\(Int(strainScore))")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(RTColor.caution)
-                        Text("Strain")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(RTColor.secondaryText)
-                    }
-                    
-                    VStack(spacing: 4) {
-                        Text("\(scores.general)")
-                            .font(.system(size: 28, weight: .bold, design: .rounded))
-                            .foregroundStyle(RTColor.optimal)
-                        Text("Recovery")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(RTColor.secondaryText)
-                    }
-                }
-                
+                StrainRecoveryWheel(
+                    strainScore: strainScore,
+                    recoveryScore: Double(scores.general),
+                    day: "TODAY"
+                )
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
+
                 StrainRecoveryBalanceCard(
                     balance: balance,
                     recovery: scores.general,

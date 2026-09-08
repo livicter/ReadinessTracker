@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-09 — Poteto: WHOOP Strain/Recovery dual-arc wheel parity (Option A)
+
+- Elevated `StrainRecoveryWheel`: concentric dual arcs (outer Strain 0–21, inner Recovery 0–100%), center Recovery %, Recovery | Strain value legend (not sequential single-ring).
+- `RecoveryStrainDetailView` now reuses `StrainRecoveryWheel` (was duplicated inline dual rings).
+- `SurfaceID.strainRecoveryWheel` / `…Legend` / `…Recovery` / `…Strain` (`strain.recovery.wheel[.legend|.recovery|.strain]`).
+- UITest: `testStrainRecoveryWheelSurface` soft-checks dual-arc chrome → `verify-strain-wheel.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #25.
+- Branch: `feature/poteto-strain-recovery-wheel`.
+
+
 ## 2026-09-09 — Poteto: WHOOP Sleep Debt presentation parity (Option A)
 
 - Elevated `SleepDebtCalculator`: Debt | Last night dual hours, zero-centered debt/surplus gauge, payback cue (≈hours over N nights at +1.0h), 7-night balance `AnimatedSparkline`, daily vs need zero-centered bars.
