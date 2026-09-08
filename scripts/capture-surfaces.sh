@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture Today, WHOOP stack, Body & activity, Body metric detail, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, sleep stages hypnogram, metric detail scrub, classic MetricDetailView scrub, strain/recovery balance, Recommendations, Coaching, Sleep Performance, Sleep HRV, Respiratory Rate, and Skin Temperature via XCUITest.
+# Capture Today, WHOOP stack, Body & activity, Body metric detail, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, sleep stages hypnogram, metric detail scrub, classic MetricDetailView scrub, strain/recovery balance, Recommendations, Coaching, Sleep Performance, Sleep HRV, Sleep Quality/Consistency, Respiratory Rate, and Skin Temperature via XCUITest.
 # UITests write PNGs to /tmp/rt-audit. This script copies them into .audit/.
 set -euo pipefail
 

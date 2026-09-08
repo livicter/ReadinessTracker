@@ -133,8 +133,19 @@ enum UIFixture {
         return (0..<14).map { offset in
             let date = cal.date(byAdding: .day, value: -offset, to: today)!
             let previous = cal.date(byAdding: .day, value: -1, to: date)!
-            let sleepStart = cal.date(bySettingHour: 23, minute: 5 + (offset % 3), second: 0, of: previous)!
-            let sleepEnd = cal.date(bySettingHour: 7, minute: 10 + (offset % 4), second: 0, of: date)!
+            // Vary older-night bed/wake so Consistency dots/bars + spark show shape; today stays glance-stable.
+            // Keep bed on previous evening (22:30–23:59) and wake on date morning (06:30–07:59).
+            let sleepStart: Date
+            let sleepEnd: Date
+            if offset == 0 {
+                sleepStart = cal.date(bySettingHour: 23, minute: 5, second: 0, of: previous)!
+                sleepEnd = cal.date(bySettingHour: 7, minute: 10, second: 0, of: date)!
+            } else {
+                let bedTotal = 22 * 60 + 30 + ((offset * 17) % 90)   // 22:30 … 23:59
+                let wakeTotal = 6 * 60 + 30 + ((offset * 11) % 90)   // 06:30 … 07:59
+                sleepStart = cal.date(bySettingHour: bedTotal / 60, minute: bedTotal % 60, second: 0, of: previous)!
+                sleepEnd = cal.date(bySettingHour: wakeTotal / 60, minute: wakeTotal % 60, second: 0, of: date)!
+            }
             let stages = coherentSleepStages(sleepStart: sleepStart, sleepEnd: sleepEnd)
             // Single source of truth: disturbance count matches awake periods in stages
             // (Today "N disturbance(s)" and DayDetail/SleepAnalysis hypnogram stay coherent).
@@ -142,7 +153,8 @@ enum UIFixture {
             return DailyHealthData(
                 date: date,
                 source: .appleWatch,
-                sleepHours: 7.4,
+                // Vary older nights so Sleep Quality spark/bars show shape; today stays 7.4h.
+                sleepHours: offset == 0 ? 7.4 : 6.2 + Double((offset * 13) % 25) * 0.1,
                 sleepEfficiency: 0.90,
                 deepSleepPercent: 0.17,
                 remSleepPercent: 0.21,
