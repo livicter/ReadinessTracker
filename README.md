@@ -2,7 +2,7 @@
 
 iOS readiness app. Bright Apple Health UI. Local HealthKit plus optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Sleep Performance shows Need | Got dual metrics. Recommendations use WHOOP-style actionable cards. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack with Fitness-style progress tiles and tap-through detail. History Browse Trends opens Health-style trend detail with summary stats and scrub.
+**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Sleep Performance shows Need | Got dual metrics. Recommendations use WHOOP-style actionable cards. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack with Fitness-style progress tiles and tap-through detail. History Browse Trends opens Health-style trend detail with summary stats and scrub. Day Detail / Sleep Analysis show WHOOP night-detail chrome (stage % chips, hypnogram, cycles summary).
 
 Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe plus `-ui-fixture`, not VoiceOver).
 
@@ -17,6 +17,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Check-in tab (Morning / Evening form) | Shipped. Dedicated capture opens the Check-in tab (segmented picker + Save) | [verify-checkin.png](.audit/verify-checkin.png) |
 | History tab (Weekly Report + Trends) | Shipped. Dedicated capture opens the History tab (source picker, Weekly Report, Trends) | [verify-history.png](.audit/verify-history.png) |
 | History Trends detail (Health Browse) | Shipped. Browse Trends → period chips, Avg/Min/Max/Change summary, drag scrub on multi-metric chart | [verify-trends.png](.audit/verify-trends.png) |
+| Day Detail / Sleep Analysis (WHOOP night) | Shipped. Asleep | In Bed | Efficiency header, stage % chips, hypnogram, cycles summary | [verify-day-detail.png](.audit/verify-day-detail.png) |
 | Recovery / Strain wheel | Shipped | [verify-whoop-stack.png](.audit/verify-whoop-stack.png) |
 | Strain / Recovery balance (Today) | Shipped. Side-by-side Recovery % \| Strain /21 with day-over-day deltas; tappable → Recovery & Strain detail; 7-day recovery spark under the wheel | [verify-strain-recovery.png](.audit/verify-strain-recovery.png) |
 | Recommendations (Today) | Shipped. WHOOP-style actionable cards (title, reason, action cue); training rules + coaching fill ≥1–3 under `-ui-fixture` | [verify-recommendations.png](.audit/verify-recommendations.png) |
@@ -176,6 +177,12 @@ Tap **Browse Trends** on History. Health Browse–style `TrendDetailView`: perio
 
 ![History Trends detail](.audit/verify-trends.png)
 
+### Day Detail / Sleep Analysis (WHOOP night)
+
+History day row opens `DayDetailView` with WHOOP night-detail clarity: sleep score + Asleep | In Bed | Efficiency header, stage % chips, Sleep Timeline hypnogram, and cycles summary (Full Sleep Analysis retained). Today → Sleep Stages opens the same elevated chips + hypnogram on `SleepAnalysisView`.
+
+![Day Detail night chrome](.audit/verify-day-detail.png)
+
 ### Weekly Report
 
 Opened from History’s Weekly Report row. Sheet shows avg readiness, trend, stat grid, Highlights/Recommendations, and Share Report under `-ui-fixture` (14 seeded days → generator needs ≥3).
@@ -254,3 +261,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 20. ~~Respiratory Rate / Skin Temperature Status cited only whoop stack — thin side-by-side cards without Tonight vs Baseline, baseline band, 7-night spark, or dedicated PNGs.~~ Closed — elevated full-width Tonight \| Baseline dual callouts + band + spark; [verify-respiratory.png](.audit/verify-respiratory.png) + [verify-skin-temp.png](.audit/verify-skin-temp.png) from `testRespiratoryRateSurface` / `testSkinTemperatureSurface`.
 21. ~~Sleep Quality / Consistency Status cited only the fifth capture — thin badges/bars without a clear score ring, bedtime consistency dots/bars, or sparklines.~~ Closed — elevated score rings + bedtime-vs-average dots/bars + quality/consistency sparks; [verify-sleep-quality.png](.audit/verify-sleep-quality.png) from `testSleepQualitySurfaceVisibleAfterScroll`.
 22. ~~History Trends / `TrendDetailView` lacked Health Browse polish (no summary Avg/Min/Max/Change, no drag scrub on multi-metric chart, History Trends was preview-only).~~ Closed — elevated summary + scrub; History **Browse Trends** → detail; [verify-trends.png](.audit/verify-trends.png) from `testTrendsDetailSurface`.
+23. ~~Day Detail / Sleep Analysis lacked WHOOP night-detail clarity (no stage % chips, hypnogram buried, no cycles summary, thin sleep header).~~ Closed — elevated header metrics + stage chips + hypnogram + cycles; [verify-day-detail.png](.audit/verify-day-detail.png) from `testDayDetailSurface`.

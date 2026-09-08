@@ -128,100 +128,46 @@ struct DayDetailView: View {
         }
     }
     
-    // MARK: - Sleep Deep Dive
+    // MARK: - Sleep Deep Dive (WHOOP night-detail clarity)
     private var sleepDeepDive: some View {
         VStack(spacing: AppleTheme.cardPadding) {
             SectionHeader(title: "Sleep Analysis")
 
             if data.sleepHours > 0 {
-            // Sleep hours hero
-            NativeCard {
-                VStack(spacing: 16) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Total Sleep")
-                                .font(.headline.weight(.semibold))
-                                .foregroundStyle(RTColor.primaryText)
-                            
-                            HStack(alignment: .lastTextBaseline, spacing: 4) {
-                                Text(String(format: "%.1f", data.sleepHours))
-                                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                                    .foregroundStyle(RTColor.sleep)
-                                Text("hours")
-                                    .font(.subheadline)
-                                    .foregroundStyle(RTColor.secondaryText)
+                NativeCard {
+                    VStack(spacing: 16) {
+                        nightHeaderMetrics
+                            .accessibilityIdentifier(SurfaceID.dayDetailHeader)
+
+                        stagePercentChips
+                            .accessibilityIdentifier(SurfaceID.dayDetailStageChips)
+
+                        if !data.sleepStages.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Sleep Timeline")
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundStyle(RTColor.primaryText)
+                                HypnogramView(intervals: data.sleepStages, interactive: false)
                             }
+                            .accessibilityIdentifier(SurfaceID.dayDetailHypnogram)
                         }
-                        
-                        Spacer()
-                        
-                        // Sleep quality badge
-                        let quality = sleepQualityLabel
-                        VStack(spacing: 4) {
-                            Text(quality.label)
-                                .font(.headline.weight(.semibold))
-                                .foregroundStyle(quality.color)
-                            Text(quality.subtitle)
-                                .font(.caption)
-                                .foregroundStyle(RTColor.secondaryText)
+
+                        cyclesSummary
+                            .accessibilityIdentifier(SurfaceID.dayDetailCycles)
+
+                        NavigationLink(value: SleepDestination(data: data, history: history)) {
+                            AppListRow(
+                                icon: "moon.fill",
+                                color: RTColor.sleep,
+                                label: "Full Sleep Analysis",
+                                value: ""
+                            )
                         }
-                        .padding(12)
-                        .background(quality.color.opacity(0.1))
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .buttonStyle(.plain)
                     }
-                    
-                    // Efficiency bar
-                    VStack(alignment: .leading, spacing: 6) {
-                        HStack {
-                            Text("Sleep Efficiency")
-                                .font(.caption)
-                                .foregroundStyle(RTColor.secondaryText)
-                            Spacer()
-                            Text("\(Int(data.sleepEfficiency * 100))%")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(data.sleepEfficiency >= 0.85 ? RTColor.optimal : RTColor.caution)
-                        }
-                        
-                        GeometryReader { geo in
-                            ZStack(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .fill(RTColor.surfaceHighlight)
-                                    .frame(height: 10)
-                                
-                                RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                    .fill(data.sleepEfficiency >= 0.85 ? RTColor.optimal : RTColor.caution)
-                                    .frame(width: geo.size.width * CGFloat(data.sleepEfficiency), height: 10)
-                            }
-                        }
-                        .frame(height: 10)
-                    }
-                    
-                // Sleep stages mini bar
-                    SleepStageBar(stages: [
-                        ("Deep", data.deepSleepPercent, RTColor.sleep),
-                        ("REM", data.remSleepPercent, Color.cyan),
-                        ("Light", data.lightSleepPercent, Color.blue.opacity(0.5)),
-                        ("Awake", data.awakePercent, RTColor.tertiaryText)
-                    ])
-                    
-                    HStack(spacing: 16) {
-                        StageLabel(label: "Deep", percent: data.deepSleepPercent, optimal: "15-20%", isOptimal: SleepData.optimalDeep.contains(data.deepSleepPercent))
-                        StageLabel(label: "REM", percent: data.remSleepPercent, optimal: "20-25%", isOptimal: SleepData.optimalRem.contains(data.remSleepPercent))
-                        StageLabel(label: "Efficiency", percent: data.sleepEfficiency, optimal: ">85%", isOptimal: data.sleepEfficiency >= 0.85)
-                    }
-                    
-                    // Link to full sleep analysis
-                    NavigationLink(value: SleepDestination(data: data, history: history)) {
-                        AppListRow(
-                            icon: "moon.fill",
-                            color: RTColor.sleep,
-                            label: "Full Sleep Analysis",
-                            value: ""
-                        )
-                    }
-                    .buttonStyle(.plain)
                 }
-            }
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(SurfaceID.dayDetail)
             } else {
                 NativeCard {
                     VStack(spacing: 12) {
@@ -243,18 +189,184 @@ struct DayDetailView: View {
             }
         }
     }
-    
-    private var sleepQualityLabel: (label: String, subtitle: String, color: Color) {
-        let hours = data.sleepHours
-        switch hours {
-        case ..<5: return ("Poor", "Not enough", RTColor.warning)
-        case 5..<6.5: return ("Fair", "Could be better", RTColor.caution)
-        case 6.5..<8: return ("Good", "Optimal range", RTColor.optimal)
-        case 8..<10: return ("Great", "Well rested", RTColor.optimal)
-        default: return ("Excess", "Might be too much", RTColor.caution)
+
+    private var nightSleepScore: Int {
+        data.sleepData.score()
+    }
+
+    private var timeInBedHours: Double {
+        data.sleepHours / max(data.sleepEfficiency, 0.01)
+    }
+
+    private var detectedCycles: [SleepCycle] {
+        SleepCycleDetector.detectCycles(in: data.sleepStages)
+    }
+
+    private var nightHeaderMetrics: some View {
+        HStack(alignment: .center, spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(RTColor.surfaceHighlight, lineWidth: 7)
+
+                Circle()
+                    .trim(from: 0, to: Double(nightSleepScore) / 100)
+                    .stroke(sleepScoreColor(nightSleepScore), style: StrokeStyle(lineWidth: 7, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+
+                VStack(spacing: 0) {
+                    Text("\(nightSleepScore)")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(RTColor.primaryText)
+                        .monospacedDigit()
+                    Text("Score")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            .frame(width: 64, height: 64)
+            .accessibilityLabel("Sleep score \(nightSleepScore)")
+
+            HStack(spacing: 0) {
+                nightMetricColumn(
+                    label: "Asleep",
+                    value: String(format: "%.1f", data.sleepHours),
+                    unit: "h",
+                    color: RTColor.sleep
+                )
+                nightMetricDivider
+                nightMetricColumn(
+                    label: "In Bed",
+                    value: String(format: "%.1f", timeInBedHours),
+                    unit: "h",
+                    color: RTColor.primaryText
+                )
+                nightMetricDivider
+                nightMetricColumn(
+                    label: "Efficiency",
+                    value: "\(Int(data.sleepEfficiency * 100))",
+                    unit: "%",
+                    color: data.sleepEfficiency >= 0.85 ? RTColor.optimal : RTColor.caution
+                )
+            }
+            .frame(maxWidth: .infinity)
         }
     }
-    
+
+    private var nightMetricDivider: some View {
+        Rectangle()
+            .fill(RTColor.divider)
+            .frame(width: 1, height: 36)
+            .padding(.horizontal, 6)
+    }
+
+    private func nightMetricColumn(label: String, value: String, unit: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(RTColor.secondaryText)
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(value)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var stagePercentChips: some View {
+        let light = max(0, 1.0 - data.deepSleepPercent - data.remSleepPercent - data.awakePercent)
+        let chips: [(label: String, percent: Double, hours: Double, color: Color)] = [
+            ("Deep", data.deepSleepPercent, data.sleepHours * data.deepSleepPercent, SleepStage.deep.color),
+            ("REM", data.remSleepPercent, data.sleepHours * data.remSleepPercent, SleepStage.rem.color),
+            ("Light", light, data.sleepHours * light, SleepStage.light.color),
+            ("Awake", data.awakePercent, timeInBedHours * data.awakePercent, RTColor.caution),
+        ]
+        return ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(chips, id: \.label) { chip in
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(chip.color)
+                            .frame(width: 8, height: 8)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text(chip.label)
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(RTColor.secondaryText)
+                            Text("\(Int(chip.percent * 100))% · \(String(format: "%.1f", chip.hours))h")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(RTColor.primaryText)
+                                .monospacedDigit()
+                        }
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 8)
+                    .background(chip.color.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .accessibilityLabel("\(chip.label) \(Int(chip.percent * 100)) percent")
+                }
+            }
+        }
+        .accessibilityLabel("Sleep stage percentages")
+    }
+
+    private var cyclesSummary: some View {
+        let cycles = detectedCycles
+        let avg: Double = {
+            guard !cycles.isEmpty else { return 0 }
+            return cycles.reduce(0) { $0 + $1.durationMinutes } / Double(cycles.count)
+        }()
+        return HStack(spacing: 12) {
+            Image(systemName: "arrow.triangle.2.circlepath")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(RTColor.sleep)
+                .frame(width: 36, height: 36)
+                .background(RTColor.sleep.opacity(0.12))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Sleep Cycles")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(RTColor.primaryText)
+                if cycles.isEmpty {
+                    Text("No cycles detected yet")
+                        .font(.caption)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("\(cycles.count) \(cycles.count == 1 ? "cycle" : "cycles") · avg \(Int(avg)) min")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(RTColor.secondaryText)
+                        .monospacedDigit()
+                }
+            }
+            Spacer()
+            if !cycles.isEmpty {
+                Text("\(cycles.count)")
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(RTColor.sleep)
+                    .monospacedDigit()
+            }
+        }
+        .accessibilityLabel(
+            cycles.isEmpty
+                ? "Sleep cycles none detected"
+                : "Sleep cycles \(cycles.count), average \(Int(avg)) minutes"
+        )
+    }
+
+    private func sleepScoreColor(_ score: Int) -> Color {
+        switch score {
+        case 80...100: return RTColor.optimal
+        case 60..<80: return RTColor.good
+        case 40..<60: return RTColor.caution
+        default: return RTColor.warning
+        }
+    }
+
+
     // MARK: - All Metrics Grid
     private var allMetricsGrid: some View {
         VStack(spacing: AppleTheme.cardPadding) {
@@ -484,19 +596,7 @@ struct DayDetailView: View {
             if data.sleepHours > 0 {
                 SectionHeader(title: "Sleep Stage Analysis")
 
-                // Compact hypnogram from real stage intervals
-                if !data.sleepStages.isEmpty {
-                    NativeCard {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Sleep Timeline")
-                                .font(.headline.weight(.semibold))
-                                .foregroundStyle(RTColor.primaryText)
-                            HypnogramView(intervals: data.sleepStages, interactive: false)
-                        }
-                    }
-                }
-
-                // Use the new Whoop-style SleepStageBreakdown
+                // Whoop-style stage breakdown (bars + grid)
                 SleepStageBreakdown(
                     sleepHours: data.sleepHours,
                     deepPercent: data.deepSleepPercent,
@@ -504,6 +604,11 @@ struct DayDetailView: View {
                     awakePercent: data.awakePercent,
                     efficiency: data.sleepEfficiency
                 )
+
+                // Full cycle composition when stages exist
+                if !detectedCycles.isEmpty {
+                    SleepCycleView(cycles: detectedCycles)
+                }
 
                 // Sleep disturbance tracker — real bed/wake times, no synthetic awake period
                 SleepDisturbanceTracker(
@@ -515,7 +620,7 @@ struct DayDetailView: View {
             }
         }
     }
-    
+
     private func stageDetailRow(
         icon: String,
         label: String,
