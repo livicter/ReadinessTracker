@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-09 — Poteto: History Trends / TrendDetail Health Browse parity (Option A)
+
+- Elevated `TrendDetailView` toward Apple Health / Google Health Browse: clearer period chips (7D/30D/90D/1Y), summary **Avg / Min / Max / Change %** row for primary metric, drag scrub (`ChartScrubSelection`) on multi-metric chart.
+- History tab Trends section → `NavigationLink` **Browse Trends** into `TrendDetailView` (preview chart retained).
+- `SurfaceID.trendsDetail` / `trendsSummary` / `trendsChartScrub` / `trendsChartSelection` / `historyTrendsLink`.
+- UITest: `testTrendsDetailSurface` → `verify-trends.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #22.
+- Branch: `feature/poteto-trends-health-browse`.
+
+
+
+
+
+
 ## 2026-09-09 — Poteto: WHOOP Sleep Consistency / Quality presentation parity (Option A)
 
 - Elevated `SleepConsistencyTracker`: clearer overall score ring, Bedtime | Wake dual %, 7-night bedtime-vs-average dots/bars, compact consistency `AnimatedSparkline`, bedtime trend chart retained.

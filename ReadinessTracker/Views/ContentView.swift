@@ -76,8 +76,29 @@ struct HistoryView: View {
                 Section("Trends") {
                     if dataStore.history.count >= 2 {
                         let sourceHistory = dataStore.dataForSource(selectedSource, days: 30)
-                        TrendChart(history: sourceHistory)
-                            .frame(height: 200)
+                        NavigationLink {
+                            TrendDetailView(history: sourceHistory)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Browse Trends")
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(RTColor.primaryText)
+                                    Spacer()
+                                    Text("7D · Avg / Min / Max")
+                                        .font(.caption2.weight(.medium))
+                                        .foregroundStyle(RTColor.tertiaryText)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(RTColor.tertiaryText)
+                                }
+                                TrendChart(history: sourceHistory)
+                                    .frame(height: 160)
+                                    .allowsHitTesting(false)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .accessibilityIdentifier(SurfaceID.historyTrendsLink)
                     } else {
                         Text("Need more data for trends")
                             .foregroundColor(.secondary)

@@ -1,8 +1,8 @@
 import SwiftUI
 import Charts
 
-/// Full-screen trend detail — tapped from Dashboard trend section.
-/// Shows all metrics overlaid with full controls and statistics.
+/// Full-screen trend detail — History Browse Trends / Dashboard Trends.
+/// Health Browse parity: period chips, summary Avg/Min/Max/Change, drag scrub.
 struct TrendDetailView: View {
     let history: [DailyHealthData]
     
@@ -10,8 +10,11 @@ struct TrendDetailView: View {
     @State private var selectedMetrics: Set<MetricToggle> = [.readiness, .sleep, .hrv]
     /// Readiness scores precomputed once per history change — avoids O(n²) recalculation per chart point.
     @State private var readinessScores: [UUID: Int] = [:]
+    @State private var selectedScrubDay: DailyHealthData?
+    @State private var lastHapticID: DailyHealthData.ID?
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     
     enum MetricToggle: String, CaseIterable, Identifiable {
         case readiness = "Readiness"
@@ -62,15 +65,19 @@ struct TrendDetailView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: AppleTheme.sectionSpacing) {
-                // Period selector
+                // Period selector (Health Browse chips: 7D / 30D / 90D / 1Y)
                 periodSelector
                     .slideIn(delay: 0)
+                
+                // Summary stats for primary metric (Avg / Min / Max / Change %)
+                summaryStatsRow
+                    .slideIn(delay: 0.03)
                 
                 // Metric toggles
                 metricToggles
                     .slideIn(delay: 0.05)
                 
-                // Main multi-metric chart
+                // Main multi-metric chart + scrub
                 mainChart
                     .slideIn(delay: 0.1)
 
@@ -94,6 +101,11 @@ struct TrendDetailView: View {
         .background(AppBackground())
         .onAppear { precomputeReadinessScores() }
         .onChange(of: history) { _ in precomputeReadinessScores() }
+        .onChange(of: selectedPeriod) { _ in
+            selectedScrubDay = nil
+            lastHapticID = nil
+        }
+        .accessibilityIdentifier(SurfaceID.trendsDetail)
         .navigationTitle("Trends")
         .navigationBarTitleDisplayMode(.large)
         .toolbarBackground(RTColor.background, for: .navigationBar)
@@ -103,6 +115,87 @@ struct TrendDetailView: View {
     // MARK: - Period Selector
     private var periodSelector: some View {
         NativePeriodSelector(selectedPeriod: $selectedPeriod)
+    }
+    
+    // MARK: - Summary Stats (Health Browse)
+    private var summaryStatsRow: some View {
+        let values = primarySeriesValues
+        let avg = values.isEmpty ? 0 : values.reduce(0, +) / Double(values.count)
+        let minV = values.min() ?? 0
+        let maxV = values.max() ?? 0
+        let change = periodChangePercent(values)
+        return NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text(primaryDepthMetric.rawValue)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(RTColor.primaryText)
+                    Text(selectedPeriod.label)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(RTColor.tertiaryText)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(RTColor.surfaceHighlight)
+                        .clipShape(Capsule())
+                    Spacer()
+                    Text(depthTimelineUnit.isEmpty ? "score" : depthTimelineUnit)
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                
+                HStack(spacing: 0) {
+                    summaryStatCell(label: "Avg", value: formattedSummary(avg))
+                    summaryStatCell(label: "Min", value: formattedSummary(minV))
+                    summaryStatCell(label: "Max", value: formattedSummary(maxV))
+                    summaryStatCell(
+                        label: "Change",
+                        value: change.map { String(format: "%+.0f%%", $0) } ?? "—",
+                        accent: changeAccent(change)
+                    )
+                }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.trendsSummary)
+        .accessibilityElement(children: .contain)
+    }
+    
+    private func summaryStatCell(label: String, value: String, accent: Color? = nil) -> some View {
+        VStack(spacing: 4) {
+            Text(label)
+                .font(.caption2.weight(.medium))
+                .foregroundStyle(RTColor.tertiaryText)
+            Text(value)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .foregroundStyle(accent ?? RTColor.primaryText)
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity)
+    }
+    
+    private var primarySeriesValues: [Double] {
+        depthTimelinePoints.map(\.value)
+    }
+    
+    private func periodChangePercent(_ values: [Double]) -> Double? {
+        guard values.count >= 2, let first = values.first, abs(first) > 0.0001 else { return nil }
+        let last = values.last!
+        return ((last - first) / abs(first)) * 100
+    }
+    
+    private func changeAccent(_ change: Double?) -> Color? {
+        guard let change else { return nil }
+        if abs(change) < 1 { return RTColor.secondaryText }
+        // Readiness / sleep / HRV / calories: up is good; RHR: down is good.
+        let upIsGood = primaryDepthMetric != .rhr
+        let improved = upIsGood ? change > 0 : change < 0
+        return improved ? RTColor.optimal : RTColor.warning
+    }
+    
+    private func formattedSummary(_ value: Double) -> String {
+        if value == floor(value) { return "\(Int(value))" }
+        return String(format: "%.1f", value)
     }
     
     // MARK: - Metric Toggles
@@ -140,68 +233,105 @@ struct TrendDetailView: View {
     private var mainChart: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Multi-Metric Trend")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(RTColor.primaryText)
+                HStack {
+                    Text("Multi-Metric Trend")
+                        .font(.headline.weight(.semibold))
+                        .foregroundStyle(RTColor.primaryText)
+                    Spacer()
+                    if selectedScrubDay == nil {
+                        Text("Drag to inspect")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
                 
                 if filteredHistory.count >= 2 {
-                    Chart(filteredHistory) { day in
-                        if selectedMetrics.contains(.readiness) {
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Readiness", readinessScores[day.id] ?? 0)
-                            )
-                            .foregroundStyle(MetricToggle.readiness.color)
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 2.5))
+                    Chart {
+                        ForEach(filteredHistory) { day in
+                            if selectedMetrics.contains(.readiness) {
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Readiness", readinessScores[day.id] ?? 0)
+                                )
+                                .foregroundStyle(MetricToggle.readiness.color)
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                            }
+                            
+                            if selectedMetrics.contains(.sleep) {
+                                let sleepNormalized = min(100, day.sleepHours * 12.5)
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Sleep", sleepNormalized)
+                                )
+                                .foregroundStyle(MetricToggle.sleep.color.opacity(0.7))
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2, dash: [4, 4]))
+                            }
+                            
+                            if selectedMetrics.contains(.hrv) {
+                                let hrvNormalized = min(100, Double(day.hrv) * 2)
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("HRV", hrvNormalized)
+                                )
+                                .foregroundStyle(MetricToggle.hrv.color.opacity(0.7))
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2, dash: [2, 2]))
+                            }
+                            
+                            if selectedMetrics.contains(.rhr) {
+                                let rhrNormalized = max(0, 100 - Double(day.restingHeartRate - 40) * 2)
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("RHR", rhrNormalized)
+                                )
+                                .foregroundStyle(MetricToggle.rhr.color.opacity(0.7))
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [6, 3]))
+                            }
+                            
+                            if selectedMetrics.contains(.calories) {
+                                let calNormalized = min(100, day.activeCalories / 15)
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Calories", calNormalized)
+                                )
+                                .foregroundStyle(MetricToggle.calories.color.opacity(0.7))
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [1, 3]))
+                            }
                         }
                         
-                        if selectedMetrics.contains(.sleep) {
-                            let sleepNormalized = min(100, day.sleepHours * 12.5)
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Sleep", sleepNormalized)
+                        if let selected = selectedScrubDay {
+                            RuleMark(x: .value("Selected", selected.date))
+                                .foregroundStyle(RTColor.primaryText.opacity(0.35))
+                                .lineStyle(StrokeStyle(lineWidth: 1))
+                            
+                            PointMark(
+                                x: .value("Selected", selected.date, unit: .day),
+                                y: .value("Value", scrubNormalizedValue(for: selected))
                             )
-                            .foregroundStyle(MetricToggle.sleep.color.opacity(0.7))
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 2, dash: [4, 4]))
-                        }
-                        
-                        if selectedMetrics.contains(.hrv) {
-                            let hrvNormalized = min(100, Double(day.hrv) * 2)
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("HRV", hrvNormalized)
-                            )
-                            .foregroundStyle(MetricToggle.hrv.color.opacity(0.7))
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 2, dash: [2, 2]))
-                        }
-                        
-                        if selectedMetrics.contains(.rhr) {
-                            let rhrNormalized = max(0, 100 - Double(day.restingHeartRate - 40) * 2)
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("RHR", rhrNormalized)
-                            )
-                            .foregroundStyle(MetricToggle.rhr.color.opacity(0.7))
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [6, 3]))
-                        }
-                        
-                        if selectedMetrics.contains(.calories) {
-                            let calNormalized = min(100, day.activeCalories / 15)
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Calories", calNormalized)
-                            )
-                            .foregroundStyle(MetricToggle.calories.color.opacity(0.7))
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [1, 3]))
+                            .foregroundStyle(primaryDepthMetric.color)
+                            .symbolSize(120)
                         }
                     }
                     .frame(height: 260)
                     .chartYScale(domain: 0...100)
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: selectedPeriod == .week ? .day : .weekOfYear)) { _ in
+                            AxisGridLine()
+                            AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                        }
+                    }
+                    .chartBackground { proxy in
+                        scrubAnnotationOverlay(proxy: proxy)
+                    }
+                    .chartOverlay { proxy in
+                        scrubOverlay(proxy: proxy)
+                    }
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsChartScrub)
                     
                     // Legend
                     HStack(spacing: 12) {
@@ -233,6 +363,105 @@ struct TrendDetailView: View {
                     .frame(height: 260)
                     .frame(maxWidth: .infinity)
                 }
+            }
+        }
+    }
+    
+    private func scrubNormalizedValue(for day: DailyHealthData) -> Double {
+        switch primaryDepthMetric {
+        case .readiness: return Double(readinessScores[day.id] ?? 0)
+        case .sleep: return min(100, day.sleepHours * 12.5)
+        case .hrv: return min(100, Double(day.hrv) * 2)
+        case .rhr: return max(0, 100 - Double(day.restingHeartRate - 40) * 2)
+        case .calories: return min(100, day.activeCalories / 15)
+        }
+    }
+    
+    private func scrubRawValue(for day: DailyHealthData) -> Double {
+        switch primaryDepthMetric {
+        case .readiness: return Double(readinessScores[day.id] ?? 0)
+        case .sleep: return day.sleepHours
+        case .hrv: return Double(day.hrv)
+        case .rhr: return Double(day.restingHeartRate)
+        case .calories: return day.activeCalories
+        }
+    }
+    
+    private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
+        GeometryReader { geometry in
+            if let selected = selectedScrubDay {
+                let xPos = proxy.position(forX: selected.date) ?? 0
+                let yPos = proxy.position(forY: scrubNormalizedValue(for: selected)) ?? 0
+                let valueText = formattedSummary(scrubRawValue(for: selected))
+                ChartTooltip(
+                    date: selected.date,
+                    value: valueText,
+                    unit: depthTimelineUnit,
+                    deviation: nil,
+                    isOutlier: false
+                )
+                .accessibilityIdentifier(SurfaceID.trendsChartSelection)
+                .accessibilityLabel(
+                    ChartScrubSelection.calloutText(
+                        date: selected.date,
+                        value: valueText,
+                        unit: depthTimelineUnit
+                    )
+                )
+                .position(
+                    x: min(max(xPos, 80), geometry.size.width - 80),
+                    y: max(yPos - 70, 50)
+                )
+            }
+        }
+    }
+    
+    private func scrubOverlay(proxy: ChartProxy) -> some View {
+        GeometryReader { geo in
+            Rectangle()
+                .fill(Color.clear)
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { value in
+                            selectNearestScrub(at: value.location, proxy: proxy, geo: geo)
+                        }
+                        .onEnded { _ in
+                            selectedScrubDay = nil
+                            lastHapticID = nil
+                        }
+                )
+        }
+    }
+    
+    private func selectNearestScrub(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy) {
+        let date: Date?
+        if #available(iOS 17.0, *) {
+            guard let plotFrame = proxy.plotFrame else { return }
+            let x = location.x - geo[plotFrame].origin.x
+            date = proxy.value(atX: x)
+        } else {
+            let width = geo.size.width
+            guard width > 0,
+                  let first = filteredHistory.first?.date,
+                  let last = filteredHistory.last?.date else { return }
+            date = ChartScrubSelection.date(
+                atFraction: location.x / width,
+                from: first,
+                to: last
+            )
+        }
+        guard let date,
+              let idx = ChartScrubSelection.nearestIndex(
+                in: filteredHistory.map(\.date),
+                to: date
+              ) else { return }
+        let point = filteredHistory[idx]
+        selectedScrubDay = point
+        if point.id != lastHapticID {
+            lastHapticID = point.id
+            if !reduceMotion {
+                Haptic.selectionChanged()
             }
         }
     }
