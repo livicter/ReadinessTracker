@@ -136,6 +136,59 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-checkin.png")
     }
 
+    func testTrendsDetailSurface() throws {
+        // History → Browse Trends → TrendDetailView (period chips + Avg/Min/Max + scrub).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.tabBars.buttons["History"]
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browse = app.staticTexts["Browse Trends"].exists ? app.staticTexts["Browse Trends"] : app.buttons["Browse Trends"]
+            XCTAssertTrue(browse.waitForExistence(timeout: 8), "Browse Trends")
+            browse.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 8) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        // Health Browse period chips.
+        XCTAssertTrue(
+            app.buttons["7D"].waitForExistence(timeout: 8) ||
+            app.staticTexts["7D"].waitForExistence(timeout: 8)
+        )
+        _ = app.buttons["30D"].exists || app.staticTexts["30D"].exists
+        // Summary Avg / Min / Max row.
+        _ = app.otherElements["trends.summary"].exists
+        _ = app.staticTexts["Avg"].exists
+        _ = app.staticTexts["Min"].exists
+        _ = app.staticTexts["Max"].exists
+        _ = app.staticTexts["Change"].exists
+        // Soft scrub chrome.
+        let chart = app.otherElements["trends.chart.scrub"].firstMatch
+        _ = chart.waitForExistence(timeout: 4) || app.staticTexts["Drag to inspect"].exists
+        if chart.exists && chart.isHittable {
+            let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
+            let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5))
+            start.press(forDuration: 0.15, thenDragTo: end)
+            _ = app.otherElements["trends.chart.selection"].exists
+        }
+        saveShot("verify-trends.png")
+    }
+
     func testHistoryTabSurface() throws {
         // Wait for Today chrome before switching tabs (heavier Body tiles can delay first paint).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

@@ -130,6 +130,11 @@ enum SurfaceID {
     static let skinTempCard = "skin.temp.card"
     static let skinTempBaselineCallout = "skin.temp.baseline"
     static let skinTempSpark = "skin.temp.spark"
+    static let trendsDetail = "trends.detail"
+    static let trendsChartScrub = "trends.chart.scrub"
+    static let trendsChartSelection = "trends.chart.selection"
+    static let trendsSummary = "trends.summary"
+    static let historyTrendsLink = "history.trends.link"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
 }
