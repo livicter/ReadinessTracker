@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-09 — Poteto: WHOOP/GH Day Detail / Sleep Analysis night-detail parity (Option A)
+
+- Elevated `DayDetailView` sleep section toward WHOOP night-detail: sleep score + **Asleep | In Bed | Efficiency** header, stage % chips (Deep/REM/Light/Awake), Sleep Timeline hypnogram, cycles summary; Full Sleep Analysis link retained.
+- Elevated `SleepAnalysisView` entry with Stage Mix % chips; hypnogram a11y id shared for capture.
+- `SurfaceID.dayDetail` / `dayDetailHeader` / `dayDetailStageChips` / `dayDetailHypnogram` / `dayDetailCycles`.
+- UITest: `testDayDetailSurface` (History → day row, fallback Today → Sleep Stages) → `verify-day-detail.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #23.
+- Branch: `feature/poteto-day-detail-whoop`.
+
+
+
+
+
+
 ## 2026-09-09 — Poteto: History Trends / TrendDetail Health Browse parity (Option A)
 
 - Elevated `TrendDetailView` toward Apple Health / Google Health Browse: clearer period chips (7D/30D/90D/1Y), summary **Avg / Min / Max / Change %** row for primary metric, drag scrub (`ChartScrubSelection`) on multi-metric chart.

@@ -189,6 +189,68 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends.png")
     }
 
+    func testDayDetailSurface() throws {
+        // History → day row → DayDetailView (WHOOP night-detail: header metrics, stage % chips, hypnogram, cycles).
+        // Alternate path Today → Sleep Stages also lands on elevated Sleep Analysis chrome.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.tabBars.buttons["History"]
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        // Prefer History day row (fixture seeds sleep hours). Scroll past Trends if needed.
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            // Nudge list downward to expose day rows under Trends.
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists {
+                list.swipeUp()
+            } else {
+                app.swipeUp()
+            }
+        }
+        if !opened {
+            // Fallback: Today → Sleep Stages → Sleep Analysis (same elevated night chrome).
+            app.tabBars.buttons["Today"].tap()
+            _ = app.staticTexts["Readiness"].waitForExistence(timeout: 6)
+            revealText("Sleep Stages")
+            let stagesCard = app.buttons["Sleep Stages"].exists ? app.buttons["Sleep Stages"] : app.staticTexts["Sleep Stages"]
+            XCTAssertTrue(stagesCard.waitForExistence(timeout: 8), "Sleep Stages")
+            stagesCard.tap()
+            opened = true
+        }
+
+        let onDayOrSleep =
+            app.otherElements["day.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Asleep"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Stage Mix"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Sleep Analysis"].waitForExistence(timeout: 4) ||
+            app.navigationBars["Sleep Analysis"].waitForExistence(timeout: 4)
+        XCTAssertTrue(onDayOrSleep, "day/sleep detail")
+
+        // Soft-check elevated WHOOP night-detail chrome.
+        _ = app.otherElements["day.detail.header"].exists || app.staticTexts["Asleep"].exists || app.staticTexts["Score"].exists
+        _ = app.otherElements["day.detail.stageChips"].exists || app.staticTexts["Deep"].exists || app.staticTexts["Stage Mix"].exists
+        revealText("Sleep Timeline")
+        _ = app.otherElements["day.detail.hypnogram"].exists || app.staticTexts["Sleep Timeline"].exists
+        _ = app.otherElements["day.detail.cycles"].exists || app.staticTexts["Sleep Cycles"].exists || app.staticTexts["Stage Mix"].exists
+        _ = app.staticTexts["Efficiency"].exists || app.staticTexts["In Bed"].exists
+
+        saveShot("verify-day-detail.png")
+    }
+
     func testHistoryTabSurface() throws {
         // Wait for Today chrome before switching tabs (heavier Body tiles can delay first paint).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

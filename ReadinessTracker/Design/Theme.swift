@@ -135,6 +135,11 @@ enum SurfaceID {
     static let trendsChartSelection = "trends.chart.selection"
     static let trendsSummary = "trends.summary"
     static let historyTrendsLink = "history.trends.link"
+    static let dayDetail = "day.detail"
+    static let dayDetailHeader = "day.detail.header"
+    static let dayDetailStageChips = "day.detail.stageChips"
+    static let dayDetailHypnogram = "day.detail.hypnogram"
+    static let dayDetailCycles = "day.detail.cycles"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
 }

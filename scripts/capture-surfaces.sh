@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture Today, WHOOP stack, Body & activity, Body metric detail, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, sleep stages hypnogram, metric detail scrub, classic MetricDetailView scrub, strain/recovery balance, Recommendations, Coaching, Sleep Performance, Sleep HRV, Sleep Quality/Consistency, Respiratory Rate, Skin Temperature, and History Trends detail via XCUITest.
+# Capture Today, WHOOP stack, Body & activity, Body metric detail, Settings, Check-in, History, Weekly Report, Journal, Journal impact, rings, ring detail, sleep quality, sleep debt, sleep disturbances, sleep stages hypnogram, metric detail scrub, classic MetricDetailView scrub, strain/recovery balance, Recommendations, Coaching, Sleep Performance, Sleep HRV, Sleep Quality/Consistency, Respiratory Rate, Skin Temperature, History Trends detail, and Day Detail / Sleep Analysis night chrome via XCUITest.
 # UITests write PNGs to /tmp/rt-audit. This script copies them into .audit/.
 set -euo pipefail
 
@@ -39,7 +39,7 @@ xcodebuild test \
   -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1

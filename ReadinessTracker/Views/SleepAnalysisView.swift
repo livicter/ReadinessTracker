@@ -43,6 +43,10 @@ struct SleepAnalysisView: View {
                 // Header with score
                 sleepHeader
                     .slideIn(delay: 0)
+
+                // WHOOP-style stage % chips
+                stagePercentChipsCard
+                    .slideIn(delay: 0.03)
                 
                 // Sleep timeline visualization
                 sleepTimeline
@@ -144,6 +148,7 @@ struct SleepAnalysisView: View {
                 HypnogramView(intervals: data.sleepStages)
             }
         }
+        .accessibilityIdentifier(SurfaceID.dayDetailHypnogram)
     }
 
     private func legendItem(color: Color, label: String, value: String) -> some View {
@@ -162,6 +167,50 @@ struct SleepAnalysisView: View {
         }
     }
     
+    // MARK: - Stage % Chips
+    private var stagePercentChipsCard: some View {
+        let light = max(0, 1.0 - data.deepSleepPercent - data.remSleepPercent - data.awakePercent)
+        let chips: [(label: String, percent: Double, hours: Double, color: Color)] = [
+            ("Deep", data.deepSleepPercent, deepSleepHours, SleepStage.deep.color),
+            ("REM", data.remSleepPercent, remSleepHours, SleepStage.rem.color),
+            ("Light", light, lightSleepHours, SleepStage.light.color),
+            ("Awake", data.awakePercent, awakeHours, RTColor.caution),
+        ]
+        return NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Stage Mix")
+                    .font(.headline.weight(.semibold))
+                    .foregroundStyle(RTColor.primaryText)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(chips, id: \.label) { chip in
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(chip.color)
+                                    .frame(width: 8, height: 8)
+                                VStack(alignment: .leading, spacing: 0) {
+                                    Text(chip.label)
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(RTColor.secondaryText)
+                                    Text("\(Int(chip.percent * 100))% · \(String(format: "%.1f", chip.hours))h")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(RTColor.primaryText)
+                                        .monospacedDigit()
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(chip.color.opacity(0.12))
+                            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .accessibilityLabel("\(chip.label) \(Int(chip.percent * 100)) percent")
+                        }
+                    }
+                }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.dayDetailStageChips)
+    }
+
     // MARK: - Stage Breakdown
     private var stageBreakdown: some View {
         NativeCard {
