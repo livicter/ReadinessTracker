@@ -1,5 +1,19 @@
 # Progress
 
+## 2026-09-08 — Poteto: Body & activity Google Health / Fitness tiles (Option A)
+
+- Elevated Body tiles: progress-to-goal rings (Steps 10k / Activity 30 min / Calories 500 / Water / Protein), 7-day sparklines, chevron.
+- Tap tile → `BodyMetricDetailView` sheet (value, goal ring, Last 7 days spark + bars). Label stays **Activity** (not Heart Points).
+- `BodyMetricKind` + `BodyMetricTile` in `Components.swift`; `SurfaceID.bodyDetail` / `body.tile.*`.
+- UIFixture varies older-day steps/Activity/calories so sparklines are real; today stays 8200 / 42 / 420.
+- UITest: `testBodyActivityVisibleAfterScroll` strengthened; `testBodyDetailSurface` → `verify-body-detail.png`.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #18.
+- Branch: `feature/poteto-body-metric-detail`.
+
+
+
+
+
 ## 2026-09-08 — Poteto: WHOOP Sleep Performance Need vs Got (Option A)
 
 - Elevated `SleepPerformanceScore`: side-by-side **Need | Got** dual metric (14-night average vs last night), clearer comparative bar with need marker, performance % ring retained.

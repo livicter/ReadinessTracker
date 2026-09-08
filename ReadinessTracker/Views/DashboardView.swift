@@ -15,6 +15,7 @@ struct DashboardView: View {
     @State private var dismissedError: String?
     @State private var isWeeklyReportPresented = false
     @State private var selectedRing: RingKind?
+    @State private var selectedBodyMetric: BodyMetricKind?
     @Environment(\.openURL) private var openURL
 
     private var latestData: DailyHealthData? {
@@ -84,7 +85,7 @@ struct DashboardView: View {
                                 .slideIn(delay: 0.13)
                             recommendationsSection(scores: finalScores)
                                 .slideIn(delay: 0.16)
-                            bodyActivitySection(data: data)
+                            bodyActivitySection(data: data, history: history)
                                 .slideIn(delay: 0.2)
                             whoopSection(data: data, history: history, scores: finalScores)
                                 .slideIn(delay: 0.22)
@@ -990,41 +991,40 @@ struct DashboardView: View {
         }
     }
 
-    private func bodyActivitySection(data: DailyHealthData) -> some View {
-        NativeCard {
+    private func bodyActivitySection(data: DailyHealthData, history: [DailyHealthData]) -> some View {
+        let kinds: [BodyMetricKind] = [.steps, .activity, .calories, .spo2, .water, .caffeine, .protein]
+        return NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 SectionHeader(title: "Body & activity")
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    bodyStat(title: "Steps", value: "\(data.steps)", icon: "figure.walk")
-                    bodyStat(title: "Activity", value: "\(data.workoutMinutes) min", icon: "flame.fill")
-                    bodyStat(title: "Calories", value: "\(Int(data.activeCalories))", icon: "bolt.fill")
-                    bodyStat(
-                        title: "SpO2",
-                        value: spo2Display(data.bloodOxygen),
-                        icon: "lungs.fill"
-                    )
-                    bodyStat(
-                        title: "Water",
-                        value: data.nutrition.waterLiters.map { String(format: "%.1f L", $0) } ?? "—",
-                        icon: "drop.fill"
-                    )
-                    bodyStat(
-                        title: "Caffeine",
-                        value: data.nutrition.caffeineMg.map { "\(Int($0)) mg" } ?? "—",
-                        icon: "cup.and.saucer.fill"
-                    )
-                    bodyStat(
-                        title: "Protein",
-                        value: data.nutrition.proteinGrams.map { "\(Int($0)) g" } ?? "—",
-                        icon: "fork.knife"
-                    )
+                    ForEach(kinds) { kind in
+                        BodyMetricTile(kind: kind, data: data, history: history) {
+                            selectedBodyMetric = kind
+                        }
+                    }
                     if UserSettings.load().trackMenstrualCycle {
-                        bodyStat(
-                            title: "Cycle",
-                            value: data.menstrualFlow ? "Flow reported" : "No flow",
-                            icon: "circle.lefthalf.filled"
+                        // Cycle remains informational (no dedicated metric kind / detail yet).
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "circle.lefthalf.filled")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundStyle(RTColor.secondaryText)
+                                Text("Cycle")
+                                    .font(.caption)
+                                    .foregroundStyle(RTColor.secondaryText)
+                            }
+                            Text(data.menstrualFlow ? "Flow reported" : "No flow")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                        }
+                        .padding(12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                                .fill(RTColor.surfaceHighlight.opacity(0.55))
                         )
+                        .accessibilityIdentifier("body.tile.cycle")
                     }
                 }
             }
@@ -1032,30 +1032,9 @@ struct DashboardView: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Body and activity")
         .accessibilityIdentifier(SurfaceID.bodyActivitySection)
-    }
-
-    private func bodyStat(title: String, value: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(RTColor.secondaryText)
-                Text(title)
-                    .font(.caption)
-                    .foregroundStyle(RTColor.secondaryText)
-            }
-            Text(value)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(RTColor.primaryText)
-                .monospacedDigit()
+        .sheet(item: $selectedBodyMetric) { kind in
+            BodyMetricDetailView(kind: kind, data: data, history: history)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func spo2Display(_ value: Double?) -> String {
-        guard let value, value > 0 else { return "—" }
-        let percent = value > 1.0 ? value : value * 100
-        return String(format: "%.0f%%", percent)
     }
 
     static func healthKitSourceLabel(_ raw: String) -> String {

@@ -153,9 +153,10 @@ enum UIFixture {
                 hrv: 58,
                 hrvIsRMSSD: true,
                 restingHeartRate: 54,
-                activeCalories: 420,
-                steps: 8200,
-                workoutMinutes: 42,
+                // Vary older days so Body tiles show real sparklines; today stays glance-stable.
+                activeCalories: offset == 0 ? 420 : 280 + Double((offset * 53) % 280),
+                steps: offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500),
+                workoutMinutes: offset == 0 ? 42 : 15 + ((offset * 11) % 45),
                 skinTemperature: 36.4,
                 respiratoryRate: 15.2,
                 bloodOxygen: 97,
