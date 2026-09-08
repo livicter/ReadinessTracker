@@ -92,13 +92,21 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSleepQualitySurfaceVisibleAfterScroll() throws {
+        // Today WHOOP stack: elevated Sleep Quality + Consistency (score rings, spark, bedtime dots/bars).
         revealText("Sleep Consistency")
         XCTAssertTrue(app.staticTexts["Sleep Quality Trend"].exists)
         XCTAssertTrue(app.staticTexts["Sleep Consistency"].exists)
-        // Sleep HRV chips (HRV Trend / Sleep Quality) may still be on screen depending on scroll depth.
-        _ = app.staticTexts["Sleep HRV"].exists
-        _ = app.staticTexts["HRV Trend"].exists
-        _ = app.staticTexts["Sleep Quality"].exists
+        // Soft: elevated chrome under -ui-fixture (rings / spark / bedtime bars).
+        _ = app.descendants(matching: .any)["sleep.quality.score"].exists
+        _ = app.descendants(matching: .any)["sleep.quality.spark"].exists
+        _ = app.descendants(matching: .any)["sleep.consistency.score"].exists
+        _ = app.descendants(matching: .any)["sleep.consistency.dual"].exists
+        _ = app.descendants(matching: .any)["sleep.consistency.bedtime"].exists
+        _ = app.descendants(matching: .any)["sleep.consistency.spark"].exists
+        _ = app.staticTexts["Bedtime"].exists
+        _ = app.staticTexts["Wake Time"].exists
+        _ = app.staticTexts["Bedtime vs Average"].exists
+        _ = app.staticTexts["7-Day Quality"].exists
         saveShot("verify-sleep-quality.png")
     }
 

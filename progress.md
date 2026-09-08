@@ -1,5 +1,20 @@
 # Progress
 
+## 2026-09-09 — Poteto: WHOOP Sleep Consistency / Quality presentation parity (Option A)
+
+- Elevated `SleepConsistencyTracker`: clearer overall score ring, Bedtime | Wake dual %, 7-night bedtime-vs-average dots/bars, compact consistency `AnimatedSparkline`, bedtime trend chart retained.
+- Elevated `SleepQualityTrend`: clearer avg score ring, compact 7-day quality sparkline, score bars + daily mini rings retained.
+- `SurfaceID.sleepConsistency*` / `sleepQuality*` (`sleep.consistency.score|dual|bedtime|spark`, `sleep.quality.score|spark`).
+- UIFixture varies older-night bed/wake + sleepHours so dots/bars/sparks show shape; today stays 23:05 / 07:10 / 7.4h.
+- UITest: `testSleepQualitySurfaceVisibleAfterScroll` soft-checks elevated chrome → `verify-sleep-quality.png`.
+- Wired through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #21.
+- Branch: `feature/poteto-sleep-consistency-quality-whoop`.
+
+
+
+
+
+
 ## 2026-09-09 — Poteto: WHOOP Respiratory Rate + Skin Temperature card parity (Option A)
 
 - Elevated `RespiratoryRateCard` + `SkinTemperatureCard`: Tonight | Baseline dual metric, delta badge, baseline band on trend chart, compact 7-night `AnimatedSparkline`.
