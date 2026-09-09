@@ -70,56 +70,46 @@ struct TripleRingHero: View {
     let sleepScore: Int
     let size: CGFloat
 
-    /// Activity-like stroke (~1/10 diameter) and tight inter-ring gap.
+    /// Activity-like stroke (~1/10 diameter) and tight inter-ring gap via `TripleRingGeometry`.
     /// #15 locked the concentric diameters: size, size-2*(lw+gap), size-4*(lw+gap).
-    /// Center score is overlay-only — it never drove radius. We pack rings tighter
-    /// toward Fitness Summary and shrink typography so READY still fits in the hole.
-    private var lineWidth: CGFloat { max(12, size / 10) }
-    private let gap: CGFloat = 2
-
-    private var holeDiameter: CGFloat {
-        size - 4 * (lineWidth + gap) - lineWidth
-    }
-
-    private var scoreFontSize: CGFloat {
-        // Score + READY caption + small padding inside the hole
-        min(34, max(22, holeDiameter * 0.30))
+    /// Center score is overlay-only — it never drove radius.
+    private var layout: TripleRingGeometry.Layout {
+        TripleRingGeometry.layout(size: size, minimumLineWidth: 12, gap: 2)
     }
 
     var body: some View {
-        let middle = size - 2 * (lineWidth + gap)
-        let inner = size - 4 * (lineWidth + gap)
+        let layout = self.layout
         ZStack {
             ActivityRing(
                 progress: Double(sleepScore) / 100,
                 color: RTColor.sleep,
-                lineWidth: lineWidth,
-                size: size
+                lineWidth: layout.lineWidth,
+                size: layout.outerSize
             )
             ActivityRing(
                 progress: Double(workScore) / 100,
                 color: RTColor.hrv,
-                lineWidth: lineWidth,
-                size: middle
+                lineWidth: layout.lineWidth,
+                size: layout.middleSize
             )
             ActivityRing(
                 progress: Double(gymScore) / 100,
                 color: RTColor.strain,
-                lineWidth: lineWidth,
-                size: inner
+                lineWidth: layout.lineWidth,
+                size: layout.innerSize
             )
             VStack(spacing: 1) {
                 Text("\(overallScore)")
-                    .font(.system(size: scoreFontSize, weight: .bold, design: .rounded))
+                    .font(.system(size: layout.scoreFontSize, weight: .bold, design: .rounded))
                     .foregroundColor(RTColor.primaryText)
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
                 Text("READY")
-                    .font(.system(size: max(8, scoreFontSize * 0.28), weight: .semibold))
+                    .font(.system(size: max(8, layout.captionFontSize), weight: .semibold))
                     .foregroundColor(RTColor.secondaryText)
                     .tracking(1.5)
             }
-            .frame(width: holeDiameter * 0.85)
+            .frame(width: layout.holeDiameter * 0.85)
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
@@ -130,7 +120,7 @@ struct TripleRingHero: View {
     }
 
     private var overallScore: Int {
-        Int((Double(gymScore) + Double(workScore) + Double(sleepScore)) / 3.0)
+        TripleRingGeometry.overallScore(gym: gymScore, work: workScore, sleep: sleepScore)
     }
 }
 

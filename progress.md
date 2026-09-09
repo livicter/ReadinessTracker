@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-09-09 — Poteto: Apple Fitness home-widget triple-ring parity
+
+- Elevated Home Screen widget: `SmallWidgetView` + medium left score use Fitness-style concentric Gym/Work/Sleep rings (scores already on `ReadinessEntry`); medium metric rows keep Gym/Work/Sleep bars with matching ring colors.
+- Shared `TripleRingGeometry` + snapshot-safe `CompactTripleRingsView` / `HomeWidgetSmallChrome` (app + widget targets); Today `TripleRingHero` now uses the same geometry helper.
+- Unit tests: `TripleRingGeometryTests`. PNG: `.audit/verify-home-widget.png` via `Scripts/capture-home-widget.sh` (`HomeWidgetCaptureTests` + `ImageRenderer`; WidgetKit UITest not required).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + Honest gap #26.
+- Branch: `feature/poteto-home-widget-triple-rings`.
+
 ## 2026-09-09 — Poteto: WHOOP Strain/Recovery dual-arc wheel parity (Option A)
 
 - Elevated `StrainRecoveryWheel`: concentric dual arcs (outer Strain 0–21, inner Recovery 0–100%), center Recovery %, Recovery | Strain value legend (not sequential single-ring).

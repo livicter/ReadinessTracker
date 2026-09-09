@@ -39,7 +39,7 @@ xcodebuild test \
   -only-testing:ReadinessTrackerUITests \
   CODE_SIGNING_ALLOWED=NO
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png verify-home-widget.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1

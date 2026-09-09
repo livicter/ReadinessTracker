@@ -65,6 +65,11 @@ private enum WidgetTone {
     static let label = Color.secondary
     static let value = Color.primary
 
+    /// Match Today `TripleRingHero` / `RTColor` (Gym=strain, Work=hrv, Sleep=sleep).
+    static let gym = Color(red: 255/255, green: 59/255, blue: 48/255)    // FF3B30
+    static let work = Color(red: 52/255, green: 199/255, blue: 89/255)   // 34C759
+    static let sleep = Color(red: 88/255, green: 86/255, blue: 214/255)  // 5856D6
+
     static func score(_ score: Int) -> Color {
         switch score {
         case 80...100: return Color(red: 52/255, green: 199/255, blue: 89/255)   // systemGreen light
@@ -74,33 +79,26 @@ private enum WidgetTone {
     }
 }
 
+
 // MARK: - Small Widget
 struct SmallWidgetView: View {
     let entry: ReadinessEntry
 
     var body: some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle()
-                    .stroke(WidgetTone.track, lineWidth: 8)
-
-                Circle()
-                    .trim(from: 0, to: Double(entry.readinessScore) / 100)
-                    .stroke(
-                        WidgetTone.score(entry.readinessScore),
-                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-
-                Text("\(entry.readinessScore)")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundStyle(WidgetTone.value)
-                    .monospacedDigit()
-            }
-            .frame(width: 80, height: 80)
-
+        VStack(spacing: 6) {
+            CompactTripleRingsView(
+                gymScore: entry.gymScore,
+                workScore: entry.workScore,
+                sleepScore: entry.sleepScore,
+                size: 96,
+                gymColor: WidgetTone.gym,
+                workColor: WidgetTone.work,
+                sleepColor: WidgetTone.sleep,
+                valueColor: WidgetTone.value,
+                captionColor: WidgetTone.label
+            )
             Text("Readiness")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(WidgetTone.label)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -114,34 +112,27 @@ struct MediumWidgetView: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(spacing: 4) {
-                ZStack {
-                    Circle()
-                        .stroke(WidgetTone.track, lineWidth: 10)
-
-                    Circle()
-                        .trim(from: 0, to: Double(entry.readinessScore) / 100)
-                        .stroke(
-                            WidgetTone.score(entry.readinessScore),
-                            style: StrokeStyle(lineWidth: 10, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-
-                    Text("\(entry.readinessScore)")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundStyle(WidgetTone.value)
-                        .monospacedDigit()
-                }
-                .frame(width: 90, height: 90)
-
+                CompactTripleRingsView(
+                    gymScore: entry.gymScore,
+                    workScore: entry.workScore,
+                    sleepScore: entry.sleepScore,
+                    size: 100,
+                    showsCaption: true,
+                    gymColor: WidgetTone.gym,
+                    workColor: WidgetTone.work,
+                    sleepColor: WidgetTone.sleep,
+                    valueColor: WidgetTone.value,
+                    captionColor: WidgetTone.label
+                )
                 Text("Readiness")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(WidgetTone.label)
             }
 
             VStack(alignment: .leading, spacing: 10) {
-                ScoreRow(label: "Gym", score: entry.gymScore, color: Color(red: 255/255, green: 149/255, blue: 0/255))
-                ScoreRow(label: "Work", score: entry.workScore, color: Color(red: 50/255, green: 173/255, blue: 230/255))
-                ScoreRow(label: "Sleep", score: entry.sleepScore, color: Color(red: 88/255, green: 86/255, blue: 214/255))
+                ScoreRow(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
+                ScoreRow(label: "Work", score: entry.workScore, color: WidgetTone.work)
+                ScoreRow(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
 
                 Divider()
 
@@ -334,3 +325,5 @@ struct ReadinessWidgetView: View {
         }
     }
 }
+
+
