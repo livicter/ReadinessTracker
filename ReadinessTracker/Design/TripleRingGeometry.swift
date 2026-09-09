@@ -1,6 +1,6 @@
 import CoreGraphics
 
-/// Shared Apple Fitness–style concentric ring layout (Today hero + Home Screen widget + Watch dashboard).
+/// Shared Apple Fitness–style concentric ring layout (Today hero + Home/Lock Screen widgets + Watch dashboard).
 /// Diameters: outer `size`, middle `size - 2*(lineWidth+gap)`, inner `size - 4*(lineWidth+gap)`.
 /// Center score is overlay-only and never drives radius (Honest gap #3 / #15 packing).
 struct TripleRingGeometry: Equatable {
@@ -31,8 +31,10 @@ struct TripleRingGeometry: Equatable {
         let middle = size - 2 * step
         let inner = size - 4 * step
         let hole = max(0, size - 4 * step - lineWidth)
-        let scoreFont = min(34, max(14, hole * 0.30))
-        let captionFont = max(7, scoreFont * 0.28)
+        // AccessoryCircular (~36–72pt) needs a lower floor than Home/Watch compact.
+        let scoreFontFloor: CGFloat = hole < 24 ? max(7, hole * 0.50) : 14
+        let scoreFont = min(34, max(scoreFontFloor, hole * 0.30))
+        let captionFont = max(6, scoreFont * 0.28)
         return Layout(
             size: size,
             lineWidth: lineWidth,

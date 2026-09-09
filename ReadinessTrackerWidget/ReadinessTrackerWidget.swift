@@ -213,15 +213,24 @@ struct AccessoryCircularWidgetView: View {
     let entry: ReadinessEntry
 
     var body: some View {
-        Gauge(value: Double(entry.readinessScore), in: 0...100) {
-            Text("Readiness")
-        } currentValueLabel: {
-            Text("\(entry.readinessScore)")
-                .font(.system(.body, design: .rounded).weight(.bold))
-                .monospacedDigit()
+        GeometryReader { geo in
+            let side = min(geo.size.width, geo.size.height)
+            CompactTripleRingsView(
+                gymScore: entry.gymScore,
+                workScore: entry.workScore,
+                sleepScore: entry.sleepScore,
+                size: side,
+                showsCaption: false,
+                minimumLineWidth: 3,
+                gap: 1.5,
+                gymColor: WidgetTone.gym,
+                workColor: WidgetTone.work,
+                sleepColor: WidgetTone.sleep,
+                valueColor: WidgetTone.value,
+                captionColor: WidgetTone.label
+            )
+            .frame(width: geo.size.width, height: geo.size.height)
         }
-        .gaugeStyle(.accessoryCircularCapacity)
-        .tint(WidgetTone.score(entry.readinessScore))
     }
 }
 
@@ -243,9 +252,9 @@ struct AccessoryRectangularWidgetView: View {
             }
             Spacer(minLength: 4)
             VStack(alignment: .trailing, spacing: 2) {
-                AccessoryMini(label: "Gym", score: entry.gymScore)
-                AccessoryMini(label: "Work", score: entry.workScore)
-                AccessoryMini(label: "Sleep", score: entry.sleepScore)
+                AccessoryMini(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
+                AccessoryMini(label: "Work", score: entry.workScore, color: WidgetTone.work)
+                AccessoryMini(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
             }
         }
     }
@@ -255,6 +264,7 @@ struct AccessoryRectangularWidgetView: View {
 private struct AccessoryMini: View {
     let label: String
     let score: Int
+    var color: Color = Color.primary
 
     var body: some View {
         HStack(spacing: 4) {
@@ -263,7 +273,7 @@ private struct AccessoryMini: View {
                 .foregroundStyle(Color.secondary)
             Text("\(score)")
                 .font(.system(size: 10, weight: .bold, design: .rounded))
-                .foregroundStyle(Color.primary)
+                .foregroundStyle(color)
                 .monospacedDigit()
         }
     }

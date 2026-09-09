@@ -38,4 +38,16 @@ final class TripleRingGeometryTests: XCTestCase {
         XCTAssertEqual(TripleRingGeometry.progress(score: -10), 0, accuracy: 0.0001)
         XCTAssertEqual(TripleRingGeometry.progress(score: 150), 1, accuracy: 0.0001)
     }
+
+    func testAccessoryCircularLayoutScalesScoreFont() {
+        let size: CGFloat = 36
+        let layout = TripleRingGeometry.layout(size: size, minimumLineWidth: 3, gap: 1.5)
+        XCTAssertEqual(layout.lineWidth, max(3, size / 10), accuracy: 0.001)
+        XCTAssertGreaterThan(layout.middleSize, layout.innerSize)
+        XCTAssertGreaterThan(layout.holeDiameter, 0)
+        XCTAssertLessThan(layout.holeDiameter, 24)
+        // Small hole uses accessory floor (<14) so center digits fit Lock Screen slot.
+        XCTAssertLessThan(layout.scoreFontSize, 14)
+        XCTAssertGreaterThanOrEqual(layout.scoreFontSize, 7)
+    }
 }
