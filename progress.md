@@ -1,5 +1,14 @@
 # Progress
 
+## 2026-09-10 — Poteto: Apple Fitness Lock Screen accessory circular triple-ring parity
+
+- Elevated Lock Screen `AccessoryCircularWidgetView` from single `.accessoryCircularCapacity` gauge to Fitness-style concentric Gym/Work/Sleep via shared `CompactTripleRingsView` + `TripleRingGeometry` (GeometryReader-scaled; caption off). Rectangular accessory kept with minor Gym/Work/Sleep digit color align.
+- PNG: `.audit/verify-lock-widget.png` via `Scripts/capture-lock-widget.sh` (`LockWidgetCaptureTests` + `ImageRenderer` of `LockScreenAccessoryChrome`). Geometry unit test covers accessory score-font floor.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #28.
+- Branch: `feature/poteto-lock-widget-triple-rings`.
+
+
+
 ## 2026-09-09 — Poteto: Apple Fitness Watch dashboard triple-ring glance parity
 
 - Elevated Watch `WatchDashboardView` hero from single `ScoreRing` to Fitness-style concentric Gym/Work/Sleep via shared `CompactTripleRingsView` + `TripleRingGeometry` (added to Watch App Sources; UIKit chrome gated with `os(iOS)`).

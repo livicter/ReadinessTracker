@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 #endif
 
-/// Snapshot-safe Fitness-style Gym / Work / Sleep rings (Home Screen widget + Watch + audit render).
+/// Snapshot-safe Fitness-style Gym / Work / Sleep rings (Home + Lock Screen widget + Watch + audit render).
 /// No animation — suitable for WidgetKit timelines, watchOS glance, and `ImageRenderer` PNG capture.
 struct CompactTripleRingsView: View {
     let gymScore: Int
@@ -134,4 +134,33 @@ struct WatchDashboardChrome: View {
         .background(Color.black)
     }
 }
+
+/// Lock Screen `accessoryCircular` chrome used for audit PNG (`verify-lock-widget.png`).
+/// Dark circular slot mirrors Lock Screen; rings reuse `CompactTripleRingsView` at accessory scale.
+struct LockScreenAccessoryChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.black)
+            CompactTripleRingsView(
+                gymScore: gymScore,
+                workScore: workScore,
+                sleepScore: sleepScore,
+                size: 72,
+                showsCaption: false,
+                minimumLineWidth: 3.5,
+                gap: 1.5,
+                valueColor: .white,
+                captionColor: Color.white.opacity(0.55)
+            )
+        }
+        .frame(width: 100, height: 100)
+        .background(Color(white: 0.12))
+    }
+}
+
 #endif
