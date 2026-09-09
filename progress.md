@@ -1,5 +1,14 @@
 # Progress
 
+## 2026-09-09 — Poteto: Apple Fitness Watch dashboard triple-ring glance parity
+
+- Elevated Watch `WatchDashboardView` hero from single `ScoreRing` to Fitness-style concentric Gym/Work/Sleep via shared `CompactTripleRingsView` + `TripleRingGeometry` (added to Watch App Sources; UIKit chrome gated with `os(iOS)`).
+- `WatchSnapshot` + iPhone `WatchConnectivityManager` push `gymScore` / `workScore` / `sleepScore` (same dual-score path as `WidgetDataExporter`).
+- PNG: `.audit/verify-watch-dashboard.png` via `Scripts/capture-watch-dashboard.sh` (`WatchDashboardCaptureTests` + `ImageRenderer` of `WatchDashboardChrome`). Watch scheme build verified when simulator available.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #27.
+- Branch: `feature/poteto-watch-dashboard-triple-rings`.
+
+
 ## 2026-09-09 — Poteto: Apple Fitness home-widget triple-ring parity
 
 - Elevated Home Screen widget: `SmallWidgetView` + medium left score use Fitness-style concentric Gym/Work/Sleep rings (scores already on `ReadinessEntry`); medium metric rows keep Gym/Work/Sleep bars with matching ring colors.

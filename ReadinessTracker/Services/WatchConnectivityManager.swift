@@ -28,6 +28,9 @@ final class WatchConnectivityManager: NSObject {
         static let workoutMinutes = "workoutMinutes"
         static let checkedInMorning = "checkedInMorning"
         static let sourceName = "sourceName"
+        static let gymScore = "gymScore"
+        static let workScore = "workScore"
+        static let sleepScore = "sleepScore"
         static let requestSnapshot = "requestSnapshot"
         static let checkIn = "checkIn"
     }
@@ -66,6 +69,8 @@ final class WatchConnectivityManager: NSObject {
         }
         let history = store.dataForSource(data.source, days: 30)
         let breakdown = ReadinessCalculator.calculateBreakdown(from: data, history: history)
+        let metadata = MetadataStore.shared.metadataFor(date: Date(), timeOfDay: .morning)
+        let dualScores = ReadinessCalculator.calculateDualScores(from: data, history: history, metadata: metadata)
         let multiplier = MetadataStore.shared.multiplierFor(date: Date())
         let readiness = min(100, max(0, Int((Double(breakdown.totalScore) * multiplier).rounded())))
         let recovery = RecoveryCalculator.calculate(from: data, history: history)
@@ -86,7 +91,10 @@ final class WatchConnectivityManager: NSObject {
             Key.steps: data.steps,
             Key.workoutMinutes: data.workoutMinutes,
             Key.checkedInMorning: MetadataStore.shared.hasCheckedInToday(.morning),
-            Key.sourceName: data.source.rawValue
+            Key.sourceName: data.source.rawValue,
+            Key.gymScore: dualScores.gym,
+            Key.workScore: dualScores.cognitive,
+            Key.sleepScore: breakdown.sleepScore
         ]
     }
 

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Page 1: readiness score ring, key vitals, morning check-in shortcut.
+/// Page 1: Fitness-style Gym/Work/Sleep rings, key vitals, morning check-in shortcut.
 struct WatchDashboardView: View {
     @EnvironmentObject private var session: WatchSessionManager
 
@@ -8,21 +8,16 @@ struct WatchDashboardView: View {
         ScrollView {
             if let snapshot = session.snapshot {
                 VStack(spacing: 10) {
-                    ZStack {
-                        ScoreRing(value: Double(snapshot.readiness) / 100,
-                                  color: WatchTheme.scoreColor(snapshot.readiness))
-                        VStack(spacing: 0) {
-                            Text("\(snapshot.readiness)")
-                                .font(.system(size: 38, weight: .bold, design: .rounded))
-                                .foregroundStyle(WatchTheme.scoreColor(snapshot.readiness))
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                            Text(WatchTheme.readinessLabel(snapshot.readiness).uppercased())
-                                .font(.caption2.weight(.medium))
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .frame(width: 110, height: 110)
+                    CompactTripleRingsView(
+                        gymScore: snapshot.gymScore,
+                        workScore: snapshot.workScore,
+                        sleepScore: snapshot.sleepScore,
+                        size: 110,
+                        minimumLineWidth: 5,
+                        gap: 2,
+                        valueColor: .white,
+                        captionColor: Color.secondary
+                    )
                     .padding(.top, 4)
 
                     Text("Readiness")

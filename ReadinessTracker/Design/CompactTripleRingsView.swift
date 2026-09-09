@@ -1,8 +1,10 @@
 import SwiftUI
+#if os(iOS)
 import UIKit
+#endif
 
-/// Snapshot-safe Fitness-style Gym / Work / Sleep rings (Home Screen widget + audit render).
-/// No animation — suitable for WidgetKit timelines and `ImageRenderer` PNG capture.
+/// Snapshot-safe Fitness-style Gym / Work / Sleep rings (Home Screen widget + Watch + audit render).
+/// No animation — suitable for WidgetKit timelines, watchOS glance, and `ImageRenderer` PNG capture.
 struct CompactTripleRingsView: View {
     let gymScore: Int
     let workScore: Int
@@ -79,6 +81,7 @@ struct CompactTripleRingsView: View {
     }
 }
 
+#if os(iOS)
 /// Small Home Screen widget chrome used for audit PNG (`verify-home-widget.png`).
 struct HomeWidgetSmallChrome: View {
     let gymScore: Int
@@ -102,3 +105,33 @@ struct HomeWidgetSmallChrome: View {
         .background(Color(uiColor: .systemBackground))
     }
 }
+
+/// Watch dashboard hero chrome used for audit PNG (`verify-watch-dashboard.png`).
+/// Mirrors watchOS glance sizing on a black canvas (ImageRenderer runs in iOS unit tests).
+struct WatchDashboardChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+
+    var body: some View {
+        VStack(spacing: 8) {
+            CompactTripleRingsView(
+                gymScore: gymScore,
+                workScore: workScore,
+                sleepScore: sleepScore,
+                size: 110,
+                minimumLineWidth: 5,
+                gap: 2,
+                valueColor: .white,
+                captionColor: Color.white.opacity(0.55)
+            )
+            Text("Readiness")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.55))
+        }
+        .padding(16)
+        .frame(width: 184, height: 224)
+        .background(Color.black)
+    }
+}
+#endif

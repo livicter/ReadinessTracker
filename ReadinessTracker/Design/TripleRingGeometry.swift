@@ -1,6 +1,6 @@
 import CoreGraphics
 
-/// Shared Apple Fitness–style concentric ring layout (Today hero + Home Screen widget).
+/// Shared Apple Fitness–style concentric ring layout (Today hero + Home Screen widget + Watch dashboard).
 /// Diameters: outer `size`, middle `size - 2*(lineWidth+gap)`, inner `size - 4*(lineWidth+gap)`.
 /// Center score is overlay-only and never drives radius (Honest gap #3 / #15 packing).
 struct TripleRingGeometry: Equatable {
