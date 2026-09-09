@@ -54,7 +54,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
-**Elsewhere.** History with weekly report. Home screen widgets and Watch complications (bright Apple Health tokens). Lock Screen widgets.
+**Elsewhere.** History with weekly report. Home screen widgets (Fitness-style Gym/Work/Sleep triple rings) and Watch complications (bright Apple Health tokens). Lock Screen widgets.
 
 **Not in this app.** Unofficial WHOOP login. Google Fit REST. Heart Points.
 
@@ -270,3 +270,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 23. ~~Day Detail / Sleep Analysis lacked WHOOP night-detail clarity (no stage % chips, hypnogram buried, no cycles summary, thin sleep header).~~ Closed — elevated header metrics + stage chips + hypnogram + cycles; [verify-day-detail.png](.audit/verify-day-detail.png) from `testDayDetailSurface`.
 24. ~~Sleep Debt Status cited only a dedicated scroll capture — cumulative chart + mini bars without a clear debt-hours graphic, payback cue, or 7-night spark.~~ Closed — elevated Debt | Last night dual hours + zero-centered gauge + payback cue + 7-night spark/bars; [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
 25. ~~Today `StrainRecoveryWheel` was a single-ring sequential Recovery→Strain gauge (not WHOOP dual concentric arcs; detail view already had dual rings inline).~~ Closed — elevated concentric dual arcs + value labels; shared via `StrainRecoveryWheel` on Today + detail; [verify-strain-wheel.png](.audit/verify-strain-wheel.png) from `testStrainRecoveryWheelSurface`.
+26. ~~Home Screen `SmallWidgetView` was a single readiness ring (Today hero already uses concentric Gym/Work/Sleep Activity rings).~~ Closed — Fitness-style `CompactTripleRingsView` on small + medium left score via shared `TripleRingGeometry`; [verify-home-widget.png](.audit/verify-home-widget.png) from `Scripts/capture-home-widget.sh` (ImageRenderer of widget chrome; geometry unit-tested).
