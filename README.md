@@ -37,6 +37,8 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
 | Metric detail chart scrub (date + value callout) | Shipped. Drag scrub on `AdvancedMetricChartView` (score breakdown → detail): RuleMark + tooltip; period selector 7D/30D/90D/1Y; Reduce Motion skips scrub haptics | [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) |
 | Classic `MetricDetailView` primary Trend scrub | Shipped. Today → Metrics cards open classic detail; `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on primary Trend chart (parity with Advanced) | [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png) |
+| Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium left score use Fitness-style `CompactTripleRingsView` via shared `TripleRingGeometry` | [verify-home-widget.png](.audit/verify-home-widget.png) |
+| Watch dashboard hero (Gym / Work / Sleep) | Shipped. Concentric Activity rings on Watch glance; `WatchSnapshot` carries gym/work/sleep from WatchConnectivity | [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
 
@@ -54,7 +56,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
-**Elsewhere.** History with weekly report. Home screen widgets (Fitness-style Gym/Work/Sleep triple rings) and Watch complications (bright Apple Health tokens). Lock Screen widgets.
+**Elsewhere.** History with weekly report. Home screen widgets and Watch dashboard (Fitness-style Gym/Work/Sleep triple rings) plus Watch complications (bright Apple Health tokens). Lock Screen widgets.
 
 **Not in this app.** Unofficial WHOOP login. Google Fit REST. Heart Points.
 
@@ -219,6 +221,12 @@ Opened from Today’s Sleep Stages card into Sleep Analysis. Under `-ui-fixture`
 
 ![Sleep stages hypnogram](.audit/verify-sleep-stages.png)
 
+### Watch dashboard
+
+Fitness-style Gym / Work / Sleep concentric rings on the Watch glance hero (parity with Today + Home widget). Scores arrive on `WatchSnapshot` via WatchConnectivity.
+
+![Watch dashboard](.audit/verify-watch-dashboard.png)
+
 ## Verify
 
 Push and pull request to `main` run three required GitHub Actions jobs.
@@ -271,3 +279,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 24. ~~Sleep Debt Status cited only a dedicated scroll capture — cumulative chart + mini bars without a clear debt-hours graphic, payback cue, or 7-night spark.~~ Closed — elevated Debt | Last night dual hours + zero-centered gauge + payback cue + 7-night spark/bars; [verify-sleep-debt.png](.audit/verify-sleep-debt.png) from `testSleepDebtSurfaceVisibleAfterScroll`.
 25. ~~Today `StrainRecoveryWheel` was a single-ring sequential Recovery→Strain gauge (not WHOOP dual concentric arcs; detail view already had dual rings inline).~~ Closed — elevated concentric dual arcs + value labels; shared via `StrainRecoveryWheel` on Today + detail; [verify-strain-wheel.png](.audit/verify-strain-wheel.png) from `testStrainRecoveryWheelSurface`.
 26. ~~Home Screen `SmallWidgetView` was a single readiness ring (Today hero already uses concentric Gym/Work/Sleep Activity rings).~~ Closed — Fitness-style `CompactTripleRingsView` on small + medium left score via shared `TripleRingGeometry`; [verify-home-widget.png](.audit/verify-home-widget.png) from `Scripts/capture-home-widget.sh` (ImageRenderer of widget chrome; geometry unit-tested).
+27. ~~Watch `WatchDashboardView` was a single `ScoreRing` (Home widget + iPhone Today already use concentric Gym/Work/Sleep).~~ Closed — Fitness-style `CompactTripleRingsView` on Watch dashboard via shared `TripleRingGeometry` (Watch App target membership); `WatchSnapshot` + `WatchConnectivityManager` push gym/work/sleep; [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) from `Scripts/capture-watch-dashboard.sh` (ImageRenderer of watch chrome; Watch sim build verified when available).

@@ -53,6 +53,9 @@
 		57AA00260000000000000001 /* CompactTripleRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00240000000000000001 /* CompactTripleRingsView.swift */; };
 		57AA00280000000000000001 /* TripleRingGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00270000000000000001 /* TripleRingGeometryTests.swift */; };
 		57AA002A00000000000001 /* HomeWidgetCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00290000000000000001 /* HomeWidgetCaptureTests.swift */; };
+		57AA00300000000000000001 /* TripleRingGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00210000000000000001 /* TripleRingGeometry.swift */; };
+		57AA00310000000000000001 /* CompactTripleRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00240000000000000001 /* CompactTripleRingsView.swift */; };
+		57AA00330000000000000001 /* WatchDashboardCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00320000000000000001 /* WatchDashboardCaptureTests.swift */; };
 		5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */; };
 		5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA60028BE763A221CC4030F9 /* NotificationManager.swift */; };
 		682DEC717507792EB4575DF9 /* StrainRecoveryBalanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B890012BCB6B39E045ACD28E /* StrainRecoveryBalanceTests.swift */; };
@@ -214,6 +217,7 @@
 		57AA00240000000000000001 /* CompactTripleRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompactTripleRingsView.swift; path = ReadinessTracker/Design/CompactTripleRingsView.swift; sourceTree = SOURCE_ROOT; };
 		57AA00270000000000000001 /* TripleRingGeometryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TripleRingGeometryTests.swift; sourceTree = "<group>"; };
 		57AA00290000000000000001 /* HomeWidgetCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HomeWidgetCaptureTests.swift; sourceTree = "<group>"; };
+		57AA00320000000000000001 /* WatchDashboardCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchDashboardCaptureTests.swift; sourceTree = "<group>"; };
 		5CCCDF3441063EDB71939BC3 /* RecoveryTrajectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecoveryTrajectoryView.swift; path = ReadinessTracker/Views/RecoveryTrajectoryView.swift; sourceTree = SOURCE_ROOT; };
 		60195A9C493E18B3114E43BF /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DayDetailView.swift; path = ReadinessTracker/Views/DayDetailView.swift; sourceTree = SOURCE_ROOT; };
 		62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRVFrequencyAnalysis.swift; path = ReadinessTracker/Models/HRVFrequencyAnalysis.swift; sourceTree = SOURCE_ROOT; };
@@ -497,6 +501,7 @@
 				57AA00130000000000000001 /* ChartScrubSelectionTests.swift */,
 				57AA00270000000000000001 /* TripleRingGeometryTests.swift */,
 				57AA00290000000000000001 /* HomeWidgetCaptureTests.swift */,
+				57AA00320000000000000001 /* WatchDashboardCaptureTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
 				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
 			);
@@ -785,6 +790,7 @@
 				57AA00140000000000000001 /* ChartScrubSelectionTests.swift in Sources */,
 				57AA00280000000000000001 /* TripleRingGeometryTests.swift in Sources */,
 				57AA002A00000000000001 /* HomeWidgetCaptureTests.swift in Sources */,
+				57AA00330000000000000001 /* WatchDashboardCaptureTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
 				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
 			);
@@ -801,6 +807,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				57AA00300000000000000001 /* TripleRingGeometry.swift in Sources */,
+				57AA00310000000000000001 /* CompactTripleRingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

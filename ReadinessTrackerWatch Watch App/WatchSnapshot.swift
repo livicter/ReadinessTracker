@@ -18,6 +18,10 @@ struct WatchSnapshot: Equatable {
     let workoutMinutes: Int
     let checkedInMorning: Bool
     let sourceName: String
+    /// Gym / Work / Sleep ring scores (0...100) — same dual-score path as Today + Home widget.
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
 
     init(dictionary: [String: Any]) {
         date = Date(timeIntervalSince1970: dictionary["date"] as? TimeInterval ?? Date().timeIntervalSince1970)
@@ -35,6 +39,9 @@ struct WatchSnapshot: Equatable {
         workoutMinutes = dictionary["workoutMinutes"] as? Int ?? 0
         checkedInMorning = dictionary["checkedInMorning"] as? Bool ?? false
         sourceName = dictionary["sourceName"] as? String ?? ""
+        gymScore = dictionary["gymScore"] as? Int ?? 0
+        workScore = dictionary["workScore"] as? Int ?? 0
+        sleepScore = dictionary["sleepScore"] as? Int ?? 0
     }
 
     /// Demo data for previews and the unpaired empty state.
@@ -53,6 +60,9 @@ struct WatchSnapshot: Equatable {
         "steps": 6320,
         "workoutMinutes": 34,
         "checkedInMorning": true,
-        "sourceName": "Apple Watch"
+        "sourceName": "Apple Watch",
+        "gymScore": 82,
+        "workScore": 75,
+        "sleepScore": 80
     ])
 }
