@@ -106,6 +106,110 @@ struct HomeWidgetSmallChrome: View {
     }
 }
 
+
+/// Large Home Screen widget chrome used for audit PNG (`verify-home-widget-large.png`).
+/// Mirrors `LargeWidgetView`: CompactTripleRingsView + Gym/Work/Sleep rows + HRV/RHR/Sleep hours.
+struct HomeWidgetLargeChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+    var hrv: Int = 45
+    var rhr: Int = 58
+    var sleepHours: Double = 7.5
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let track = Color.primary.opacity(0.08)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 16) {
+                CompactTripleRingsView(
+                    gymScore: gymScore,
+                    workScore: workScore,
+                    sleepScore: sleepScore,
+                    size: 120
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Readiness")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.secondary)
+                    Text("\(readinessScore)")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.primary)
+                        .monospacedDigit()
+                    Text("Gym · Work · Sleep")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.secondary)
+                }
+                Spacer(minLength: 0)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                chromeScoreRow(label: "Gym", score: gymScore, color: gymColor)
+                chromeScoreRow(label: "Work", score: workScore, color: workColor)
+                chromeScoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
+            }
+
+            Divider()
+
+            HStack(spacing: 16) {
+                chromeMetricMini(label: "HRV", value: "\(hrv)", unit: "ms")
+                chromeMetricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
+                chromeMetricMini(label: "Sleep", value: String(format: "%.1f", sleepHours), unit: "h")
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(16)
+        .frame(width: 338, height: 354, alignment: .topLeading)
+        .background(Color(uiColor: .systemBackground))
+    }
+
+    private func chromeScoreRow(label: String, score: Int, color: Color) -> some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.secondary)
+                .frame(width: 40, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(track)
+                        .frame(height: 6)
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(color)
+                        .frame(width: geo.size.width * CGFloat(score) / 100, height: 6)
+                }
+            }
+            .frame(height: 6)
+            Text("\(score)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
+                .monospacedDigit()
+                .frame(width: 28, alignment: .trailing)
+        }
+    }
+
+    private func chromeMetricMini(label: String, value: String, unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.secondary)
+            HStack(alignment: .lastTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(Color.secondary)
+            }
+        }
+    }
+}
+
 /// Watch dashboard hero chrome used for audit PNG (`verify-watch-dashboard.png`).
 /// Mirrors watchOS glance sizing on a black canvas (ImageRenderer runs in iOS unit tests).
 struct WatchDashboardChrome: View {
