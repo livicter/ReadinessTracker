@@ -72,8 +72,16 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        if url.scheme == "readinesstracker" {
+        switch AppDeepLink.parse(url) {
+        case .checkIn(let time):
+            AppDeepLink.postOpenCheckIn(time)
+        case .fitbitOAuth:
             FitbitManager.shared.handleCallback(url: url)
+        case .none:
+            if url.scheme == "readinesstracker" {
+                // Backward-compatible Fitbit callback if host/path is unexpected.
+                FitbitManager.shared.handleCallback(url: url)
+            }
         }
         return true
     }

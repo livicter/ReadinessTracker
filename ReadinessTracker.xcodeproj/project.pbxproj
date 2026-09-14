@@ -61,6 +61,9 @@
 		57AA00450000000000000001 /* CompactStrainRecoveryWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */; };
 		57AA00460000000000000001 /* StrainRecoveryDualArcGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */; };
 		57AA00480000000000000001 /* WatchStrainCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00490000000000000001 /* WatchStrainCaptureTests.swift */; };
+		57AA00510000000000000001 /* AppDeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00500000000000000001 /* AppDeepLink.swift */; };
+		57AA00520000000000000001 /* AppDeepLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00530000000000000001 /* AppDeepLinkTests.swift */; };
+		57AA00540000000000000001 /* HomeWidgetCheckInCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */; };
 		57AA00330000000000000001 /* WatchDashboardCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00320000000000000001 /* WatchDashboardCaptureTests.swift */; };
 		57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00340000000000000001 /* LockWidgetCaptureTests.swift */; };
 		5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */; };
@@ -225,6 +228,9 @@
 		57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompactStrainRecoveryWheel.swift; path = ReadinessTracker/Design/CompactStrainRecoveryWheel.swift; sourceTree = SOURCE_ROOT; };
 		57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainRecoveryDualArcGeometryTests.swift; sourceTree = "<group>"; };
 		57AA00490000000000000001 /* WatchStrainCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchStrainCaptureTests.swift; sourceTree = "<group>"; };
+		57AA00500000000000000001 /* AppDeepLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDeepLink.swift; sourceTree = "<group>"; };
+		57AA00530000000000000001 /* AppDeepLinkTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppDeepLinkTests.swift; sourceTree = "<group>"; };
+		57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HomeWidgetCheckInCaptureTests.swift; sourceTree = "<group>"; };
 		57AA00240000000000000001 /* CompactTripleRingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompactTripleRingsView.swift; path = ReadinessTracker/Design/CompactTripleRingsView.swift; sourceTree = SOURCE_ROOT; };
 		57AA00270000000000000001 /* TripleRingGeometryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TripleRingGeometryTests.swift; sourceTree = "<group>"; };
 		57AA00290000000000000001 /* HomeWidgetCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HomeWidgetCaptureTests.swift; sourceTree = "<group>"; };
@@ -518,6 +524,8 @@
 				57AA00320000000000000001 /* WatchDashboardCaptureTests.swift */,
 				57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */,
 				57AA00490000000000000001 /* WatchStrainCaptureTests.swift */,
+				57AA00530000000000000001 /* AppDeepLinkTests.swift */,
+				57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */,
 				57AA00340000000000000001 /* LockWidgetCaptureTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
 				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
@@ -562,6 +570,7 @@
 			isa = PBXGroup;
 			children = (
 				19F4501D295F232278CE3D7E /* ReadinessTrackerApp.swift */,
+				57AA00500000000000000001 /* AppDeepLink.swift */,
 				7733C28EE8BA53BDB56B8824 /* Models */,
 				577D53ECC28A70A61C7510A1 /* Services */,
 				CD89216CA16CFFCAEA498747 /* Views */,
@@ -810,6 +819,8 @@
 				57AA00330000000000000001 /* WatchDashboardCaptureTests.swift in Sources */,
 				57AA00460000000000000001 /* StrainRecoveryDualArcGeometryTests.swift in Sources */,
 				57AA00480000000000000001 /* WatchStrainCaptureTests.swift in Sources */,
+				57AA00520000000000000001 /* AppDeepLinkTests.swift in Sources */,
+				57AA00540000000000000001 /* HomeWidgetCheckInCaptureTests.swift in Sources */,
 				57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
 				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
@@ -849,6 +860,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1429D6A18568A07A87CA4399 /* ReadinessTrackerApp.swift in Sources */,
+				57AA00510000000000000001 /* AppDeepLink.swift in Sources */,
 				3F1A9C4B7D2E4F08A5B6C1D9 /* BreathingView.swift in Sources */,
 				7DBD9150E09A04993544873B /* HealthData.swift in Sources */,
 				D88D1601AA428652E2DA0439 /* ReadinessCalculator.swift in Sources */,

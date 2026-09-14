@@ -143,6 +143,8 @@ struct HomeWidgetLargeChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
+                    chromeCheckInControl()
+                        .padding(.top, 4)
                 }
                 Spacer(minLength: 0)
             }
@@ -165,6 +167,23 @@ struct HomeWidgetLargeChrome: View {
         .padding(16)
         .frame(width: 338, height: 354, alignment: .topLeading)
         .background(Color(uiColor: .systemBackground))
+    }
+
+    private func chromeCheckInControl(compact: Bool = false) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            Text("Check-in")
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+        }
+        .foregroundStyle(Color.white)
+        .padding(.horizontal, compact ? 8 : 10)
+        .padding(.vertical, compact ? 5 : 6)
+        .background(
+            Capsule(style: .continuous)
+                .fill(Color(red: 52/255, green: 199/255, blue: 89/255))
+        )
+        .accessibilityLabel("Open Check-in")
     }
 
     private func chromeScoreRow(label: String, score: Int, color: Color) -> some View {
@@ -193,6 +212,167 @@ struct HomeWidgetLargeChrome: View {
     }
 
     private func chromeMetricMini(label: String, value: String, unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.secondary)
+            HStack(alignment: .lastTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(Color.secondary)
+            }
+        }
+    }
+}
+
+/// Medium + large Home widget chrome with Fitness-style Check-in control
+/// (`verify-home-widget-checkin.png`). Mirrors interactive Link on real widgets.
+struct HomeWidgetCheckInChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+    var hrv: Int = 45
+    var rhr: Int = 58
+    var sleepHours: Double = 7.5
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let track = Color.primary.opacity(0.08)
+    private let checkInGreen = Color(red: 52/255, green: 199/255, blue: 89/255)
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            mediumCard
+            largeCard
+        }
+        .padding(12)
+        .frame(width: 360, alignment: .topLeading)
+        .background(Color(uiColor: .secondarySystemBackground))
+    }
+
+    private var mediumCard: some View {
+        HStack(spacing: 16) {
+            VStack(spacing: 4) {
+                CompactTripleRingsView(
+                    gymScore: gymScore,
+                    workScore: workScore,
+                    sleepScore: sleepScore,
+                    size: 100
+                )
+                Text("Readiness")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.secondary)
+            }
+            VStack(alignment: .leading, spacing: 8) {
+                scoreRow(label: "Gym", score: gymScore, color: gymColor)
+                scoreRow(label: "Work", score: workScore, color: workColor)
+                scoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
+                Divider()
+                HStack(spacing: 10) {
+                    metricMini(label: "HRV", value: "\(hrv)", unit: "ms")
+                    metricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
+                    Spacer(minLength: 0)
+                    checkInPill(compact: true)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(width: 338, height: 158)
+        .background(Color(uiColor: .systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private var largeCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 16) {
+                CompactTripleRingsView(
+                    gymScore: gymScore,
+                    workScore: workScore,
+                    sleepScore: sleepScore,
+                    size: 120
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Readiness")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.secondary)
+                    Text("\(readinessScore)")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.primary)
+                        .monospacedDigit()
+                    Text("Gym · Work · Sleep")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.secondary)
+                    checkInPill()
+                        .padding(.top, 4)
+                }
+                Spacer(minLength: 0)
+            }
+            VStack(alignment: .leading, spacing: 10) {
+                scoreRow(label: "Gym", score: gymScore, color: gymColor)
+                scoreRow(label: "Work", score: workScore, color: workColor)
+                scoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
+            }
+            Divider()
+            HStack(spacing: 16) {
+                metricMini(label: "HRV", value: "\(hrv)", unit: "ms")
+                metricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
+                metricMini(label: "Sleep", value: String(format: "%.1f", sleepHours), unit: "h")
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(16)
+        .frame(width: 338, height: 354, alignment: .topLeading)
+        .background(Color(uiColor: .systemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private func checkInPill(compact: Bool = false) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            Text("Check-in")
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+        }
+        .foregroundStyle(Color.white)
+        .padding(.horizontal, compact ? 8 : 10)
+        .padding(.vertical, compact ? 5 : 6)
+        .background(Capsule(style: .continuous).fill(checkInGreen))
+        .accessibilityLabel("Open Check-in")
+    }
+
+    private func scoreRow(label: String, score: Int, color: Color) -> some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.secondary)
+                .frame(width: 40, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(track)
+                        .frame(height: 6)
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(color)
+                        .frame(width: geo.size.width * CGFloat(score) / 100, height: 6)
+                }
+            }
+            .frame(height: 6)
+            Text("\(score)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
+                .monospacedDigit()
+                .frame(width: 28, alignment: .trailing)
+        }
+    }
+
+    private func metricMini(label: String, value: String, unit: String) -> some View {
         VStack(spacing: 2) {
             Text(label)
                 .font(.system(size: 10, weight: .medium))

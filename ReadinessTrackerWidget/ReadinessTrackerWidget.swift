@@ -80,6 +80,37 @@ private enum WidgetTone {
 }
 
 
+
+
+// MARK: - Check-in deep link (opens app Check-in tab / Morning)
+private enum WidgetDeepLink {
+    static let checkIn = URL(string: "readinesstracker://checkin/morning")!
+}
+
+/// Fitness-style Check-in control for medium/large Home widgets.
+private struct WidgetCheckInControl: View {
+    var compact: Bool = false
+
+    var body: some View {
+        Link(destination: WidgetDeepLink.checkIn) {
+            HStack(spacing: 4) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: compact ? 11 : 12, weight: .semibold))
+                Text("Check-in")
+                    .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            }
+            .foregroundStyle(Color.white)
+            .padding(.horizontal, compact ? 8 : 10)
+            .padding(.vertical, compact ? 5 : 6)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color(red: 52/255, green: 199/255, blue: 89/255)) // systemGreen
+            )
+        }
+        .accessibilityLabel("Open Check-in")
+    }
+}
+
 // MARK: - Small Widget
 struct SmallWidgetView: View {
     let entry: ReadinessEntry
@@ -102,6 +133,7 @@ struct SmallWidgetView: View {
                 .foregroundStyle(WidgetTone.label)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(WidgetDeepLink.checkIn)
     }
 }
 
@@ -129,22 +161,24 @@ struct MediumWidgetView: View {
                     .foregroundStyle(WidgetTone.label)
             }
 
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 ScoreRow(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
                 ScoreRow(label: "Work", score: entry.workScore, color: WidgetTone.work)
                 ScoreRow(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
 
                 Divider()
 
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     MetricMini(label: "HRV", value: "\(entry.hrv)", unit: "ms")
                     MetricMini(label: "RHR", value: "\(entry.rhr)", unit: "bpm")
-                    MetricMini(label: "Sleep", value: String(format: "%.1f", entry.sleepHours), unit: "h")
+                    Spacer(minLength: 0)
+                    WidgetCheckInControl(compact: true)
                 }
             }
         }
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .widgetURL(WidgetDeepLink.checkIn)
     }
 }
 
@@ -179,6 +213,8 @@ struct LargeWidgetView: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(WidgetTone.label)
+                    WidgetCheckInControl()
+                        .padding(.top, 4)
                 }
                 Spacer(minLength: 0)
             }
@@ -200,6 +236,7 @@ struct LargeWidgetView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .widgetURL(WidgetDeepLink.checkIn)
     }
 }
 

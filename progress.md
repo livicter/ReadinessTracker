@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-09-14 — Poteto: Home widget interactive Check-in control
+
+- Elevated Home Screen widgets: medium/large show Fitness-style **Check-in** `Link`; all families use `.widgetURL` → `readinesstracker://checkin/morning`. App routes via `AppDeepLink` + ContentView tab / Morning (Fitbit `oauth` host unchanged).
+- PNG: `.audit/verify-home-widget-checkin.png` via `Scripts/capture-home-widget-checkin.sh` (`HomeWidgetCheckInCaptureTests` + `ImageRenderer` of `HomeWidgetCheckInChrome`). Large chrome also shows Check-in.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #31.
+- Branch: `feature/poteto-home-widget-checkin`.
+
+
 ## 2026-09-14 — Poteto: WHOOP Watch Strain/Recovery dual-arc parity
 
 - Elevated Watch `WatchStrainView` from single `ScoreRing` to WHOOP dual concentric arcs (Recovery inner / Strain outer) via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel` (Watch App Sources; no UIKit). Today `StrainRecoveryWheel` now uses the same geometry helper.
