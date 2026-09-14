@@ -37,7 +37,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Settings connect / reconnect + cycle toggle off | Shipped | [verify-settings-sources.png](.audit/verify-settings-sources.png) |
 | Metric detail chart scrub (date + value callout) | Shipped. Drag scrub on `AdvancedMetricChartView` (score breakdown → detail): RuleMark + tooltip; period selector 7D/30D/90D/1Y; Reduce Motion skips scrub haptics | [verify-metric-detail-scrub.png](.audit/verify-metric-detail-scrub.png) |
 | Classic `MetricDetailView` primary Trend scrub | Shipped. Today → Metrics cards open classic detail; `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on primary Trend chart (parity with Advanced) | [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png) |
-| Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium + **large** use Fitness-style `CompactTripleRingsView`; large adds Gym/Work/Sleep rows + HRV/RHR/Sleep hours | [verify-home-widget.png](.audit/verify-home-widget.png) · [verify-home-widget-large.png](.audit/verify-home-widget-large.png) |
+| Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium + **large** use Fitness-style `CompactTripleRingsView`; large adds Gym/Work/Sleep rows + HRV/RHR/Sleep hours; medium/large show interactive **Check-in** (`Link` / `widgetURL` → `readinesstracker://checkin/morning`) | [verify-home-widget.png](.audit/verify-home-widget.png) · [verify-home-widget-large.png](.audit/verify-home-widget-large.png) · [verify-home-widget-checkin.png](.audit/verify-home-widget-checkin.png) |
 | Watch dashboard hero (Gym / Work / Sleep) | Shipped. Concentric Activity rings on Watch glance; `WatchSnapshot` carries gym/work/sleep from WatchConnectivity | [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) |
 | Watch strain page (Recovery | Strain dual arcs) | Shipped. WHOOP dual concentric arcs (Recovery inner / Strain outer) on Watch strain page via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel`; uses recovery + strain from `WatchSnapshot` | [verify-watch-strain.png](.audit/verify-watch-strain.png) |
 | Lock Screen circular (Gym / Work / Sleep) | Shipped. `accessoryCircular` uses Fitness-style `CompactTripleRingsView` (rectangular keeps score rows; ring-color digits) | [verify-lock-widget.png](.audit/verify-lock-widget.png) |
@@ -58,7 +58,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
-**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large), Lock Screen circular, Watch dashboard (Fitness-style Gym/Work/Sleep triple rings), and Watch strain (WHOOP Recovery|Strain dual arcs) plus Watch complications (bright Apple Health tokens). Lock Screen rectangular keeps Gym/Work/Sleep score rows.
+**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large) with Fitness-style Check-in deep link on medium/large, Lock Screen circular, Watch dashboard (Fitness-style Gym/Work/Sleep triple rings), and Watch strain (WHOOP Recovery|Strain dual arcs) plus Watch complications (bright Apple Health tokens). Lock Screen rectangular keeps Gym/Work/Sleep score rows.
 
 **Not in this app.** Unofficial WHOOP login. Google Fit REST. Heart Points.
 
@@ -243,9 +243,15 @@ WHOOP dual concentric arcs on the Watch strain page (Recovery inner / Strain out
 
 ### Home Screen large
 
-`.systemLarge` Home widget mirrors Fitness / Health glance density: `CompactTripleRingsView` plus Gym / Work / Sleep score rows and HRV / RHR / Sleep hours (same Medium patterns).
+`.systemLarge` Home widget mirrors Fitness / Health glance density: `CompactTripleRingsView` plus Gym / Work / Sleep score rows and HRV / RHR / Sleep hours (same Medium patterns). Medium and large expose a Fitness-style **Check-in** control (`Link` / `.widgetURL` → `readinesstracker://checkin/morning` opens the Check-in tab on Morning).
 
 ![Home Screen large](.audit/verify-home-widget-large.png)
+
+### Home Screen Check-in control
+
+Medium + large chrome with the interactive Check-in capsule (small uses `.widgetURL` only). Deep link handled by `AppDeepLink` → Check-in tab / Morning.
+
+![Home Screen Check-in](.audit/verify-home-widget-checkin.png)
 
 ## Verify
 
@@ -303,3 +309,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 28. ~~Lock Screen `AccessoryCircularWidgetView` was a single `.accessoryCircularCapacity` gauge (Home + Watch + Today already use concentric Gym/Work/Sleep).~~ Closed — Fitness-style `CompactTripleRingsView` on `accessoryCircular` via shared `TripleRingGeometry` (scaled for accessory; rectangular kept with ring-color digit align); [verify-lock-widget.png](.audit/verify-lock-widget.png) from `Scripts/capture-lock-widget.sh` (ImageRenderer of Lock Screen chrome; geometry unit-tested).
 29. ~~Home Screen widget supported `.systemSmall` + `.systemMedium` only (no `.systemLarge`; Fitness / Health expose large glance surfaces).~~ Closed — `LargeWidgetView` with `CompactTripleRingsView` + Gym/Work/Sleep rows + HRV/RHR/Sleep hours; `supportedFamilies` + `ReadinessWidgetView` switch; [verify-home-widget-large.png](.audit/verify-home-widget-large.png) from `Scripts/capture-home-widget-large.sh` (ImageRenderer of `HomeWidgetLargeChrome`).
 30. ~~Watch `WatchStrainView` used a single `ScoreRing` for strain (iPhone Today already uses WHOOP dual concentric Recovery|Strain arcs via `StrainRecoveryWheel`).~~ Closed — elevated dual arcs (Recovery inner / Strain outer) via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel` (Watch App target membership); [verify-watch-strain.png](.audit/verify-watch-strain.png) from `Scripts/capture-watch-strain.sh` (ImageRenderer of `WatchStrainChrome`; Watch sim build verified when available).
+31. ~~Home Screen widgets were glance-only (no Fitness-style deep-link / action into morning Check-in).~~ Closed — medium/large `Link` + `.widgetURL` (`readinesstracker://checkin/morning`); small `.widgetURL`; `AppDeepLink` + ContentView tab route; [verify-home-widget-checkin.png](.audit/verify-home-widget-checkin.png) from `Scripts/capture-home-widget-checkin.sh` (ImageRenderer of `HomeWidgetCheckInChrome`).

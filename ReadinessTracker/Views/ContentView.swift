@@ -4,7 +4,9 @@ import UIKit
 
 struct ContentView: View {
     @State private var selectedTab = 0
-    
+    @State private var checkInPreferredTime: CheckInTime = .morning
+    @State private var checkInRouteID = UUID()
+
     var body: some View {
         TabView(selection: $selectedTab) {
             DashboardView()
@@ -19,7 +21,8 @@ struct ContentView: View {
                 }
                 .tag(1)
 
-            CheckInView()
+            CheckInView(initialTime: checkInPreferredTime)
+                .id(checkInRouteID)
                 .tabItem {
                     Label("Check-in", systemImage: "checkmark.circle")
                 }
@@ -37,6 +40,22 @@ struct ContentView: View {
         .toolbarBackground(RTColor.surface, for: .tabBar)
         .onAppear { UIFixture.installIfRequested() }
         .onChange(of: selectedTab) { _ in Haptic.selectionChanged() }
+        .onOpenURL { url in
+            if case .checkIn(let time) = AppDeepLink.parse(url) {
+                openCheckIn(time)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: AppDeepLink.openCheckInNotification)) { note in
+            let raw = note.userInfo?["time"] as? String
+            let time = CheckInTime(rawValue: raw ?? "") ?? .morning
+            openCheckIn(time)
+        }
+    }
+
+    private func openCheckIn(_ time: CheckInTime) {
+        checkInPreferredTime = time
+        checkInRouteID = UUID()
+        selectedTab = 2
     }
 }
 
