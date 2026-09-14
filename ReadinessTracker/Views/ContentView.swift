@@ -41,8 +41,13 @@ struct ContentView: View {
         .onAppear { UIFixture.installIfRequested() }
         .onChange(of: selectedTab) { _ in Haptic.selectionChanged() }
         .onOpenURL { url in
-            if case .checkIn(let time) = AppDeepLink.parse(url) {
+            switch AppDeepLink.parse(url) {
+            case .checkIn(let time):
                 openCheckIn(time)
+            case .trends:
+                openTrends()
+            case .fitbitOAuth, .none:
+                break
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: AppDeepLink.openCheckInNotification)) { note in
@@ -50,12 +55,19 @@ struct ContentView: View {
             let time = CheckInTime(rawValue: raw ?? "") ?? .morning
             openCheckIn(time)
         }
+        .onReceive(NotificationCenter.default.publisher(for: AppDeepLink.openTrendsNotification)) { _ in
+            openTrends()
+        }
     }
 
     private func openCheckIn(_ time: CheckInTime) {
         checkInPreferredTime = time
         checkInRouteID = UUID()
         selectedTab = 2
+    }
+
+    private func openTrends() {
+        selectedTab = 1
     }
 }
 

@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-14 — Poteto evening: more App deep links (Evening Check-in + Trends)
+
+- Extended `AppDeepLink` with `checkInEveningURL` (`readinesstracker://checkin/evening`) + `trends` (`readinesstracker://trends` → History browse). Fitbit `oauth` unchanged.
+- Medium widget secondary **Trends** `Link`; large shows Check-in / Evening / Trends. ContentView + AppDelegate route tab selection.
+- PNG: `.audit/verify-home-widget-deeplinks.png` via `Scripts/capture-home-widget-deeplinks.sh` (`HomeWidgetCheckInCaptureTests` + `ImageRenderer` of `HomeWidgetCheckInChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #32.
+- Branch: `feature/poteto-evening-deeplinks`.
+
+
+
 ## 2026-09-14 — Poteto: Home widget interactive Check-in control
 
 - Elevated Home Screen widgets: medium/large show Fitness-style **Check-in** `Link`; all families use `.widgetURL` → `readinesstracker://checkin/morning`. App routes via `AppDeepLink` + ContentView tab / Morning (Fitbit `oauth` host unchanged).

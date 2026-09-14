@@ -82,21 +82,24 @@ private enum WidgetTone {
 
 
 
-// MARK: - Check-in deep link (opens app Check-in tab / Morning)
+// MARK: - Deep links (Check-in Morning/Evening + Trends / History browse)
 private enum WidgetDeepLink {
     static let checkIn = URL(string: "readinesstracker://checkin/morning")!
+    static let checkInEvening = URL(string: "readinesstracker://checkin/evening")!
+    static let trends = URL(string: "readinesstracker://trends")!
 }
 
 /// Fitness-style Check-in control for medium/large Home widgets.
 private struct WidgetCheckInControl: View {
     var compact: Bool = false
+    var evening: Bool = false
 
     var body: some View {
-        Link(destination: WidgetDeepLink.checkIn) {
+        Link(destination: evening ? WidgetDeepLink.checkInEvening : WidgetDeepLink.checkIn) {
             HStack(spacing: 4) {
-                Image(systemName: "checkmark.circle.fill")
+                Image(systemName: evening ? "moon.stars.fill" : "checkmark.circle.fill")
                     .font(.system(size: compact ? 11 : 12, weight: .semibold))
-                Text("Check-in")
+                Text(evening ? "Evening" : "Check-in")
                     .font(.system(size: compact ? 11 : 12, weight: .semibold))
             }
             .foregroundStyle(Color.white)
@@ -104,10 +107,38 @@ private struct WidgetCheckInControl: View {
             .padding(.vertical, compact ? 5 : 6)
             .background(
                 Capsule(style: .continuous)
-                    .fill(Color(red: 52/255, green: 199/255, blue: 89/255)) // systemGreen
+                    .fill(
+                        evening
+                            ? Color(red: 88/255, green: 86/255, blue: 214/255) // systemIndigo / sleep
+                            : Color(red: 52/255, green: 199/255, blue: 89/255) // systemGreen
+                    )
             )
         }
-        .accessibilityLabel("Open Check-in")
+        .accessibilityLabel(evening ? "Open Evening Check-in" : "Open Check-in")
+    }
+}
+
+/// Secondary Trends control → History browse (`readinesstracker://trends`).
+private struct WidgetTrendsControl: View {
+    var compact: Bool = false
+
+    var body: some View {
+        Link(destination: WidgetDeepLink.trends) {
+            HStack(spacing: 4) {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.system(size: compact ? 11 : 12, weight: .semibold))
+                Text("Trends")
+                    .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            }
+            .foregroundStyle(Color.white)
+            .padding(.horizontal, compact ? 8 : 10)
+            .padding(.vertical, compact ? 5 : 6)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color(red: 0/255, green: 122/255, blue: 255/255)) // systemBlue
+            )
+        }
+        .accessibilityLabel("Open Trends")
     }
 }
 
@@ -168,10 +199,11 @@ struct MediumWidgetView: View {
 
                 Divider()
 
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     MetricMini(label: "HRV", value: "\(entry.hrv)", unit: "ms")
                     MetricMini(label: "RHR", value: "\(entry.rhr)", unit: "bpm")
                     Spacer(minLength: 0)
+                    WidgetTrendsControl(compact: true)
                     WidgetCheckInControl(compact: true)
                 }
             }
@@ -213,8 +245,12 @@ struct LargeWidgetView: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(WidgetTone.label)
-                    WidgetCheckInControl()
-                        .padding(.top, 4)
+                    HStack(spacing: 6) {
+                        WidgetCheckInControl()
+                        WidgetCheckInControl(evening: true)
+                    }
+                    .padding(.top, 4)
+                    WidgetTrendsControl()
                 }
                 Spacer(minLength: 0)
             }

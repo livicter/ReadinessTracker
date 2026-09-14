@@ -75,6 +75,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         switch AppDeepLink.parse(url) {
         case .checkIn(let time):
             AppDeepLink.postOpenCheckIn(time)
+        case .trends:
+            AppDeepLink.postOpenTrends()
         case .fitbitOAuth:
             FitbitManager.shared.handleCallback(url: url)
         case .none:
