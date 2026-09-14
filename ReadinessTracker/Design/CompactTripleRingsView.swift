@@ -229,8 +229,9 @@ struct HomeWidgetLargeChrome: View {
     }
 }
 
-/// Medium + large Home widget chrome with Fitness-style Check-in control
-/// (`verify-home-widget-checkin.png`). Mirrors interactive Link on real widgets.
+/// Medium + large Home widget chrome with Fitness-style deep-link controls
+/// (Check-in / Evening / Trends — `verify-home-widget-deeplinks.png`).
+/// Mirrors interactive Links on real widgets.
 struct HomeWidgetCheckInChrome: View {
     let gymScore: Int
     let workScore: Int
@@ -245,6 +246,8 @@ struct HomeWidgetCheckInChrome: View {
     private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
     private let track = Color.primary.opacity(0.08)
     private let checkInGreen = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let eveningIndigo = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let trendsBlue = Color(red: 0/255, green: 122/255, blue: 255/255)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -274,10 +277,11 @@ struct HomeWidgetCheckInChrome: View {
                 scoreRow(label: "Work", score: workScore, color: workColor)
                 scoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
                 Divider()
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     metricMini(label: "HRV", value: "\(hrv)", unit: "ms")
                     metricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
                     Spacer(minLength: 0)
+                    trendsPill(compact: true)
                     checkInPill(compact: true)
                 }
             }
@@ -309,8 +313,12 @@ struct HomeWidgetCheckInChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
-                    checkInPill()
-                        .padding(.top, 4)
+                    HStack(spacing: 6) {
+                        checkInPill()
+                        eveningPill()
+                    }
+                    .padding(.top, 4)
+                    trendsPill()
                 }
                 Spacer(minLength: 0)
             }
@@ -334,17 +342,53 @@ struct HomeWidgetCheckInChrome: View {
     }
 
     private func checkInPill(compact: Bool = false) -> some View {
+        actionPill(
+            icon: "checkmark.circle.fill",
+            title: "Check-in",
+            color: checkInGreen,
+            compact: compact,
+            accessibility: "Open Check-in"
+        )
+    }
+
+    private func eveningPill(compact: Bool = false) -> some View {
+        actionPill(
+            icon: "moon.stars.fill",
+            title: "Evening",
+            color: eveningIndigo,
+            compact: compact,
+            accessibility: "Open Evening Check-in"
+        )
+    }
+
+    private func trendsPill(compact: Bool = false) -> some View {
+        actionPill(
+            icon: "chart.line.uptrend.xyaxis",
+            title: "Trends",
+            color: trendsBlue,
+            compact: compact,
+            accessibility: "Open Trends"
+        )
+    }
+
+    private func actionPill(
+        icon: String,
+        title: String,
+        color: Color,
+        compact: Bool,
+        accessibility: String
+    ) -> some View {
         HStack(spacing: 4) {
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: icon)
                 .font(.system(size: compact ? 11 : 12, weight: .semibold))
-            Text("Check-in")
+            Text(title)
                 .font(.system(size: compact ? 11 : 12, weight: .semibold))
         }
         .foregroundStyle(Color.white)
         .padding(.horizontal, compact ? 8 : 10)
         .padding(.vertical, compact ? 5 : 6)
-        .background(Capsule(style: .continuous).fill(checkInGreen))
-        .accessibilityLabel("Open Check-in")
+        .background(Capsule(style: .continuous).fill(color))
+        .accessibilityLabel(accessibility)
     }
 
     private func scoreRow(label: String, score: Int, color: Color) -> some View {

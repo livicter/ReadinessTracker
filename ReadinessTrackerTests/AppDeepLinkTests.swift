@@ -7,6 +7,11 @@ final class AppDeepLinkTests: XCTestCase {
         XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.morning))
     }
 
+    func testParsesCheckInEveningHostPath() {
+        let url = URL(string: "readinesstracker://checkin/evening")!
+        XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.evening))
+    }
+
     func testParsesCheckInEveningQuery() {
         let url = URL(string: "readinesstracker://checkin?time=evening")!
         XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.evening))
@@ -15,6 +20,16 @@ final class AppDeepLinkTests: XCTestCase {
     func testParsesCheckInBareHostAsMorning() {
         let url = URL(string: "readinesstracker://checkin")!
         XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.morning))
+    }
+
+    func testParsesTrendsHost() {
+        let url = URL(string: "readinesstracker://trends")!
+        XCTAssertEqual(AppDeepLink.parse(url), .trends)
+    }
+
+    func testParsesTrendsPathFallback() {
+        let url = URL(string: "readinesstracker:///trends")!
+        XCTAssertEqual(AppDeepLink.parse(url), .trends)
     }
 
     func testParsesFitbitOAuth() {
@@ -32,5 +47,19 @@ final class AppDeepLinkTests: XCTestCase {
         XCTAssertEqual(url.scheme, AppDeepLink.scheme)
         XCTAssertEqual(url.host, AppDeepLink.checkInHost)
         XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.morning))
+    }
+
+    func testCheckInEveningURLMatchesScheme() {
+        let url = AppDeepLink.checkInEveningURL
+        XCTAssertEqual(url.scheme, AppDeepLink.scheme)
+        XCTAssertEqual(url.host, AppDeepLink.checkInHost)
+        XCTAssertEqual(AppDeepLink.parse(url), .checkIn(.evening))
+    }
+
+    func testTrendsURLMatchesScheme() {
+        let url = AppDeepLink.trendsURL
+        XCTAssertEqual(url.scheme, AppDeepLink.scheme)
+        XCTAssertEqual(url.host, AppDeepLink.trendsHost)
+        XCTAssertEqual(AppDeepLink.parse(url), .trends)
     }
 }

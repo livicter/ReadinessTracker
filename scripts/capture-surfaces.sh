@@ -43,6 +43,7 @@ xcodebuild test \
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidget" ./scripts/capture-home-widget.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetLarge" ./scripts/capture-home-widget-large.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetCheckIn" ./scripts/capture-home-widget-checkin.sh
+DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetDeepLinks" ./scripts/capture-home-widget-deeplinks.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-LockWidget" ./scripts/capture-lock-widget.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-WatchDash" ./scripts/capture-watch-dashboard.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-WatchStrain" ./scripts/capture-watch-strain.sh
@@ -50,11 +51,12 @@ DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-WatchStrain" ./scripts/capture
 cp -f .audit/verify-home-widget.png "$SHOT_SRC/verify-home-widget.png"
 cp -f .audit/verify-home-widget-large.png "$SHOT_SRC/verify-home-widget-large.png"
 cp -f .audit/verify-home-widget-checkin.png "$SHOT_SRC/verify-home-widget-checkin.png"
+cp -f .audit/verify-home-widget-deeplinks.png "$SHOT_SRC/verify-home-widget-deeplinks.png"
 cp -f .audit/verify-lock-widget.png "$SHOT_SRC/verify-lock-widget.png"
 cp -f .audit/verify-watch-dashboard.png "$SHOT_SRC/verify-watch-dashboard.png"
 cp -f .audit/verify-watch-strain.png "$SHOT_SRC/verify-watch-strain.png"
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png verify-home-widget.png verify-home-widget-large.png verify-home-widget-checkin.png verify-lock-widget.png verify-watch-dashboard.png verify-watch-strain.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png verify-home-widget.png verify-home-widget-large.png verify-home-widget-checkin.png verify-home-widget-deeplinks.png verify-lock-widget.png verify-watch-dashboard.png verify-watch-strain.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1
