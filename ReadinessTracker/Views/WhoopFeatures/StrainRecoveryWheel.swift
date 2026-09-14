@@ -7,43 +7,35 @@ struct StrainRecoveryWheel: View {
     let recoveryScore: Double // 0-100%
     let day: String // "TODAY" / "DAY 1"
 
-    private var strainFraction: CGFloat {
-        CGFloat(min(max(strainScore / 21.0, 0), 1))
+    private var layout: StrainRecoveryDualArcGeometry.Layout {
+        StrainRecoveryDualArcGeometry.layout(size: 180, minimumOuterWidth: 20, minimumInnerWidth: 14)
     }
-
-    private var recoveryFraction: CGFloat {
-        CGFloat(min(max(recoveryScore / 100.0, 0), 1))
-    }
-
-    private let outerWidth: CGFloat = 20
-    private let innerWidth: CGFloat = 14
-    /// Inset so the recovery track sits inside the strain track (WHOOP dual-arc gap).
-    private let ringInset: CGFloat = 20
 
     var body: some View {
+        let layout = self.layout
         VStack(spacing: 12) {
             ZStack {
                 // Outer track (Strain)
                 Circle()
-                    .stroke(RTColor.surfaceHighlight, lineWidth: outerWidth)
+                    .stroke(RTColor.surfaceHighlight, lineWidth: layout.outerWidth)
 
                 // Inner track (Recovery)
                 Circle()
-                    .stroke(RTColor.surfaceHighlight, lineWidth: innerWidth)
-                    .padding(ringInset)
+                    .stroke(RTColor.surfaceHighlight, lineWidth: layout.innerWidth)
+                    .padding(layout.ringInset)
 
                 // Strain fill (outer)
                 Circle()
-                    .trim(from: 0, to: strainFraction)
-                    .stroke(RTColor.caution, style: StrokeStyle(lineWidth: outerWidth, lineCap: .round))
+                    .trim(from: 0, to: StrainRecoveryDualArcGeometry.strainFraction(strainScore))
+                    .stroke(RTColor.caution, style: StrokeStyle(lineWidth: layout.outerWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
 
                 // Recovery fill (inner)
                 Circle()
-                    .trim(from: 0, to: recoveryFraction)
-                    .stroke(RTColor.optimal, style: StrokeStyle(lineWidth: innerWidth, lineCap: .round))
+                    .trim(from: 0, to: StrainRecoveryDualArcGeometry.recoveryFraction(recoveryScore))
+                    .stroke(RTColor.optimal, style: StrokeStyle(lineWidth: layout.innerWidth, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                    .padding(ringInset)
+                    .padding(layout.ringInset)
 
                 // Center metrics
                 VStack(spacing: 2) {
@@ -61,7 +53,7 @@ struct StrainRecoveryWheel: View {
                         .foregroundStyle(RTColor.optimal)
                 }
             }
-            .frame(width: 180, height: 180)
+            .frame(width: layout.size, height: layout.size)
             .accessibilityIdentifier(SurfaceID.strainRecoveryWheel)
 
             // Value legend (labels + numbers, not color dots alone)

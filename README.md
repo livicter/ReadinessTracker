@@ -2,7 +2,7 @@
 
 iOS readiness app. Bright Apple Health UI. Local HealthKit plus optional Fitbit. WHOOP product surfaces via Apple Health. No unofficial WHOOP OAuth.
 
-**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Sleep Performance shows Need | Got dual metrics. Recommendations use WHOOP-style actionable cards. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack with Fitness-style progress tiles and tap-through detail. History Browse Trends opens Health-style trend detail with summary stats and scrub. Day Detail / Sleep Analysis show WHOOP night-detail chrome (stage % chips, hypnogram, cycles summary).
+**main:** Gym / Work / Sleep rings use Apple Activity packing with a center READY score in a Fitness-scale hole; legend opens Fitness-style ring detail. Today Strain/Recovery Balance shows Recovery | Strain with deltas and a 7-day recovery spark. Watch strain page mirrors WHOOP dual Recovery|Strain arcs. Sleep Performance shows Need | Got dual metrics. Recommendations use WHOOP-style actionable cards. Today scroll keeps Morning and Evening above the tab bar. Body sits above the WHOOP stack with Fitness-style progress tiles and tap-through detail. History Browse Trends opens Health-style trend detail with summary stats and scrub. Day Detail / Sleep Analysis show WHOOP night-detail chrome (stage % chips, hypnogram, cycles summary).
 
 Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITest swipe plus `-ui-fixture`, not VoiceOver).
 
@@ -39,6 +39,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Classic `MetricDetailView` primary Trend scrub | Shipped. Today → Metrics cards open classic detail; `ChartScrubSelection` drag scrub + RuleMark/`ChartTooltip` on primary Trend chart (parity with Advanced) | [verify-metric-detail-classic-scrub.png](.audit/verify-metric-detail-classic-scrub.png) |
 | Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium + **large** use Fitness-style `CompactTripleRingsView`; large adds Gym/Work/Sleep rows + HRV/RHR/Sleep hours | [verify-home-widget.png](.audit/verify-home-widget.png) · [verify-home-widget-large.png](.audit/verify-home-widget-large.png) |
 | Watch dashboard hero (Gym / Work / Sleep) | Shipped. Concentric Activity rings on Watch glance; `WatchSnapshot` carries gym/work/sleep from WatchConnectivity | [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) |
+| Watch strain page (Recovery | Strain dual arcs) | Shipped. WHOOP dual concentric arcs (Recovery inner / Strain outer) on Watch strain page via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel`; uses recovery + strain from `WatchSnapshot` | [verify-watch-strain.png](.audit/verify-watch-strain.png) |
 | Lock Screen circular (Gym / Work / Sleep) | Shipped. `accessoryCircular` uses Fitness-style `CompactTripleRingsView` (rectangular keeps score rows; ring-color digits) | [verify-lock-widget.png](.audit/verify-lock-widget.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
@@ -57,7 +58,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
-**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large), Lock Screen circular, and Watch dashboard (Fitness-style Gym/Work/Sleep triple rings) plus Watch complications (bright Apple Health tokens). Lock Screen rectangular keeps Gym/Work/Sleep score rows.
+**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large), Lock Screen circular, Watch dashboard (Fitness-style Gym/Work/Sleep triple rings), and Watch strain (WHOOP Recovery|Strain dual arcs) plus Watch complications (bright Apple Health tokens). Lock Screen rectangular keeps Gym/Work/Sleep score rows.
 
 **Not in this app.** Unofficial WHOOP login. Google Fit REST. Heart Points.
 
@@ -228,6 +229,12 @@ Fitness-style Gym / Work / Sleep concentric rings on the Watch glance hero (pari
 
 ![Watch dashboard](.audit/verify-watch-dashboard.png)
 
+### Watch strain
+
+WHOOP dual concentric arcs on the Watch strain page (Recovery inner / Strain outer), matching Today `StrainRecoveryWheel` colors and labels. Shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel` (Watch App target membership); recovery % and strain 0–21 come from `WatchSnapshot`.
+
+![Watch strain](.audit/verify-watch-strain.png)
+
 ### Lock Screen circular
 
 `accessoryCircular` Lock Screen widget uses the same Fitness-style Gym / Work / Sleep concentric rings as Home + Watch (`CompactTripleRingsView` / `TripleRingGeometry`, scaled for the accessory slot). Rectangular accessory stays score rows with ring-colored digits.
@@ -295,3 +302,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 27. ~~Watch `WatchDashboardView` was a single `ScoreRing` (Home widget + iPhone Today already use concentric Gym/Work/Sleep).~~ Closed — Fitness-style `CompactTripleRingsView` on Watch dashboard via shared `TripleRingGeometry` (Watch App target membership); `WatchSnapshot` + `WatchConnectivityManager` push gym/work/sleep; [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) from `Scripts/capture-watch-dashboard.sh` (ImageRenderer of watch chrome; Watch sim build verified when available).
 28. ~~Lock Screen `AccessoryCircularWidgetView` was a single `.accessoryCircularCapacity` gauge (Home + Watch + Today already use concentric Gym/Work/Sleep).~~ Closed — Fitness-style `CompactTripleRingsView` on `accessoryCircular` via shared `TripleRingGeometry` (scaled for accessory; rectangular kept with ring-color digit align); [verify-lock-widget.png](.audit/verify-lock-widget.png) from `Scripts/capture-lock-widget.sh` (ImageRenderer of Lock Screen chrome; geometry unit-tested).
 29. ~~Home Screen widget supported `.systemSmall` + `.systemMedium` only (no `.systemLarge`; Fitness / Health expose large glance surfaces).~~ Closed — `LargeWidgetView` with `CompactTripleRingsView` + Gym/Work/Sleep rows + HRV/RHR/Sleep hours; `supportedFamilies` + `ReadinessWidgetView` switch; [verify-home-widget-large.png](.audit/verify-home-widget-large.png) from `Scripts/capture-home-widget-large.sh` (ImageRenderer of `HomeWidgetLargeChrome`).
+30. ~~Watch `WatchStrainView` used a single `ScoreRing` for strain (iPhone Today already uses WHOOP dual concentric Recovery|Strain arcs via `StrainRecoveryWheel`).~~ Closed — elevated dual arcs (Recovery inner / Strain outer) via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel` (Watch App target membership); [verify-watch-strain.png](.audit/verify-watch-strain.png) from `Scripts/capture-watch-strain.sh` (ImageRenderer of `WatchStrainChrome`; Watch sim build verified when available).

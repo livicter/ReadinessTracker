@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-09-14 — Poteto: WHOOP Watch Strain/Recovery dual-arc parity
+
+- Elevated Watch `WatchStrainView` from single `ScoreRing` to WHOOP dual concentric arcs (Recovery inner / Strain outer) via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel` (Watch App Sources; no UIKit). Today `StrainRecoveryWheel` now uses the same geometry helper.
+- PNG: `.audit/verify-watch-strain.png` via `Scripts/capture-watch-strain.sh` (`WatchStrainCaptureTests` + `ImageRenderer` of `WatchStrainChrome`). Watch scheme build verified when simulator available.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #30.
+- Branch: `feature/poteto-watch-strain-dual-arcs`.
+
+
+
+
+
 ## 2026-09-14 — Poteto: Apple Fitness / Google Health large Home widget parity
 
 - Elevated Home Screen widget: added `.systemLarge` (`LargeWidgetView`) with Fitness-style `CompactTripleRingsView` + Gym/Work/Sleep `ScoreRow`s + HRV/RHR/Sleep `MetricMini`s (reuse Medium patterns). Wired `supportedFamilies` + `ReadinessWidgetView` switch. Watch complication untouched.
