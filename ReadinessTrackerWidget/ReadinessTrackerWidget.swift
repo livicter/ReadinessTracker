@@ -148,6 +148,61 @@ struct MediumWidgetView: View {
     }
 }
 
+
+// MARK: - Large Widget
+struct LargeWidgetView: View {
+    let entry: ReadinessEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .center, spacing: 16) {
+                CompactTripleRingsView(
+                    gymScore: entry.gymScore,
+                    workScore: entry.workScore,
+                    sleepScore: entry.sleepScore,
+                    size: 120,
+                    showsCaption: true,
+                    gymColor: WidgetTone.gym,
+                    workColor: WidgetTone.work,
+                    sleepColor: WidgetTone.sleep,
+                    valueColor: WidgetTone.value,
+                    captionColor: WidgetTone.label
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Readiness")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(WidgetTone.label)
+                    Text("\(entry.readinessScore)")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundStyle(WidgetTone.value)
+                        .monospacedDigit()
+                    Text("Gym · Work · Sleep")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(WidgetTone.label)
+                }
+                Spacer(minLength: 0)
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                ScoreRow(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
+                ScoreRow(label: "Work", score: entry.workScore, color: WidgetTone.work)
+                ScoreRow(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
+            }
+
+            Divider()
+
+            HStack(spacing: 16) {
+                MetricMini(label: "HRV", value: "\(entry.hrv)", unit: "ms")
+                MetricMini(label: "RHR", value: "\(entry.rhr)", unit: "bpm")
+                MetricMini(label: "Sleep", value: String(format: "%.1f", entry.sleepHours), unit: "h")
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+}
+
 struct ScoreRow: View {
     let label: String
     let score: Int
@@ -300,9 +355,9 @@ struct ReadinessTrackerWidget: Widget {
         .description("Track your daily readiness for gym and work.")
         .supportedFamilies({
             if #available(iOSApplicationExtension 16.0, *) {
-                return [.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular]
+                return [.systemSmall, .systemMedium, .systemLarge, .accessoryCircular, .accessoryRectangular]
             } else {
-                return [.systemSmall, .systemMedium]
+                return [.systemSmall, .systemMedium, .systemLarge]
             }
         }())
     }
@@ -318,6 +373,8 @@ struct ReadinessWidgetView: View {
             SmallWidgetView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+        case .systemLarge:
+            LargeWidgetView(entry: entry)
         case .accessoryCircular:
             if #available(iOSApplicationExtension 16.0, *) {
                 AccessoryCircularWidgetView(entry: entry)

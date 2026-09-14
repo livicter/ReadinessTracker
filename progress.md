@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-14 — Poteto: Apple Fitness / Google Health large Home widget parity
+
+- Elevated Home Screen widget: added `.systemLarge` (`LargeWidgetView`) with Fitness-style `CompactTripleRingsView` + Gym/Work/Sleep `ScoreRow`s + HRV/RHR/Sleep `MetricMini`s (reuse Medium patterns). Wired `supportedFamilies` + `ReadinessWidgetView` switch. Watch complication untouched.
+- PNG: `.audit/verify-home-widget-large.png` via `Scripts/capture-home-widget-large.sh` (`HomeWidgetCaptureTests` + `ImageRenderer` of `HomeWidgetLargeChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #29.
+- Branch: `feature/poteto-home-widget-large`.
+
+
+
+
 ## 2026-09-10 — Poteto: Apple Fitness Lock Screen accessory circular triple-ring parity
 
 - Elevated Lock Screen `AccessoryCircularWidgetView` from single `.accessoryCircularCapacity` gauge to Fitness-style concentric Gym/Work/Sleep via shared `CompactTripleRingsView` + `TripleRingGeometry` (GeometryReader-scaled; caption off). Rectangular accessory kept with minor Gym/Work/Sleep digit color align.
