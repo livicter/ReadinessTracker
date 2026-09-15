@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-09-16 — Poteto: Honest #37 Watch complication WidgetKit timeline reload
+
+- After successful Watch App Group mirror write (`WatchSessionManager.persistSnapshotDictionary`), soft-fail reload Watch Widgets timelines via `WatchComplicationTimelineReloader` → `WidgetCenter.shared.reloadTimelines(ofKind: "ReadinessWatchComplication")` so complications update without waiting for the next timeline policy.
+- Proof: focused XCTest `WatchComplicationTimelineReloaderTests` (kind match + injected reload seam + default soft-fail). UI unchanged — reuse `.audit/verify-watch-complication.png`. Portal App Group enable remains manual in `docs/DEVICE_SETUP.md`.
+- Wired reloader into iOS + Watch App targets; test into `ReadinessTracker.xcodeproj`; README Status + App surfaces + Honest gap #37.
+- Branch: `feature/poteto-watch-complication-reload`.
+
+
+
+
+
+
 ## 2026-09-16 — Poteto: Honest #36 iOS App Group `lastWatchSnapshot` writer
 
 - Closed data-path hole: iOS now writes App Group `group.com.readinesstracker` / `lastWatchSnapshot` when pushing/updating Watch snapshots via `WatchSnapshotAppGroupStore` from `WatchConnectivityManager.pushSnapshot()` (always, even if WC inactive) and `WidgetDataExporter.export(...)`. Watch `WatchSessionManager` mirror unchanged for the watch-side container.
