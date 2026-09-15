@@ -15,7 +15,7 @@ The iOS app, Home/Lock widgets, Watch App, and Watch complications share readine
    - `ReadinessTrackerWatchWidgets/ReadinessTrackerWatchWidgets.entitlements`
 6. Rebuild on a physical device (or simulator) so `UserDefaults(suiteName: "group.com.readinesstracker")` works for Home/Lock widgets and Watch complications (`lastWatchSnapshot`).
 
-Code path (Honest #36): iOS `WatchConnectivityManager` / `WidgetDataExporter` write `lastWatchSnapshot` via `WatchSnapshotAppGroupStore`; Watch `WatchSessionManager` mirrors the same key for the watch-side container. Do not claim live-device App Group works until portal steps above are complete.
+Code path (Honest #36/#37): iOS `WatchConnectivityManager` / `WidgetDataExporter` write `lastWatchSnapshot` via `WatchSnapshotAppGroupStore`; Watch `WatchSessionManager` mirrors the same key for the watch-side container and soft-fail reloads `ReadinessWatchComplication` WidgetKit timelines after persist. Do not claim live-device App Group works until portal steps above are complete.
 
 ## Fitbit credentials (no secrets in git)
 

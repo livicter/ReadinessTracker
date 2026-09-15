@@ -22,9 +22,11 @@ final class WatchSessionManager: NSObject, ObservableObject {
     }
 
     /// Persist for the Watch App and (when App Group is provisioned) the complication extension.
+    /// After a successful mirror write, soft-fail reload Watch Widgets timelines (Honest #37).
     private func persistSnapshotDictionary(_ dict: [String: Any]) {
         UserDefaults.standard.set(dict, forKey: defaultsKey)
         UserDefaults(suiteName: appGroupID)?.set(dict, forKey: defaultsKey)
+        WatchComplicationTimelineReloader.reloadAfterSnapshotWrite()
     }
 
     func start() {

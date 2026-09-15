@@ -1,0 +1,19 @@
+Honest #37 local self-verify (Mac mini / iPhone Air arm64 + Watch Series 11)
+Command: xcodebuild test -only-testing:ReadinessTrackerTests/WatchComplicationTimelineReloaderTests
+ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO
+
+Test Suite 'WatchComplicationTimelineReloaderTests' started at 2026-09-16 01:49:49.273 KST
+Test Case 'testDefaultReloadSoftFailsWithoutCrashing' passed (1.683 seconds).
+Test Case 'testKindMatchesWatchWidgetsStaticConfiguration' passed (0.020 seconds).
+Test Case 'testReloadAfterSnapshotWriteInvokesInjectedHookWithWatchKind' passed (0.002 seconds).
+Executed 3 tests, with 0 failures (0 unexpected)
+** TEST SUCCEEDED **
+
+Watch soft-build: xcodebuild build -scheme "ReadinessTrackerWatch Watch App"
+destination "platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)"
+** BUILD SUCCEEDED **
+
+Hook: WatchSessionManager.persistSnapshotDictionary → WatchComplicationTimelineReloader.reloadAfterSnapshotWrite()
+Kind: ReadinessWatchComplication (matches ReadinessWatchComplication.kind)
+UI unchanged — reuse .audit/verify-watch-complication.png
+Portal App Group enable remains manual (docs/DEVICE_SETUP.md)
