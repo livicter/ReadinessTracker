@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #50 Watch strain Recovery|Strain secondary
+
+- Elevated Watch `WatchStrainView` secondary glance from thin Recovery/Strain legend rows to Recovery % | Strain /21 dual callout + day cue (`WatchSnapshot.recovery` / `strain` / `date`); dual arcs (#30) unchanged. No invented metrics.
+- PNG: `.audit/verify-watch-strain.png` refreshed via `Scripts/capture-watch-strain.sh` (`WatchStrainCaptureTests` + `ImageRenderer` of elevated `WatchStrainChrome`).
+- README Status + App surfaces + Honest gap #50; tree-guard / capture-surfaces already list the PNG.
+- Branch: `feature/poteto-watch-strain-secondary`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #49 Watch dashboard HRV|RHR vitals
 
 - Elevated Watch `WatchDashboardView` vitals from plain HRV/RHR/Recovery metric rows to HRV|RHR dual callout + Ready/Recovery cue (`hrv` + `restingHeartRate` + `readiness`/`recovery`); no invented metrics. Rings unchanged.
