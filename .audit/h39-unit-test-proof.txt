@@ -1,0 +1,33 @@
+Honest #39 local self-verify (Mac mini / iPhone Air + Watch Series 11)
+Command: xcodebuild test -project ReadinessTracker.xcodeproj -only-testing:ReadinessTrackerTests/WatchComplicationWCPushTests
+ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO
+destination: platform=iOS Simulator,name=iPhone Air
+
+Test Suite 'WatchComplicationWCPushTests' started at 2026-09-16 02:17:39.066 KST
+Test Case 'testDeliverFallbackSkipsMessageWhenUnreachable' passed (0.008 seconds).
+Test Case 'testDeliverFallsBackToContextAndReachableMessage' passed (0.002 seconds).
+Test Case 'testDeliverSkipsTransferWhenGlanceUnchangedButKeepsContextFallback' passed (0.002 seconds).
+Test Case 'testDeliverSoftFailsWhenContextThrows' passed (0.038 seconds).
+Test Case 'testDeliverTransfersAgainWhenGlanceChanges' passed (0.001 seconds).
+Test Case 'testDeliverUsesComplicationTransferSeamWhenBudgetRemains' passed (0.002 seconds).
+Test Case 'testFingerprintStoreRoundTripViaUserDefaults' passed (0.009 seconds).
+Test Case 'testGlanceFieldsChangedWhenRingOrRecoveryStrainDiffers' passed (0.011 seconds).
+Test Case 'testGlanceFingerprintIgnoresNonGlanceNoise' passed (0.002 seconds).
+Test Case 'testPreferredRouteFallsBackWhenNoTransfersRemain' passed (0.001 seconds).
+Test Case 'testPreferredRouteSkipsTransferWhenGlanceUnchangedEvenWithBudget' passed (0.001 seconds).
+Test Case 'testPreferredRouteTransfersWhenGlanceChangedAndBudgetRemains' passed (0.113 seconds).
+Test Case 'testPreferredRouteUsesComplicationTransferWhenBudgetRemains' passed (0.001 seconds).
+Executed 13 tests, with 0 failures (0 unexpected)
+** TEST SUCCEEDED **
+
+Watch soft-build: xcodebuild build -scheme "ReadinessTrackerWatch Watch App"
+destination "platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)"
+** BUILD SUCCEEDED **
+
+Hook: WatchConnectivityManager.pushSnapshot → WatchComplicationWCPush.deliver
+  complication transfer only when remainingTransfers > 0 AND glance fingerprint changed
+  (readiness/gym/work/sleep + recovery/strain); persist last-sent fingerprint in UserDefaults
+  else updateApplicationContext + reachable sendMessage (soft-fail)
+  App Group write always runs before WC route (Honest #36)
+UI unchanged — reuse .audit/verify-watch-complication.png
+Portal App Group enable remains manual (docs/DEVICE_SETUP.md)
