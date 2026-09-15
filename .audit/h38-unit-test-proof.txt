@@ -1,0 +1,24 @@
+Honest #38 local self-verify (Mac mini / iPhone Air arm64 + Watch Series 11)
+Command: xcodebuild test -project ReadinessTracker.xcodeproj -only-testing:ReadinessTrackerTests/WatchComplicationWCPushTests
+ONLY_ACTIVE_ARCH=YES CODE_SIGNING_ALLOWED=NO
+
+Test Suite 'WatchComplicationWCPushTests' started at 2026-09-16 03:04:48.318 KST
+Test Case 'testDeliverFallbackSkipsMessageWhenUnreachable' passed (0.002 seconds).
+Test Case 'testDeliverFallsBackToContextAndReachableMessage' passed (0.001 seconds).
+Test Case 'testDeliverSoftFailsWhenContextThrows' passed (0.000 seconds).
+Test Case 'testDeliverUsesComplicationTransferSeamWhenBudgetRemains' passed (0.002 seconds).
+Test Case 'testPreferredRouteFallsBackWhenNoTransfersRemain' passed (0.000 seconds).
+Test Case 'testPreferredRouteUsesComplicationTransferWhenBudgetRemains' passed (0.000 seconds).
+Executed 6 tests, with 0 failures (0 unexpected)
+** TEST SUCCEEDED **
+
+Watch soft-build: xcodebuild build -scheme "ReadinessTrackerWatch Watch App"
+destination "platform=watchOS Simulator,name=Apple Watch Series 11 (46mm)"
+** BUILD SUCCEEDED **
+
+Hook: WatchConnectivityManager.pushSnapshot → WatchComplicationWCPush.deliver
+  prefer transferCurrentComplicationUserInfo when remainingComplicationUserInfoTransfers > 0
+  else updateApplicationContext + reachable sendMessage (soft-fail)
+Watch: WatchSessionManager.didReceiveUserInfo → apply → persistSnapshotDictionary → WatchComplicationTimelineReloader
+UI unchanged — reuse .audit/verify-watch-complication.png
+Portal App Group enable remains manual (docs/DEVICE_SETUP.md)

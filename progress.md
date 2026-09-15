@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-09-16 — Poteto: Honest #38 WatchConnectivity complication push
+
+- When iOS pushes/updates `WatchSnapshot`, prefer WC `transferCurrentComplicationUserInfo` while `remainingComplicationUserInfoTransfers > 0`; else fall back to existing `updateApplicationContext` / reachable message (`WatchComplicationWCPush` seam). Soft-fail if session inactive / budget exhausted.
+- Watch `WatchSessionManager` handles `didReceiveUserInfo` (complication transfers) with the same App Group persist + `WatchComplicationTimelineReloader` path as context/message.
+- Proof: focused XCTest `WatchComplicationWCPushTests` (route preference + deliver seams + soft-fail context throw). UI unchanged — reuse `.audit/verify-watch-complication.png`. Portal App Group enable remains manual in `docs/DEVICE_SETUP.md`.
+- Wired helper into iOS target + tests into `ReadinessTracker.xcodeproj`; README Status + App surfaces + Honest gap #38.
+- Branch: `feature/poteto-watch-complication-wc-push`.
+
+
+
+
+
+
 ## 2026-09-16 — Poteto: Honest #37 Watch complication WidgetKit timeline reload
 
 - After successful Watch App Group mirror write (`WatchSessionManager.persistSnapshotDictionary`), soft-fail reload Watch Widgets timelines via `WatchComplicationTimelineReloader` → `WidgetCenter.shared.reloadTimelines(ofKind: "ReadinessWatchComplication")` so complications update without waiting for the next timeline policy.

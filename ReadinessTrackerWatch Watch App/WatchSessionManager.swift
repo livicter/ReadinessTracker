@@ -101,4 +101,11 @@ extension WatchSessionManager: WCSessionDelegate {
     nonisolated func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
         Task { @MainActor in self.apply(message) }
     }
+
+    /// Complication-priority transfers (`transferCurrentComplicationUserInfo`) and
+    /// queued `transferUserInfo` arrive here (Honest #38). Same persist + timeline reload
+    /// path as application-context / message snapshots.
+    nonisolated func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any]) {
+        Task { @MainActor in self.apply(userInfo) }
+    }
 }
