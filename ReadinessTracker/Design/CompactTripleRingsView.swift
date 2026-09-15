@@ -775,11 +775,36 @@ struct HomeWidgetCheckInChrome: View {
 }
 
 /// Watch dashboard hero chrome used for audit PNG (`verify-watch-dashboard.png`).
-/// Mirrors watchOS glance sizing on a black canvas (ImageRenderer runs in iOS unit tests).
+/// Mirrors watchOS glance: rings + HRV|RHR dual callout + readiness/recovery cue (ImageRenderer / iOS tests).
 struct WatchDashboardChrome: View {
     let gymScore: Int
     let workScore: Int
     let sleepScore: Int
+    var hrv: Double = 62
+    var restingHeartRate: Double = 54
+    var readiness: Int = 82
+    var recovery: Int = 78
+
+    private let hrvColor = Color(red: 0/255, green: 208/255, blue: 132/255)
+    private let rhrColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+
+    private var readinessLabel: String {
+        switch readiness {
+        case 80...100: return "Ready"
+        case 60..<80: return "Good"
+        case 40..<60: return "Easy"
+        default: return "Rest"
+        }
+    }
+
+    private func scoreColor(_ score: Int) -> Color {
+        switch score {
+        case 80...100: return Color(red: 0/255, green: 208/255, blue: 132/255)
+        case 60..<80: return Color(red: 52/255, green: 199/255, blue: 89/255)
+        case 40..<60: return Color(red: 255/255, green: 149/255, blue: 0/255)
+        default: return Color(red: 255/255, green: 59/255, blue: 48/255)
+        }
+    }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -787,19 +812,56 @@ struct WatchDashboardChrome: View {
                 gymScore: gymScore,
                 workScore: workScore,
                 sleepScore: sleepScore,
-                size: 110,
+                size: 96,
                 minimumLineWidth: 5,
                 gap: 2,
                 valueColor: .white,
                 captionColor: Color.white.opacity(0.55)
             )
+
+            HStack(spacing: 12) {
+                dualCallout(label: "HRV", value: "\(Int(hrv))", unit: "ms", color: hrvColor)
+                dualCallout(label: "RHR", value: "\(Int(restingHeartRate))", unit: "bpm", color: rhrColor)
+            }
+
+            HStack(spacing: 6) {
+                Text(readinessLabel)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(scoreColor(readiness))
+                Text("·")
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.white.opacity(0.35))
+                Text("Recovery \(recovery)%")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(scoreColor(recovery))
+                    .monospacedDigit()
+            }
+
             Text("Readiness")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
         .padding(16)
-        .frame(width: 184, height: 224)
+        .frame(width: 184, height: 268)
         .background(Color.black)
+    }
+
+    private func dualCallout(label: String, value: String, unit: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.55))
+            HStack(alignment: .firstTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.white.opacity(0.45))
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 

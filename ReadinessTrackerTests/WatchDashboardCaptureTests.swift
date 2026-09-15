@@ -20,7 +20,15 @@ final class WatchDashboardCaptureTests: XCTestCase {
 
         let path = env["WATCH_DASHBOARD_PNG_PATH"] ?? Self.defaultPNGPath
 
-        let view = WatchDashboardChrome(gymScore: 82, workScore: 75, sleepScore: 80)
+        let view = WatchDashboardChrome(
+            gymScore: 82,
+            workScore: 75,
+            sleepScore: 80,
+            hrv: 62,
+            restingHeartRate: 54,
+            readiness: 82,
+            recovery: 78
+        )
         let renderer = ImageRenderer(content: view)
         renderer.scale = 3
         guard let image = renderer.uiImage, let data = image.pngData() else {

@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Page 1: Fitness-style Gym/Work/Sleep rings, key vitals, morning check-in shortcut.
+/// Page 1: Fitness-style Gym/Work/Sleep rings, HRV|RHR vitals callout, morning check-in shortcut.
 struct WatchDashboardView: View {
     @EnvironmentObject private var session: WatchSessionManager
 
@@ -20,30 +20,39 @@ struct WatchDashboardView: View {
                     )
                     .padding(.top, 4)
 
+                    // Elevated vitals: HRV|RHR dual callout from existing snapshot fields.
+                    HStack(spacing: 12) {
+                        dualCallout(
+                            label: "HRV",
+                            value: "\(Int(snapshot.hrv))",
+                            unit: "ms",
+                            color: WatchTheme.green
+                        )
+                        dualCallout(
+                            label: "RHR",
+                            value: "\(Int(snapshot.restingHeartRate))",
+                            unit: "bpm",
+                            color: WatchTheme.red
+                        )
+                    }
+
+                    // Readiness + recovery cue when space allows (existing fields only).
+                    HStack(spacing: 6) {
+                        Text(WatchTheme.readinessLabel(snapshot.readiness))
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(WatchTheme.scoreColor(snapshot.readiness))
+                        Text("·")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                        Text("Recovery \(snapshot.recovery)%")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(WatchTheme.scoreColor(snapshot.recovery))
+                            .monospacedDigit()
+                    }
+
                     Text("Readiness")
                         .font(.caption)
                         .foregroundStyle(.secondary)
-
-                    Divider()
-
-                    WatchMetricRow(
-                        icon: "waveform.path.ecg",
-                        label: "HRV",
-                        value: "\(Int(snapshot.hrv)) ms",
-                        color: WatchTheme.green
-                    )
-                    WatchMetricRow(
-                        icon: "heart.fill",
-                        label: "RHR",
-                        value: "\(Int(snapshot.restingHeartRate)) bpm",
-                        color: WatchTheme.red
-                    )
-                    WatchMetricRow(
-                        icon: "lungs.fill",
-                        label: "Recovery",
-                        value: "\(snapshot.recovery)%",
-                        color: WatchTheme.scoreColor(snapshot.recovery)
-                    )
 
                     if !snapshot.checkedInMorning {
                         NavigationLink {
@@ -63,6 +72,24 @@ struct WatchDashboardView: View {
             }
         }
         .containerBackground(.black, for: .navigation)
+    }
+
+    private func dualCallout(label: String, value: String, unit: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+            HStack(alignment: .firstTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var emptyState: some View {

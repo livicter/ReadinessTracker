@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #49 Watch dashboard HRV|RHR vitals
+
+- Elevated Watch `WatchDashboardView` vitals from plain HRV/RHR/Recovery metric rows to HRV|RHR dual callout + Ready/Recovery cue (`hrv` + `restingHeartRate` + `readiness`/`recovery`); no invented metrics. Rings unchanged.
+- PNG: `.audit/verify-watch-dashboard.png` refreshed via `Scripts/capture-watch-dashboard.sh` (`WatchDashboardCaptureTests` + `ImageRenderer` of elevated `WatchDashboardChrome`).
+- README Status + App surfaces + Honest gap #49 (Watch sleep Elsewhere already present from #48).
+- Branch: `feature/poteto-watch-dashboard-vitals`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #48 Watch sleep Hours|Eff + stage legend
 
 - Elevated Watch `WatchSleepView` with Hours|Efficiency dual callout (`sleepHours` + `sleepEfficiency`) and clearer Deep/REM/Light capsule stage legend; optional Sleep score when present. No invented Need (snapshot has no sleepNeed).
