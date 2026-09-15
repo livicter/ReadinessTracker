@@ -1,18 +1,29 @@
 import SwiftUI
 
-/// Morning check-in made on the wrist; sent to the iPhone over WatchConnectivity.
+/// Morning / Evening check-in on the wrist; sent to the iPhone over WatchConnectivity.
 struct WatchCheckInView: View {
     @EnvironmentObject private var session: WatchSessionManager
     @Environment(\.dismiss) private var dismiss
 
+    @State private var timeOfDay = "Morning"
     @State private var feel = 3
     @State private var alcohol = false
     @State private var lateCaffeine = false
     @State private var sick = false
+    @State private var workoutToday = false
+
+    private let periods = ["Morning", "Evening"]
 
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
+                // watchOS has no .segmented; equivalent Morning|Evening picker.
+                Picker("Check-in", selection: $timeOfDay) {
+                    ForEach(periods, id: \.self) { Text($0).tag($0) }
+                }
+                .labelsHidden()
+                .accessibilityLabel("Check-in time of day")
+
                 Text("How do you feel?")
                     .font(.headline)
 
@@ -40,14 +51,19 @@ struct WatchCheckInView: View {
                 Toggle("Sick", isOn: $sick)
                     .font(.caption)
 
+                if timeOfDay == "Evening" {
+                    Toggle("Workout today", isOn: $workoutToday)
+                        .font(.caption)
+                }
+
                 Button {
                     session.sendCheckIn(
-                        timeOfDay: "Morning",
+                        timeOfDay: timeOfDay,
                         subjectiveFeel: feel,
                         alcoholConsumed: alcohol,
                         caffeineAfter2pm: lateCaffeine,
                         isSick: sick,
-                        workoutToday: false
+                        workoutToday: timeOfDay == "Evening" ? workoutToday : false
                     ) { ok in
                         if ok { dismiss() }
                     }

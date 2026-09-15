@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #47 Watch Check-in Morning|Evening
+
+- Elevated Watch `WatchCheckInView` from morning-only stars+toggles to Morning|Evening picker (watchOS equivalent); keep feel stars + habit toggles (Evening adds Workout); `WatchSessionManager.sendCheckIn` sends correct `timeOfDay`.
+- PNG: `.audit/verify-watch-checkin.png` via `Scripts/capture-watch-checkin.sh` (`WatchCheckInCaptureTests` + `ImageRenderer` of `WatchCheckInChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #47.
+- Branch: `feature/poteto-watch-checkin-evening`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #46 Watch complication accessoryCorner Fitness cues
 
 - Elevated Watch `accessoryCorner` `widgetLabel` from plain monochrome `R… G… W… S…` text to colored readiness + short G/W/S cues (`WatchCornerComplicationView` + `WatchAccessoryCue`; rings from #44 kept; inline #45 cue parity).
