@@ -167,11 +167,25 @@ private struct WatchAccessoryCue: View {
 struct WatchInlineComplicationView: View {
     let entry: WatchComplicationEntry
 
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let readinessColor = Color(red: 10/255, green: 132/255, blue: 255/255)
+
     var body: some View {
-        Text("R\(entry.readiness) G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
-            .font(.system(.body, design: .rounded).weight(.semibold))
-            .monospacedDigit()
-            .containerBackground(for: .widget) { Color.clear }
+        // Compact accessoryInline: colored readiness + short G/W/S cues (Lock #34 / rect #44 parity).
+        HStack(spacing: 3) {
+            Text("R\(entry.readiness)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(readinessColor)
+                .monospacedDigit()
+            WatchAccessoryCue(letter: "G", score: entry.gymScore, color: gymColor)
+            WatchAccessoryCue(letter: "W", score: entry.workScore, color: workColor)
+            WatchAccessoryCue(letter: "S", score: entry.sleepScore, color: sleepColor)
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.55)
+        .containerBackground(for: .widget) { Color.clear }
     }
 }
 

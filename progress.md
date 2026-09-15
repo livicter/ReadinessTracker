@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #45 Watch complication accessoryInline Fitness cues
+
+- Elevated Watch `accessoryInline` from plain monochrome `R… G… W… S…` text to colored readiness + short G/W/S (R/G/W/S) cues within inline width (`WatchInlineComplicationView`; Lock #34 / rect #44 parity).
+- PNG: `.audit/verify-watch-complication-inline.png` via `Scripts/capture-watch-complication-inline.sh` (`WatchComplicationCaptureTests` + `ImageRenderer` of `WatchComplicationInlineChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #45.
+- Branch: `feature/poteto-watch-complication-inline`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #44 Watch complication rectangular Fitness parity
 
 - Elevated Watch `accessoryRectangular` from thin Ready/G-W-S text beside fixed rings to Lock Screen (#33) parity: GeometryReader-scaled `CompactTripleRingsView` + Readiness score + colored G/W/S cues; corner uses compact rings + readiness/G/W/S label.
