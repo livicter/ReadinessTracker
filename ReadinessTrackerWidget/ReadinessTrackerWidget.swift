@@ -369,39 +369,60 @@ struct AccessoryRectangularWidgetView: View {
 
     var body: some View {
         HStack(spacing: 8) {
+            GeometryReader { geo in
+                let side = min(geo.size.width, geo.size.height)
+                CompactTripleRingsView(
+                    gymScore: entry.gymScore,
+                    workScore: entry.workScore,
+                    sleepScore: entry.sleepScore,
+                    size: side,
+                    showsCaption: false,
+                    minimumLineWidth: 3,
+                    gap: 1.5,
+                    gymColor: WidgetTone.gym,
+                    workColor: WidgetTone.work,
+                    sleepColor: WidgetTone.sleep,
+                    valueColor: WidgetTone.value,
+                    captionColor: WidgetTone.label
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .frame(maxWidth: 64)
+
             VStack(alignment: .leading, spacing: 2) {
                 Text("Readiness")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color.secondary)
                 Text("\(entry.readinessScore)")
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundStyle(Color.primary)
                     .monospacedDigit()
+                HStack(spacing: 6) {
+                    AccessoryCue(letter: "G", score: entry.gymScore, color: WidgetTone.gym)
+                    AccessoryCue(letter: "W", score: entry.workScore, color: WidgetTone.work)
+                    AccessoryCue(letter: "S", score: entry.sleepScore, color: WidgetTone.sleep)
+                }
             }
-            Spacer(minLength: 4)
-            VStack(alignment: .trailing, spacing: 2) {
-                AccessoryMini(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
-                AccessoryMini(label: "Work", score: entry.workScore, color: WidgetTone.work)
-                AccessoryMini(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
-            }
+            Spacer(minLength: 0)
         }
     }
 }
 
 @available(iOSApplicationExtension 16.0, *)
-private struct AccessoryMini: View {
-    let label: String
+private struct AccessoryCue: View {
+    let letter: String
     let score: Int
-    var color: Color = Color.primary
+    let color: Color
 
     var body: some View {
-        HStack(spacing: 4) {
-            Text(label)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(Color.secondary)
-            Text("\(score)")
-                .font(.system(size: 10, weight: .bold, design: .rounded))
+        HStack(spacing: 2) {
+            Text(letter)
+                .font(.system(size: 9, weight: .semibold))
                 .foregroundStyle(color)
+            Text("\(score)")
+                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
                 .monospacedDigit()
         }
     }
