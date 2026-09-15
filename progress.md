@@ -1,3 +1,16 @@
+## 2026-09-16 — Poteto: Honest #39 complication transfer throttle
+
+- Throttle scarce WC `transferCurrentComplicationUserInfo` (~50/day): only spend a complication-priority transfer when glance-relevant fields change (readiness/gym/work/sleep + recovery/strain fingerprint). Unchanged scores still write App Group + fall back to `updateApplicationContext` / reachable message.
+- Persist last-sent glance fingerprint in UserDefaults (`WatchComplicationWCPush.FingerprintStore`); seam injectable for tests.
+- Proof: focused XCTest `WatchComplicationWCPushTests` (changed→transfer vs unchanged→skip transfer + context). UI unchanged — reuse `.audit/verify-watch-complication.png`. Portal App Group enable remains manual in `docs/DEVICE_SETUP.md`.
+- README Status + App surfaces + Honest gap #39.
+- Branch: `feature/poteto-watch-complication-transfer-throttle`.
+
+
+
+
+
+
 # Progress
 
 ## 2026-09-16 — Poteto: Honest #38 WatchConnectivity complication push

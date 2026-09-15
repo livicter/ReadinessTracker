@@ -50,7 +50,9 @@ final class WatchConnectivityManager: NSObject {
     /// App Group (`lastWatchSnapshot`) for complications, and sends it to the watch.
     /// Honest #38: prefer complication-priority `transferCurrentComplicationUserInfo`
     /// when WC budget remains; otherwise fall back to application context + reachable message.
-    /// Soft-fail when session inactive or transfers exhausted (no throw to callers).
+    /// Honest #39: spend a complication transfer only when glance-relevant fields change
+    /// (readiness/gym/work/sleep + recovery/strain); unchanged scores still get App Group
+    /// write + context/message fallback. Soft-fail when session inactive (no throw to callers).
     @MainActor
     func pushSnapshot() {
         let payload = Self.buildPayload()
@@ -62,10 +64,15 @@ final class WatchConnectivityManager: NSObject {
         let session = WCSession.default
         // Soft-fail: inactive session leaves App Group write in place; WC push skipped.
         guard session.activationState == .activated else { return }
+        let lastFingerprint = WatchComplicationWCPush.FingerprintStore.load()
         WatchComplicationWCPush.deliver(
             payload: payload,
             remainingTransfers: session.remainingComplicationUserInfoTransfers,
             isReachable: session.isReachable,
+            lastFingerprint: lastFingerprint,
+            persistFingerprint: { token in
+                WatchComplicationWCPush.FingerprintStore.save(token)
+            },
             transferComplication: { info in
                 _ = session.transferCurrentComplicationUserInfo(info)
             },
