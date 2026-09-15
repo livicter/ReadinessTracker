@@ -945,4 +945,64 @@ struct WatchComplicationChrome: View {
     }
 }
 
+
+/// Watch face `accessoryRectangular` chrome used for audit PNG (`verify-watch-complication-rectangular.png`).
+/// Dark rounded slot mirrors watch complications; Lock Screen rectangular parity (#33/#44).
+struct WatchComplicationRectangularChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 79
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+
+    var body: some View {
+        HStack(spacing: 8) {
+            CompactTripleRingsView(
+                gymScore: gymScore,
+                workScore: workScore,
+                sleepScore: sleepScore,
+                size: 48,
+                showsCaption: false,
+                minimumLineWidth: 2.5,
+                gap: 1,
+                gymColor: gymColor,
+                workColor: workColor,
+                sleepColor: sleepColor,
+                valueColor: .white,
+                captionColor: Color.white.opacity(0.55)
+            )
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Readiness")
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.55))
+                Text("\(readinessScore)")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .monospacedDigit()
+                HStack(spacing: 5) {
+                    Text("G\(gymScore)")
+                        .foregroundStyle(gymColor)
+                    Text("W\(workScore)")
+                        .foregroundStyle(workColor)
+                    Text("S\(sleepScore)")
+                        .foregroundStyle(sleepColor)
+                }
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .frame(width: 168, height: 68)
+        .background(Color.black)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(8)
+        .background(Color(white: 0.12))
+    }
+}
+
 #endif

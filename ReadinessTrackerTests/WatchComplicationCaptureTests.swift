@@ -43,4 +43,45 @@ final class WatchComplicationCaptureTests: XCTestCase {
         attachment.lifetime = .keepAlways
         add(attachment)
     }
+
+    @MainActor
+    func testCaptureWatchComplicationRectangularPNGWhenRequested() throws {
+        let env = ProcessInfo.processInfo.environment
+        let sentinelPath = "/tmp/rt-audit/CAPTURE_WATCH_COMPLICATION_RECTANGULAR"
+        let sentinelOK = FileManager.default.fileExists(atPath: sentinelPath)
+            || env["CAPTURE_WATCH_COMPLICATION_RECTANGULAR"] == "1"
+        guard sentinelOK else {
+            throw XCTSkip("Drop \(sentinelPath) or set CAPTURE_WATCH_COMPLICATION_RECTANGULAR=1 to render audit PNG")
+        }
+
+        let path = env["WATCH_COMPLICATION_RECTANGULAR_PNG_PATH"] ?? "/tmp/rt-audit/verify-watch-complication-rectangular.png"
+
+        let view = WatchComplicationRectangularChrome(
+            gymScore: 82,
+            workScore: 75,
+            sleepScore: 80,
+            readinessScore: 79
+        )
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = 3
+        guard let image = renderer.uiImage, let data = image.pngData() else {
+            XCTFail("ImageRenderer failed")
+            return
+        }
+        let url = URL(fileURLWithPath: path)
+        try FileManager.default.createDirectory(
+            at: url.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        try data.write(to: url)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: path), path)
+        let attrs = try FileManager.default.attributesOfItem(atPath: path)
+        let size = attrs[.size] as? NSNumber
+        XCTAssertGreaterThan(size?.intValue ?? 0, 800)
+
+        let attachment = XCTAttachment(image: image)
+        attachment.name = "verify-watch-complication-rectangular.png"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
 }
