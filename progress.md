@@ -1,3 +1,14 @@
+## 2026-09-16 — Poteto: Honest #40 Home widget Extra Large
+
+- Added Home Screen `.systemExtraLarge` (`ExtraLargeWidgetView`): Fitness-style `CompactTripleRingsView` (larger) + readiness High/Moderate/Low cue + Gym/Work/Sleep score rows + HRV/RHR/Sleep hours + G/W/S metric tiles; Check-in / Evening / Trends deep links (parity with large). Wired `supportedFamilies` + `ReadinessWidgetView` switch.
+- PNG: `.audit/verify-home-widget-extra-large.png` via `Scripts/capture-home-widget-extra-large.sh` (`HomeWidgetCaptureTests` + `ImageRenderer` of `HomeWidgetExtraLargeChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #40.
+- Branch: `feature/poteto-home-widget-extra-large`.
+
+
+
+
+
 ## 2026-09-16 — Poteto: Honest #39 complication transfer throttle
 
 - Throttle scarce WC `transferCurrentComplicationUserInfo` (~50/day): only spend a complication-priority transfer when glance-relevant fields change (readiness/gym/work/sleep + recovery/strain fingerprint). Unchanged scores still write App Group + fall back to `updateApplicationContext` / reachable message.

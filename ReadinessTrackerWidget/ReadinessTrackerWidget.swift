@@ -335,6 +335,92 @@ struct MetricMini: View {
 }
 
 
+
+// MARK: - Extra Large Widget (iPad / StandBy)
+/// Fitness / Health-style `.systemExtraLarge` glance: larger rings + Large rows/metrics
+/// plus readiness cue and Gym/Work/Sleep metric tiles (richer than `.systemLarge`).
+struct ExtraLargeWidgetView: View {
+    let entry: ReadinessEntry
+
+    private var readinessCue: String {
+        switch entry.readinessScore {
+        case 80...100: return "High"
+        case 60..<80: return "Moderate"
+        default: return "Low"
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 20) {
+            HStack(alignment: .center, spacing: 16) {
+                CompactTripleRingsView(
+                    gymScore: entry.gymScore,
+                    workScore: entry.workScore,
+                    sleepScore: entry.sleepScore,
+                    size: 148,
+                    showsCaption: true,
+                    gymColor: WidgetTone.gym,
+                    workColor: WidgetTone.work,
+                    sleepColor: WidgetTone.sleep,
+                    valueColor: WidgetTone.value,
+                    captionColor: WidgetTone.label
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Readiness")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(WidgetTone.label)
+                    Text("\(entry.readinessScore)")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .foregroundStyle(WidgetTone.value)
+                        .monospacedDigit()
+                    Text(readinessCue)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(WidgetTone.score(entry.readinessScore))
+                    Text("Gym · Work · Sleep")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(WidgetTone.label)
+                    HStack(spacing: 6) {
+                        WidgetCheckInControl()
+                        WidgetCheckInControl(evening: true)
+                    }
+                    .padding(.top, 4)
+                    WidgetTrendsControl()
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
+                    ScoreRow(label: "Gym", score: entry.gymScore, color: WidgetTone.gym)
+                    ScoreRow(label: "Work", score: entry.workScore, color: WidgetTone.work)
+                    ScoreRow(label: "Sleep", score: entry.sleepScore, color: WidgetTone.sleep)
+                }
+
+                Divider()
+
+                HStack(spacing: 16) {
+                    MetricMini(label: "HRV", value: "\(entry.hrv)", unit: "ms")
+                    MetricMini(label: "RHR", value: "\(entry.rhr)", unit: "bpm")
+                    MetricMini(label: "Sleep", value: String(format: "%.1f", entry.sleepHours), unit: "h")
+                    Spacer(minLength: 0)
+                }
+
+                HStack(spacing: 16) {
+                    MetricMini(label: "Gym", value: "\(entry.gymScore)", unit: "")
+                    MetricMini(label: "Work", value: "\(entry.workScore)", unit: "")
+                    MetricMini(label: "Sleep", value: "\(entry.sleepScore)", unit: "")
+                    Spacer(minLength: 0)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .widgetURL(WidgetDeepLink.checkIn)
+    }
+}
+
 // MARK: - Accessory Circular (Lock Screen)
 @available(iOSApplicationExtension 16.0, *)
 struct AccessoryCircularWidgetView: View {
@@ -463,9 +549,9 @@ struct ReadinessTrackerWidget: Widget {
         .description("Track your daily readiness for gym and work.")
         .supportedFamilies({
             if #available(iOSApplicationExtension 16.0, *) {
-                return [.systemSmall, .systemMedium, .systemLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline]
+                return [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline]
             } else {
-                return [.systemSmall, .systemMedium, .systemLarge]
+                return [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge]
             }
         }())
     }
@@ -483,6 +569,8 @@ struct ReadinessWidgetView: View {
             MediumWidgetView(entry: entry)
         case .systemLarge:
             LargeWidgetView(entry: entry)
+        case .systemExtraLarge:
+            ExtraLargeWidgetView(entry: entry)
         case .accessoryCircular:
             if #available(iOSApplicationExtension 16.0, *) {
                 AccessoryCircularWidgetView(entry: entry)

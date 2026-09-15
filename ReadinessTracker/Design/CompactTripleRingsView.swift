@@ -229,6 +229,163 @@ struct HomeWidgetLargeChrome: View {
     }
 }
 
+
+
+/// Extra Large Home Screen widget chrome used for audit PNG (`verify-home-widget-extra-large.png`).
+/// Mirrors `ExtraLargeWidgetView`: larger rings + Large rows/metrics + readiness cue + G/W/S tiles.
+struct HomeWidgetExtraLargeChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+    var hrv: Int = 45
+    var rhr: Int = 58
+    var sleepHours: Double = 7.5
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let track = Color.primary.opacity(0.08)
+    private let checkInGreen = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let eveningIndigo = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let trendsBlue = Color(red: 0/255, green: 122/255, blue: 255/255)
+
+    private var readinessCue: String {
+        switch readinessScore {
+        case 80...100: return "High"
+        case 60..<80: return "Moderate"
+        default: return "Low"
+        }
+    }
+
+    private var readinessCueColor: Color {
+        switch readinessScore {
+        case 80...100: return workColor
+        case 60..<80: return Color(red: 255/255, green: 149/255, blue: 0/255)
+        default: return gymColor
+        }
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 20) {
+            HStack(alignment: .center, spacing: 16) {
+                CompactTripleRingsView(
+                    gymScore: gymScore,
+                    workScore: workScore,
+                    sleepScore: sleepScore,
+                    size: 148
+                )
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Readiness")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Color.secondary)
+                    Text("\(readinessScore)")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.primary)
+                        .monospacedDigit()
+                    Text(readinessCue)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(readinessCueColor)
+                    Text("Gym · Work · Sleep")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.secondary)
+                    HStack(spacing: 6) {
+                        actionPill(icon: "checkmark.circle.fill", title: "Check-in", color: checkInGreen, accessibility: "Open Check-in")
+                        actionPill(icon: "moon.stars.fill", title: "Evening", color: eveningIndigo, accessibility: "Open Evening Check-in")
+                    }
+                    .padding(.top, 4)
+                    actionPill(icon: "chart.line.uptrend.xyaxis", title: "Trends", color: trendsBlue, accessibility: "Open Trends")
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 10) {
+                    chromeScoreRow(label: "Gym", score: gymScore, color: gymColor)
+                    chromeScoreRow(label: "Work", score: workScore, color: workColor)
+                    chromeScoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
+                }
+                Divider()
+                HStack(spacing: 16) {
+                    chromeMetricMini(label: "HRV", value: "\(hrv)", unit: "ms")
+                    chromeMetricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
+                    chromeMetricMini(label: "Sleep", value: String(format: "%.1f", sleepHours), unit: "h")
+                    Spacer(minLength: 0)
+                }
+                HStack(spacing: 16) {
+                    chromeMetricMini(label: "Gym", value: "\(gymScore)", unit: "")
+                    chromeMetricMini(label: "Work", value: "\(workScore)", unit: "")
+                    chromeMetricMini(label: "Sleep", value: "\(sleepScore)", unit: "")
+                    Spacer(minLength: 0)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(16)
+        .frame(width: 720, height: 350, alignment: .topLeading)
+        .background(Color(uiColor: .systemBackground))
+    }
+
+    private func actionPill(icon: String, title: String, color: Color, accessibility: String) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+        }
+        .foregroundStyle(Color.white)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Capsule(style: .continuous).fill(color))
+        .accessibilityLabel(accessibility)
+    }
+
+    private func chromeScoreRow(label: String, score: Int, color: Color) -> some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.secondary)
+                .frame(width: 40, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(track)
+                        .frame(height: 6)
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(color)
+                        .frame(width: geo.size.width * CGFloat(score) / 100, height: 6)
+                }
+            }
+            .frame(height: 6)
+            Text("\(score)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
+                .monospacedDigit()
+                .frame(width: 28, alignment: .trailing)
+        }
+    }
+
+    private func chromeMetricMini(label: String, value: String, unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.secondary)
+            HStack(alignment: .lastTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                    .monospacedDigit()
+                if !unit.isEmpty {
+                    Text(unit)
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(Color.secondary)
+                }
+            }
+        }
+    }
+}
+
 /// Medium + large Home widget chrome with Fitness-style deep-link controls
 /// (Check-in / Evening / Trends — `verify-home-widget-deeplinks.png`).
 /// Mirrors interactive Links on real widgets.
