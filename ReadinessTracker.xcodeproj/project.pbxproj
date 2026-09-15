@@ -59,6 +59,8 @@
 		57AA00420000000000000001 /* StrainRecoveryDualArcGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00400000000000000001 /* StrainRecoveryDualArcGeometry.swift */; };
 		57AA00430000000000000001 /* CompactStrainRecoveryWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */; };
 		57AA00D20000000000000001 /* WatchCheckInChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00D10000000000000001 /* WatchCheckInChrome.swift */; };
+		57AA00E20000000000000001 /* WatchSleepChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00E10000000000000001 /* WatchSleepChrome.swift */; };
+		57AA00E40000000000000001 /* WatchSleepCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00E30000000000000001 /* WatchSleepCaptureTests.swift */; };
 		57AA00450000000000000001 /* CompactStrainRecoveryWheel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */; };
 		57AA00460000000000000001 /* StrainRecoveryDualArcGeometryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */; };
 		57AA00480000000000000001 /* WatchStrainCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00490000000000000001 /* WatchStrainCaptureTests.swift */; };
@@ -267,6 +269,8 @@
 		57AA00400000000000000001 /* StrainRecoveryDualArcGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StrainRecoveryDualArcGeometry.swift; path = ReadinessTracker/Design/StrainRecoveryDualArcGeometry.swift; sourceTree = SOURCE_ROOT; };
 		57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompactStrainRecoveryWheel.swift; path = ReadinessTracker/Design/CompactStrainRecoveryWheel.swift; sourceTree = SOURCE_ROOT; };
 		57AA00D10000000000000001 /* WatchCheckInChrome.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchCheckInChrome.swift; sourceTree = "<group>"; };
+		57AA00E10000000000000001 /* WatchSleepChrome.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSleepChrome.swift; sourceTree = "<group>"; };
+		57AA00E30000000000000001 /* WatchSleepCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSleepCaptureTests.swift; sourceTree = "<group>"; };
 		57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainRecoveryDualArcGeometryTests.swift; sourceTree = "<group>"; };
 		57AA00490000000000000001 /* WatchStrainCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchStrainCaptureTests.swift; sourceTree = "<group>"; };
 		57AA00D30000000000000001 /* WatchCheckInCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchCheckInCaptureTests.swift; sourceTree = "<group>"; };
@@ -543,6 +547,7 @@
 				57AA00400000000000000001 /* StrainRecoveryDualArcGeometry.swift */,
 				57AA00440000000000000001 /* CompactStrainRecoveryWheel.swift */,
 				57AA00D10000000000000001 /* WatchCheckInChrome.swift */,
+				57AA00E10000000000000001 /* WatchSleepChrome.swift */,
 				D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */,
 				79CC408E4EF9AA4508C25854 /* AppleNativeTheme.swift */,
 			);
@@ -601,6 +606,7 @@
 				57AA00470000000000000001 /* StrainRecoveryDualArcGeometryTests.swift */,
 				57AA00490000000000000001 /* WatchStrainCaptureTests.swift */,
 				57AA00D30000000000000001 /* WatchCheckInCaptureTests.swift */,
+				57AA00E30000000000000001 /* WatchSleepCaptureTests.swift */,
 				57AA00530000000000000001 /* AppDeepLinkTests.swift */,
 				57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */,
 				57AA00340000000000000001 /* LockWidgetCaptureTests.swift */,
@@ -945,6 +951,7 @@
 				57AA00460000000000000001 /* StrainRecoveryDualArcGeometryTests.swift in Sources */,
 				57AA00480000000000000001 /* WatchStrainCaptureTests.swift in Sources */,
 				57AA00D40000000000000001 /* WatchCheckInCaptureTests.swift in Sources */,
+				57AA00E40000000000000001 /* WatchSleepCaptureTests.swift in Sources */,
 				57AA00520000000000000001 /* AppDeepLinkTests.swift in Sources */,
 				57AA00540000000000000001 /* HomeWidgetCheckInCaptureTests.swift in Sources */,
 				57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */,
@@ -1017,6 +1024,7 @@
 				57AA00410000000000000001 /* StrainRecoveryDualArcGeometry.swift in Sources */,
 				57AA00430000000000000001 /* CompactStrainRecoveryWheel.swift in Sources */,
 				57AA00D20000000000000001 /* WatchCheckInChrome.swift in Sources */,
+				57AA00E20000000000000001 /* WatchSleepChrome.swift in Sources */,
 				FFB6CF2934E34F20A8F38CD3 /* PoincarePlotView.swift in Sources */,
 				F996D6EFFA9F04A4AB2E1508 /* MetricType.swift in Sources */,
 				F80A052B486FD461EB169EBD /* MetricDetailView.swift in Sources */,
