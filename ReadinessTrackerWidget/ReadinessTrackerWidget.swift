@@ -94,6 +94,7 @@ private enum WidgetTone {
 /// WidgetKit live relative time (does not go stale between hourly timeline reloads).
 private struct WidgetUpdatedCue: View {
     let lastUpdate: Date?
+    var fontSize: CGFloat = 10
 
     var body: some View {
         if let lastUpdate {
@@ -101,7 +102,7 @@ private struct WidgetUpdatedCue: View {
                 Text("Updated ")
                 Text(lastUpdate, style: .relative)
             }
-            .font(.system(size: 10, weight: .medium))
+            .font(.system(size: fontSize, weight: .medium))
             .foregroundStyle(WidgetTone.label)
             .accessibilityElement(children: .combine)
         }
@@ -173,12 +174,12 @@ struct SmallWidgetView: View {
     let entry: ReadinessEntry
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             CompactTripleRingsView(
                 gymScore: entry.gymScore,
                 workScore: entry.workScore,
                 sleepScore: entry.sleepScore,
-                size: 96,
+                size: 88,
                 gymColor: WidgetTone.gym,
                 workColor: WidgetTone.work,
                 sleepColor: WidgetTone.sleep,
@@ -188,6 +189,8 @@ struct SmallWidgetView: View {
             Text("Readiness")
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(WidgetTone.label)
+            // Compact Fitness-style live Updated (Honest #51); hide if App Group lastUpdate missing.
+            WidgetUpdatedCue(lastUpdate: entry.lastUpdate, fontSize: 9)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .widgetURL(WidgetDeepLink.checkIn)
