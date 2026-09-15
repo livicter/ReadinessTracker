@@ -92,6 +92,8 @@ struct WatchStrainChrome: View {
     let strainScore: Double
     let recoveryScore: Double
     var dayCue: String = "TODAY"
+    /// Glance freshness from `WatchSnapshot.date` (Honest #53 audit sync); hide if nil.
+    var snapshotDate: Date? = Date().addingTimeInterval(-5 * 60)
 
     private let recoveryColor = Color(red: 52/255, green: 199/255, blue: 89/255)
     private let strainColor = Color(red: 255/255, green: 149/255, blue: 0/255)
@@ -130,12 +132,22 @@ struct WatchStrainChrome: View {
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Color.white.opacity(0.55))
 
+            if let snapshotDate {
+                HStack(spacing: 0) {
+                    Text("Updated ")
+                    Text(snapshotDate, style: .relative)
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.55))
+                .accessibilityElement(children: .combine)
+            }
+
             Text("Strain")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
         .padding(16)
-        .frame(width: 184, height: 268)
+        .frame(width: 184, height: 288)
         .background(Color.black)
     }
 

@@ -25,4 +25,4 @@ xcodebuild test \
 [[ -s "$TMP_PNG" ]] || { echo "missing tmp PNG at $TMP_PNG"; exit 1; }
 cp -f "$TMP_PNG" .audit/verify-watch-strain.png
 echo "==> wrote .audit/verify-watch-strain.png ($(wc -c < .audit/verify-watch-strain.png | tr -d ' ') bytes)"
-echo "==> capture method: ImageRenderer of WatchStrainChrome (shared CompactStrainRecoveryWheel) via WatchStrainCaptureTests; Watch App also compiles StrainRecoveryDualArcGeometry + CompactStrainRecoveryWheel."
+echo "==> capture method: ImageRenderer of WatchStrainChrome (dual callout + day + Updated cue; shared CompactStrainRecoveryWheel) via WatchStrainCaptureTests; Watch App also compiles StrainRecoveryDualArcGeometry + CompactStrainRecoveryWheel."
