@@ -40,7 +40,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium + **large** use Fitness-style `CompactTripleRingsView`; large adds Gym/Work/Sleep rows + HRV/RHR/Sleep hours; medium/large show interactive **Check-in** / **Evening** / **Trends** (`Link` → `readinesstracker://checkin/{morning|evening}` + `readinesstracker://trends`) | [verify-home-widget.png](.audit/verify-home-widget.png) · [verify-home-widget-large.png](.audit/verify-home-widget-large.png) · [verify-home-widget-checkin.png](.audit/verify-home-widget-checkin.png) · [verify-home-widget-deeplinks.png](.audit/verify-home-widget-deeplinks.png) |
 | Watch dashboard hero (Gym / Work / Sleep) | Shipped. Concentric Activity rings on Watch glance; `WatchSnapshot` carries gym/work/sleep from WatchConnectivity | [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) |
 | Watch strain page (Recovery | Strain dual arcs) | Shipped. WHOOP dual concentric arcs (Recovery inner / Strain outer) on Watch strain page via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel`; uses recovery + strain from `WatchSnapshot` | [verify-watch-strain.png](.audit/verify-watch-strain.png) |
-| Lock Screen circular + rectangular (Gym / Work / Sleep) | Shipped. `accessoryCircular` + `accessoryRectangular` use Fitness-style `CompactTripleRingsView` (rectangular: compact rings + readiness score + short G/W/S cues) | [verify-lock-widget.png](.audit/verify-lock-widget.png) · [verify-lock-widget-rectangular.png](.audit/verify-lock-widget-rectangular.png) |
+| Lock Screen circular + rectangular + inline (Gym / Work / Sleep) | Shipped. `accessoryCircular` + `accessoryRectangular` use Fitness-style `CompactTripleRingsView` (rectangular: compact rings + readiness score + short G/W/S cues); `accessoryInline` is a compact text glance (readiness score + short G/W/S cues) | [verify-lock-widget.png](.audit/verify-lock-widget.png) · [verify-lock-widget-rectangular.png](.audit/verify-lock-widget-rectangular.png) · [verify-lock-widget-inline.png](.audit/verify-lock-widget-inline.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
 
@@ -247,6 +247,12 @@ WHOOP dual concentric arcs on the Watch strain page (Recovery inner / Strain out
 
 ![Lock Screen rectangular](.audit/verify-lock-widget-rectangular.png)
 
+### Lock Screen inline
+
+`accessoryInline` Lock Screen widget adds the Fitness / Health-style glance beside Lock Screen time: readiness score plus short Gym / Work / Sleep cues in a single compact text line (`AccessoryInlineWidgetView`).
+
+![Lock Screen inline](.audit/verify-lock-widget-inline.png)
+
 ### Home Screen large
 
 `.systemLarge` Home widget mirrors Fitness / Health glance density: `CompactTripleRingsView` plus Gym / Work / Sleep score rows and HRV / RHR / Sleep hours (same Medium patterns). Medium and large expose Fitness-style deep-link controls: **Check-in** (`readinesstracker://checkin/morning`), **Evening** (`…/evening`), and **Trends** (`readinesstracker://trends` → History browse).
@@ -324,3 +330,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 31. ~~Home Screen widgets were glance-only (no Fitness-style deep-link / action into morning Check-in).~~ Closed — medium/large `Link` + `.widgetURL` (`readinesstracker://checkin/morning`); small `.widgetURL`; `AppDeepLink` + ContentView tab route; [verify-home-widget-checkin.png](.audit/verify-home-widget-checkin.png) from `Scripts/capture-home-widget-checkin.sh` (ImageRenderer of `HomeWidgetCheckInChrome`).
 32. ~~App deep links stopped at morning Check-in (no Evening check-in or Trends / History browse routes from Fitness-style widget surfaces).~~ Closed — `AppDeepLink` adds `readinesstracker://checkin/evening` + `readinesstracker://trends`; medium secondary Trends + large Check-in/Evening/Trends `Link`s; [verify-home-widget-deeplinks.png](.audit/verify-home-widget-deeplinks.png) from `Scripts/capture-home-widget-deeplinks.sh` (ImageRenderer of `HomeWidgetCheckInChrome`).
 33. ~~Lock Screen `AccessoryRectangularWidgetView` still showed readiness digit + Gym/Work/Sleep score rows (circular / Home / Watch already use Fitness-style `CompactTripleRingsView`).~~ Closed — elevated rectangular to compact triple rings + readiness score + short G/W/S cues via shared `TripleRingGeometry`; [verify-lock-widget-rectangular.png](.audit/verify-lock-widget-rectangular.png) from `Scripts/capture-lock-widget-rectangular.sh` (ImageRenderer of `LockScreenRectangularChrome`; geometry unit-tested).
+34. ~~Lock Screen widgets shipped `accessoryCircular` + `accessoryRectangular` but `supportedFamilies` omitted `.accessoryInline` (Apple Fitness / Health often expose an inline Lock Screen glance).~~ Closed — `AccessoryInlineWidgetView` compact text glance (readiness score + short G/W/S cues); `supportedFamilies` + `ReadinessWidgetView` switch (iOS 16+); [verify-lock-widget-inline.png](.audit/verify-lock-widget-inline.png) from `Scripts/capture-lock-widget-inline.sh` (ImageRenderer of `LockScreenInlineChrome`).

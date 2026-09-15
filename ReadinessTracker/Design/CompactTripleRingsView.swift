@@ -544,4 +544,35 @@ struct LockScreenRectangularChrome: View {
     }
 }
 
+
+/// Lock Screen `accessoryInline` chrome used for audit PNG (`verify-lock-widget-inline.png`).
+/// Dark capsule mirrors the inline glance beside Lock Screen time (text-only; no rings).
+struct LockScreenInlineChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+
+    var body: some View {
+        HStack(spacing: 6) {
+            Text("\(readinessScore)")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .monospacedDigit()
+            Text("G\(gymScore) W\(workScore) S\(sleepScore)")
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                .foregroundStyle(Color.white.opacity(0.75))
+                .monospacedDigit()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(Color.black)
+        .clipShape(Capsule())
+        .padding(12)
+        .frame(width: 220, height: 48)
+        .background(Color(white: 0.12))
+    }
+}
+
+
 #endif
