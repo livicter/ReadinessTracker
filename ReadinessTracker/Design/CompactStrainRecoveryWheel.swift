@@ -91,17 +91,18 @@ struct CompactStrainRecoveryWheel: View {
 struct WatchStrainChrome: View {
     let strainScore: Double
     let recoveryScore: Double
+    var dayCue: String = "TODAY"
 
     private let recoveryColor = Color(red: 52/255, green: 199/255, blue: 89/255)
     private let strainColor = Color(red: 255/255, green: 149/255, blue: 0/255)
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             CompactStrainRecoveryWheel(
                 strainScore: strainScore,
                 recoveryScore: recoveryScore,
                 size: 110,
-                day: "TODAY",
+                day: dayCue,
                 minimumOuterWidth: 8,
                 minimumInnerWidth: 6,
                 trackColor: Color.white.opacity(0.18),
@@ -109,40 +110,51 @@ struct WatchStrainChrome: View {
                 captionColor: Color.white.opacity(0.55)
             )
 
-            HStack(spacing: 16) {
-                chromeMetric(color: recoveryColor, title: "Recovery", value: "\(Int(recoveryScore.rounded()))", unit: "%")
-                chromeMetric(color: strainColor, title: "Strain", value: String(format: "%.1f", strainScore), unit: "/21")
+            // Elevated Recovery % | Strain /21 dual callout (parity with WatchStrainView).
+            HStack(spacing: 12) {
+                dualCallout(
+                    label: "Recovery",
+                    value: "\(Int(recoveryScore.rounded()))",
+                    unit: "%",
+                    color: recoveryColor
+                )
+                dualCallout(
+                    label: "Strain",
+                    value: String(format: "%.1f", strainScore),
+                    unit: "/21",
+                    color: strainColor
+                )
             }
+
+            Text(dayCue == "TODAY" ? "Today" : dayCue.capitalized)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.55))
 
             Text("Strain")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
         .padding(16)
-        .frame(width: 184, height: 248)
+        .frame(width: 184, height: 268)
         .background(Color.black)
     }
 
-    private func chromeMetric(color: Color, title: String, value: String, unit: String) -> some View {
-        HStack(spacing: 6) {
-            Capsule()
-                .fill(color)
-                .frame(width: 3, height: 22)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(title)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(Color.white.opacity(0.55))
-                HStack(alignment: .firstTextBaseline, spacing: 1) {
-                    Text(value)
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(color)
-                        .monospacedDigit()
-                    Text(unit)
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundStyle(Color.white.opacity(0.45))
-                }
+    private func dualCallout(label: String, value: String, unit: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.55))
+            HStack(alignment: .firstTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(Color.white.opacity(0.45))
             }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 #endif
