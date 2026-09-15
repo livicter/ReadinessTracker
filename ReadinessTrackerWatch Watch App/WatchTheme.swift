@@ -61,6 +61,25 @@ enum WatchTheme {
     }
 }
 
+
+/// Compact Fitness-style glance freshness from `WatchSnapshot.date` (live relative; hide if missing).
+struct WatchGlanceUpdatedCue: View {
+    let date: Date?
+    var font: Font = .caption2.weight(.medium)
+
+    var body: some View {
+        if let date {
+            HStack(spacing: 0) {
+                Text("Updated ")
+                Text(date, style: .relative)
+            }
+            .font(font)
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .combine)
+        }
+    }
+}
+
 /// Icon + label + value row used across watch pages.
 struct WatchMetricRow: View {
     let icon: String

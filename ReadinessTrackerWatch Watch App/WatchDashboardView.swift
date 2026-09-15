@@ -50,6 +50,9 @@ struct WatchDashboardView: View {
                             .monospacedDigit()
                     }
 
+                    // Glance freshness from existing WatchSnapshot.date (Honest #52).
+                    WatchGlanceUpdatedCue(date: snapshot.date)
+
                     Text("Readiness")
                         .font(.caption)
                         .foregroundStyle(.secondary)

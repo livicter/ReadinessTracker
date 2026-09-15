@@ -37,10 +37,11 @@ struct WatchStrainView: View {
                         )
                     }
 
-                    // Day cue from snapshot.date (existing field only).
+                    // Day + Updated cues from snapshot.date (existing field only; Honest #52).
                     Text(dayLabel(for: snapshot.date))
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.secondary)
+                    WatchGlanceUpdatedCue(date: snapshot.date)
 
                     Text("Strain")
                         .font(.caption)

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Render WatchDashboardChrome → .audit/verify-watch-dashboard.png via unit test ImageRenderer.
-# Rings + HRV|RHR dual callout + Ready/Recovery cue; CompactTripleRingsView / TripleRingGeometry in Watch App target.
+# Rings + HRV|RHR + Ready/Recovery + Updated cue from WatchSnapshot.date; CompactTripleRingsView in Watch App target.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -25,4 +25,4 @@ xcodebuild test \
 [[ -s "$TMP_PNG" ]] || { echo "missing tmp PNG at $TMP_PNG"; exit 1; }
 cp -f "$TMP_PNG" .audit/verify-watch-dashboard.png
 echo "==> wrote .audit/verify-watch-dashboard.png ($(wc -c < .audit/verify-watch-dashboard.png | tr -d ' ') bytes)"
-echo "==> capture method: ImageRenderer of WatchDashboardChrome (rings + HRV|RHR + Ready/Recovery) via WatchDashboardCaptureTests; Watch App WatchDashboardView uses same snapshot fields."
+echo "==> capture method: ImageRenderer of WatchDashboardChrome (rings + HRV|RHR + Ready/Recovery + Updated) via WatchDashboardCaptureTests; Watch App WatchDashboardView uses WatchSnapshot.date."

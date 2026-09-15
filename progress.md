@@ -1,3 +1,10 @@
+## 2026-09-16 — Poteto: Honest #52 Watch glance Updated cue
+
+- Elevated Watch dashboard/sleep/strain with compact Fitness-style live **Updated …** (`Text(..., style: .relative)`) from existing `WatchSnapshot.date` via `WatchGlanceUpdatedCue` (hide if missing; no new fields).
+- PNG: `.audit/verify-watch-dashboard.png` refreshed via `Scripts/capture-watch-dashboard.sh` (`WatchDashboardCaptureTests` + `ImageRenderer` of `WatchDashboardChrome` with Updated cue).
+- Branch: `feature/poteto-watch-glance-updated` → squash-merge to main.
+- Avoided: Portal, complications, WC infra, Lock filler.
+
 ## 2026-09-16 — Poteto: Honest #51 Home widget small Updated cue
 
 - Elevated Home `SmallWidgetView` with compact Fitness-style live **Updated …** (`Text(..., style: .relative)`, 9pt) from App Group `lastUpdate` (hide if missing); rings slightly tightened (88pt / spacing 4) so triple rings stay primary. Medium+ cues unchanged.
