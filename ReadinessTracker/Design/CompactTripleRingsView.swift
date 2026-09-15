@@ -81,6 +81,20 @@ struct CompactTripleRingsView: View {
     }
 }
 
+
+#if os(iOS)
+/// Fitness-style “Updated …” label from App Group `lastUpdate` (nil → hide cue).
+enum WidgetFreshnessLabel {
+    static func text(from lastUpdate: Date?, relativeTo now: Date = Date()) -> String? {
+        guard let lastUpdate else { return nil }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        let relative = formatter.localizedString(for: lastUpdate, relativeTo: now)
+        return "Updated \(relative)"
+    }
+}
+#endif
+
 #if os(iOS)
 /// Small Home Screen widget chrome used for audit PNG (`verify-home-widget.png`).
 struct HomeWidgetSmallChrome: View {
@@ -117,6 +131,7 @@ struct HomeWidgetLargeChrome: View {
     var hrv: Int = 45
     var rhr: Int = 58
     var sleepHours: Double = 7.5
+    var lastUpdate: Date? = Date().addingTimeInterval(-5 * 60)
 
     private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
     private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
@@ -143,6 +158,11 @@ struct HomeWidgetLargeChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
+                    if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
+                        Text(label)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Color.secondary)
+                    }
                     chromeCheckInControl()
                         .padding(.top, 4)
                 }
@@ -241,6 +261,7 @@ struct HomeWidgetExtraLargeChrome: View {
     var hrv: Int = 45
     var rhr: Int = 58
     var sleepHours: Double = 7.5
+    var lastUpdate: Date? = Date().addingTimeInterval(-5 * 60)
 
     private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
     private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
@@ -289,6 +310,11 @@ struct HomeWidgetExtraLargeChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
+                    if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
+                        Text(label)
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Color.secondary)
+                    }
                     HStack(spacing: 6) {
                         actionPill(icon: "checkmark.circle.fill", title: "Check-in", color: checkInGreen, accessibility: "Open Check-in")
                         actionPill(icon: "moon.stars.fill", title: "Evening", color: eveningIndigo, accessibility: "Open Evening Check-in")
@@ -381,6 +407,124 @@ struct HomeWidgetExtraLargeChrome: View {
                         .font(.system(size: 9, weight: .medium))
                         .foregroundStyle(Color.secondary)
                 }
+            }
+        }
+    }
+}
+
+
+/// Medium Home Screen widget chrome with Fitness-style “Updated …” freshness
+/// (`verify-home-widget-updated.png`). Mirrors `MediumWidgetView` + App Group cue.
+struct HomeWidgetUpdatedChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+    var hrv: Int = 45
+    var rhr: Int = 58
+    var sleepHours: Double = 7.5
+    var lastUpdate: Date? = Date().addingTimeInterval(-5 * 60)
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let track = Color.primary.opacity(0.08)
+    private let checkInGreen = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let trendsBlue = Color(red: 0/255, green: 122/255, blue: 255/255)
+
+    var body: some View {
+        HStack(spacing: 16) {
+            VStack(spacing: 4) {
+                CompactTripleRingsView(
+                    gymScore: gymScore,
+                    workScore: workScore,
+                    sleepScore: sleepScore,
+                    size: 100
+                )
+                Text("Readiness")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.secondary)
+                if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
+                    Text(label)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Color.secondary)
+                        .accessibilityLabel(label)
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                chromeScoreRow(label: "Gym", score: gymScore, color: gymColor)
+                chromeScoreRow(label: "Work", score: workScore, color: workColor)
+                chromeScoreRow(label: "Sleep", score: sleepScore, color: sleepColor)
+
+                Divider()
+
+                HStack(spacing: 8) {
+                    chromeMetricMini(label: "HRV", value: "\(hrv)", unit: "ms")
+                    chromeMetricMini(label: "RHR", value: "\(rhr)", unit: "bpm")
+                    Spacer(minLength: 0)
+                    actionPill(icon: "chart.line.uptrend.xyaxis", title: "Trends", color: trendsBlue, compact: true)
+                    actionPill(icon: "checkmark.circle.fill", title: "Check-in", color: checkInGreen, compact: true)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(width: 360, height: 169, alignment: .center)
+        .background(Color(uiColor: .systemBackground))
+    }
+
+    private func actionPill(icon: String, title: String, color: Color, compact: Bool = false) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            Text(title)
+                .font(.system(size: compact ? 11 : 12, weight: .semibold))
+        }
+        .foregroundStyle(Color.white)
+        .padding(.horizontal, compact ? 8 : 10)
+        .padding(.vertical, compact ? 5 : 6)
+        .background(Capsule(style: .continuous).fill(color))
+    }
+
+    private func chromeScoreRow(label: String, score: Int, color: Color) -> some View {
+        HStack(spacing: 8) {
+            Text(label)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(Color.secondary)
+                .frame(width: 40, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(track)
+                        .frame(height: 6)
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(color)
+                        .frame(width: geo.size.width * CGFloat(score) / 100, height: 6)
+                }
+            }
+            .frame(height: 6)
+            Text("\(score)")
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .foregroundStyle(Color.primary)
+                .monospacedDigit()
+                .frame(width: 28, alignment: .trailing)
+        }
+    }
+
+    private func chromeMetricMini(label: String, value: String, unit: String) -> some View {
+        VStack(spacing: 2) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.secondary)
+            HStack(alignment: .lastTextBaseline, spacing: 1) {
+                Text(value)
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                    .monospacedDigit()
+                Text(unit)
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundStyle(Color.secondary)
             }
         }
     }

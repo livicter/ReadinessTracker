@@ -11,6 +11,8 @@ struct ReadinessEntry: TimelineEntry {
     let hrv: Int
     let rhr: Int
     let sleepHours: Double
+    /// App Group `lastUpdate` from `WidgetDataExporter` (nil if missing).
+    let lastUpdate: Date?
 }
 
 struct Provider: TimelineProvider {
@@ -23,7 +25,8 @@ struct Provider: TimelineProvider {
             sleepScore: 80,
             hrv: 45,
             rhr: 58,
-            sleepHours: 7.5
+            sleepHours: 7.5,
+            lastUpdate: Date().addingTimeInterval(-5 * 60)
         )
     }
 
@@ -54,7 +57,8 @@ struct Provider: TimelineProvider {
             sleepScore: defaults.integer(forKey: "sleepScore"),
             hrv: defaults.integer(forKey: "hrv"),
             rhr: defaults.integer(forKey: "rhr"),
-            sleepHours: defaults.double(forKey: "sleepHours")
+            sleepHours: defaults.double(forKey: "sleepHours"),
+            lastUpdate: defaults.object(forKey: "lastUpdate") as? Date
         )
     }
 }
@@ -81,6 +85,33 @@ private enum WidgetTone {
 
 
 
+
+
+
+// MARK: - Freshness (“Updated …”)
+/// Fitness-style relative freshness from App Group `lastUpdate`. Returns nil when missing.
+enum WidgetFreshness {
+    static func updatedLabel(from lastUpdate: Date?, relativeTo now: Date = Date()) -> String? {
+        guard let lastUpdate else { return nil }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .abbreviated
+        let relative = formatter.localizedString(for: lastUpdate, relativeTo: now)
+        return "Updated \(relative)"
+    }
+}
+
+private struct WidgetUpdatedCue: View {
+    let lastUpdate: Date?
+
+    var body: some View {
+        if let label = WidgetFreshness.updatedLabel(from: lastUpdate) {
+            Text(label)
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(WidgetTone.label)
+                .accessibilityLabel(label)
+        }
+    }
+}
 
 // MARK: - Deep links (Check-in Morning/Evening + Trends / History browse)
 private enum WidgetDeepLink {
@@ -190,6 +221,7 @@ struct MediumWidgetView: View {
                 Text("Readiness")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(WidgetTone.label)
+                WidgetUpdatedCue(lastUpdate: entry.lastUpdate)
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -245,6 +277,7 @@ struct LargeWidgetView: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(WidgetTone.label)
+                    WidgetUpdatedCue(lastUpdate: entry.lastUpdate)
                     HStack(spacing: 6) {
                         WidgetCheckInControl()
                         WidgetCheckInControl(evening: true)
@@ -379,6 +412,7 @@ struct ExtraLargeWidgetView: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(WidgetTone.label)
+                    WidgetUpdatedCue(lastUpdate: entry.lastUpdate)
                     HStack(spacing: 6) {
                         WidgetCheckInControl()
                         WidgetCheckInControl(evening: true)
