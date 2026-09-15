@@ -1,0 +1,25 @@
+Honest #43 local self-verify (Mac mini)
+Command: xcodebuild test -project ReadinessTracker.xcodeproj -scheme ReadinessTracker
+  -destination "platform=iOS Simulator,name=iPhone Air"
+  -derivedDataPath /tmp/ReadinessTracker-H43-Unit-DD
+  -only-testing:ReadinessTrackerTests/WidgetExportAfterWriteTests
+  -resultBundlePath /tmp/h43-unit.xcresult
+  CODE_SIGNING_ALLOWED=NO ENABLE_ON_DEMAND_RESOURCES=NO
+
+Test Suite 'WidgetExportAfterWriteTests' started at 2026-09-16 03:40:31.312 HKT
+Test Case 'testDataStoreSaveInvokesExportAfterWrite' passed (3.188 seconds).
+Test Case 'testEveningCheckInAlsoInvokesExportAfterWrite' passed (0.085 seconds).
+Test Case 'testMetadataStoreSaveInvokesExportAfterWrite' passed (0.077 seconds).
+Test Case 'testRunInvokesInjectedPerformWithProvidedStore' passed (0.003 seconds).
+Executed 4 tests, with 0 failures (0 unexpected)
+** TEST SUCCEEDED **
+
+Tree guard: ./Scripts/ci-guard-tree.sh → TREE GUARD OK
+
+Audit:
+  HealthKit/Fitbit: already exported via DataStore.persist → WidgetExportAfterWrite.run
+  Missing: MetadataStore.persist (CheckInView Morning/Evening Save + Watch→phone check-in)
+Fix: shared WidgetExportAfterWrite.run() from DataStore.persist + MetadataStore.persist
+  (WidgetDataExporter.export owns WidgetCenter.reload — no duplicate)
+
+UI unchanged — reuse .audit/verify-home-widget-live-updated.png

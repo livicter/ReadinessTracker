@@ -68,5 +68,8 @@ class MetadataStore: ObservableObject {
         if let encoded = try? JSONEncoder().encode(entries) {
             defaults.set(encoded, forKey: key)
         }
+
+        // Check-in multipliers affect dual Gym/Work scores — refresh glances (Honest #43)
+        WidgetExportAfterWrite.run()
     }
 }

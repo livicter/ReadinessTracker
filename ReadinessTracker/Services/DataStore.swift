@@ -72,9 +72,8 @@ class DataStore: ObservableObject {
             defaults.set(encoded, forKey: key)
         }
 
-        // Widget + watch snapshots after every data write (health sync, check-in)
-        WidgetDataExporter.export(from: self)
-        WatchConnectivityManager.shared.pushSnapshot()
+        // Widget + watch snapshots after every health data write (Honest #43)
+        WidgetExportAfterWrite.run(dataStore: self)
     }
 }
 
