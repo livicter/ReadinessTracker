@@ -93,35 +93,74 @@ struct WatchCircularComplicationView: View {
 struct WatchRectangularComplicationView: View {
     let entry: WatchComplicationEntry
 
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+
     var body: some View {
+        // Lock Screen rectangular parity (#33): compact triple rings + readiness + short G/W/S cues.
         HStack(spacing: 6) {
-            CompactTripleRingsView(
-                gymScore: entry.gymScore,
-                workScore: entry.workScore,
-                sleepScore: entry.sleepScore,
-                size: 36,
-                showsCaption: false,
-                minimumLineWidth: 2.5,
-                gap: 1,
-                valueColor: .primary,
-                captionColor: .secondary
-            )
+            GeometryReader { geo in
+                let side = min(geo.size.width, geo.size.height)
+                CompactTripleRingsView(
+                    gymScore: entry.gymScore,
+                    workScore: entry.workScore,
+                    sleepScore: entry.sleepScore,
+                    size: side,
+                    showsCaption: false,
+                    minimumLineWidth: 2.5,
+                    gap: 1,
+                    gymColor: gymColor,
+                    workColor: workColor,
+                    sleepColor: sleepColor,
+                    valueColor: .primary,
+                    captionColor: .secondary
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .frame(maxWidth: 44)
+
             VStack(alignment: .leading, spacing: 1) {
-                Text("Ready \(entry.readiness)")
-                    .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                Text("G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                Text("Readiness")
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                Text("\(entry.readiness)")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
+                HStack(spacing: 4) {
+                    WatchAccessoryCue(letter: "G", score: entry.gymScore, color: gymColor)
+                    WatchAccessoryCue(letter: "W", score: entry.workScore, color: workColor)
+                    WatchAccessoryCue(letter: "S", score: entry.sleepScore, color: sleepColor)
+                }
             }
             Spacer(minLength: 0)
         }
         .containerBackground(for: .widget) { Color.clear }
+    }
+}
+
+private struct WatchAccessoryCue: View {
+    let letter: String
+    let score: Int
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 1) {
+            Text(letter)
+                .font(.system(size: 9, weight: .semibold))
+                .foregroundStyle(color)
+            Text("\(score)")
+                .font(.system(size: 9, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+                .monospacedDigit()
+        }
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
     }
 }
 
@@ -140,14 +179,23 @@ struct WatchCornerComplicationView: View {
     let entry: WatchComplicationEntry
 
     var body: some View {
-        Text("\(entry.readiness)")
-            .font(.system(.title3, design: .rounded).weight(.bold))
-            .monospacedDigit()
-            .widgetLabel {
-                Text("G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
-                    .monospacedDigit()
-            }
-            .containerBackground(for: .widget) { Color.clear }
+        // Cheap Fitness-style elevation: compact rings in the corner slot + G/W/S label.
+        CompactTripleRingsView(
+            gymScore: entry.gymScore,
+            workScore: entry.workScore,
+            sleepScore: entry.sleepScore,
+            size: 28,
+            showsCaption: false,
+            minimumLineWidth: 2,
+            gap: 0.8,
+            valueColor: .primary,
+            captionColor: .secondary
+        )
+        .widgetLabel {
+            Text("R\(entry.readiness) G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
+                .monospacedDigit()
+        }
+        .containerBackground(for: .widget) { Color.clear }
     }
 }
 

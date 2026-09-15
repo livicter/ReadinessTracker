@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #44 Watch complication rectangular Fitness parity
+
+- Elevated Watch `accessoryRectangular` from thin Ready/G-W-S text beside fixed rings to Lock Screen (#33) parity: GeometryReader-scaled `CompactTripleRingsView` + Readiness score + colored G/W/S cues; corner uses compact rings + readiness/G/W/S label.
+- PNG: `.audit/verify-watch-complication-rectangular.png` via `Scripts/capture-watch-complication-rectangular.sh` (`WatchComplicationCaptureTests` + `ImageRenderer` of `WatchComplicationRectangularChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #44.
+- Branch: `feature/poteto-watch-complication-rectangular`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #43 widget export on all write paths
 
 - Audited `WidgetDataExporter.export` call sites: HealthKit/Fitbit already hit export via `DataStore.persist`; Morning/Evening Check-in (`MetadataStore.save` from `CheckInView` + Watch Connectivity check-in) did **not**.
