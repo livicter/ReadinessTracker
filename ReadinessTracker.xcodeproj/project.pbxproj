@@ -110,6 +110,7 @@
 		D91F919B127DFE3D9AD7B50F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156364342BFD68DEC2AFF4EC /* Foundation.framework */; };
 		DA351070FEEEB49A1DB55DEF /* SleepConsistencyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */; };
 		DA6B374DC4663B26CD969BD9 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */; };
+		57AA00820000000000000001 /* WatchSnapshotAppGroupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00810000000000000001 /* WatchSnapshotAppGroupStore.swift */; };
 		DF3BC5618216DF0064BADC23 /* UserMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA90E3B855B871337DEB0A0 /* UserMetadata.swift */; };
 		E3010EC13C0C6FABE2C9360F /* CoachingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7A8CCED4BECFEAF1F7AD4B /* CoachingView.swift */; };
 		EA1C997340E8B855CC18A6D1 /* AppleNativeTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CC408E4EF9AA4508C25854 /* AppleNativeTheme.swift */; };
@@ -127,6 +128,7 @@
 		57AA006A0000000000000001 /* TripleRingGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00210000000000000001 /* TripleRingGeometry.swift */; };
 		57AA006B0000000000000001 /* CompactTripleRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00240000000000000001 /* CompactTripleRingsView.swift */; };
 		57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */; };
+		57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */; };
 		57AA00750000000000000001 /* ReadinessWatchComplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00740000000000000001 /* ReadinessWatchComplication.swift */; };
 		57AA00780000000000000001 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AA00770000000000000001 /* WidgetKit.framework */; };
 		57AA007A0000000000000001 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AA00790000000000000001 /* SwiftUI.framework */; };
@@ -311,6 +313,7 @@
 		CCA90E3B855B871337DEB0A0 /* UserMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMetadata.swift; sourceTree = "<group>"; };
 		CCBFE0E73D7E7320AD0A7570 /* ReadinessTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadinessTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchConnectivityManager.swift; path = ReadinessTracker/Services/WatchConnectivityManager.swift; sourceTree = SOURCE_ROOT; };
+		57AA00810000000000000001 /* WatchSnapshotAppGroupStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchSnapshotAppGroupStore.swift; path = ReadinessTracker/Services/WatchSnapshotAppGroupStore.swift; sourceTree = SOURCE_ROOT; };
 		D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PoincarePlotView.swift; path = ReadinessTracker/Design/PoincarePlotView.swift; sourceTree = SOURCE_ROOT; };
 		D551B1384E980CF2EC373C72 /* SyncStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncStatusView.swift; path = ReadinessTracker/Views/SyncStatusView.swift; sourceTree = SOURCE_ROOT; };
 		E26DF2562B91AB2F789E7365 /* FitbitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitbitManager.swift; sourceTree = "<group>"; };
@@ -327,6 +330,7 @@
 
 		57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReadinessTrackerWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationCaptureTests.swift; sourceTree = "<group>"; };
+		57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSnapshotAppGroupStoreTests.swift; sourceTree = "<group>"; };
 		57AA00720000000000000001 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		57AA00730000000000000001 /* ReadinessTrackerWatchWidgets.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ReadinessTrackerWatchWidgets.entitlements; sourceTree = "<group>"; };
 		57AA00740000000000000001 /* ReadinessWatchComplication.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReadinessWatchComplication.swift; sourceTree = "<group>"; };
@@ -451,6 +455,7 @@
 				8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */,
 				BA60028BE763A221CC4030F9 /* NotificationManager.swift */,
 				D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */,
+				57AA00810000000000000001 /* WatchSnapshotAppGroupStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -576,6 +581,7 @@
 				57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */,
 				57AA00340000000000000001 /* LockWidgetCaptureTests.swift */,
 				57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */,
+				57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
 				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
 			);
@@ -914,6 +920,7 @@
 				57AA00540000000000000001 /* HomeWidgetCheckInCaptureTests.swift in Sources */,
 				57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */,
 				57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */,
+				57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
 				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
 			);
@@ -1028,6 +1035,7 @@
 				37DC4839AE0C23214F42E6D5 /* CoachingInsight.swift in Sources */,
 				5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */,
 				DA6B374DC4663B26CD969BD9 /* WatchConnectivityManager.swift in Sources */,
+				57AA00820000000000000001 /* WatchSnapshotAppGroupStore.swift in Sources */,
 				E3010EC13C0C6FABE2C9360F /* CoachingView.swift in Sources */,
 				D8B1B1F8A192CF005A8E212F /* NotificationSettingsView.swift in Sources */,
 			);

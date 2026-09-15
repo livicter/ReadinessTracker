@@ -2,16 +2,20 @@
 
 ## App Group (`group.com.readinesstracker`)
 
-The iOS app and widget share readiness scores via an App Group.
+The iOS app, Home/Lock widgets, Watch App, and Watch complications share readiness scores via an App Group. **Portal enable is manual** (code + entitlements already declare the suite; live-device App Group does not work until these portal steps are done).
 
 1. Sign in to [Apple Developer](https://developer.apple.com/account) → **Identifiers**.
 2. Open the App ID for the main app (`com.readiness.ReadinessTracker`, or your team’s equivalent).
 3. Enable **App Groups** → Configure → register / select `group.com.readinesstracker`.
-4. Repeat for the Widget extension App ID (`com.readiness.ReadinessTracker.widget`).
-5. In Xcode, confirm both targets use the matching entitlements:
+4. Repeat for the Widget extension App ID (`com.readiness.ReadinessTracker.widget`), Watch App, and Watch Widgets extension App IDs.
+5. In Xcode, confirm targets use the matching entitlements:
    - `ReadinessTracker/ReadinessTracker.entitlements`
    - `ReadinessTrackerWidget/ReadinessTrackerWidget.entitlements`
-6. Rebuild on a physical device (or simulator) so `UserDefaults(suiteName: "group.com.readinesstracker")` works for Home Screen and Lock Screen widgets.
+   - `ReadinessTrackerWatch Watch App/ReadinessTrackerWatch.entitlements`
+   - `ReadinessTrackerWatchWidgets/ReadinessTrackerWatchWidgets.entitlements`
+6. Rebuild on a physical device (or simulator) so `UserDefaults(suiteName: "group.com.readinesstracker")` works for Home/Lock widgets and Watch complications (`lastWatchSnapshot`).
+
+Code path (Honest #36): iOS `WatchConnectivityManager` / `WidgetDataExporter` write `lastWatchSnapshot` via `WatchSnapshotAppGroupStore`; Watch `WatchSessionManager` mirrors the same key for the watch-side container. Do not claim live-device App Group works until portal steps above are complete.
 
 ## Fitbit credentials (no secrets in git)
 

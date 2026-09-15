@@ -46,15 +46,19 @@ final class WatchConnectivityManager: NSObject {
         session.activate()
     }
 
-    /// Builds a snapshot from the latest stored data and sends it to the watch
+    /// Builds a snapshot from the latest stored data, writes it to the shared
+    /// App Group (`lastWatchSnapshot`) for complications, and sends it to the watch
     /// (application context for background delivery + live message when reachable).
     @MainActor
     func pushSnapshot() {
+        let payload = Self.buildPayload()
+        guard !payload.isEmpty else { return }
+        // Close Honest #36: always mirror the WC payload into the App Group suite
+        // so Watch complications can leave sample fallback when the group works.
+        WatchSnapshotAppGroupStore.write(payload)
         guard WCSession.isSupported() else { return }
         let session = WCSession.default
         guard session.activationState == .activated else { return }
-        let payload = Self.buildPayload()
-        guard !payload.isEmpty else { return }
         try? session.updateApplicationContext(payload)
         if session.isReachable {
             session.sendMessage(payload, replyHandler: nil)

@@ -45,6 +45,19 @@ enum WidgetDataExporter {
         sharedDefaults?.set(sleepHours, forKey: "sleepHours")
         sharedDefaults?.set(Date(), forKey: "lastUpdate")
 
+        // Also write the Watch complication dictionary key (same suite / key as
+        // WatchSessionManager + WatchComplicationStore) so App Group readers leave sample.
+        WatchSnapshotAppGroupStore.write([
+            "date": Date().timeIntervalSince1970,
+            "readiness": readinessScore,
+            "gymScore": gymScore,
+            "workScore": workScore,
+            "sleepScore": sleepScore,
+            "hrv": hrv,
+            "restingHeartRate": rhr,
+            "sleepHours": sleepHours
+        ], defaults: sharedDefaults)
+
         WidgetCenter.shared.reloadTimelines(ofKind: "ReadinessTrackerWidget")
     }
 }
