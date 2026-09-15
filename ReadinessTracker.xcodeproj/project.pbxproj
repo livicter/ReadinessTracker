@@ -122,6 +122,14 @@
 		FFB6CF2934E34F20A8F38CD3 /* PoincarePlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D398F3163ECB4F5683C4DDA7 /* PoincarePlotView.swift */; };
 		FFE0A71E2C3B44234AB22B3E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8F6449F83F9046308CEE1BB /* Assets.xcassets */; };
 		C1A1F1080000000000000001 /* SurfacesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1A1F1010000000000000001 /* SurfacesUITests.swift */; };
+
+		57AA00670000000000000001 /* ReadinessTrackerWatchWidgets.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		57AA006A0000000000000001 /* TripleRingGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00210000000000000001 /* TripleRingGeometry.swift */; };
+		57AA006B0000000000000001 /* CompactTripleRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00240000000000000001 /* CompactTripleRingsView.swift */; };
+		57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */; };
+		57AA00750000000000000001 /* ReadinessWatchComplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00740000000000000001 /* ReadinessWatchComplication.swift */; };
+		57AA00780000000000000001 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AA00770000000000000001 /* WidgetKit.framework */; };
+		57AA007A0000000000000001 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57AA00790000000000000001 /* SwiftUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -153,6 +161,14 @@
 			remoteGlobalIDString = 51D820C5C3EF80053A88AE39;
 			remoteInfo = ReadinessTracker;
 		};
+
+		57AA00680000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 390C8C7D7247342CD8100F2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57AA00620000000000000001;
+			remoteInfo = ReadinessTrackerWatchWidgets;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -176,6 +192,18 @@
 				D43FB07A3FEA01E96CC21DB8 /* ReadinessTrackerWidget.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+
+		57AA00660000000000000001 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				57AA00670000000000000001 /* ReadinessTrackerWatchWidgets.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -296,6 +324,14 @@
 		F9975446B618A947B5BE1069 /* QuickTrendTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QuickTrendTests.swift; sourceTree = "<group>"; };
 		C1A1F1010000000000000001 /* SurfacesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurfacesUITests.swift; sourceTree = "<group>"; };
 		C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReadinessTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+
+		57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReadinessTrackerWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationCaptureTests.swift; sourceTree = "<group>"; };
+		57AA00720000000000000001 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57AA00730000000000000001 /* ReadinessTrackerWatchWidgets.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = ReadinessTrackerWatchWidgets.entitlements; sourceTree = "<group>"; };
+		57AA00740000000000000001 /* ReadinessWatchComplication.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ReadinessWatchComplication.swift; sourceTree = "<group>"; };
+		57AA00770000000000000001 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		57AA00790000000000000001 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -370,6 +406,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+		57AA00640000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57AA00780000000000000001 /* WidgetKit.framework in Frameworks */,
+				57AA007A00000000000001 /* SwiftUI.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -423,6 +469,7 @@
 				EB3FC12896B9622317749428 /* ReadinessTracker */,
 				57A5F0CB2FCA0C260061C07C /* ReadinessTrackerWatch */,
 				57A5F0DA2FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
+				57AA00710000000000000001 /* ReadinessTrackerWatchWidgets */,
 				8E4F6EAC342FC231B7B08716 /* Products */,
 				57A5F0C52FCA0BAC0061C07C /* Recovered References */,
 				A9BEC5E3B9915C5F4854B822 /* ReadinessTrackerTests */,
@@ -501,6 +548,7 @@
 				2A77F1EB943BD413A146320A /* ReadinessTrackerTests.xctest */,
 				C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */,
 				2B0AF691FDB2B1FC2BCC2903 /* ReadinessTrackerWidget.appex */,
+				57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -527,6 +575,7 @@
 				57AA00530000000000000001 /* AppDeepLinkTests.swift */,
 				57AA00550000000000000001 /* HomeWidgetCheckInCaptureTests.swift */,
 				57AA00340000000000000001 /* LockWidgetCaptureTests.swift */,
+				57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
 				43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */,
 			);
@@ -540,6 +589,8 @@
 				156364342BFD68DEC2AFF4EC /* Foundation.framework */,
 				C59BEA3111F0535ECE8127D0 /* WidgetKit.framework */,
 				C0759E50E0B67A527BF7C73A /* SwiftUI.framework */,
+				57AA00770000000000000001 /* WidgetKit.framework */,
+				57AA00790000000000000001 /* SwiftUI.framework */,
 			);
 			name = iOS;
 			sourceTree = "<group>";
@@ -586,6 +637,17 @@
 				C1A1F1010000000000000001 /* SurfacesUITests.swift */,
 			);
 			path = ReadinessTrackerUITests;
+			sourceTree = "<group>";
+		};
+
+		57AA00710000000000000001 /* ReadinessTrackerWatchWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				57AA00740000000000000001 /* ReadinessWatchComplication.swift */,
+				57AA00720000000000000001 /* Info.plist */,
+				57AA00730000000000000001 /* ReadinessTrackerWatchWidgets.entitlements */,
+			);
+			path = ReadinessTrackerWatchWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -656,10 +718,12 @@
 				57A5F0D22FCA0C280061C07C /* Sources */,
 				57A5F0D32FCA0C280061C07C /* Frameworks */,
 				57A5F0D42FCA0C280061C07C /* Resources */,
+				57AA00660000000000000001 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				57AA00690000000000000001 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				57A5F0DA2FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
@@ -705,6 +769,24 @@
 			productReference = C1A1F1030000000000000001 /* ReadinessTrackerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+
+		57AA00620000000000000001 /* ReadinessTrackerWatchWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57AA006E0000000000000001 /* Build configuration list for PBXNativeTarget "ReadinessTrackerWatchWidgets" */;
+			buildPhases = (
+				57AA00630000000000000001 /* Sources */,
+				57AA00640000000000000001 /* Frameworks */,
+				57AA00650000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ReadinessTrackerWatchWidgets;
+			productName = ReadinessTrackerWatchWidgets;
+			productReference = 57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -745,6 +827,7 @@
 				51D820C5C3EF80053A88AE39 /* ReadinessTracker */,
 				57A5F0C92FCA0C260061C07C /* ReadinessTrackerWatch */,
 				57A5F0D52FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
+				57AA00620000000000000001 /* ReadinessTrackerWatchWidgets */,
 				B58574B0B3BD6FDD527B3530 /* ReadinessTrackerTests */,
 				C1A1F1040000000000000001 /* ReadinessTrackerUITests */,
 				11BCE63BA2721C8EB6DC5A97 /* ReadinessTrackerWidget */,
@@ -796,6 +879,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+		57AA00650000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -822,6 +913,7 @@
 				57AA00520000000000000001 /* AppDeepLinkTests.swift in Sources */,
 				57AA00540000000000000001 /* HomeWidgetCheckInCaptureTests.swift in Sources */,
 				57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */,
+				57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
 				8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */,
 			);
@@ -949,6 +1041,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+		57AA00630000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57AA00750000000000000001 /* ReadinessWatchComplication.swift in Sources */,
+				57AA006A0000000000000001 /* TripleRingGeometry.swift in Sources */,
+				57AA006B0000000000000001 /* CompactTripleRingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -974,6 +1077,12 @@
 			name = ReadinessTracker;
 			target = 51D820C5C3EF80053A88AE39 /* ReadinessTracker */;
 			targetProxy = C1A1F10A0000000000000001 /* PBXContainerItemProxy */;
+		};
+
+		57AA00690000000000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57AA00620000000000000001 /* ReadinessTrackerWatchWidgets */;
+			targetProxy = 57AA00680000000000000001 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1225,6 +1334,7 @@
 		57A5F0E42FCA0C290061C07C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ReadinessTrackerWatch Watch App/ReadinessTrackerWatch.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1312,6 +1422,7 @@
 		57A5F0E52FCA0C290061C07C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ReadinessTrackerWatch Watch App/ReadinessTrackerWatch.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1557,6 +1668,64 @@
 			};
 			name = Release;
 		};
+
+		57AA006C0000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ReadinessTrackerWatchWidgets/ReadinessTrackerWatchWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J7W4N5SU3H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReadinessTrackerWatchWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Readiness;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Reatix.ReadinessTrackerWatch.watchkitapp.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		57AA006D0000000000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ReadinessTrackerWatchWidgets/ReadinessTrackerWatchWidgets.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = J7W4N5SU3H;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReadinessTrackerWatchWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Readiness;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = Reatix.ReadinessTrackerWatch.watchkitapp.widgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1619,6 +1788,16 @@
 			buildConfigurations = (
 				C1A1F10B0000000000000001 /* Debug */,
 				C1A1F10C0000000000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+
+		57AA006E0000000000000001 /* Build configuration list for PBXNativeTarget "ReadinessTrackerWatchWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57AA006C0000000000000001 /* Debug */,
+				57AA006D0000000000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
