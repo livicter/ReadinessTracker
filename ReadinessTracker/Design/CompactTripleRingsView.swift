@@ -491,4 +491,57 @@ struct LockScreenAccessoryChrome: View {
     }
 }
 
+
+/// Lock Screen `accessoryRectangular` chrome used for audit PNG (`verify-lock-widget-rectangular.png`).
+/// Dark rounded slot mirrors Lock Screen; rings reuse `CompactTripleRingsView` at accessory height.
+struct LockScreenRectangularChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 78
+
+    var body: some View {
+        HStack(spacing: 10) {
+            CompactTripleRingsView(
+                gymScore: gymScore,
+                workScore: workScore,
+                sleepScore: sleepScore,
+                size: 56,
+                showsCaption: false,
+                minimumLineWidth: 3,
+                gap: 1.5,
+                valueColor: .white,
+                captionColor: Color.white.opacity(0.55)
+            )
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Readiness")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.55))
+                Text("\(readinessScore)")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .monospacedDigit()
+                HStack(spacing: 6) {
+                    Text("G\(gymScore)")
+                        .foregroundStyle(Color(red: 255/255, green: 59/255, blue: 48/255))
+                    Text("W\(workScore)")
+                        .foregroundStyle(Color(red: 52/255, green: 199/255, blue: 89/255))
+                    Text("S\(sleepScore)")
+                        .foregroundStyle(Color(red: 88/255, green: 86/255, blue: 214/255))
+                }
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .frame(width: 172, height: 72)
+        .background(Color.black)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(8)
+        .background(Color(white: 0.12))
+    }
+}
+
 #endif

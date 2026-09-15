@@ -50,4 +50,16 @@ final class TripleRingGeometryTests: XCTestCase {
         XCTAssertLessThan(layout.scoreFontSize, 14)
         XCTAssertGreaterThanOrEqual(layout.scoreFontSize, 7)
     }
+
+    func testAccessoryRectangularLayoutScalesScoreFont() {
+        let size: CGFloat = 56
+        let layout = TripleRingGeometry.layout(size: size, minimumLineWidth: 3, gap: 1.5)
+        XCTAssertEqual(layout.lineWidth, max(3, size / 10), accuracy: 0.001)
+        XCTAssertGreaterThan(layout.middleSize, layout.innerSize)
+        XCTAssertGreaterThan(layout.holeDiameter, 0)
+        // Rectangular accessory height ~56pt; center digits must remain readable.
+        XCTAssertGreaterThanOrEqual(layout.scoreFontSize, 9)
+        XCTAssertLessThan(layout.scoreFontSize, 20)
+    }
+
 }

@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-09-16 — Poteto: Apple Fitness Lock Screen accessory rectangular triple-ring parity
+
+- Elevated Lock Screen `AccessoryRectangularWidgetView` from readiness digit + Gym/Work/Sleep score rows to Fitness-style `CompactTripleRingsView` + readiness score + short G/W/S cues (GeometryReader-scaled for accessory height; caption off). Circular evidence unchanged.
+- PNG: `.audit/verify-lock-widget-rectangular.png` via `Scripts/capture-lock-widget-rectangular.sh` (`LockWidgetCaptureTests` + `ImageRenderer` of `LockScreenRectangularChrome`). Geometry unit test covers rectangular accessory score-font band.
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #33.
+- Branch: `feature/poteto-lock-rectangular-triple-rings`.
+
+
+
+
 ## 2026-09-14 — Poteto evening: more App deep links (Evening Check-in + Trends)
 
 - Extended `AppDeepLink` with `checkInEveningURL` (`readinesstracker://checkin/evening`) + `trends` (`readinesstracker://trends` → History browse). Fitbit `oauth` unchanged.
