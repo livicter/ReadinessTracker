@@ -1048,4 +1048,59 @@ struct WatchComplicationInlineChrome: View {
 }
 
 
+
+/// Watch face `accessoryCorner` chrome used for audit PNG (`verify-watch-complication-corner.png`).
+/// Compact rings + colored readiness / G/W/S widgetLabel cues (rings #44; inline #45 cue parity).
+struct WatchComplicationCornerChrome: View {
+    let gymScore: Int
+    let workScore: Int
+    let sleepScore: Int
+    var readinessScore: Int = 79
+
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let readinessColor = Color(red: 10/255, green: 132/255, blue: 255/255)
+
+    var body: some View {
+        VStack(spacing: 8) {
+            CompactTripleRingsView(
+                gymScore: gymScore,
+                workScore: workScore,
+                sleepScore: sleepScore,
+                size: 40,
+                showsCaption: false,
+                minimumLineWidth: 2.2,
+                gap: 0.9,
+                gymColor: gymColor,
+                workColor: workColor,
+                sleepColor: sleepColor,
+                valueColor: .white,
+                captionColor: Color.white.opacity(0.55)
+            )
+            HStack(spacing: 4) {
+                Text("R\(readinessScore)")
+                    .foregroundStyle(readinessColor)
+                Text("G\(gymScore)")
+                    .foregroundStyle(gymColor)
+                Text("W\(workScore)")
+                    .foregroundStyle(workColor)
+                Text("S\(sleepScore)")
+                    .foregroundStyle(sleepColor)
+            }
+            .font(.system(size: 11, weight: .semibold, design: .rounded))
+            .monospacedDigit()
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .frame(width: 168, height: 100)
+        .background(Color.black)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(10)
+        .background(Color(white: 0.12))
+    }
+}
+
 #endif

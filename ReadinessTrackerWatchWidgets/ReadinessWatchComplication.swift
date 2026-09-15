@@ -192,8 +192,13 @@ struct WatchInlineComplicationView: View {
 struct WatchCornerComplicationView: View {
     let entry: WatchComplicationEntry
 
+    private let gymColor = Color(red: 255/255, green: 59/255, blue: 48/255)
+    private let workColor = Color(red: 52/255, green: 199/255, blue: 89/255)
+    private let sleepColor = Color(red: 88/255, green: 86/255, blue: 214/255)
+    private let readinessColor = Color(red: 10/255, green: 132/255, blue: 255/255)
+
     var body: some View {
-        // Cheap Fitness-style elevation: compact rings in the corner slot + G/W/S label.
+        // Compact rings (#44) + colored readiness/G/W/S widgetLabel cues (inline #45 parity).
         CompactTripleRingsView(
             gymScore: entry.gymScore,
             workScore: entry.workScore,
@@ -202,12 +207,24 @@ struct WatchCornerComplicationView: View {
             showsCaption: false,
             minimumLineWidth: 2,
             gap: 0.8,
+            gymColor: gymColor,
+            workColor: workColor,
+            sleepColor: sleepColor,
             valueColor: .primary,
             captionColor: .secondary
         )
         .widgetLabel {
-            Text("R\(entry.readiness) G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
-                .monospacedDigit()
+            HStack(spacing: 2) {
+                Text("R\(entry.readiness)")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(readinessColor)
+                    .monospacedDigit()
+                WatchAccessoryCue(letter: "G", score: entry.gymScore, color: gymColor)
+                WatchAccessoryCue(letter: "W", score: entry.workScore, color: workColor)
+                WatchAccessoryCue(letter: "S", score: entry.sleepScore, color: sleepColor)
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.55)
         }
         .containerBackground(for: .widget) { Color.clear }
     }

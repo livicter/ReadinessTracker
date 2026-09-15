@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #46 Watch complication accessoryCorner Fitness cues
+
+- Elevated Watch `accessoryCorner` `widgetLabel` from plain monochrome `R… G… W… S…` text to colored readiness + short G/W/S cues (`WatchCornerComplicationView` + `WatchAccessoryCue`; rings from #44 kept; inline #45 cue parity).
+- PNG: `.audit/verify-watch-complication-corner.png` via `Scripts/capture-watch-complication-corner.sh` (`WatchComplicationCaptureTests` + `ImageRenderer` of `WatchComplicationCornerChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #46.
+- Branch: `feature/poteto-watch-complication-corner`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #45 Watch complication accessoryInline Fitness cues
 
 - Elevated Watch `accessoryInline` from plain monochrome `R… G… W… S…` text to colored readiness + short G/W/S (R/G/W/S) cues within inline width (`WatchInlineComplicationView`; Lock #34 / rect #44 parity).
