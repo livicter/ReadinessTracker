@@ -49,7 +49,7 @@ struct WatchDashboardView: View {
                         NavigationLink {
                             WatchCheckInView()
                         } label: {
-                            Label("Check-in", systemImage: "sunrise.fill")
+                            Label("Check-in", systemImage: "checkmark.circle.fill")
                                 .font(.caption.weight(.semibold))
                         }
                         .buttonStyle(.borderedProminent)
