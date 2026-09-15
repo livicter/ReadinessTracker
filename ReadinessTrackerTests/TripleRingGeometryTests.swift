@@ -62,4 +62,16 @@ final class TripleRingGeometryTests: XCTestCase {
         XCTAssertLessThan(layout.scoreFontSize, 20)
     }
 
+
+    func testWatchComplicationLayoutScalesScoreFont() {
+        let size: CGFloat = 52
+        let layout = TripleRingGeometry.layout(size: size, minimumLineWidth: 3, gap: 1.5)
+        XCTAssertEqual(layout.lineWidth, max(3, size / 10), accuracy: 0.001)
+        XCTAssertGreaterThan(layout.middleSize, layout.innerSize)
+        XCTAssertGreaterThan(layout.holeDiameter, 0)
+        // Circular watch complication ~44–52pt; center digits must remain readable.
+        XCTAssertGreaterThanOrEqual(layout.scoreFontSize, 7)
+        XCTAssertLessThan(layout.scoreFontSize, 16)
+    }
+
 }

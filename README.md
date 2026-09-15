@@ -40,6 +40,7 @@ Screenshots are Simulator captures from `./scripts/capture-surfaces.sh` (XCUITes
 | Home Screen widget (Gym / Work / Sleep) | Shipped. Small + medium + **large** use Fitness-style `CompactTripleRingsView`; large adds Gym/Work/Sleep rows + HRV/RHR/Sleep hours; medium/large show interactive **Check-in** / **Evening** / **Trends** (`Link` → `readinesstracker://checkin/{morning|evening}` + `readinesstracker://trends`) | [verify-home-widget.png](.audit/verify-home-widget.png) · [verify-home-widget-large.png](.audit/verify-home-widget-large.png) · [verify-home-widget-checkin.png](.audit/verify-home-widget-checkin.png) · [verify-home-widget-deeplinks.png](.audit/verify-home-widget-deeplinks.png) |
 | Watch dashboard hero (Gym / Work / Sleep) | Shipped. Concentric Activity rings on Watch glance; `WatchSnapshot` carries gym/work/sleep from WatchConnectivity | [verify-watch-dashboard.png](.audit/verify-watch-dashboard.png) |
 | Watch strain page (Recovery | Strain dual arcs) | Shipped. WHOOP dual concentric arcs (Recovery inner / Strain outer) on Watch strain page via shared `StrainRecoveryDualArcGeometry` + `CompactStrainRecoveryWheel`; uses recovery + strain from `WatchSnapshot` | [verify-watch-strain.png](.audit/verify-watch-strain.png) |
+| Watch complication (Gym / Work / Sleep rings) | Shipped. WidgetKit accessory circular (+ rectangular/inline/corner) Fitness-style `CompactTripleRingsView` in `ReadinessTrackerWatchWidgets` embedded in Watch App; timeline from App Group `WatchSnapshot` (portal provisioning manual) | [verify-watch-complication.png](.audit/verify-watch-complication.png) |
 | Lock Screen circular + rectangular + inline (Gym / Work / Sleep) | Shipped. `accessoryCircular` + `accessoryRectangular` use Fitness-style `CompactTripleRingsView` (rectangular: compact rings + readiness score + short G/W/S cues); `accessoryInline` is a compact text glance (readiness score + short G/W/S cues) | [verify-lock-widget.png](.audit/verify-lock-widget.png) · [verify-lock-widget-rectangular.png](.audit/verify-lock-widget-rectangular.png) · [verify-lock-widget-inline.png](.audit/verify-lock-widget-inline.png) |
 | Official WHOOP API | Out of scope | Settings copy says so |
 | Google Fit REST / “Heart Points” | Out of scope | Activity = minutes + calories |
@@ -58,7 +59,7 @@ Four tabs stay Today, History, Check-in, and Settings.
 
 **Settings.** Apple Health Connect / Reconnect. Fitbit Connect / Refresh / Disconnect. Cycle tracking off by default. CSV export. Coaching and notification screens.
 
-**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large) with Fitness-style Check-in / Evening / Trends deep links on medium/large, Lock Screen circular + rectangular (Fitness-style Gym/Work/Sleep triple rings), Watch dashboard (Fitness-style Gym/Work/Sleep triple rings), and Watch strain (WHOOP Recovery|Strain dual arcs) plus Watch complications (bright Apple Health tokens).
+**Elsewhere.** History with weekly report. Home screen widgets (small / medium / large) with Fitness-style Check-in / Evening / Trends deep links on medium/large, Lock Screen circular + rectangular (Fitness-style Gym/Work/Sleep triple rings), Watch dashboard (Fitness-style Gym/Work/Sleep triple rings), and Watch strain (WHOOP Recovery|Strain dual arcs) plus Watch complications (Fitness-style Gym/Work/Sleep circular rings via Watch Widgets extension).
 
 **Not in this app.** Unofficial WHOOP login. Google Fit REST. Heart Points.
 
@@ -235,6 +236,14 @@ WHOOP dual concentric arcs on the Watch strain page (Recovery inner / Strain out
 
 ![Watch strain](.audit/verify-watch-strain.png)
 
+
+### Watch complication
+
+Fitness-style Gym / Work / Sleep concentric rings on Watch face complications (`accessoryCircular`, plus rectangular / inline / corner). Shipped as `ReadinessTrackerWatchWidgets` (WidgetKit) embedded in the Watch App; scores come from the App Group snapshot written by `WatchSessionManager` (App Group portal provisioning stays manual).
+
+![Watch complication](.audit/verify-watch-complication.png)
+
+
 ### Lock Screen circular
 
 `accessoryCircular` Lock Screen widget uses the same Fitness-style Gym / Work / Sleep concentric rings as Home + Watch (`CompactTripleRingsView` / `TripleRingGeometry`, scaled for the accessory slot).
@@ -331,3 +340,4 @@ Do not commit `build/`, `build-DD/`, `Readiness.app`, or `Secrets.xcconfig`. The
 32. ~~App deep links stopped at morning Check-in (no Evening check-in or Trends / History browse routes from Fitness-style widget surfaces).~~ Closed — `AppDeepLink` adds `readinesstracker://checkin/evening` + `readinesstracker://trends`; medium secondary Trends + large Check-in/Evening/Trends `Link`s; [verify-home-widget-deeplinks.png](.audit/verify-home-widget-deeplinks.png) from `Scripts/capture-home-widget-deeplinks.sh` (ImageRenderer of `HomeWidgetCheckInChrome`).
 33. ~~Lock Screen `AccessoryRectangularWidgetView` still showed readiness digit + Gym/Work/Sleep score rows (circular / Home / Watch already use Fitness-style `CompactTripleRingsView`).~~ Closed — elevated rectangular to compact triple rings + readiness score + short G/W/S cues via shared `TripleRingGeometry`; [verify-lock-widget-rectangular.png](.audit/verify-lock-widget-rectangular.png) from `Scripts/capture-lock-widget-rectangular.sh` (ImageRenderer of `LockScreenRectangularChrome`; geometry unit-tested).
 34. ~~Lock Screen widgets shipped `accessoryCircular` + `accessoryRectangular` but `supportedFamilies` omitted `.accessoryInline` (Apple Fitness / Health often expose an inline Lock Screen glance).~~ Closed — `AccessoryInlineWidgetView` compact text glance (readiness score + short G/W/S cues); `supportedFamilies` + `ReadinessWidgetView` switch (iOS 16+); [verify-lock-widget-inline.png](.audit/verify-lock-widget-inline.png) from `Scripts/capture-lock-widget-inline.sh` (ImageRenderer of `LockScreenInlineChrome`).
+35. ~~README Elsewhere mentioned Watch complications, but `ReadinessTrackerWatch/Complications/ReadinessComplication.swift` was excluded/dead (not in Watch App target) while Watch dashboard already used Fitness `CompactTripleRingsView`.~~ Closed — WidgetKit Watch Widgets extension (`ReadinessTrackerWatchWidgets`) with circular triple rings (reuse `CompactTripleRingsView` + `TripleRingGeometry`); orphan removed; [verify-watch-complication.png](.audit/verify-watch-complication.png) from `Scripts/capture-watch-complication.sh` (ImageRenderer of `WatchComplicationChrome`; Watch sim build when available).

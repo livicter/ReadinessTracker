@@ -11,12 +11,20 @@ final class WatchSessionManager: NSObject, ObservableObject {
     @Published private(set) var isPhoneReachable = false
 
     private let defaultsKey = "lastWatchSnapshot"
+    private let appGroupID = "group.com.readinesstracker"
 
     private override init() {
         super.init()
-        if let dict = UserDefaults.standard.dictionary(forKey: defaultsKey) {
+        if let dict = UserDefaults.standard.dictionary(forKey: defaultsKey)
+            ?? UserDefaults(suiteName: appGroupID)?.dictionary(forKey: defaultsKey) {
             snapshot = WatchSnapshot(dictionary: dict)
         }
+    }
+
+    /// Persist for the Watch App and (when App Group is provisioned) the complication extension.
+    private func persistSnapshotDictionary(_ dict: [String: Any]) {
+        UserDefaults.standard.set(dict, forKey: defaultsKey)
+        UserDefaults(suiteName: appGroupID)?.set(dict, forKey: defaultsKey)
     }
 
     func start() {
@@ -60,7 +68,7 @@ final class WatchSessionManager: NSObject, ObservableObject {
     private func apply(_ dictionary: [String: Any]) {
         guard dictionary["readiness"] != nil else { return }
         snapshot = WatchSnapshot(dictionary: dictionary)
-        UserDefaults.standard.set(dictionary, forKey: defaultsKey)
+        persistSnapshotDictionary(dictionary)
     }
 }
 
