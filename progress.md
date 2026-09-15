@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #48 Watch sleep Hours|Eff + stage legend
+
+- Elevated Watch `WatchSleepView` with Hours|Efficiency dual callout (`sleepHours` + `sleepEfficiency`) and clearer Deep/REM/Light capsule stage legend; optional Sleep score when present. No invented Need (snapshot has no sleepNeed).
+- PNG: `.audit/verify-watch-sleep.png` via `Scripts/capture-watch-sleep.sh` (`WatchSleepCaptureTests` + `ImageRenderer` of `WatchSleepChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #48.
+- Branch: `feature/poteto-watch-sleep`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #47 Watch Check-in Morning|Evening
 
 - Elevated Watch `WatchCheckInView` from morning-only stars+toggles to Morning|Evening picker (watchOS equivalent); keep feel stars + habit toggles (Evening adds Workout); `WatchSessionManager.sendCheckIn` sends correct `timeOfDay`.
