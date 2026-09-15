@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Render WatchSleepChrome → .audit/verify-watch-sleep.png via unit test ImageRenderer.
-# Mirrors Watch App WatchSleepView (Hours|Eff callout + stage bar + legend).
+# Mirrors Watch App WatchSleepView (Hours|Eff callout + stage bar + legend + Updated cue).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -44,4 +44,4 @@ fi
 [[ -s "$TMP_PNG" ]] || { echo "missing tmp PNG at $TMP_PNG"; exit 1; }
 cp -f "$TMP_PNG" .audit/verify-watch-sleep.png
 echo "==> wrote .audit/verify-watch-sleep.png ($(wc -c < .audit/verify-watch-sleep.png | tr -d ' ') bytes)"
-echo "==> capture method: ImageRenderer of WatchSleepChrome (Hours|Eff + stage legend) via WatchSleepCaptureTests; Watch App compiles WatchSleepView with same snapshot fields."
+echo "==> capture method: ImageRenderer of WatchSleepChrome (Hours|Eff + stage legend + Updated cue) via WatchSleepCaptureTests; Watch App compiles WatchSleepView with same snapshot fields."

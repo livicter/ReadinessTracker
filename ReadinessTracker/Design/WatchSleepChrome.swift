@@ -8,6 +8,8 @@ struct WatchSleepChrome: View {
     var sleepScore: Int = 80
     var deepSleepPercent: Double = 0.18
     var remSleepPercent: Double = 0.24
+    /// Glance freshness from `WatchSnapshot.date` (Honest #53 audit sync); hide if nil.
+    var snapshotDate: Date? = Date().addingTimeInterval(-5 * 60)
 
     private var lightPercent: Double {
         max(0, 1 - deepSleepPercent - remSleepPercent)
@@ -57,12 +59,22 @@ struct WatchSleepChrome: View {
                 stageLegend(color: teal, title: "Light", percent: Int((lightPercent * 100).rounded()))
             }
 
+            if let snapshotDate {
+                HStack(spacing: 0) {
+                    Text("Updated ")
+                    Text(snapshotDate, style: .relative)
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.55))
+                .accessibilityElement(children: .combine)
+            }
+
             Text("Sleep")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
         .padding(16)
-        .frame(width: 184, height: 248)
+        .frame(width: 184, height: 268)
         .background(Color.black)
     }
 

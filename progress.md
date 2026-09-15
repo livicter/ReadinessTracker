@@ -1,3 +1,11 @@
+## 2026-09-16 — Poteto: Honest #53 Watch sleep/strain Updated audit PNGs
+
+- Audit sync after #52: `WatchSleepChrome` / `WatchStrainChrome` now include compact live **Updated …** (`Text(..., style: .relative)`) from optional `snapshotDate` (default ~5m ago; hide if nil) — parity with live `WatchGlanceUpdatedCue` + dashboard chrome.
+- PNGs: `.audit/verify-watch-sleep.png` + `.audit/verify-watch-strain.png` refreshed via `Scripts/capture-watch-sleep.sh` / `Scripts/capture-watch-strain.sh` (`WatchSleepCaptureTests` / `WatchStrainCaptureTests` + `ImageRenderer`).
+- README Status + Honest gap #53; tree-guard / capture-surfaces already list both PNGs.
+- Branch: `feature/poteto-watch-updated-audit-pngs` → squash-merge to main.
+- Avoided: Portal, new features beyond audit sync, complications, WC, Lock filler.
+
 ## 2026-09-16 — Poteto: Honest #52 Watch glance Updated cue
 
 - Elevated Watch dashboard/sleep/strain with compact Fitness-style live **Updated …** (`Text(..., style: .relative)`) from existing `WatchSnapshot.date` via `WatchGlanceUpdatedCue` (hide if missing; no new fields).
