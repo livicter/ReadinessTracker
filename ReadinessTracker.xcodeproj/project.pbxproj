@@ -129,6 +129,7 @@
 		57AA006B0000000000000001 /* CompactTripleRingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00240000000000000001 /* CompactTripleRingsView.swift */; };
 		57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */; };
 		57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */; };
+		57AA00B20000000000000001 /* HomeWidgetAppGroupEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */; };
 		57AA00920000000000000001 /* WatchComplicationTimelineReloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */; };
 		57AA00930000000000000001 /* WatchComplicationTimelineReloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */; };
 		57AA00950000000000000001 /* WatchComplicationTimelineReloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */; };
@@ -336,6 +337,7 @@
 		57AA00610000000000000001 /* ReadinessTrackerWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ReadinessTrackerWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationCaptureTests.swift; sourceTree = "<group>"; };
 		57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSnapshotAppGroupStoreTests.swift; sourceTree = "<group>"; };
+		57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HomeWidgetAppGroupEntryTests.swift; sourceTree = "<group>"; };
 		57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchComplicationTimelineReloader.swift; path = ReadinessTracker/Services/WatchComplicationTimelineReloader.swift; sourceTree = SOURCE_ROOT; };
 		57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationTimelineReloaderTests.swift; sourceTree = "<group>"; };
 		57AA00A10000000000000001 /* WatchComplicationWCPush.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchComplicationWCPush.swift; path = ReadinessTracker/Services/WatchComplicationWCPush.swift; sourceTree = SOURCE_ROOT; };
@@ -593,6 +595,7 @@
 				57AA00340000000000000001 /* LockWidgetCaptureTests.swift */,
 				57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */,
 				57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */,
+				57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */,
 				57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */,
 				57AA00A30000000000000001 /* WatchComplicationWCPushTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
@@ -934,6 +937,7 @@
 				57AA00350000000000000001 /* LockWidgetCaptureTests.swift in Sources */,
 				57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */,
 				57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */,
+				57AA00B20000000000000001 /* HomeWidgetAppGroupEntryTests.swift in Sources */,
 				57AA00950000000000000001 /* WatchComplicationTimelineReloaderTests.swift in Sources */,
 				57AA00A40000000000000001 /* WatchComplicationWCPushTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,

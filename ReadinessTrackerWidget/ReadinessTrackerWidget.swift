@@ -34,8 +34,9 @@ struct Provider: TimelineProvider {
         Self.sampleEntry
     }
 
+    /// Gallery / peek: same App Group load as timeline (not sample-only).
     func getSnapshot(in context: Context, completion: @escaping (ReadinessEntry) -> Void) {
-        completion(placeholder(in: context))
+        completion(loadLatestEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<ReadinessEntry>) -> Void) {
@@ -45,20 +46,21 @@ struct Provider: TimelineProvider {
     }
 
     private func loadLatestEntry() -> ReadinessEntry {
-        guard let defaults = UserDefaults(suiteName: "group.com.readinesstracker"),
-              defaults.object(forKey: "readinessScore") != nil else {
+        guard let snap = HomeWidgetAppGroupEntry.load(
+            from: UserDefaults(suiteName: HomeWidgetAppGroupEntry.suiteName)
+        ) else {
             return Self.sampleEntry
         }
         return ReadinessEntry(
             date: Date(),
-            readinessScore: defaults.integer(forKey: "readinessScore"),
-            gymScore: defaults.integer(forKey: "gymScore"),
-            workScore: defaults.integer(forKey: "workScore"),
-            sleepScore: defaults.integer(forKey: "sleepScore"),
-            hrv: defaults.integer(forKey: "hrv"),
-            rhr: defaults.integer(forKey: "rhr"),
-            sleepHours: defaults.double(forKey: "sleepHours"),
-            lastUpdate: defaults.object(forKey: "lastUpdate") as? Date
+            readinessScore: snap.readinessScore,
+            gymScore: snap.gymScore,
+            workScore: snap.workScore,
+            sleepScore: snap.sleepScore,
+            hrv: snap.hrv,
+            rhr: snap.rhr,
+            sleepHours: snap.sleepHours,
+            lastUpdate: snap.lastUpdate
         )
     }
 }
@@ -89,26 +91,19 @@ private enum WidgetTone {
 
 
 // MARK: - Freshness (“Updated …”)
-/// Fitness-style relative freshness from App Group `lastUpdate`. Returns nil when missing.
-enum WidgetFreshness {
-    static func updatedLabel(from lastUpdate: Date?, relativeTo now: Date = Date()) -> String? {
-        guard let lastUpdate else { return nil }
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .abbreviated
-        let relative = formatter.localizedString(for: lastUpdate, relativeTo: now)
-        return "Updated \(relative)"
-    }
-}
-
+/// WidgetKit live relative time (does not go stale between hourly timeline reloads).
 private struct WidgetUpdatedCue: View {
     let lastUpdate: Date?
 
     var body: some View {
-        if let label = WidgetFreshness.updatedLabel(from: lastUpdate) {
-            Text(label)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(WidgetTone.label)
-                .accessibilityLabel(label)
+        if let lastUpdate {
+            HStack(spacing: 0) {
+                Text("Updated ")
+                Text(lastUpdate, style: .relative)
+            }
+            .font(.system(size: 10, weight: .medium))
+            .foregroundStyle(WidgetTone.label)
+            .accessibilityElement(children: .combine)
         }
     }
 }
