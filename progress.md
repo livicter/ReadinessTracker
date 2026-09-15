@@ -1,3 +1,12 @@
+## 2026-09-16 — Poteto: Honest #51 Home widget small Updated cue
+
+- Elevated Home `SmallWidgetView` with compact Fitness-style live **Updated …** (`Text(..., style: .relative)`, 9pt) from App Group `lastUpdate` (hide if missing); rings slightly tightened (88pt / spacing 4) so triple rings stay primary. Medium+ cues unchanged.
+- PNG: `.audit/verify-home-widget-small-updated.png` via `Scripts/capture-home-widget-small-updated.sh` (`HomeWidgetCaptureTests` + `ImageRenderer` of `HomeWidgetSmallChrome`); also refresh `.audit/verify-home-widget.png`.
+- README Status + App surfaces + Honest gap #51; tree-guard / capture-surfaces list the new PNG.
+- Branch: `feature/poteto-home-widget-small-updated`.
+
+
+
 ## 2026-09-16 — Poteto: Honest #50 Watch strain Recovery|Strain secondary
 
 - Elevated Watch `WatchStrainView` secondary glance from thin Recovery/Strain legend rows to Recovery % | Strain /21 dual callout + day cue (`WatchSnapshot.recovery` / `strain` / `date`); dual arcs (#30) unchanged. No invented metrics.

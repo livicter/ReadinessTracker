@@ -147,23 +147,26 @@ enum WidgetFreshnessLabel {
 #endif
 
 #if os(iOS)
-/// Small Home Screen widget chrome used for audit PNG (`verify-home-widget.png`).
+/// Small Home Screen widget chrome used for audit PNG (`verify-home-widget.png` /
+/// `verify-home-widget-small-updated.png`). Mirrors `SmallWidgetView` + live Updated cue.
 struct HomeWidgetSmallChrome: View {
     let gymScore: Int
     let workScore: Int
     let sleepScore: Int
+    var lastUpdate: Date? = Date().addingTimeInterval(-5 * 60)
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 4) {
             CompactTripleRingsView(
                 gymScore: gymScore,
                 workScore: workScore,
                 sleepScore: sleepScore,
-                size: 96
+                size: 88
             )
             Text("Readiness")
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Color.secondary)
+            HomeWidgetLiveUpdatedCue(lastUpdate: lastUpdate, fontSize: 9)
         }
         .padding(12)
         .frame(width: 158, height: 158)

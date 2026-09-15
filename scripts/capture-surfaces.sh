@@ -45,6 +45,7 @@ DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetLarge" ./scripts/cap
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetExtraLarge" ./scripts/capture-home-widget-extra-large.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetUpdated" ./scripts/capture-home-widget-updated.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetLiveUpdated" ./scripts/capture-home-widget-live-updated.sh
+DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetSmallUpdated" ./scripts/capture-home-widget-small-updated.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetCheckIn" ./scripts/capture-home-widget-checkin.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-HomeWidgetDeepLinks" ./scripts/capture-home-widget-deeplinks.sh
 DESTINATION="$DEST" DERIVED_DATA_PATH="${DERIVED}-LockWidget" ./scripts/capture-lock-widget.sh
@@ -64,6 +65,7 @@ cp -f .audit/verify-home-widget-large.png "$SHOT_SRC/verify-home-widget-large.pn
 cp -f .audit/verify-home-widget-extra-large.png "$SHOT_SRC/verify-home-widget-extra-large.png"
 cp -f .audit/verify-home-widget-updated.png "$SHOT_SRC/verify-home-widget-updated.png"
 cp -f .audit/verify-home-widget-live-updated.png "$SHOT_SRC/verify-home-widget-live-updated.png"
+cp -f .audit/verify-home-widget-small-updated.png "$SHOT_SRC/verify-home-widget-small-updated.png"
 cp -f .audit/verify-home-widget-checkin.png "$SHOT_SRC/verify-home-widget-checkin.png"
 cp -f .audit/verify-home-widget-deeplinks.png "$SHOT_SRC/verify-home-widget-deeplinks.png"
 cp -f .audit/verify-lock-widget.png "$SHOT_SRC/verify-lock-widget.png"
@@ -78,7 +80,7 @@ cp -f .audit/verify-watch-complication-corner.png "$SHOT_SRC/verify-watch-compli
 cp -f .audit/verify-watch-checkin.png "$SHOT_SRC/verify-watch-checkin.png"
 cp -f .audit/verify-watch-sleep.png "$SHOT_SRC/verify-watch-sleep.png"
 
-for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png verify-home-widget.png verify-home-widget-large.png verify-home-widget-extra-large.png verify-home-widget-updated.png verify-home-widget-live-updated.png verify-home-widget-checkin.png verify-home-widget-deeplinks.png verify-lock-widget.png verify-lock-widget-rectangular.png verify-lock-widget-inline.png verify-watch-dashboard.png verify-watch-strain.png verify-watch-complication.png verify-watch-complication-rectangular.png verify-watch-complication-inline.png verify-watch-complication-corner.png verify-watch-checkin.png verify-watch-sleep.png; do
+for f in verify-dashboard.png verify-whoop-stack.png verify-body-activity.png verify-body-detail.png verify-settings-sources.png verify-rings.png verify-ring-detail.png verify-sleep-quality.png verify-sleep-debt.png verify-checkin.png verify-history.png verify-journal.png verify-journal-impact.png verify-sleep-disturbances.png verify-weekly-report.png verify-sleep-stages.png verify-metric-detail-scrub.png verify-metric-detail-classic-scrub.png verify-strain-recovery.png verify-strain-wheel.png verify-recommendations.png verify-coaching.png verify-sleep-performance.png verify-sleep-hrv.png verify-respiratory.png verify-skin-temp.png verify-trends.png verify-day-detail.png verify-home-widget.png verify-home-widget-large.png verify-home-widget-extra-large.png verify-home-widget-updated.png verify-home-widget-live-updated.png verify-home-widget-small-updated.png verify-home-widget-checkin.png verify-home-widget-deeplinks.png verify-lock-widget.png verify-lock-widget-rectangular.png verify-lock-widget-inline.png verify-watch-dashboard.png verify-watch-strain.png verify-watch-complication.png verify-watch-complication-rectangular.png verify-watch-complication-inline.png verify-watch-complication-corner.png verify-watch-checkin.png verify-watch-sleep.png; do
   if [[ ! -s "$SHOT_SRC/$f" ]]; then
     echo "missing $SHOT_SRC/$f" >&2
     exit 1
