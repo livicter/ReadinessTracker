@@ -1,3 +1,13 @@
+## 2026-09-16 — Poteto: Honest #41 Home widget Updated freshness
+
+- Thread App Group `lastUpdate` into `ReadinessEntry` from Provider; Fitness-style **Updated …** cue on `MediumWidgetView` / `LargeWidgetView` / `ExtraLargeWidgetView` (graceful if missing; accessories uncluttered).
+- PNG: `.audit/verify-home-widget-updated.png` via `Scripts/capture-home-widget-updated.sh` (`HomeWidgetCaptureTests` + `ImageRenderer` of `HomeWidgetUpdatedChrome` medium chrome).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #41.
+- Branch: `feature/poteto-home-widget-updated`.
+
+
+
+
 ## 2026-09-16 — Poteto: Honest #40 Home widget Extra Large
 
 - Added Home Screen `.systemExtraLarge` (`ExtraLargeWidgetView`): Fitness-style `CompactTripleRingsView` (larger) + readiness High/Moderate/Low cue + Gym/Work/Sleep score rows + HRV/RHR/Sleep hours + G/W/S metric tiles; Check-in / Evening / Trends deep links (parity with large). Wired `supportedFamilies` + `ReadinessWidgetView` switch.
