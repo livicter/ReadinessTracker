@@ -83,7 +83,58 @@ struct CompactTripleRingsView: View {
 
 
 #if os(iOS)
-/// Fitness-style “Updated …” label from App Group `lastUpdate` (nil → hide cue).
+/// App Group → Home widget scores + `lastUpdate` (shared by Provider getSnapshot/getTimeline).
+/// Returns nil when suite empty so callers can fall back to sample.
+enum HomeWidgetAppGroupEntry {
+    static let suiteName = "group.com.readinesstracker"
+
+    struct Snapshot: Equatable {
+        let readinessScore: Int
+        let gymScore: Int
+        let workScore: Int
+        let sleepScore: Int
+        let hrv: Int
+        let rhr: Int
+        let sleepHours: Double
+        let lastUpdate: Date?
+    }
+
+    static func load(from defaults: UserDefaults?) -> Snapshot? {
+        guard let defaults, defaults.object(forKey: "readinessScore") != nil else {
+            return nil
+        }
+        return Snapshot(
+            readinessScore: defaults.integer(forKey: "readinessScore"),
+            gymScore: defaults.integer(forKey: "gymScore"),
+            workScore: defaults.integer(forKey: "workScore"),
+            sleepScore: defaults.integer(forKey: "sleepScore"),
+            hrv: defaults.integer(forKey: "hrv"),
+            rhr: defaults.integer(forKey: "rhr"),
+            sleepHours: defaults.double(forKey: "sleepHours"),
+            lastUpdate: defaults.object(forKey: "lastUpdate") as? Date
+        )
+    }
+}
+
+/// Fitness-style live “Updated …” cue (`Text(..., style: .relative)` — not a baked string).
+struct HomeWidgetLiveUpdatedCue: View {
+    let lastUpdate: Date?
+    var fontSize: CGFloat = 10
+
+    var body: some View {
+        if let lastUpdate {
+            HStack(spacing: 0) {
+                Text("Updated ")
+                Text(lastUpdate, style: .relative)
+            }
+            .font(.system(size: fontSize, weight: .medium))
+            .foregroundStyle(Color.secondary)
+            .accessibilityElement(children: .combine)
+        }
+    }
+}
+
+/// Legacy baked relative string (tests / callers that need a String). Prefer `HomeWidgetLiveUpdatedCue`.
 enum WidgetFreshnessLabel {
     static func text(from lastUpdate: Date?, relativeTo now: Date = Date()) -> String? {
         guard let lastUpdate else { return nil }
@@ -158,11 +209,7 @@ struct HomeWidgetLargeChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
-                    if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
-                        Text(label)
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(Color.secondary)
-                    }
+                    HomeWidgetLiveUpdatedCue(lastUpdate: lastUpdate)
                     chromeCheckInControl()
                         .padding(.top, 4)
                 }
@@ -310,11 +357,7 @@ struct HomeWidgetExtraLargeChrome: View {
                     Text("Gym · Work · Sleep")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.secondary)
-                    if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
-                        Text(label)
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(Color.secondary)
-                    }
+                    HomeWidgetLiveUpdatedCue(lastUpdate: lastUpdate)
                     HStack(spacing: 6) {
                         actionPill(icon: "checkmark.circle.fill", title: "Check-in", color: checkInGreen, accessibility: "Open Check-in")
                         actionPill(icon: "moon.stars.fill", title: "Evening", color: eveningIndigo, accessibility: "Open Evening Check-in")
@@ -413,8 +456,9 @@ struct HomeWidgetExtraLargeChrome: View {
 }
 
 
-/// Medium Home Screen widget chrome with Fitness-style “Updated …” freshness
-/// (`verify-home-widget-updated.png`). Mirrors `MediumWidgetView` + App Group cue.
+/// Medium Home Screen widget chrome with Fitness-style live “Updated …” freshness
+/// (`verify-home-widget-updated.png` / `verify-home-widget-live-updated.png`).
+/// Mirrors `MediumWidgetView` + App Group `lastUpdate` via `Text(..., style: .relative)`.
 struct HomeWidgetUpdatedChrome: View {
     let gymScore: Int
     let workScore: Int
@@ -444,12 +488,7 @@ struct HomeWidgetUpdatedChrome: View {
                 Text("Readiness")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(Color.secondary)
-                if let label = WidgetFreshnessLabel.text(from: lastUpdate) {
-                    Text(label)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(Color.secondary)
-                        .accessibilityLabel(label)
-                }
+                HomeWidgetLiveUpdatedCue(lastUpdate: lastUpdate)
             }
 
             VStack(alignment: .leading, spacing: 8) {

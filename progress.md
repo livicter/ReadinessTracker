@@ -1,3 +1,14 @@
+## 2026-09-16 — Poteto: Honest #42 Home widget live Updated + App Group snapshot
+
+- Prefer WidgetKit live relative time: `Text(lastUpdate, style: .relative)` (prefix “Updated ”) via `WidgetUpdatedCue` / `HomeWidgetLiveUpdatedCue` instead of baked `RelativeDateTimeFormatter` string; keep `Date?` on entry.
+- `getSnapshot` loads App Group via shared `HomeWidgetAppGroupEntry` (same as `getTimeline`), falling back to sample only when suite empty.
+- PNG: `.audit/verify-home-widget-live-updated.png` via `Scripts/capture-home-widget-live-updated.sh` (`HomeWidgetCaptureTests` + ImageRenderer).
+- Unit: `HomeWidgetAppGroupEntryTests`; wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #42.
+- Branch: `feature/poteto-home-widget-live-updated`.
+
+
+
+
 ## 2026-09-16 — Poteto: Honest #41 Home widget Updated freshness
 
 - Thread App Group `lastUpdate` into `ReadinessEntry` from Provider; Fitness-style **Updated …** cue on `MediumWidgetView` / `LargeWidgetView` / `ExtraLargeWidgetView` (graceful if missing; accessories uncluttered).
