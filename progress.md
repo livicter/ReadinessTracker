@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-09-16 — Poteto: Honest #36 iOS App Group `lastWatchSnapshot` writer
+
+- Closed data-path hole: iOS now writes App Group `group.com.readinesstracker` / `lastWatchSnapshot` when pushing/updating Watch snapshots via `WatchSnapshotAppGroupStore` from `WatchConnectivityManager.pushSnapshot()` (always, even if WC inactive) and `WidgetDataExporter.export(...)`. Watch `WatchSessionManager` mirror unchanged for the watch-side container.
+- Proof: focused XCTest `WatchSnapshotAppGroupStoreTests` (encode/write/read round-trip). UI unchanged — reuse `.audit/verify-watch-complication.png`. Portal App Group enable remains manual in `docs/DEVICE_SETUP.md` (Status note).
+- Wired test into `ReadinessTracker.xcodeproj`; README Status + App surfaces + Honest gap #36.
+- Branch: `feature/poteto-watch-complication-appgroup`.
+
+
+
+
+
 ## 2026-09-16 — Poteto: Watch complication Fitness-style triple rings
 
 - Shipped WidgetKit Watch Widgets extension (`ReadinessTrackerWatchWidgets`) embedded in `ReadinessTrackerWatch Watch App`: `accessoryCircular` (+ rectangular / inline / corner) Fitness-style `CompactTripleRingsView` via shared `TripleRingGeometry`. Timeline reads App Group `lastWatchSnapshot` (sample fallback). Removed dead orphan `ReadinessTrackerWatch/Complications/ReadinessComplication.swift`.
