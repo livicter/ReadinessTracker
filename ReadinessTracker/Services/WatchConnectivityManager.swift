@@ -47,8 +47,10 @@ final class WatchConnectivityManager: NSObject {
     }
 
     /// Builds a snapshot from the latest stored data, writes it to the shared
-    /// App Group (`lastWatchSnapshot`) for complications, and sends it to the watch
-    /// (application context for background delivery + live message when reachable).
+    /// App Group (`lastWatchSnapshot`) for complications, and sends it to the watch.
+    /// Honest #38: prefer complication-priority `transferCurrentComplicationUserInfo`
+    /// when WC budget remains; otherwise fall back to application context + reachable message.
+    /// Soft-fail when session inactive or transfers exhausted (no throw to callers).
     @MainActor
     func pushSnapshot() {
         let payload = Self.buildPayload()
@@ -58,11 +60,22 @@ final class WatchConnectivityManager: NSObject {
         WatchSnapshotAppGroupStore.write(payload)
         guard WCSession.isSupported() else { return }
         let session = WCSession.default
+        // Soft-fail: inactive session leaves App Group write in place; WC push skipped.
         guard session.activationState == .activated else { return }
-        try? session.updateApplicationContext(payload)
-        if session.isReachable {
-            session.sendMessage(payload, replyHandler: nil)
-        }
+        WatchComplicationWCPush.deliver(
+            payload: payload,
+            remainingTransfers: session.remainingComplicationUserInfoTransfers,
+            isReachable: session.isReachable,
+            transferComplication: { info in
+                _ = session.transferCurrentComplicationUserInfo(info)
+            },
+            updateApplicationContext: { info in
+                try session.updateApplicationContext(info)
+            },
+            sendMessage: { info in
+                session.sendMessage(info, replyHandler: nil)
+            }
+        )
     }
 
     @MainActor
