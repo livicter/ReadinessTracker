@@ -67,6 +67,9 @@ struct WatchSleepView: View {
                         )
                     }
 
+                    // Glance freshness from existing WatchSnapshot.date (Honest #52).
+                    WatchGlanceUpdatedCue(date: snapshot.date)
+
                     Text("Sleep")
                         .font(.caption)
                         .foregroundStyle(.secondary)

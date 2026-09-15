@@ -778,7 +778,7 @@ struct HomeWidgetCheckInChrome: View {
 }
 
 /// Watch dashboard hero chrome used for audit PNG (`verify-watch-dashboard.png`).
-/// Mirrors watchOS glance: rings + HRV|RHR dual callout + readiness/recovery cue (ImageRenderer / iOS tests).
+/// Mirrors watchOS glance: rings + HRV|RHR dual callout + readiness/recovery + Updated cue (ImageRenderer / iOS tests).
 struct WatchDashboardChrome: View {
     let gymScore: Int
     let workScore: Int
@@ -787,6 +787,8 @@ struct WatchDashboardChrome: View {
     var restingHeartRate: Double = 54
     var readiness: Int = 82
     var recovery: Int = 78
+    /// Glance freshness from `WatchSnapshot.date` (Honest #52); hide if nil.
+    var snapshotDate: Date? = Date().addingTimeInterval(-5 * 60)
 
     private let hrvColor = Color(red: 0/255, green: 208/255, blue: 132/255)
     private let rhrColor = Color(red: 255/255, green: 59/255, blue: 48/255)
@@ -840,12 +842,22 @@ struct WatchDashboardChrome: View {
                     .monospacedDigit()
             }
 
+            if let snapshotDate {
+                HStack(spacing: 0) {
+                    Text("Updated ")
+                    Text(snapshotDate, style: .relative)
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.55))
+                .accessibilityElement(children: .combine)
+            }
+
             Text("Readiness")
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(Color.white.opacity(0.55))
         }
         .padding(16)
-        .frame(width: 184, height: 268)
+        .frame(width: 184, height: 284)
         .background(Color.black)
     }
 
