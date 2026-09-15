@@ -4,8 +4,9 @@ import WidgetKit
 /// Snapshots today's readiness data into the shared App Group container
 /// so the home screen widget (ReadinessTrackerWidget) can render it.
 ///
-/// Call `WidgetDataExporter.export()` after any data refresh (HealthKit/Fitbit
-/// sync, manual check-in) to keep the widget up to date.
+/// Prefer `WidgetExportAfterWrite.run()` after store writes (HealthKit/Fitbit
+/// via `DataStore`, Check-in via `MetadataStore`) so Home widgets stay fresh
+/// without duplicating WidgetCenter reload (Honest #43).
 enum WidgetDataExporter {
     static let appGroupID = "group.com.readinesstracker"
 

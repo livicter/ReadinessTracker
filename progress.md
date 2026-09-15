@@ -1,3 +1,10 @@
+## 2026-09-16 — Poteto: Honest #43 widget export on all write paths
+
+- Audited `WidgetDataExporter.export` call sites: HealthKit/Fitbit already hit export via `DataStore.persist`; Morning/Evening Check-in (`MetadataStore.save` from `CheckInView` + Watch Connectivity check-in) did **not**.
+- Added shared `WidgetExportAfterWrite.run()` (export + watch pushSnapshot; testable `testPerform` hook). Wired `DataStore.persist` + `MetadataStore.persist`. No extra WidgetCenter.reload outside exporter.
+- Unit: `WidgetExportAfterWriteTests`; proof `.audit/h43-unit-test-proof.txt` (UI unchanged). README Honest gap #43.
+- Branch: `feature/poteto-widget-export-all-paths`.
+
 ## 2026-09-16 — Poteto: Honest #42 Home widget live Updated + App Group snapshot
 
 - Prefer WidgetKit live relative time: `Text(lastUpdate, style: .relative)` (prefix “Updated ”) via `WidgetUpdatedCue` / `HomeWidgetLiveUpdatedCue` instead of baked `RelativeDateTimeFormatter` string; keep `Date?` on entry.

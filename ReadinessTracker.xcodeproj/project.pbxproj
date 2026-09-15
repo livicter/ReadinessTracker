@@ -130,6 +130,8 @@
 		57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */; };
 		57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */; };
 		57AA00B20000000000000001 /* HomeWidgetAppGroupEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */; };
+		57AA00C20000000000000001 /* WidgetExportAfterWrite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00C10000000000000001 /* WidgetExportAfterWrite.swift */; };
+		57AA00C40000000000000001 /* WidgetExportAfterWriteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00C30000000000000001 /* WidgetExportAfterWriteTests.swift */; };
 		57AA00920000000000000001 /* WatchComplicationTimelineReloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */; };
 		57AA00930000000000000001 /* WatchComplicationTimelineReloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */; };
 		57AA00950000000000000001 /* WatchComplicationTimelineReloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */; };
@@ -338,6 +340,8 @@
 		57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationCaptureTests.swift; sourceTree = "<group>"; };
 		57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchSnapshotAppGroupStoreTests.swift; sourceTree = "<group>"; };
 		57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HomeWidgetAppGroupEntryTests.swift; sourceTree = "<group>"; };
+		57AA00C10000000000000001 /* WidgetExportAfterWrite.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetExportAfterWrite.swift; path = ReadinessTracker/Services/WidgetExportAfterWrite.swift; sourceTree = SOURCE_ROOT; };
+		57AA00C30000000000000001 /* WidgetExportAfterWriteTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetExportAfterWriteTests.swift; sourceTree = "<group>"; };
 		57AA00910000000000000001 /* WatchComplicationTimelineReloader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchComplicationTimelineReloader.swift; path = ReadinessTracker/Services/WatchComplicationTimelineReloader.swift; sourceTree = SOURCE_ROOT; };
 		57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchComplicationTimelineReloaderTests.swift; sourceTree = "<group>"; };
 		57AA00A10000000000000001 /* WatchComplicationWCPush.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WatchComplicationWCPush.swift; path = ReadinessTracker/Services/WatchComplicationWCPush.swift; sourceTree = SOURCE_ROOT; };
@@ -464,6 +468,7 @@
 				AE3726965C8A625B069AB691 /* TrendAnalysisEngine.swift */,
 				2B056B9B7C4F499A8D0EDF65 /* AIRecommendations.swift */,
 				8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */,
+				57AA00C10000000000000001 /* WidgetExportAfterWrite.swift */,
 				BA60028BE763A221CC4030F9 /* NotificationManager.swift */,
 				D1B094D6738E5EFCA45A2968 /* WatchConnectivityManager.swift */,
 				57AA00810000000000000001 /* WatchSnapshotAppGroupStore.swift */,
@@ -596,6 +601,7 @@
 				57AA006F0000000000000001 /* WatchComplicationCaptureTests.swift */,
 				57AA00830000000000000001 /* WatchSnapshotAppGroupStoreTests.swift */,
 				57AA00B10000000000000001 /* HomeWidgetAppGroupEntryTests.swift */,
+				57AA00C30000000000000001 /* WidgetExportAfterWriteTests.swift */,
 				57AA00940000000000000001 /* WatchComplicationTimelineReloaderTests.swift */,
 				57AA00A30000000000000001 /* WatchComplicationWCPushTests.swift */,
 				57AA00070000000000000001 /* SleepCycleDetectorTests.swift */,
@@ -938,6 +944,7 @@
 				57AA00700000000000000001 /* WatchComplicationCaptureTests.swift in Sources */,
 				57AA00840000000000000001 /* WatchSnapshotAppGroupStoreTests.swift in Sources */,
 				57AA00B20000000000000001 /* HomeWidgetAppGroupEntryTests.swift in Sources */,
+				57AA00C40000000000000001 /* WidgetExportAfterWriteTests.swift in Sources */,
 				57AA00950000000000000001 /* WatchComplicationTimelineReloaderTests.swift in Sources */,
 				57AA00A40000000000000001 /* WatchComplicationWCPushTests.swift in Sources */,
 				57AA00080000000000000001 /* SleepCycleDetectorTests.swift in Sources */,
@@ -1052,6 +1059,7 @@
 				57AA000E0000000000000001 /* DepthTimelineChart.swift in Sources */,
 				57AA00120000000000000001 /* ChartScrubSelection.swift in Sources */,
 				88655F0BEB2B5D453C78C1F7 /* WidgetDataExporter.swift in Sources */,
+				57AA00C20000000000000001 /* WidgetExportAfterWrite.swift in Sources */,
 				37DC4839AE0C23214F42E6D5 /* CoachingInsight.swift in Sources */,
 				5E98713B81776CE10E3ABDF1 /* NotificationManager.swift in Sources */,
 				DA6B374DC4663B26CD969BD9 /* WatchConnectivityManager.swift in Sources */,
