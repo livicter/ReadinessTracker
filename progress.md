@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-09-16 — Poteto: Lock Screen accessoryInline compact text glance
+
+- Added Lock Screen `.accessoryInline` (`AccessoryInlineWidgetView`): readiness score + short G/W/S cues as a single-line text glance beside Lock Screen time. Wired `supportedFamilies` + `ReadinessWidgetView` switch (iOS 16+). Circular/rectangular evidence unchanged.
+- PNG: `.audit/verify-lock-widget-inline.png` via `Scripts/capture-lock-widget-inline.sh` (`LockWidgetCaptureTests` + `ImageRenderer` of `LockScreenInlineChrome`).
+- Wired PNG through `capture-surfaces.sh` and `ci-guard-tree.sh`; README Status + App surfaces + Honest gap #34.
+- Branch: `feature/poteto-lock-inline`.
+
+
+
+
+
 ## 2026-09-16 — Poteto: Apple Fitness Lock Screen accessory rectangular triple-ring parity
 
 - Elevated Lock Screen `AccessoryRectangularWidgetView` from readiness digit + Gym/Work/Sleep score rows to Fitness-style `CompactTripleRingsView` + readiness score + short G/W/S cues (GeometryReader-scaled for accessory height; caption off). Circular evidence unchanged.

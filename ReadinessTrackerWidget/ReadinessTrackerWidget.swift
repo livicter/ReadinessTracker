@@ -428,6 +428,20 @@ private struct AccessoryCue: View {
     }
 }
 
+
+// MARK: - Accessory Inline (Lock Screen)
+@available(iOSApplicationExtension 16.0, *)
+struct AccessoryInlineWidgetView: View {
+    let entry: ReadinessEntry
+
+    var body: some View {
+        // Single-line Lock Screen glance beside the time: readiness + short G/W/S cues.
+        Text("\(entry.readinessScore) · G\(entry.gymScore) W\(entry.workScore) S\(entry.sleepScore)")
+            .font(.system(size: 14, weight: .semibold, design: .rounded))
+            .monospacedDigit()
+    }
+}
+
 // MARK: - Widget Configuration
 @main
 struct ReadinessTrackerWidget: Widget {
@@ -449,7 +463,7 @@ struct ReadinessTrackerWidget: Widget {
         .description("Track your daily readiness for gym and work.")
         .supportedFamilies({
             if #available(iOSApplicationExtension 16.0, *) {
-                return [.systemSmall, .systemMedium, .systemLarge, .accessoryCircular, .accessoryRectangular]
+                return [.systemSmall, .systemMedium, .systemLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline]
             } else {
                 return [.systemSmall, .systemMedium, .systemLarge]
             }
@@ -478,6 +492,12 @@ struct ReadinessWidgetView: View {
         case .accessoryRectangular:
             if #available(iOSApplicationExtension 16.0, *) {
                 AccessoryRectangularWidgetView(entry: entry)
+            } else {
+                SmallWidgetView(entry: entry)
+            }
+        case .accessoryInline:
+            if #available(iOSApplicationExtension 16.0, *) {
+                AccessoryInlineWidgetView(entry: entry)
             } else {
                 SmallWidgetView(entry: entry)
             }
