@@ -8,38 +8,26 @@ struct ContentView: View {
     @State private var checkInRouteID = UUID()
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            DashboardView()
-                .tabItem {
-                    Label("Today", systemImage: "gauge.with.dots.needle.67percent")
-                }
-                .tag(0)
-
-            HistoryView()
-                .tabItem {
-                    Label("History", systemImage: "chart.line.uptrend.xyaxis")
-                }
-                .tag(1)
-
-            CheckInView(initialTime: checkInPreferredTime)
-                .id(checkInRouteID)
-                .tabItem {
-                    Label("Check-in", systemImage: "checkmark.circle")
-                }
-                .environment(\.symbolVariants, selectedTab == 2 ? .fill : .none)
-                .tag(2)
-
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .environment(\.symbolVariants, selectedTab == 3 ? .fill : .none)
-                .tag(3)
+        Group {
+            switch selectedTab {
+            case 0:
+                DashboardView()
+            case 1:
+                HistoryView()
+            case 2:
+                CheckInView(initialTime: checkInPreferredTime)
+                    .id(checkInRouteID)
+            default:
+                SettingsView()
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            FloatingPillTabBar(selection: $selectedTab)
+        }
+        .ignoresSafeArea(.keyboard)
         .tint(RTColor.optimal)
-        .toolbarBackground(RTColor.surface, for: .tabBar)
         .onAppear { UIFixture.installIfRequested() }
-        .onChange(of: selectedTab) { _ in Haptic.selectionChanged() }
         .onOpenURL { url in
             switch AppDeepLink.parse(url) {
             case .checkIn(let time):

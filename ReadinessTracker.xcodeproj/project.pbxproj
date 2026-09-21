@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F10A71AB7ABBA40001B10001 /* FloatingPillTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */; };
 		00BC10E3DD13EF2BC2276280 /* StrainRecoveryBalanceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B0DA072454C458C48F95EAD /* StrainRecoveryBalanceCard.swift */; };
 		0667BB02BE7E4EBFBAFE99D6999B53F1 /* StrainCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F371515D46F540FD8094CED0B52AEE3A /* StrainCalculator.swift */; };
 		0E461FA090FB65C4BDF4AE50 /* BaselineManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1953FFA7C85EECE5D00CD67D /* BaselineManagerTests.swift */; };
@@ -223,6 +224,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPillTabBar.swift; sourceTree = "<group>"; };
 		0518368B65DA466798DA533A /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSettings.swift; path = ReadinessTracker/Models/UserSettings.swift; sourceTree = SOURCE_ROOT; };
 		0DC90D2ADB45EC5D1985C2A7 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		0DD4A4F0863C67ECD459DCE4 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -539,6 +541,7 @@
 			isa = PBXGroup;
 			children = (
 				C0CB65267C349A3D15B1DBBD /* Theme.swift */,
+				F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */,
 				57AA00110000000000000001 /* ChartScrubSelection.swift */,
 				8AF7EEDF89A57D2C8EE67CED /* Components.swift */,
 				7BA040C138E14DB7AE926B08 /* TripleRingView.swift */,
@@ -1016,6 +1019,7 @@
 				6CE8A7ACC28ED78129F0091A /* DashboardView.swift in Sources */,
 				3A6FEE83BC553A539F370D9F /* CheckInView.swift in Sources */,
 				23AE06D7FA36DDB9EB4EDE5A /* Theme.swift in Sources */,
+				F10A71AB7ABBA40001B10001 /* FloatingPillTabBar.swift in Sources */,
 				C2AC0EFDA65DF96CB584AE8F /* Components.swift in Sources */,
 				A01A36F3EA3BD434A91390B6 /* Animations.swift in Sources */,
 				7000A0ED19CF4F6FAC37B7E4 /* TripleRingView.swift in Sources */,

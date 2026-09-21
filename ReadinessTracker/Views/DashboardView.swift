@@ -1040,7 +1040,11 @@ struct DashboardView: View {
     }
 
     static func healthKitSourceLabel(_ raw: String) -> String {
-        raw.localizedCaseInsensitiveContains("whoop") ? "WHOOP via Apple Health" : raw
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return "HealthKit" }
+        if trimmed.localizedCaseInsensitiveContains("whoop") { return "HealthKit · WHOOP" }
+        if trimmed.localizedCaseInsensitiveContains("apple") { return "HealthKit" }
+        return "HealthKit · \(trimmed)"
     }
 
     private func trendFor(_ value: Double, baseline: Double, higherIsBetter: Bool) -> TrendDirection {
