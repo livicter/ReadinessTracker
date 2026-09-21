@@ -12,7 +12,7 @@ final class SurfacesUITests: XCTestCase {
 
     func testTodayHeroBright() throws {
         XCTAssertTrue(app.staticTexts["Readiness"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts["HealthKit · WHOOP"].exists)
+        XCTAssertTrue(app.staticTexts["HealthKit"].exists)
         saveShot("verify-dashboard.png")
     }
 
@@ -615,7 +615,7 @@ final class SurfacesUITests: XCTestCase {
     func testSettingsSourcesConnectRows() throws {
         app.tabBars.buttons["Settings"].tap()
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts["HealthKit · WHOOP"].exists)
+        XCTAssertTrue(app.staticTexts["HealthKit"].exists)
         let connect = app.descendants(matching: .any)["settings.healthkit.connect"].firstMatch
         let reconnect = app.buttons["Reconnect"]
         let connectTitle = app.buttons["Connect"]
