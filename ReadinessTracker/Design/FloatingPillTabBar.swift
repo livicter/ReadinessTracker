@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Apple Fitness–style floating frosted pill tab bar (Honest #54).
+/// Apple Fitness–style floating frosted pill tab bar (Honest #55).
 struct FloatingPillTabBar: View {
     @Binding var selection: Int
 
@@ -33,7 +33,7 @@ struct FloatingPillTabBar: View {
                             .frame(width: 44, height: 28)
                             .background(
                                 Capsule()
-                                    .fill(selection == item.id ? RTColor.optimal.opacity(0.16) : Color.clear)
+                                    .fill(selection == item.id ? Color.primary.opacity(0.06) : Color.clear)
                             )
                         Text(item.title)
                             .font(.caption2.weight(selection == item.id ? .semibold : .medium))
