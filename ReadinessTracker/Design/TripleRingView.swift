@@ -211,18 +211,19 @@ struct LegendItem: View {
     }
 
     private var legendContent: some View {
-        VStack(spacing: 6) {
-            HStack(spacing: 4) {
-                Image(systemName: kind.icon)
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(kind.color)
-                Text(kind.label)
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(RTColor.secondaryText)
-            }
+        VStack(spacing: 8) {
+            Image(systemName: kind.icon)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(kind.color)
+                .frame(width: 36, height: 36)
+                .background(kind.color.opacity(0.14))
+                .clipShape(Circle())
+            Text(kind.label)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(RTColor.secondaryText)
             Text("\(score)")
                 .font(.system(.title3, design: .rounded).weight(.bold))
-                .foregroundColor(RTColor.primaryText)
+                .foregroundStyle(RTColor.primaryText)
         }
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())

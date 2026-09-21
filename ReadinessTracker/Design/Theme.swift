@@ -175,7 +175,7 @@ enum ScoreZone {
     
     var label: String {
         switch self {
-        case .optimal: return "Ready to perform"
+        case .optimal: return "Good to go"
         case .good: return "Good to go"
         case .caution: return "Take it easy"
         case .warning: return "Rest needed"
