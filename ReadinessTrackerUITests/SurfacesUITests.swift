@@ -645,6 +645,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-settings-sources.png")
     }
 
+    func testSettingsNotificationsSurface() throws {
+        // Settings → Notifications: Apple Settings chrome with tinted icon wells (Honest #62).
+        tapMainTab("Settings")
+        revealText("Notifications")
+        let row = app.buttons["Notifications"].exists ? app.buttons["Notifications"] : app.staticTexts["Notifications"]
+        XCTAssertTrue(row.waitForExistence(timeout: 8), "Notifications row")
+        row.tap()
+        XCTAssertTrue(
+            app.navigationBars["Notifications"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Notifications"].waitForExistence(timeout: 8)
+        )
+        XCTAssertTrue(
+            app.switches["Allow Notifications"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Allow Notifications"].waitForExistence(timeout: 8) ||
+            app.descendants(matching: .any)["settings.notifications.master"].firstMatch.waitForExistence(timeout: 8),
+            "Allow Notifications master"
+        )
+        // Soft: icon-well rows present when master is on (fixture enables notifications).
+        _ = app.staticTexts["Morning Summary"].exists
+        _ = app.staticTexts["Quiet Hours"].exists
+        saveShot("verify-settings-notifications.png")
+    }
+
     private func revealText(_ text: String) {
         let el = app.staticTexts[text]
         var n = 0

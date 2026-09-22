@@ -7,6 +7,7 @@ import UserNotifications
 /// Changes persist via UserSettings and trigger an immediate reschedule in
 /// NotificationManager. Designed to be pushed from SettingsView — embed in a
 /// NavigationLink, e.g. `NavigationLink("Notifications") { NotificationSettingsView() }`.
+/// Honest #62: Apple Settings chrome — tinted SF Symbol wells beside each row.
 struct NotificationSettingsView: View {
     @State private var settings = UserSettings.load().notifications
     @State private var authorizationStatus: UNAuthorizationStatus = .notDetermined
@@ -22,6 +23,7 @@ struct NotificationSettingsView: View {
             }
         }
         .navigationTitle("Notifications")
+        .navigationBarTitleDisplayMode(.large)
         .task {
             authorizationStatus = await NotificationManager.shared.authorizationStatus()
         }
@@ -42,12 +44,22 @@ struct NotificationSettingsView: View {
 
     private var masterSection: some View {
         Section {
-            Toggle("Enable Notifications", isOn: $settings.notificationsEnabled)
+            Toggle(isOn: $settings.notificationsEnabled) {
+                settingsLabel(
+                    icon: "bell.fill",
+                    color: Color(hex: "34C759"),
+                    title: "Allow Notifications"
+                )
+            }
+            .accessibilityIdentifier("settings.notifications.master")
 
             if authorizationStatus == .denied {
-                Label("Notifications are turned off in system Settings.", systemImage: "exclamationmark.triangle.fill")
-                    .font(.caption)
-                    .foregroundStyle(RTColor.caution)
+                Label(
+                    "Notifications are turned off in system Settings.",
+                    systemImage: "exclamationmark.triangle.fill"
+                )
+                .font(.caption)
+                .foregroundStyle(RTColor.caution)
                 Button("Open System Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
@@ -56,28 +68,42 @@ struct NotificationSettingsView: View {
                 .font(.caption)
             }
         } footer: {
-            Text("Smart alerts for your morning readiness, low recovery days, and bedtime.")
+            Text("Morning readiness, low-recovery days, and bedtime — paused during Quiet Hours.")
         }
     }
 
     private var morningSummarySection: some View {
         Section {
-            Toggle("Morning Summary", isOn: $settings.morningSummaryEnabled)
+            Toggle(isOn: $settings.morningSummaryEnabled) {
+                settingsLabel(
+                    icon: "sun.horizon.fill",
+                    color: Color(hex: "FF9F0A"),
+                    title: "Morning Summary",
+                    subtitle: "Readiness score after you wake"
+                )
+            }
+            .accessibilityIdentifier("settings.notifications.morning")
             if settings.morningSummaryEnabled {
                 DatePicker(
-                    "Delivery Time",
+                    "Time",
                     selection: timeBinding(hour: \.morningSummaryHour, minute: \.morningSummaryMinute),
                     displayedComponents: .hourAndMinute
                 )
             }
-        } footer: {
-            Text("Daily readiness score and zone after you wake up.")
         }
     }
 
     private var lowRecoverySection: some View {
         Section {
-            Toggle("Low Recovery Warning", isOn: $settings.lowRecoveryEnabled)
+            Toggle(isOn: $settings.lowRecoveryEnabled) {
+                settingsLabel(
+                    icon: "heart.fill",
+                    color: Color(hex: "FF375F"),
+                    title: "Low Recovery Warning",
+                    subtitle: "When readiness drops below baseline"
+                )
+            }
+            .accessibilityIdentifier("settings.notifications.recovery")
             if settings.lowRecoveryEnabled {
                 Stepper(
                     "Below baseline by \(settings.lowRecoveryThreshold) pts",
@@ -86,14 +112,20 @@ struct NotificationSettingsView: View {
                     step: 5
                 )
             }
-        } footer: {
-            Text("Alerts you when today's readiness drops well below your 14-day baseline.")
         }
     }
 
     private var bedtimeReminderSection: some View {
         Section {
-            Toggle("Bedtime Reminder", isOn: $settings.bedtimeReminderEnabled)
+            Toggle(isOn: $settings.bedtimeReminderEnabled) {
+                settingsLabel(
+                    icon: "moon.fill",
+                    color: Color(hex: "BF5AF2"),
+                    title: "Bedtime Reminder",
+                    subtitle: bedtimeSubtitle
+                )
+            }
+            .accessibilityIdentifier("settings.notifications.bedtime")
             if settings.bedtimeReminderEnabled {
                 Stepper(
                     "\(settings.bedtimeReminderLeadMinutes) min before bed",
@@ -102,18 +134,20 @@ struct NotificationSettingsView: View {
                     step: 15
                 )
             }
-        } footer: {
-            if let bedtime = NotificationManager.typicalBedtimeMinutes(from: DataStore.shared.history) {
-                Text("Based on your typical bedtime of \(formattedMinutes(bedtime)).")
-            } else {
-                Text("Needs a few nights of sleep data to learn your typical bedtime.")
-            }
         }
     }
 
     private var quietHoursSection: some View {
         Section {
-            Toggle("Quiet Hours", isOn: $settings.quietHoursEnabled)
+            Toggle(isOn: $settings.quietHoursEnabled) {
+                settingsLabel(
+                    icon: "moon.zzz.fill",
+                    color: Color(hex: "64D2FF"),
+                    title: "Quiet Hours",
+                    subtitle: "Silence scheduled alerts"
+                )
+            }
+            .accessibilityIdentifier("settings.notifications.quiet")
             if settings.quietHoursEnabled {
                 Picker("From", selection: $settings.quietHoursStartHour) {
                     ForEach(0..<24, id: \.self) { hour in
@@ -127,7 +161,39 @@ struct NotificationSettingsView: View {
                 }
             }
         } footer: {
-            Text("Notifications scheduled inside quiet hours are silenced.")
+            Text("Alerts scheduled inside Quiet Hours are held until they end.")
+        }
+    }
+
+    private var bedtimeSubtitle: String {
+        if let bedtime = NotificationManager.typicalBedtimeMinutes(from: DataStore.shared.history) {
+            return "Typical bedtime \(formattedMinutes(bedtime))"
+        }
+        return "Learns from a few nights of sleep"
+    }
+
+    // MARK: - Row chrome
+
+    @ViewBuilder
+    private func settingsLabel(
+        icon: String,
+        color: Color,
+        title: String,
+        subtitle: String? = nil
+    ) -> some View {
+        HStack(spacing: 12) {
+            AppIconTile(systemName: icon, color: color, size: 30)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(RTColor.primaryText)
+                if let subtitle {
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
         }
     }
 
