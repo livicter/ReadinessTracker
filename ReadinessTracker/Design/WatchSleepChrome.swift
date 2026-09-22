@@ -56,7 +56,7 @@ struct WatchSleepChrome: View {
             HStack(spacing: 8) {
                 stageLegend(color: purple, title: "Deep", percent: Int((deepSleepPercent * 100).rounded()))
                 stageLegend(color: indigo, title: "REM", percent: Int((remSleepPercent * 100).rounded()))
-                stageLegend(color: teal, title: "Light", percent: Int((lightPercent * 100).rounded()))
+                stageLegend(color: teal, title: "Core", percent: Int((lightPercent * 100).rounded()))
             }
 
             if let snapshotDate {

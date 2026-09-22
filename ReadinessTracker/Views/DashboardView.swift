@@ -561,7 +561,7 @@ struct DashboardView: View {
                     SleepStageBar(stages: [
                         ("Deep", data.deepSleepPercent, RTColor.sleep),
                         ("REM", data.remSleepPercent, RTColor.consistency),
-                        ("Light", data.lightSleepPercent, RTColor.sleep.opacity(0.5)),
+                        ("Core", data.lightSleepPercent, RTColor.sleep.opacity(0.5)),
                         ("Awake", data.awakePercent, RTColor.tertiaryText)
                     ])
 

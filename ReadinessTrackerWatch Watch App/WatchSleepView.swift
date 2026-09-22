@@ -62,7 +62,7 @@ struct WatchSleepView: View {
                         )
                         stageLegend(
                             color: WatchTheme.teal,
-                            title: "Light",
+                            title: "Core",
                             percent: Int((lightPercent * 100).rounded())
                         )
                     }
@@ -96,7 +96,7 @@ struct WatchSleepView: View {
                     )
                     WatchMetricRow(
                         icon: "moon.zzz.fill",
-                        label: "Light",
+                        label: "Core",
                         value: "\(Int((lightPercent * 100).rounded()))%",
                         color: WatchTheme.teal
                     )

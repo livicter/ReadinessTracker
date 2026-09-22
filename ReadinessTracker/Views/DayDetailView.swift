@@ -282,7 +282,7 @@ struct DayDetailView: View {
         let chips: [(label: String, percent: Double, hours: Double, color: Color)] = [
             ("Deep", data.deepSleepPercent, data.sleepHours * data.deepSleepPercent, SleepStage.deep.color),
             ("REM", data.remSleepPercent, data.sleepHours * data.remSleepPercent, SleepStage.rem.color),
-            ("Light", light, data.sleepHours * light, SleepStage.light.color),
+            ("Core", light, data.sleepHours * light, SleepStage.light.color),
             ("Awake", data.awakePercent, timeInBedHours * data.awakePercent, RTColor.caution),
         ]
         return ScrollView(.horizontal, showsIndicators: false) {
@@ -596,7 +596,7 @@ struct DayDetailView: View {
             if data.sleepHours > 0 {
                 SectionHeader(title: "Sleep Stage Analysis")
 
-                // Whoop-style stage breakdown (bars + grid)
+                // Apple Health–style stage breakdown (bar + under-labels)
                 SleepStageBreakdown(
                     sleepHours: data.sleepHours,
                     deepPercent: data.deepSleepPercent,
