@@ -676,6 +676,23 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-settings-notifications.png")
     }
 
+
+    func testSettingsInsightsActionsChrome() throws {
+        // Honest #66: Insights/Actions rows use AppIconTile wells.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Settings")
+        var n = 0
+        let coaching = app.staticTexts.matching(NSPredicate(format: "label == %@", "Coaching")).element(boundBy: 0)
+        while !coaching.exists && n < 16 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(coaching.waitForExistence(timeout: 8), "Coaching row")
+        _ = app.staticTexts["Notifications"].exists
+        _ = app.staticTexts["Refresh Health Data"].exists || app.staticTexts["Export CSV"].exists
+        saveShot("verify-settings-insights.png")
+    }
+
     private func revealText(_ text: String) {
         let el = app.staticTexts[text]
         var n = 0

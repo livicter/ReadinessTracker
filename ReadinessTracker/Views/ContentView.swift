@@ -387,12 +387,12 @@ struct SettingsView: View {
                     NavigationLink {
                         CoachingView()
                     } label: {
-                        Label("Coaching", systemImage: "lightbulb.fill")
+                        settingsLinkLabel(title: "Coaching", icon: "lightbulb.fill", tint: RTColor.caution)
                     }
                     NavigationLink {
                         NotificationSettingsView()
                     } label: {
-                        Label("Notifications", systemImage: "bell.fill")
+                        settingsLinkLabel(title: "Notifications", icon: "bell.fill", tint: Color(hex: "34C759"))
                     }
                 }
 
@@ -401,16 +401,20 @@ struct SettingsView: View {
                         Haptic.press()
                         Task { await refreshAllSources() }
                     } label: {
-                        Label(isRefreshing ? "Refreshing…" : "Refresh Health Data", systemImage: "arrow.clockwise")
+                        settingsLinkLabel(
+                            title: isRefreshing ? "Refreshing…" : "Refresh Health Data",
+                            icon: "arrow.clockwise",
+                            tint: RTColor.optimal
+                        )
                     }
                     .disabled(isRefreshing)
-                    
+
                     Button {
                         Haptic.press()
                         exportText = DataStore.shared.exportCSV()
                         showingExportSheet = true
                     } label: {
-                        Label("Export CSV", systemImage: "square.and.arrow.up")
+                        settingsLinkLabel(title: "Export CSV", icon: "square.and.arrow.up", tint: RTColor.hrv)
                     }
                 }
                 
@@ -421,7 +425,7 @@ struct SettingsView: View {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")
                             .foregroundColor(.secondary)
                     }
-                    Text("Google Fit REST is not connected. Body & activity uses Apple Health.")
+                    Text("Google Fit REST is not connected. Body metrics use Apple Health.")
                         .font(.caption2)
                         .foregroundStyle(RTColor.tertiaryText)
                 }
@@ -433,6 +437,19 @@ struct SettingsView: View {
                 ShareSheet(activityItems: [exportText])
             }
         }
+    }
+
+
+    private func settingsLinkLabel(title: String, icon: String, tint: Color) -> some View {
+        HStack(spacing: 12) {
+            AppIconTile(systemName: icon, color: tint, size: 30)
+            Text(title)
+                .font(.body)
+                .foregroundStyle(RTColor.primaryText)
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(title)
     }
 
     private func refreshAllSources() async {
