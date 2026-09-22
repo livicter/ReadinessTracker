@@ -111,14 +111,14 @@ enum UIFixture {
         let today = cal.startOfDay(for: Date())
         // (daysAgo, behaviors, notes, readinessScore)
         let specs: [(Int, [JournalEntryView.Behavior], String, Int)] = [
-            (7, [.alcohol], "Fixture: drinks after dinner", 48),
-            (6, [.caffeineLate, .screenTime], "Fixture: late coffee + phone", 55),
-            (5, [.meditation], "Fixture: evening sit", 82),
-            (4, [.alcohol, .stress], "Fixture: stress + drinks", 42),
-            (3, [.sauna], "Fixture: post-workout heat", 78),
-            (2, [.iceBath, .meditation], "Fixture: cold + calm", 88),
-            (1, [.screenTime], "Fixture: late scrolling", 60),
-            (0, [.massage], "Fixture: recovery day", 80),
+            (7, [.alcohol], "Drinks after dinner", 48),
+            (6, [.caffeineLate, .screenTime], "Late coffee and phone", 55),
+            (5, [.meditation], "Evening meditation", 82),
+            (4, [.alcohol, .stress], "Stressful day with drinks", 42),
+            (3, [.sauna], "Post-workout sauna", 78),
+            (2, [.iceBath, .meditation], "Cold plunge and calm", 88),
+            (1, [.screenTime], "Late night scrolling", 60),
+            (0, [.massage], "Easy recovery day", 80),
         ]
         return specs.map { daysAgo, behaviors, notes, score in
             let date = cal.date(byAdding: .day, value: -daysAgo, to: today)!
