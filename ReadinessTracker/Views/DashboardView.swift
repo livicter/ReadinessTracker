@@ -354,7 +354,7 @@ struct DashboardView: View {
 
     // MARK: - Recommendations Section
     private func recommendationsSection(scores: DualReadinessScores) -> some View {
-        // WHOOP-style actionable cards: training rules first, coaching fill to 1–3.
+        // Apple Fitness–style actionable cards: training rules first, coaching fill to 1–3.
         let cards = AIRecommendationEngine.shared.morningActionableCards(for: selectedSource, limit: 3)
 
         return Group {
@@ -1055,7 +1055,7 @@ struct DashboardView: View {
 
 // MARK: - Supporting Views
 
-/// WHOOP-style morning recommendation: title, reason, concrete action cue.
+/// Apple Fitness–style morning recommendation: title, reason, capsule action cue.
 struct RecommendationActionCard: View {
     let card: ActionableRecommendation
 
@@ -1068,8 +1068,8 @@ struct RecommendationActionCard: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(tint)
                     .frame(width: 32, height: 32)
-                    .background(tint.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .background(tint.opacity(0.14))
+                    .clipShape(Circle())
 
                 Text(card.title)
                     .font(.subheadline.weight(.semibold))
@@ -1094,10 +1094,11 @@ struct RecommendationActionCard: View {
                     .foregroundStyle(RTColor.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(10)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
-                RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                Capsule(style: .continuous)
                     .fill(RTColor.surfaceHighlight)
             )
         }
