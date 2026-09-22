@@ -336,32 +336,54 @@ class AIRecommendationEngine {
     /// insights to fill up to `limit`. Follows fixture / live data (no placeholder copy).
     func morningActionableCards(for source: DataSource, limit: Int = 3) -> [ActionableRecommendation] {
         var cards: [ActionableRecommendation] = []
-        var seen = Set<String>()
+        var seenTitles = Set<String>()
+        var seenActions = Set<String>()
+        var hasProgressLoadCard = false
+
+        func consider(title: String, reason: String, action: String, tintHex: String, icon: String) {
+            guard cards.count < limit else { return }
+            guard seenTitles.insert(title).inserted else { return }
+            let actionKey = action.lowercased()
+            guard seenActions.insert(actionKey).inserted else { return }
+            let isProgress = Self.isProgressLoadTitle(title)
+            if isProgress && hasProgressLoadCard { return }
+            if isProgress { hasProgressLoadCard = true }
+            cards.append(ActionableRecommendation(
+                title: title,
+                reason: reason,
+                action: action,
+                tintHex: tintHex,
+                icon: icon
+            ))
+        }
 
         for rec in generateRecommendations(for: source) {
-            guard seen.insert(rec.title).inserted else { continue }
-            cards.append(ActionableRecommendation(
+            consider(
                 title: rec.title,
                 reason: rec.description,
                 action: rec.action,
                 tintHex: rec.priority.color,
                 icon: rec.type.icon
-            ))
+            )
             if cards.count >= limit { return cards }
         }
 
         for insight in generateCoachingFeed(for: source) {
-            guard seen.insert(insight.title).inserted else { continue }
-            cards.append(ActionableRecommendation(
+            consider(
                 title: insight.title,
                 reason: insight.explanation,
                 action: insight.action,
                 tintHex: Self.tintHex(for: insight.category),
                 icon: insight.category.icon
-            ))
+            )
             if cards.count >= limit { break }
         }
         return cards
+    }
+
+    private static func isProgressLoadTitle(_ title: String) -> Bool {
+        let t = title.lowercased()
+        return t.contains("progress") || t.contains("overload")
     }
 
     private static func tintHex(for category: CoachingInsight.Category) -> String {
