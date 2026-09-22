@@ -283,6 +283,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testHistoryTabSurface() throws {
+        // Honest #64: History rows use circular tint metric wells.
         // Wait for Today chrome before switching tabs (heavier Body tiles can delay first paint).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch

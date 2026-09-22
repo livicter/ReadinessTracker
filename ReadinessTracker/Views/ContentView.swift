@@ -246,15 +246,17 @@ struct HistoryRow: View {
                 Text(data.date, style: .date)
                     .font(.headline)
                 
-                HStack(spacing: 8) {
-                    Label("\(String(format: "%.1f", data.sleepHours))h", systemImage: "bed.double")
-                    Label("\(Int(data.hrv))ms", systemImage: "waveform.path.ecg")
+                HStack(spacing: 10) {
+                    historyMetricChip(icon: "bed.double", tint: RTColor.sleep, text: "\(String(format: "%.1f", data.sleepHours))h")
+                    historyMetricChip(icon: "waveform.path.ecg", tint: RTColor.hrv, text: "\(Int(data.hrv))ms")
                     if data.deepSleepPercent > 0 {
-                        Label("D:\(Int(data.deepSleepPercent * 100))%", systemImage: "moon.fill")
+                        historyMetricChip(
+                            icon: "moon.fill",
+                            tint: RTColor.sleep,
+                            text: "D:\(Int(data.deepSleepPercent * 100))%"
+                        )
                     }
                 }
-                .font(.caption)
-                .foregroundColor(.secondary)
             }
             
             Spacer()
@@ -274,6 +276,23 @@ struct HistoryRow: View {
         .padding(.vertical, 4)
     }
     
+
+    private func historyMetricChip(icon: String, tint: Color, text: String) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: icon)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 22, height: 22)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+            Text(text)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(RTColor.secondaryText)
+                .monospacedDigit()
+        }
+        .accessibilityElement(children: .combine)
+    }
+
     private func scoreColor(_ score: Int) -> Color {
         ScoreZone(score: score).color
     }
