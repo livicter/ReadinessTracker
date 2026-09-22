@@ -173,7 +173,7 @@ struct SleepAnalysisView: View {
         let chips: [(label: String, percent: Double, hours: Double, color: Color)] = [
             ("Deep", data.deepSleepPercent, deepSleepHours, SleepStage.deep.color),
             ("REM", data.remSleepPercent, remSleepHours, SleepStage.rem.color),
-            ("Light", light, lightSleepHours, SleepStage.light.color),
+            ("Core", light, lightSleepHours, SleepStage.light.color),
             ("Awake", data.awakePercent, awakeHours, RTColor.caution),
         ]
         return NativeCard {
@@ -241,7 +241,7 @@ struct SleepAnalysisView: View {
                     )
                     
                     stageBar(
-                        label: "Light Sleep",
+                        label: "Core",
                         hours: lightSleepHours,
                         percent: data.lightSleepPercent,
                         totalHours: data.sleepHours,
@@ -504,7 +504,7 @@ struct SleepAnalysisView: View {
                             y: .value("Hours", day.sleepHours * day.lightSleepPercent)
                         )
                         .foregroundStyle(Color.blue.opacity(0.5))
-                        .position(by: .value("Stage", "Light"))
+                        .position(by: .value("Stage", "Core"))
                     }
                     .chartYAxis {
                         AxisMarks(position: .leading)
@@ -521,7 +521,7 @@ struct SleepAnalysisView: View {
                 HStack(spacing: 16) {
                     legendItem(color: RTColor.sleep, label: "Deep", value: "")
                     legendItem(color: Color.cyan, label: "REM", value: "")
-                    legendItem(color: Color.blue.opacity(0.5), label: "Light", value: "")
+                    legendItem(color: Color.blue.opacity(0.5), label: "Core", value: "")
                 }
             }
         }

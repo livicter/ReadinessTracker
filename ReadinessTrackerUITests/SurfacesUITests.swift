@@ -393,6 +393,9 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["No detailed stage data. Stage intervals are recorded from your next sync."].exists)
         // Soft: axis / disturbance chrome may be merged under a11y; stages-derived wake still 1.
         _ = app.staticTexts["Awake"].exists
+        // Honest #61: Apple Health naming — Core (not Light); no score capsule on stages card.
+        _ = app.staticTexts["Core"].exists
+        XCTAssertFalse(app.staticTexts["Light Sleep"].exists)
         _ = app.staticTexts["1 wakes"].exists || app.staticTexts["1 wake"].exists
         saveShot("verify-sleep-stages.png")
     }

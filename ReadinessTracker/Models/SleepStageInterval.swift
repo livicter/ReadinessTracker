@@ -7,7 +7,7 @@ enum SleepStage: String, Codable, CaseIterable {
     var label: String {
         switch self {
         case .awake: return "Awake"
-        case .light: return "Light"
+        case .light: return "Core"
         case .deep: return "Deep"
         case .rem: return "REM"
         }
@@ -34,7 +34,7 @@ enum SleepStage: String, Codable, CaseIterable {
     }
 
     /// Chart Y band for HypnogramView (`chartYScale` domain -4...0).
-    /// Awake occupies (-1, 0], REM (-2, -1], Light (-3, -2], Deep (-4, -3].
+    /// Awake occupies (-1, 0], REM (-2, -1], Core (-3, -2], Deep (-4, -3].
     var hypnogramYStart: Int { -(depthRank + 1) }
     var hypnogramYEnd: Int { -depthRank }
 }

@@ -187,7 +187,7 @@ struct HypnogramView: View {
         switch rank {
         case -1: return "Awake"
         case -2: return "REM"
-        case -3: return "Light"
+        case -3: return "Core"
         default: return "Deep"
         }
     }
