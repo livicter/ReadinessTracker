@@ -132,14 +132,39 @@ struct ActivityRing: View {
 
     @State private var animatedProgress: Double = 0
 
+    /// Leading-tip glow like Apple Fitness Activity rings (Honest #58).
+    private var tipPosition: CGPoint {
+        let p = min(max(animatedProgress, 0), 1)
+        let angle = (-90.0 + 360.0 * p) * .pi / 180.0
+        let radius = (size - lineWidth) / 2
+        return CGPoint(
+            x: size / 2 + radius * CGFloat(cos(angle)),
+            y: size / 2 + radius * CGFloat(sin(angle))
+        )
+    }
+
     var body: some View {
+        let p = min(max(animatedProgress, 0), 1)
         ZStack {
             Circle()
                 .stroke(color.opacity(0.15), lineWidth: lineWidth)
             Circle()
-                .trim(from: 0, to: min(animatedProgress, 1.0))
+                .trim(from: 0, to: p)
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
+            if p > 0.02 {
+                Circle()
+                    .fill(color.opacity(0.55))
+                    .frame(width: lineWidth * 1.35, height: lineWidth * 1.35)
+                    .blur(radius: lineWidth * 0.35)
+                    .position(tipPosition)
+                    .allowsHitTesting(false)
+                Circle()
+                    .fill(color)
+                    .frame(width: lineWidth * 0.42, height: lineWidth * 0.42)
+                    .position(tipPosition)
+                    .allowsHitTesting(false)
+            }
         }
         .frame(width: size, height: size)
         .accessibilityElement(children: .ignore)
