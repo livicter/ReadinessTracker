@@ -10,6 +10,25 @@ final class SurfacesUITests: XCTestCase {
         app.launch()
     }
 
+
+    /// Floating pill tabs are not UITabBar — prefer tab.<name> ids.
+    private func tapMainTab(_ title: String) {
+        let id = "tab.\(title.lowercased())"
+        let byId = app.descendants(matching: .any)[id].firstMatch
+        if byId.waitForExistence(timeout: 3) {
+            byId.tap()
+            return
+        }
+        let byButton = app.buttons[title]
+        if byButton.waitForExistence(timeout: 3) {
+            byButton.tap()
+            return
+        }
+        let legacy = app.tabBars.buttons[title]
+        XCTAssertTrue(legacy.waitForExistence(timeout: 8), "Missing tab \(title)")
+        legacy.tap()
+    }
+
     func testTodayHeroBright() throws {
         XCTAssertTrue(app.staticTexts["Readiness"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts["HealthKit"].exists)
@@ -130,7 +149,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testCheckInTabSurface() throws {
-        app.tabBars.buttons["Check-in"].tap()
+        tapMainTab("Check-in")
         // Daily Check-in: Morning/Evening segmented picker + Save chrome under -ui-fixture.
         let morning = app.buttons["Morning"]
         let evening = app.buttons["Evening"]
@@ -150,7 +169,7 @@ final class SurfacesUITests: XCTestCase {
     func testTrendsDetailSurface() throws {
         // History → Browse Trends → TrendDetailView (period chips + Avg/Min/Max + scrub).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
-        let historyTab = app.tabBars.buttons["History"]
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
         XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
         historyTab.tap()
         let landed =
@@ -204,7 +223,7 @@ final class SurfacesUITests: XCTestCase {
         // History → day row → DayDetailView (WHOOP night-detail: header metrics, stage % chips, hypnogram, cycles).
         // Alternate path Today → Sleep Stages also lands on elevated Sleep Analysis chrome.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
-        let historyTab = app.tabBars.buttons["History"]
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
         XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
         historyTab.tap()
         let landed =
@@ -233,7 +252,7 @@ final class SurfacesUITests: XCTestCase {
         }
         if !opened {
             // Fallback: Today → Sleep Stages → Sleep Analysis (same elevated night chrome).
-            app.tabBars.buttons["Today"].tap()
+            tapMainTab("Today")
             _ = app.staticTexts["Readiness"].waitForExistence(timeout: 6)
             revealText("Sleep Stages")
             let stagesCard = app.buttons["Sleep Stages"].exists ? app.buttons["Sleep Stages"] : app.staticTexts["Sleep Stages"]
@@ -265,7 +284,7 @@ final class SurfacesUITests: XCTestCase {
     func testHistoryTabSurface() throws {
         // Wait for Today chrome before switching tabs (heavier Body tiles can delay first paint).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
-        let historyTab = app.tabBars.buttons["History"]
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
         XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
         historyTab.tap()
         // History: source picker + Weekly Report + Trends under -ui-fixture (14 appleWatch days).
@@ -338,7 +357,7 @@ final class SurfacesUITests: XCTestCase {
 
     func testWeeklyReportSurface() throws {
         // History → Weekly Report sheet: fixture seeds 14 appleWatch days (≥3 needed).
-        app.tabBars.buttons["History"].tap()
+        tapMainTab("History")
         XCTAssertTrue(app.staticTexts["Weekly Report"].waitForExistence(timeout: 8))
         let row = app.buttons["Weekly Report"].exists ? app.buttons["Weekly Report"] : app.staticTexts["Weekly Report"]
         row.tap()
@@ -593,7 +612,7 @@ final class SurfacesUITests: XCTestCase {
 
     func testCoachingSurface() throws {
         // Settings → Coaching: ranked insight cards under -ui-fixture (not empty state).
-        app.tabBars.buttons["Settings"].tap()
+        tapMainTab("Settings")
         let coaching = app.staticTexts["Coaching"].exists ? app.staticTexts["Coaching"] : app.buttons["Coaching"]
         XCTAssertTrue(coaching.waitForExistence(timeout: 8), "Coaching row")
         coaching.tap()
@@ -613,7 +632,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSettingsSourcesConnectRows() throws {
-        app.tabBars.buttons["Settings"].tap()
+        tapMainTab("Settings")
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts["HealthKit"].exists)
         let connect = app.descendants(matching: .any)["settings.healthkit.connect"].firstMatch

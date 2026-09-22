@@ -304,7 +304,7 @@ struct SettingsView: View {
                             .font(.caption)
                             .foregroundStyle(RTColor.secondaryText)
                         if healthKit.dataSource.localizedCaseInsensitiveContains("whoop") {
-                            Text("Official WHOOP API is not connected. Enable WHOOP → Apple Health sharing.")
+                            Text("Using WHOOP through Apple Health.")
                                 .font(.caption2)
                                 .foregroundStyle(RTColor.tertiaryText)
                         }
@@ -330,7 +330,7 @@ struct SettingsView: View {
                         if let message = fitbit.errorMessage, !fitbit.isAuthenticated {
                             Text(message)
                                 .font(.caption2)
-                                .foregroundStyle(RTColor.warning)
+                                .foregroundStyle(RTColor.secondaryText)
                         }
                         HStack {
                             Button(fitbit.isAuthenticated ? "Refresh" : "Connect") {
@@ -435,12 +435,14 @@ struct StatusBadge: View {
     
     var body: some View {
         Text(isActive ? "Connected" : "Not Connected")
-            .font(.caption.weight(.medium))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(isActive ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
-            .foregroundColor(isActive ? .green : .secondary)
-            .cornerRadius(8)
+            .font(.caption2.weight(.semibold))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .foregroundStyle(isActive ? RTColor.optimal : RTColor.secondaryText)
+            .background(
+                Capsule()
+                    .fill(isActive ? RTColor.optimal.opacity(0.16) : Color.primary.opacity(0.06))
+            )
     }
 }
 

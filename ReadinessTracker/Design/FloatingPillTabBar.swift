@@ -44,6 +44,7 @@ struct FloatingPillTabBar: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(item.title)
+                .accessibilityIdentifier("tab.\(item.title.lowercased())")
                 .accessibilityAddTraits(selection == item.id ? .isSelected : [])
             }
         }
