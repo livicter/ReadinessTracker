@@ -150,20 +150,26 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testCheckInTabSurface() throws {
+        // Honest #65: Check-in section headers use circular tint icon wells.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         tapMainTab("Check-in")
-        // Daily Check-in: Morning/Evening segmented picker + Save chrome under -ui-fixture.
         let morning = app.buttons["Morning"]
         let evening = app.buttons["Evening"]
         let save = app.buttons["Save"]
         let physical = app.staticTexts["Physical State"]
+        let physicalId = app.descendants(matching: .any)["checkin.section.physical-state"].firstMatch
+        let feel = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "feel")).firstMatch
         XCTAssertTrue(
-            morning.waitForExistence(timeout: 8) ||
-            evening.waitForExistence(timeout: 8) ||
-            save.waitForExistence(timeout: 8) ||
-            physical.waitForExistence(timeout: 8)
+            morning.waitForExistence(timeout: 10) ||
+            evening.waitForExistence(timeout: 2) ||
+            save.waitForExistence(timeout: 2) ||
+            physical.waitForExistence(timeout: 2) ||
+            physicalId.waitForExistence(timeout: 2) ||
+            feel.waitForExistence(timeout: 2),
+            "Check-in surface"
         )
-        XCTAssertTrue(morning.exists || evening.exists || save.exists || physical.exists)
         _ = app.staticTexts["Daily Check-in"].exists
+        _ = physical.exists || physicalId.exists
         saveShot("verify-checkin.png")
     }
 

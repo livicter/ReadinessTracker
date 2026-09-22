@@ -106,7 +106,7 @@ struct CheckInView: View {
     
     private var morningSection: some View {
         Group {
-            Section("Physical State") {
+            Section {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("How do you feel? \(subjectiveFeel)/5")
                         .font(.subheadline)
@@ -130,9 +130,9 @@ struct CheckInView: View {
                         .foregroundColor(.secondary)
                     feelPicker(binding: $mentalFatigue, color: .purple)
                 }
-            }
+            } header: { checkInSectionHeader("Physical State", icon: "heart.fill", tint: RTColor.optimal) }
             
-            Section("Nap") {
+            Section {
                 Toggle("Did you nap?", isOn: $hadNap)
                 if hadNap {
                     VStack(alignment: .leading) {
@@ -147,26 +147,26 @@ struct CheckInView: View {
                         feelPicker(binding: $napQuality, color: .blue)
                     }
                 }
-            }
+            } header: { checkInSectionHeader("Nap", icon: "moon.zzz.fill", tint: Color(hex: "5AC8FA")) }
             
-            Section("Last Night") {
+            Section {
                 Toggle("Alcohol consumed?", isOn: $alcoholConsumed)
                 if alcoholConsumed {
                     Stepper("Drinks: \(alcoholDrinks)", value: $alcoholDrinks, in: 1...10)
                 }
                 Toggle("Caffeine after 2pm?", isOn: $caffeineAfter2pm)
-            }
+            } header: { checkInSectionHeader("Last Night", icon: "moon.stars.fill", tint: RTColor.sleep) }
             
-            Section("Wellness") {
+            Section {
                 Toggle("Feeling sick?", isOn: $isSick)
                 Toggle("Feeling stressed?", isOn: $isStressed)
-            }
+            } header: { checkInSectionHeader("Wellness", icon: "cross.case.fill", tint: RTColor.caution) }
         }
     }
     
     private var eveningSection: some View {
         Group {
-            Section("Today's Activity") {
+            Section {
                 Toggle("Workout today?", isOn: $workoutToday)
                 if workoutToday {
                     TextField("Type (e.g. Run, Lift, HIIT)", text: $workoutType)
@@ -200,9 +200,9 @@ struct CheckInView: View {
                         }
                     }
                 }
-            }
+            } header: { checkInSectionHeader("Today's Activity", icon: "figure.run", tint: RTColor.strain) }
             
-            Section("Tomorrow") {
+            Section {
                 Toggle("Planned workout?", isOn: $plannedWorkoutTomorrow)
                 if plannedWorkoutTomorrow {
                     TextField("Type", text: $plannedWorkoutType)
@@ -213,10 +213,29 @@ struct CheckInView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-            }
+            } header: { checkInSectionHeader("Tomorrow", icon: "calendar", tint: RTColor.good) }
         }
     }
     
+
+    private func checkInSectionHeader(_ title: String, icon: String, tint: Color) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 24, height: 24)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(RTColor.secondaryText)
+                .textCase(nil)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(title)
+        .accessibilityIdentifier("checkin.section.\(title.lowercased().replacingOccurrences(of: " ", with: "-"))")
+    }
+
     private func feelPicker(binding: Binding<Int>, color: Color = .green) -> some View {
         HStack {
             ForEach(1...5, id: \.self) { i in
