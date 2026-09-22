@@ -997,7 +997,7 @@ struct DashboardView: View {
         let kinds: [BodyMetricKind] = [.steps, .activity, .calories, .spo2, .water, .caffeine, .protein]
         return NativeCard {
             VStack(alignment: .leading, spacing: 14) {
-                SectionHeader(title: "Body & activity")
+                SectionHeader(title: "Body")
 
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     ForEach(kinds) { kind in
@@ -1008,12 +1008,15 @@ struct DashboardView: View {
                     if UserSettings.load().trackMenstrualCycle {
                         // Cycle remains informational (no dedicated metric kind / detail yet).
                         VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 6) {
+                            HStack(spacing: 8) {
                                 Image(systemName: "circle.lefthalf.filled")
-                                    .font(.system(size: 12, weight: .semibold))
+                                    .font(.system(size: 11, weight: .semibold))
                                     .foregroundStyle(RTColor.secondaryText)
+                                    .frame(width: 26, height: 26)
+                                    .background(RTColor.secondaryText.opacity(0.12))
+                                    .clipShape(Circle())
                                 Text("Cycle")
-                                    .font(.caption)
+                                    .font(.caption.weight(.semibold))
                                     .foregroundStyle(RTColor.secondaryText)
                             }
                             Text(data.menstrualFlow ? "Flow reported" : "No flow")
@@ -1032,7 +1035,7 @@ struct DashboardView: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Body and activity")
+        .accessibilityLabel("Body")
         .accessibilityIdentifier(SurfaceID.bodyActivitySection)
         .sheet(item: $selectedBodyMetric) { kind in
             BodyMetricDetailView(kind: kind, data: data, history: history)

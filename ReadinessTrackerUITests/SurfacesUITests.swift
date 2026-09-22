@@ -72,8 +72,9 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testBodyActivityVisibleAfterScroll() throws {
+        // Honest #63: Body section + circular tint wells on metric tiles.
         // Elevated Body tiles: progress-to-goal + sparkline chrome; Activity minutes label.
-        revealText("Body & activity")
+        revealText("Body")
         XCTAssertTrue(app.staticTexts["Steps"].exists)
         XCTAssertTrue(app.staticTexts["Activity"].exists)
         let stepsTile = app.descendants(matching: .any)["body.tile.steps"].firstMatch
@@ -84,7 +85,7 @@ final class SurfacesUITests: XCTestCase {
 
     func testBodyDetailSurface() throws {
         // Today Body Steps tile → Fitness / Google Health–style metric detail sheet.
-        revealText("Body & activity")
+        revealText("Body")
         let stepsTile = app.descendants(matching: .any)["body.tile.steps"].firstMatch
         XCTAssertTrue(stepsTile.waitForExistence(timeout: 8), "body.tile.steps")
         // Nested card tiles can report exists but not hittable after scroll; coordinate tap is reliable.

@@ -471,10 +471,13 @@ struct BodyMetricTile: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
+            HStack(spacing: 8) {
                 Image(systemName: kind.icon)
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(kind.color)
+                    .frame(width: 26, height: 26)
+                    .background(kind.color.opacity(0.14))
+                    .clipShape(Circle())
                 Text(kind.label)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
@@ -546,10 +549,13 @@ struct BodyMetricDetailView: View {
             ScrollView {
                 VStack(spacing: 28) {
                     VStack(spacing: 8) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 10) {
                             Image(systemName: kind.icon)
-                                .font(.title3.weight(.semibold))
+                                .font(.body.weight(.semibold))
                                 .foregroundStyle(kind.color)
+                                .frame(width: 36, height: 36)
+                                .background(kind.color.opacity(0.14))
+                                .clipShape(Circle())
                             Text(kind.label)
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(RTColor.primaryText)
