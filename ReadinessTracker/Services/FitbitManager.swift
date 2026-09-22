@@ -22,7 +22,7 @@ class FitbitManager: ObservableObject {
         self.clientId = id
         self.clientSecret = secret
         if !Self.areCredentialsConfigured(clientId: id, clientSecret: secret) {
-            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+            errorMessage = "Fitbit isn’t set up on this build yet."
         }
     }
 
@@ -51,7 +51,7 @@ class FitbitManager: ObservableObject {
     /// Builds the Fitbit OAuth URL, or nil when credentials are missing/placeholder.
     var authURL: URL? {
         guard hasValidCredentials else {
-            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+            errorMessage = "Fitbit isn’t set up on this build yet."
             return nil
         }
         var components = URLComponents(string: "https://www.fitbit.com/oauth2/authorize")!
@@ -91,7 +91,7 @@ class FitbitManager: ObservableObject {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
         guard hasValidCredentials else {
-            errorMessage = "Fitbit credentials missing. Copy Secrets.xcconfig.example to Secrets.xcconfig, set FITBIT_CLIENT_ID and FITBIT_CLIENT_SECRET, and rebuild. See FITBIT_SETUP.md."
+            errorMessage = "Fitbit isn’t set up on this build yet."
             return
         }
         let credentials = "\(clientId):\(clientSecret)".data(using: .utf8)!.base64EncodedString()
