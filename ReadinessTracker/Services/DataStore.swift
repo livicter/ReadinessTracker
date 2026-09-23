@@ -248,6 +248,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 4.0 + Double((offset * 3) % 9) // 4…12
             }()
+            // Apple Move Time minutes (Honest #164). Completes Activity ring trio.
+            let appleMoveTimeMinutesValue: Double? = {
+                if offset == 0 { return 48.0 }
+                if offset % 5 == 0 { return nil }
+                return 20.0 + Double((offset * 11) % 55) // 20…74
+            }()
             // Walking double support % (Honest #145). Simulator often empty — seed for UI.
             let walkingDoubleSupportPercentValue: Double? = {
                 if offset == 0 { return 27.5 }
@@ -417,6 +423,7 @@ enum UIFixture {
                 distanceWalkingRunningKm: distanceWalkingRunningKmValue,
                 appleExerciseTimeMinutes: appleExerciseTimeMinutesValue,
                 appleStandHours: appleStandHoursValue,
+                appleMoveTimeMinutes: appleMoveTimeMinutesValue,
                 walkingDoubleSupportPercent: walkingDoubleSupportPercentValue,
                 walkingAsymmetryPercent: walkingAsymmetryPercentValue,
                 walkingSpeedMps: walkingSpeedMpsValue,

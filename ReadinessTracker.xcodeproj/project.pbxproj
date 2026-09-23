@@ -109,6 +109,7 @@
 		H47J90L62H081920314G1 /* DistanceTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = G47J90L62H081920314G0 /* DistanceTonightBaselineCard.swift */; };
 		J58K01M73I192031425H3 /* AppleExerciseTimeTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425H2 /* AppleExerciseTimeTonightBaselineCard.swift */; };
 		J58K01M73I192031425H5 /* AppleStandHoursTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425H4 /* AppleStandHoursTonightBaselineCard.swift */; };
+		J58K01M73I192031425M5 /* AppleMoveTimeTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425M4 /* AppleMoveTimeTonightBaselineCard.swift */; };
 		J58K01M73I192031425H7 /* WalkingDoubleSupportTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425H6 /* WalkingDoubleSupportTonightBaselineCard.swift */; };
 		J58K01M73I192031425H9 /* WalkingAsymmetryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */; };
 		J58K01M73I192031425HB /* WalkingSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */; };
@@ -384,6 +385,7 @@
 		G47J90L62H081920314G0 /* DistanceTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DistanceTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DistanceTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425H2 /* AppleExerciseTimeTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppleExerciseTimeTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AppleExerciseTimeTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425H4 /* AppleStandHoursTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppleStandHoursTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AppleStandHoursTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425M4 /* AppleMoveTimeTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppleMoveTimeTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AppleMoveTimeTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425H6 /* WalkingDoubleSupportTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingDoubleSupportTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingDoubleSupportTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingAsymmetryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingAsymmetryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -703,6 +705,7 @@
 				G47J90L62H081920314G0 /* DistanceTonightBaselineCard.swift */,
 				I58K01M73I192031425H2 /* AppleExerciseTimeTonightBaselineCard.swift */,
 				I58K01M73I192031425H4 /* AppleStandHoursTonightBaselineCard.swift */,
+				I58K01M73I192031425M4 /* AppleMoveTimeTonightBaselineCard.swift */,
 				I58K01M73I192031425H6 /* WalkingDoubleSupportTonightBaselineCard.swift */,
 				I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */,
 				I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */,
@@ -1243,6 +1246,7 @@
 				H47J90L62H081920314G1 /* DistanceTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425H3 /* AppleExerciseTimeTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425H5 /* AppleStandHoursTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425M5 /* AppleMoveTimeTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425H7 /* WalkingDoubleSupportTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425H9 /* WalkingAsymmetryTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HB /* WalkingSpeedTonightBaselineCard.swift in Sources */,
