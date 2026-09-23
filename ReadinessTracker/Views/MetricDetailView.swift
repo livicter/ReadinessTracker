@@ -49,6 +49,14 @@ struct MetricDetailView: View {
         TrendAnalysisEngine.standardDeviation(values: values.map(\.value))
     }
 
+    /// Honest #253: mirror Advanced — elevate unused classifyTrend on classic.
+    var trendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = analyzedData.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: metric)
+    }
+
     var trend: TrendDirection {
         guard values.count >= 2 else { return .flat }
         let recent = values.suffix(3).map { $0.value }.reduce(0, +) / Double(min(3, values.count))
@@ -194,6 +202,11 @@ struct MetricDetailView: View {
                             .font(RTFont.captionSmall)
                             .foregroundColor(trendColor)
                     }
+                }
+
+                // Honest #253: elevate classifyTrend on classic (parity with Advanced).
+                if let strength = trendClassification {
+                    classicClassifyTrendCallout(strength)
                 }
 
                 // Zone indicator
@@ -1075,6 +1088,42 @@ struct MetricDetailView: View {
         case .hrv, .restingHR, .activeCalories, .bloodOxygen:
             return "\(Int(value))"
         }
+    }
+
+    private func classicClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = analyzedData.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.metricClassicTrendStrength)
+        .accessibilityLabel("Trend strength \(strength.rawValue)")
     }
 
     private var trendLabel: String {
