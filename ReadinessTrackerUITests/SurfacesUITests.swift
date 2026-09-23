@@ -1306,6 +1306,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-headphone-audio-tonight-baseline.png")
     }
 
+    func testEnvSoundReductionTonightBaselineSurface() throws {
+        // Honest #138: Environmental sound reduction Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Sound Reduction"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Sound Reduction")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.soundred.card"].exists
+        _ = app.descendants(matching: .any)["vitals.soundred.baseline"].exists
+        _ = app.staticTexts["7-Day Sound Reduction"].exists
+        _ = app.descendants(matching: .any)["vitals.soundred.spark"].exists
+        saveShot("verify-env-sound-reduction-tonight-baseline.png")
+    }
+
+
 
 
     func testWatchStrainTonightBaselineSurface() throws {
