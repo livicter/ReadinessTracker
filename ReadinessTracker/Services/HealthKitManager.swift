@@ -41,6 +41,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .walkingStepLength)!,
             HKObjectType.quantityType(forIdentifier: .stairAscentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .stairDescentSpeed)!,
+            HKObjectType.quantityType(forIdentifier: .sixMinuteWalkTestDistance)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -114,6 +115,7 @@ class HealthKitManager: ObservableObject {
         async let stepLength = fetchWalkingStepLength(predicate: predicate)
         async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
         async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
+        async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -173,6 +175,7 @@ class HealthKitManager: ObservableObject {
             walkingStepLengthMeters: await stepLength,
             stairAscentSpeedMps: await stairAscent,
             stairDescentSpeedMps: await stairDescent,
+            sixMinuteWalkDistanceMeters: await sixMWT,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -233,6 +236,7 @@ class HealthKitManager: ObservableObject {
             async let stepLength = fetchWalkingStepLength(predicate: predicate)
             async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
             async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
+            async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -263,6 +267,7 @@ class HealthKitManager: ObservableObject {
             let stepLengthValue = await stepLength
             let stairAscentValue = await stairAscent
             let stairDescentValue = await stairDescent
+            let sixMWTValue = await sixMWT
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -319,6 +324,7 @@ class HealthKitManager: ObservableObject {
                 walkingStepLengthMeters: stepLengthValue,
                 stairAscentSpeedMps: stairAscentValue,
                 stairDescentSpeedMps: stairDescentValue,
+                sixMinuteWalkDistanceMeters: sixMWTValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -642,6 +648,23 @@ class HealthKitManager: ObservableObject {
     private func fetchStairDescentSpeed(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .stairDescentSpeed) else { return nil }
         let unit = HKUnit.meter().unitDivided(by: .second())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Most recent / day average six-minute walk test distance (meters). Sparse clinical mobility — fixture seeds UI.
+    private func fetchSixMinuteWalkDistance(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .sixMinuteWalkTestDistance) else { return nil }
+        let unit = HKUnit.meter()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
                 quantityType: type,

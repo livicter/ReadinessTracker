@@ -1537,6 +1537,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.stairDescentSpeedCard)
 
+                SixMinuteWalkTonightBaselineCard(
+                    meters: data.sixMinuteWalkDistanceMeters,
+                    history: history.compactMap { day in
+                        guard let m = day.sixMinuteWalkDistanceMeters else { return nil }
+                        return (day.date, m)
+                    },
+                    baseline: SixMinuteWalkBaseline.average(
+                        from: history,
+                        fallback: data.sixMinuteWalkDistanceMeters ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
