@@ -1789,6 +1789,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-physical-effort-tonight-baseline.png")
     }
 
+    func testRunningPowerTonightBaselineSurface() throws {
+        // Honest #159: Running Power Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Running Power"]
+        while !title.exists && n < 52 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Running Power")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.runningPower.card"].exists
+        _ = app.descendants(matching: .any)["body.runningPower.baseline"].exists
+        _ = app.staticTexts["7-Day Running Power"].exists
+        _ = app.descendants(matching: .any)["body.runningPower.spark"].exists
+        saveShot("verify-running-power-tonight-baseline.png")
+    }
+
 
 
 
