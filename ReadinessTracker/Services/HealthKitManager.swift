@@ -39,6 +39,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .pushCount)!,
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
+            HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
             HKObjectType.quantityType(forIdentifier: .walkingAsymmetryPercentage)!,
@@ -162,6 +163,7 @@ class HealthKitManager: ObservableObject {
         async let pushes = fetchPushCount(predicate: predicate)
         async let inhaler = fetchInhalerUsage(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
+        async let glucose = fetchBloodGlucose(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -244,6 +246,7 @@ class HealthKitManager: ObservableObject {
             pushCount: await pushes,
             inhalerUsage: await inhaler,
             insulinDeliveryIU: await insulin,
+            bloodGlucoseMgDl: await glucose,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -327,6 +330,7 @@ class HealthKitManager: ObservableObject {
             async let pushes = fetchPushCount(predicate: predicate)
             async let inhaler = fetchInhalerUsage(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
+            async let glucose = fetchBloodGlucose(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -380,6 +384,7 @@ class HealthKitManager: ObservableObject {
             let pushesValue = await pushes
             let inhalerValue = await inhaler
             let insulinValue = await insulin
+            let glucoseValue = await glucose
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -459,6 +464,7 @@ class HealthKitManager: ObservableObject {
                 pushCount: pushesValue,
                 inhalerUsage: inhalerValue,
                 insulinDeliveryIU: insulinValue,
+                bloodGlucoseMgDl: glucoseValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -676,6 +682,24 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .insulinDelivery) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .internationalUnit())
     }
+
+
+    /// Day average blood glucose (mg/dL). Sparse vitals — fixture seeds UI.
+    private func fetchBloodGlucose(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .bloodGlucose) else { return nil }
+        let unit = HKUnit.gramUnit(with: .milli).unitDivided(by: .literUnit(with: .deci))
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
 
 
 

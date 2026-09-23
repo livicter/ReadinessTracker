@@ -236,6 +236,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 15 + Double((offset * 7) % 46) // 15…60
             }()
+            // Blood glucose mg/dL (Honest #180). Sparse vitals — seed for UI.
+            let bloodGlucoseMgDlValue: Double? = {
+                if offset == 0 { return 98 }
+                if offset % 5 == 0 { return nil }
+                return 85 + Double((offset * 9) % 56) // 85…140
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -475,6 +481,7 @@ enum UIFixture {
                 pushCount: pushCountValue,
                 inhalerUsage: inhalerUsageValue,
                 insulinDeliveryIU: insulinDeliveryIUValue,
+                bloodGlucoseMgDl: bloodGlucoseMgDlValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
