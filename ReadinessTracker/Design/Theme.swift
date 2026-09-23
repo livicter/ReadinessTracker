@@ -626,6 +626,9 @@ enum SurfaceID {
     /// Honest #260: Trends momentum strip (classic #248 / Advanced #241 parity).
     static let trendsMomentum = "trends.momentum"
     static let trendsMomentumToggle = "trends.momentum.toggle"
+    /// Honest #261: Trends Day Δ / rateOfChange strip (classic #248 triad complete).
+    static let trendsDayDelta = "trends.dayDelta"
+    static let trendsDayDeltaToggle = "trends.dayDelta.toggle"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"
