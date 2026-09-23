@@ -1674,6 +1674,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-swim-strokes-tonight-baseline.png")
     }
 
+    func testCyclingCadenceTonightBaselineSurface() throws {
+        // Honest #154: Cycling Cadence Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Cycling Cadence"]
+        while !title.exists && n < 42 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Cycling Cadence")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.cyclingCadence.card"].exists
+        _ = app.descendants(matching: .any)["body.cyclingCadence.baseline"].exists
+        _ = app.staticTexts["7-Day Cycling Cadence"].exists
+        _ = app.descendants(matching: .any)["body.cyclingCadence.spark"].exists
+        saveShot("verify-cycling-cadence-tonight-baseline.png")
+    }
+
 
 
 
