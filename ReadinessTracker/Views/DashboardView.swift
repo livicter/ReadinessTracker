@@ -1289,6 +1289,16 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.stepsCard)
 
+                ActiveCaloriesTonightBaselineCard(
+                    currentCalories: data.activeCalories,
+                    history: history.map { ($0.date, $0.activeCalories) },
+                    baseline: ActiveCaloriesBaseline.average(
+                        from: history,
+                        fallback: data.activeCalories
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.activeCaloriesCard)
+
                 HydrationTonightBaselineCard(
                     waterLiters: data.nutrition.waterLiters,
                     caffeineMg: data.nutrition.caffeineMg,
