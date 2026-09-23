@@ -96,6 +96,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryZinc)!,
             HKObjectType.quantityType(forIdentifier: .dietaryFolate)!,
             HKObjectType.quantityType(forIdentifier: .dietaryVitaminA)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryVitaminE)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1774,6 +1775,12 @@ class HealthKitManager: ObservableObject {
             unit: .gramUnit(with: .micro)
         ).map { $0 }
 
+        let vitaminE = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryVitaminE)!,
+            predicate: predicate,
+            unit: .gramUnit(with: .milli)
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1802,6 +1809,7 @@ class HealthKitManager: ObservableObject {
             zincMg: zinc,
             folateMcg: folate,
             vitaminAMcg: vitaminA,
+            vitaminEMg: vitaminE,
             alcoholicBeverages: alcohol
         )
     }
