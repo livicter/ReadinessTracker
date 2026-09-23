@@ -810,6 +810,22 @@ final class SurfacesUITests: XCTestCase {
 
 
 
+
+    func testStrainBalanceColumnWellSurface() throws {
+        // Honest #97: Recovery|Strain balance dual columns circular wells.
+        _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Recovery"].exists && n < 10 {
+            app.swipeUp()
+            n += 1
+        }
+        // Soft: Balance card Recovery / Strain labels
+        _ = app.staticTexts["Recovery"].exists
+        _ = app.staticTexts["Strain"].exists || app.staticTexts["/21"].exists
+        saveShot("verify-strain-balance-columns.png")
+    }
+
     func testSleepDebtColumnWellSurface() throws {
         // Honest #96: Sleep Debt Banked|Debt / Last night dual columns circular wells.
         _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
