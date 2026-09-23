@@ -65,6 +65,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryWater)!,
             HKObjectType.quantityType(forIdentifier: .dietaryCaffeine)!,
             HKObjectType.quantityType(forIdentifier: .dietaryProtein)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryEnergyConsumed)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
         
@@ -1404,8 +1405,14 @@ class HealthKitManager: ObservableObject {
             predicate: predicate,
             unit: .gram()
         ).map { $0 }
+
+        let energy = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryEnergyConsumed)!,
+            predicate: predicate,
+            unit: .kilocalorie()
+        ).map { $0 }
         
-        return NutritionSummary(waterLiters: water, caffeineMg: caffeine, proteinGrams: protein)
+        return NutritionSummary(waterLiters: water, caffeineMg: caffeine, proteinGrams: protein, energyKcal: energy)
     }
     
     private func fetchMenstrualFlow(predicate: NSPredicate) async -> Bool {
