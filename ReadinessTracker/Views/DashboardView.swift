@@ -704,6 +704,22 @@ struct DashboardView: View {
 
 
 
+
+            TimeInBedCard(
+                sleepHours: data.sleepHours,
+                sleepEfficiency: data.sleepEfficiency,
+                history: history.map { ($0.date, $0.sleepHours, $0.sleepEfficiency) },
+                baselineInBed: TimeInBed.baselineInBed(
+                    from: history,
+                    fallback: TimeInBed.hours(asleep: data.sleepHours, efficiency: data.sleepEfficiency)
+                ),
+                baselineAsleep: TimeInBed.baselineAsleep(
+                    from: history,
+                    fallback: data.sleepHours
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.timeInBedCard)
+
             WakeEpisodesCard(
 
 

@@ -1237,6 +1237,31 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-midpoint.png")
     }
 
+    func testTimeInBedSurface() throws {
+        // Honest #115: WHOOP Time in Bed vs Asleep Tonight | Baseline on Today sleep stack.
+        var n = 0
+        let title = app.staticTexts["Time in Bed"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Time in Bed")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        XCTAssertTrue(app.staticTexts["In Bed"].exists)
+        XCTAssertTrue(app.staticTexts["Asleep"].exists)
+        _ = app.descendants(matching: .any)["sleep.inbed.card"].exists
+        _ = app.descendants(matching: .any)["sleep.inbed.baseline"].exists
+        _ = app.staticTexts["7-Night In Bed"].exists
+        _ = app.descendants(matching: .any)["sleep.inbed.spark"].exists
+        saveShot("verify-time-in-bed.png")
+    }
+
 
 
 
