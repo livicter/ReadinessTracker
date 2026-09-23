@@ -17,6 +17,7 @@
 | Metric About wells | `metric-about-wells.md` | Metric Detail About circular wells |
 | Metric Detail hero well | `metric-detail-hero-well.md` | Hero circular well |
 | Ring Detail hero well | `ring-detail-hero-well.md` | Gym/Work/Sleep Ring Detail hero well |
+| ScorePill wells | `score-pill-wells.md` | Readiness Detail General/Work/Gym wells |
 | Readiness Detail wells | `readiness-detail-wells.md` | Rec + component circular wells |
 | Journal Behavior Impact wells | `journal-behavior-wells.md` | Impact row circular wells |
 | Weekly Report trend well | `weekly-report-trend-well.md` | Readiness trend circular well |
