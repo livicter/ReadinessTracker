@@ -1430,6 +1430,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-caffeine-tonight-baseline.png")
     }
 
+    func testProteinTonightBaselineSurface() throws {
+        // Honest #126: Protein Tonight | Baseline dual on Today Body (beyond NutritionSummary glance).
+        var n = 0
+        while !app.descendants(matching: .any)["body.protein.card"].exists && n < 18 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.protein.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Protein card")
+        XCTAssertTrue(app.staticTexts["Protein"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.protein.baseline"].exists
+        _ = app.staticTexts["7-Day Protein"].exists
+        _ = app.descendants(matching: .any)["body.protein.spark"].exists
+        saveShot("verify-protein-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0
