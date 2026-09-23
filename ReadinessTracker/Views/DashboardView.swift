@@ -974,6 +974,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.environmentalAudioCard)
 
+            HeadphoneAudioTonightBaselineCard(
+                exposureDBA: data.headphoneAudioExposureDBA,
+                history: history.compactMap { day in
+                    guard let dba = day.headphoneAudioExposureDBA else { return nil }
+                    return (day.date, dba)
+                },
+                baseline: HeadphoneAudioBaseline.average(
+                    from: history,
+                    fallback: data.headphoneAudioExposureDBA ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.headphoneAudioCard)
+
+
 
 
 

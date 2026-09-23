@@ -1283,6 +1283,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-environmental-audio-tonight-baseline.png")
     }
 
+    func testHeadphoneAudioTonightBaselineSurface() throws {
+        // Honest #137: Headphone audio exposure Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Headphone Audio"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Headphone Audio")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.headaudio.card"].exists
+        _ = app.descendants(matching: .any)["vitals.headaudio.baseline"].exists
+        _ = app.staticTexts["7-Day Headphone Audio"].exists
+        _ = app.descendants(matching: .any)["vitals.headaudio.spark"].exists
+        saveShot("verify-headphone-audio-tonight-baseline.png")
+    }
+
+
 
     func testWatchStrainTonightBaselineSurface() throws {
         // Honest #135: Watch Strain Tonight | Baseline (snapshot field unused by complications).
