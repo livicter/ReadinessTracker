@@ -141,6 +141,11 @@ struct TrendDetailView: View {
         let minV = values.min() ?? 0
         let maxV = values.max() ?? 0
         let change = periodChangePercent(values)
+        // Honest #256: elevate unused coefficientOfVariation (classic/Advanced stats parity).
+        let cv = values.count >= 2
+            ? TrendAnalysisEngine.coefficientOfVariation(values: values)
+            : 0
+        let cvLabel = values.count >= 2 ? "\(Int(cv * 100))%" : "—"
         return NativeCard {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
@@ -169,6 +174,16 @@ struct TrendDetailView: View {
                         value: change.map { String(format: "%+.0f%%", $0) } ?? "—",
                         accent: changeAccent(change)
                     )
+                }
+
+                // Honest #256: Volatility CV% (coefficientOfVariation) — Metric Detail #254 parity.
+                HStack(spacing: 0) {
+                    summaryStatCell(label: "Volatility", value: cvLabel)
+                        .accessibilityIdentifier(SurfaceID.trendsStatsCV)
+                        .accessibilityLabel("Volatility coefficient of variation")
+                    Spacer(minLength: 0)
+                    Spacer(minLength: 0)
+                    Spacer(minLength: 0)
                 }
             }
         }
