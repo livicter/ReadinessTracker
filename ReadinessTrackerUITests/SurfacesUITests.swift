@@ -486,6 +486,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testStrainRecoveryBalanceSurface() throws {
+        // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.
         // Scroll via Sleep Consistency (stable neighbor above Balance) to avoid ambiguous "Balance" hits.
         revealText("Sleep Consistency")
