@@ -390,6 +390,12 @@ struct SettingsView: View {
                         settingsLinkLabel(title: "Coaching", icon: "lightbulb.fill", tint: RTColor.caution)
                     }
                     NavigationLink {
+                        BreathingView()
+                    } label: {
+                        settingsLinkLabel(title: "Breathing", icon: "wind", tint: RTColor.hrv)
+                            .accessibilityIdentifier("settings.link.breathing")
+                    }
+                    NavigationLink {
                         NotificationSettingsView()
                     } label: {
                         settingsLinkLabel(title: "Notifications", icon: "bell.fill", tint: Color(hex: "34C759"))

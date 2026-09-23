@@ -52,6 +52,8 @@ struct BreathingView: View {
                         .multilineTextAlignment(.center)
                 }
                 .padding(.top, 20)
+                .accessibilityElement(children: .combine)
+                .accessibilityIdentifier(SurfaceID.breathingSession)
                 
                 // Breathing circle
                 ZStack {
@@ -90,6 +92,8 @@ struct BreathingView: View {
                                 .foregroundColor(breathPhase.color)
                         }
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier(SurfaceID.breathingPhase)
                 }
                 
                 // Stats
@@ -110,10 +114,14 @@ struct BreathingView: View {
                     color: isBreathing ? RTColor.warning : RTColor.optimal,
                     action: toggleBreathing
                 )
+                .accessibilityIdentifier(SurfaceID.breathingStart)
                 .padding(.horizontal, 24)
                 .padding(.bottom, 30)
             }
         }
+        .navigationTitle("Breathing")
+        .navigationBarTitleDisplayMode(.inline)
+        .accessibilityIdentifier(SurfaceID.breathingSession)
         .onAppear {
             // Simulate HRV reading after session
             if showHRV {

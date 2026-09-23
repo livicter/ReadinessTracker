@@ -990,6 +990,36 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-coaching.png")
     }
 
+    func testBreathingSessionSurface() throws {
+        // Honest #102: Settings → Breathing (wired session; coaching also deep-links when action mentions breath).
+        tapMainTab("Settings")
+        // Prefer a11y id — label queries match both the StaticText and the combined NavigationLink.
+        let row = app.descendants(matching: .any)["settings.link.breathing"].firstMatch
+        if !row.waitForExistence(timeout: 4) {
+            app.swipeUp()
+        }
+        XCTAssertTrue(row.waitForExistence(timeout: 8), "Breathing row")
+        if row.isHittable {
+            row.tap()
+        } else {
+            row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+        let session = app.descendants(matching: .any)["breathing.session"].firstMatch
+        XCTAssertTrue(
+            session.waitForExistence(timeout: 8) ||
+            app.navigationBars["Breathing"].waitForExistence(timeout: 8) ||
+            app.staticTexts["HRV Coherence"].waitForExistence(timeout: 8),
+            "breathing.session"
+        )
+        let startBtn = app.descendants(matching: .any)["breathing.start"].firstMatch
+        XCTAssertTrue(
+            startBtn.waitForExistence(timeout: 6) ||
+            app.buttons["Start"].firstMatch.waitForExistence(timeout: 6),
+            "breathing.start"
+        )
+        saveShot("verify-breathing.png")
+    }
+
     func testSettingsSourcesConnectRows() throws {
         tapMainTab("Settings")
         XCTAssertTrue(app.staticTexts["Apple Health"].waitForExistence(timeout: 8))

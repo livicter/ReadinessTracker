@@ -129,22 +129,57 @@ private struct CoachingCard: View {
                     .foregroundStyle(RTColor.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
 
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(RTColor.optimal)
+                Group {
+                    if insight.action.localizedCaseInsensitiveContains("breath") {
+                        NavigationLink {
+                            BreathingView()
+                        } label: {
+                            HStack(alignment: .top, spacing: 8) {
+                                Image(systemName: "wind")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(RTColor.hrv)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(insight.action)
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(RTColor.primaryText)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    Text("Open Breathing")
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(RTColor.hrv)
+                                }
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                            .padding(10)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                                    .fill(RTColor.surfaceHighlight)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("coaching.action.breathing")
+                    } else {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(RTColor.optimal)
 
-                    Text(insight.action)
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(RTColor.primaryText)
-                        .fixedSize(horizontal: false, vertical: true)
+                            Text(insight.action)
+                                .font(.caption.weight(.medium))
+                                .foregroundStyle(RTColor.primaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                                .fill(RTColor.surfaceHighlight)
+                        )
+                    }
                 }
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
-                        .fill(RTColor.surfaceHighlight)
-                )
             }
         }
         .accessibilityElement(children: .combine)
