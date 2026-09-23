@@ -254,6 +254,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 55.5 + Double((offset * 5) % 26) / 10.0 // 55.5…58.0
             }()
+            // Waist circumference cm (Honest #183). Sparse composition — seed for UI.
+            let waistCircumferenceCmValue: Double? = {
+                if offset == 0 { return 81.2 }
+                if offset % 5 == 0 { return nil }
+                return 79.0 + Double((offset * 3) % 51) / 10.0 // 79.0…84.0
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -496,6 +502,7 @@ enum UIFixture {
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,
                 bodyMassKg: bodyMassKgValue,
                 leanBodyMassKg: leanBodyMassKgValue,
+                waistCircumferenceCm: waistCircumferenceCmValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

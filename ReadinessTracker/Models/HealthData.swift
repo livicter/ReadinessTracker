@@ -49,6 +49,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let bloodGlucoseMgDl: Double?  // blood glucose mg/dL — Honest #180
     let bodyMassKg: Double?  // body mass kg — Honest #181
     let leanBodyMassKg: Double?  // lean body mass kg — Honest #182
+    let waistCircumferenceCm: Double?  // waist cm — Honest #183
     let environmentalAudioExposureDBA: Double?  // dB A-weighted — Honest #136
     let headphoneAudioExposureDBA: Double?  // dB A-weighted — Honest #137
     let environmentalSoundReductionDBA: Double?  // dB A-weighted — Honest #138
@@ -131,6 +132,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          bloodGlucoseMgDl: Double? = nil,
          bodyMassKg: Double? = nil,
          leanBodyMassKg: Double? = nil,
+         waistCircumferenceCm: Double? = nil,
          environmentalAudioExposureDBA: Double? = nil,
          headphoneAudioExposureDBA: Double? = nil,
          environmentalSoundReductionDBA: Double? = nil,
@@ -202,6 +204,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.bloodGlucoseMgDl = bloodGlucoseMgDl
         self.bodyMassKg = bodyMassKg
         self.leanBodyMassKg = leanBodyMassKg
+        self.waistCircumferenceCm = waistCircumferenceCm
         self.environmentalAudioExposureDBA = environmentalAudioExposureDBA
         self.headphoneAudioExposureDBA = headphoneAudioExposureDBA
         self.environmentalSoundReductionDBA = environmentalSoundReductionDBA
@@ -280,6 +283,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.bloodGlucoseMgDl = nil
         self.bodyMassKg = nil
         self.leanBodyMassKg = nil
+        self.waistCircumferenceCm = nil
         self.environmentalAudioExposureDBA = nil
         self.headphoneAudioExposureDBA = nil
         self.environmentalSoundReductionDBA = nil
@@ -325,7 +329,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, inhalerUsage, insulinDeliveryIU, bloodGlucoseMgDl, bodyMassKg, leanBodyMassKg, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, inhalerUsage, insulinDeliveryIU, bloodGlucoseMgDl, bodyMassKg, leanBodyMassKg, waistCircumferenceCm, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -369,6 +373,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.bloodGlucoseMgDl = try container.decodeIfPresent(Double.self, forKey: .bloodGlucoseMgDl)
         self.bodyMassKg = try container.decodeIfPresent(Double.self, forKey: .bodyMassKg)
         self.leanBodyMassKg = try container.decodeIfPresent(Double.self, forKey: .leanBodyMassKg)
+        self.waistCircumferenceCm = try container.decodeIfPresent(Double.self, forKey: .waistCircumferenceCm)
         self.environmentalAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalAudioExposureDBA)
         self.headphoneAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .headphoneAudioExposureDBA)
         self.environmentalSoundReductionDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalSoundReductionDBA)
