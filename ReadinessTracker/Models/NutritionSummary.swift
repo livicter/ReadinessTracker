@@ -56,13 +56,15 @@ struct NutritionSummary: Codable, Hashable {
     let pantothenicAcidMg: Double?
     /// Dietary biotin (mcg) from HealthKit `dietaryBiotin` — Honest #210.
     let biotinMcg: Double?
+    /// Dietary copper (mg) from HealthKit `dietaryCopper` — Honest #211.
+    let copperMg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -95,6 +97,7 @@ struct NutritionSummary: Codable, Hashable {
         niacinMg: Double? = nil,
         pantothenicAcidMg: Double? = nil,
         biotinMcg: Double? = nil,
+        copperMg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -126,6 +129,7 @@ struct NutritionSummary: Codable, Hashable {
         self.niacinMg = niacinMg
         self.pantothenicAcidMg = pantothenicAcidMg
         self.biotinMcg = biotinMcg
+        self.copperMg = copperMg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
