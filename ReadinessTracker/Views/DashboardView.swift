@@ -1563,6 +1563,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.swimDistanceCard)
 
+                SwimStrokesTonightBaselineCard(
+                    strokes: data.swimmingStrokeCount,
+                    history: history.compactMap { day in
+                        guard let s = day.swimmingStrokeCount else { return nil }
+                        return (day.date, s)
+                    },
+                    baseline: SwimStrokesBaseline.average(
+                        from: history,
+                        fallback: data.swimmingStrokeCount ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.swimStrokesCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
