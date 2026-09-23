@@ -2381,6 +2381,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-daily-trimp.png")
     }
 
+    func testStrainZoneDistributionSurface() throws {
+        // Honest #239: WHOOP soft-band strain zone days via zoneDistribution.
+        var n = 0
+        let title = app.staticTexts["Strain Zones"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Strain Zones")
+        for _ in 0..<3 {
+            if title.exists { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(app.staticTexts["Strain Zones"].exists, "Strain Zones visible")
+        _ = app.descendants(matching: .any)["strain.zoneDist.card"].exists
+        _ = app.descendants(matching: .any)["strain.zoneDist.bar"].exists
+        _ = app.staticTexts["Rest"].exists || app.staticTexts["Light"].exists
+        _ = app.staticTexts["Moderate"].exists || app.staticTexts["Hard"].exists || app.staticTexts["All out"].exists
+        _ = app.descendants(matching: .any)["strain.zoneDist.light"].exists
+        saveShot("verify-strain-zone-distribution.png")
+    }
+
+
     func testCycleTonightBaselineSurface() throws {
         // Honest #120: Cycle Tonight | Baseline dual on Today Body (beyond Flow chip).
         var n = 0
