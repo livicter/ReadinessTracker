@@ -1280,6 +1280,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.hydrationCard)
 
+                CaffeineTonightBaselineCard(
+                    caffeineMg: data.nutrition.caffeineMg,
+                    history: history.compactMap { day in
+                        guard let c = day.nutrition.caffeineMg else { return nil }
+                        return (day.date, c)
+                    },
+                    baselineMg: CaffeineBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.caffeineMg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.caffeineCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,
