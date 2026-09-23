@@ -101,6 +101,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryVitaminB6)!,
             HKObjectType.quantityType(forIdentifier: .dietaryThiamin)!,
             HKObjectType.quantityType(forIdentifier: .dietaryRiboflavin)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryNiacin)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1809,6 +1810,12 @@ class HealthKitManager: ObservableObject {
             unit: .gramUnit(with: .milli)
         ).map { $0 }
 
+        let niacin = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryNiacin)!,
+            predicate: predicate,
+            unit: .gramUnit(with: .milli)
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1842,6 +1849,7 @@ class HealthKitManager: ObservableObject {
             vitaminB6Mg: vitaminB6,
             thiaminMg: thiamin,
             riboflavinMg: riboflavin,
+            niacinMg: niacin,
             alcoholicBeverages: alcohol
         )
     }
