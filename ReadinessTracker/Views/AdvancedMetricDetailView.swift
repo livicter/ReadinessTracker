@@ -13,6 +13,7 @@ struct AdvancedMetricDetailView: View {
     @State private var showMovingAverage = true
     @State private var showOutliers = true
     @State private var showVolatility = true  // Honest #240: rolling CV overlay
+    @State private var showMomentum = true  // Honest #241: windowed momentum
     @Environment(\.dismiss) private var dismiss
     
     var filteredHistory: [(date: Date, value: Double)] {
@@ -90,7 +91,8 @@ struct AdvancedMetricDetailView: View {
                             showBaselineBands: showBaselineBands,
                             showMovingAverage: showMovingAverage,
                             showOutliers: showOutliers,
-                            showVolatility: showVolatility
+                            showVolatility: showVolatility,
+                            showMomentum: showMomentum
                         )
                     }
                 } else {
@@ -248,8 +250,12 @@ struct AdvancedMetricDetailView: View {
                 ToggleChip(label: "Moving Avg", isOn: $showMovingAverage)
                 ToggleChip(label: "Outliers", isOn: $showOutliers)
             }
-            ToggleChip(label: "Volatility", isOn: $showVolatility)
-                .accessibilityIdentifier(SurfaceID.metricChartVolatilityToggle)
+            HStack(spacing: 12) {
+                ToggleChip(label: "Volatility", isOn: $showVolatility)
+                    .accessibilityIdentifier(SurfaceID.metricChartVolatilityToggle)
+                ToggleChip(label: "Momentum", isOn: $showMomentum)
+                    .accessibilityIdentifier(SurfaceID.metricChartMomentumToggle)
+            }
         }
     }
     

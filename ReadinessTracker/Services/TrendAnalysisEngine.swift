@@ -302,6 +302,7 @@ struct AnalyzedDataPoint: Identifiable {
     let trendSlope: Double?
     let trendRSquared: Double?
     let volatility: Double?
+    let momentum: Double?  // Honest #241: windowed % change
     let isOutlier: Bool
 }
 
@@ -322,6 +323,7 @@ extension TrendAnalysisEngine {
         let ema7 = exponentialMovingAverage(values: values, window: 7)
         let roc = rateOfChange(values: values)
         let vol = rollingVolatility(values: values, window: 7)
+        let mom = momentum(values: values, window: 7)
         
         // Overall baseline (30-day or all available)
         let baseline = mean(values: values)
@@ -351,6 +353,7 @@ extension TrendAnalysisEngine {
                 trendSlope: i == history.count - 1 ? slope : nil,  // Only on last point
                 trendRSquared: i == history.count - 1 ? rSquared : nil,
                 volatility: i >= 6 && (i - 6) < vol.count ? vol[i - 6] : nil,
+                momentum: i >= 7 && (i - 7) < mom.count ? mom[i - 7] : nil,
                 isOutlier: abs(z) > 2
             )
         }
