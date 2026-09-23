@@ -113,6 +113,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryMolybdenum)!,
             HKObjectType.quantityType(forIdentifier: .dietaryChloride)!,
             HKObjectType.quantityType(forIdentifier: .dietaryFatMonounsaturated)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryFatPolyunsaturated)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1893,6 +1894,12 @@ class HealthKitManager: ObservableObject {
             unit: .gram()
         ).map { $0 }
 
+        let pufa = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryFatPolyunsaturated)!,
+            predicate: predicate,
+            unit: .gram()
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1938,6 +1945,7 @@ class HealthKitManager: ObservableObject {
             molybdenumMcg: molybdenum,
             chlorideMg: chloride,
             monounsaturatedFatGrams: mufa,
+            polyunsaturatedFatGrams: pufa,
             alcoholicBeverages: alcohol
         )
     }
