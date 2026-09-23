@@ -116,6 +116,18 @@ struct TrendDetailView: View {
                     .accessibilityIdentifier(SurfaceID.trendsHistogram)
                     .slideIn(delay: 0.13)
                 }
+
+                // Honest #263: SmartInsightsView (classic Metric Detail parity, ≥3 days).
+                if depthTimelinePoints.count >= 3 {
+                    SmartInsightsView(
+                        metric: scrubAnalysisMetric,
+                        history: depthTimelinePoints,
+                        currentValue: depthTimelinePoints.last?.value ?? 0
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsSmartInsights)
+                    .slideIn(delay: 0.14)
+                }
                 
                 // Individual metric cards
                 metricCards
