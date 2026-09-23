@@ -46,6 +46,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
             HKObjectType.quantityType(forIdentifier: .peakExpiratoryFlowRate)!,
             HKObjectType.quantityType(forIdentifier: .forcedVitalCapacity)!,
+            HKObjectType.quantityType(forIdentifier: .forcedExpiratoryVolume1)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
             HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic)!,
@@ -217,6 +218,7 @@ class HealthKitManager: ObservableObject {
         async let inhaler = fetchInhalerUsage(predicate: predicate)
         async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
         async let fvc = fetchForcedVitalCapacity(predicate: predicate)
+        async let fev1 = fetchForcedExpiratoryVolume1(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
         async let bp = fetchBloodPressure(predicate: predicate)
@@ -310,6 +312,7 @@ class HealthKitManager: ObservableObject {
             inhalerUsage: await inhaler,
             peakExpiratoryFlowLpm: await pef,
             forcedVitalCapacityLiters: await fvc,
+            forcedExpiratoryVolume1Liters: await fev1,
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
             bloodPressureSystolicMmHg: await bp.systolic,
@@ -413,6 +416,7 @@ class HealthKitManager: ObservableObject {
             async let inhaler = fetchInhalerUsage(predicate: predicate)
             async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
             async let fvc = fetchForcedVitalCapacity(predicate: predicate)
+            async let fev1 = fetchForcedExpiratoryVolume1(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
             async let bp = fetchBloodPressure(predicate: predicate)
@@ -481,6 +485,7 @@ class HealthKitManager: ObservableObject {
             let inhalerValue = await inhaler
             let pefValue = await pef
             let fvcValue = await fvc
+            let fev1Value = await fev1
             let insulinValue = await insulin
             let glucoseValue = await glucose
             let bpValue = await bp
@@ -571,6 +576,7 @@ class HealthKitManager: ObservableObject {
                 inhalerUsage: inhalerValue,
                 peakExpiratoryFlowLpm: pefValue,
                 forcedVitalCapacityLiters: fvcValue,
+                forcedExpiratoryVolume1Liters: fev1Value,
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
                 bloodPressureSystolicMmHg: bpValue.systolic,
@@ -826,6 +832,23 @@ class HealthKitManager: ObservableObject {
     /// Day average forced vital capacity (L). Sparse lung function — fixture seeds UI.
     private func fetchForcedVitalCapacity(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .forcedVitalCapacity) else { return nil }
+        let unit = HKUnit.liter()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average forced expiratory volume in 1 second (L). Sparse lung function — fixture seeds UI.
+    private func fetchForcedExpiratoryVolume1(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .forcedExpiratoryVolume1) else { return nil }
         let unit = HKUnit.liter()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
