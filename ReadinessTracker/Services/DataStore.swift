@@ -90,6 +90,7 @@ enum UIFixture {
         guard isRequested else { return }
         DataStore.shared.seedUIFixture()
         seedJournalEntries()
+        MetadataStore.shared.seedUIFixtureCheckIns()
         // Google Health / Apple Health Cycle glance: show Cycle tile under -ui-fixture.
         var settings = UserSettings.load()
         settings.trackMenstrualCycle = true

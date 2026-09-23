@@ -1412,6 +1412,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-hydration-tonight-baseline.png")
     }
 
+    func testCheckInInsightsSurface() throws {
+        // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
+        var n = 0
+        while !app.descendants(matching: .any)["checkin.insights.card"].exists && n < 12 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["checkin.insights.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Check-in Insights card")
+        XCTAssertTrue(app.staticTexts["Check-in Insights"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["checkin.insights.baseline"].exists
+        _ = app.staticTexts["7-Day Feel"].exists
+        _ = app.descendants(matching: .any)["checkin.insights.spark"].exists
+        saveShot("verify-checkin-insights.png")
+    }
+
 
 
 
