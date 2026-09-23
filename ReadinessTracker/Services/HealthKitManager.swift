@@ -94,6 +94,9 @@ class HealthKitManager: ObservableObject {
             if let gctType = HKObjectType.quantityType(forIdentifier: .runningGroundContactTime) {
                 typesToRead.insert(gctType)
             }
+            if let strideType = HKObjectType.quantityType(forIdentifier: .runningStrideLength) {
+                typesToRead.insert(strideType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -155,6 +158,7 @@ class HealthKitManager: ObservableObject {
         async let runPower = fetchRunningPower(predicate: predicate)
         async let runSpeed = fetchRunningSpeed(predicate: predicate)
         async let runGCT = fetchRunningGroundContact(predicate: predicate)
+        async let runStride = fetchRunningStrideLength(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -225,6 +229,7 @@ class HealthKitManager: ObservableObject {
             runningPowerWatts: await runPower,
             runningSpeedMps: await runSpeed,
             runningGroundContactMs: await runGCT,
+            runningStrideLengthMeters: await runStride,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -296,6 +301,7 @@ class HealthKitManager: ObservableObject {
             async let runPower = fetchRunningPower(predicate: predicate)
             async let runSpeed = fetchRunningSpeed(predicate: predicate)
             async let runGCT = fetchRunningGroundContact(predicate: predicate)
+        async let runStride = fetchRunningStrideLength(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -337,6 +343,7 @@ class HealthKitManager: ObservableObject {
             let runPowerValue = await runPower
             let runSpeedValue = await runSpeed
             let runGCTValue = await runGCT
+            let runStrideValue = await runStride
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -404,6 +411,7 @@ class HealthKitManager: ObservableObject {
                 runningPowerWatts: runPowerValue,
                 runningSpeedMps: runSpeedValue,
                 runningGroundContactMs: runGCTValue,
+                runningStrideLengthMeters: runStrideValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -917,6 +925,29 @@ class HealthKitManager: ObservableObject {
             self.healthStore.execute(query)
         }
     }
+
+
+    /// Day average running stride length (meters). Sparse run-form — fixture seeds UI. iOS 16+.
+    private func fetchRunningStrideLength(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .runningStrideLength) else { return nil }
+        let unit = HKUnit.meter()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let meters = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: meters)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
 
 
     private func fetchHeartbeatSeriesRRIntervals(predicate: NSPredicate) async -> [Double] {

@@ -1680,6 +1680,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.runningGCTCard)
 
+                RunningStrideTonightBaselineCard(
+                    meters: data.runningStrideLengthMeters,
+                    history: history.compactMap { day in
+                        guard let m = day.runningStrideLengthMeters else { return nil }
+                        return (day.date, m)
+                    },
+                    baseline: RunningStrideBaseline.average(
+                        from: history,
+                        fallback: data.runningStrideLengthMeters ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.runningStrideCard)
+
+
 
 
                 ActiveCaloriesTonightBaselineCard(
