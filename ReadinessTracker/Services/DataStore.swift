@@ -171,6 +171,8 @@ enum UIFixture {
             }
             let deepSleepPercentValue: Double = offset == 0 ? 0.17 : (0.12 + Double((offset * 3) % 10) * 0.01)
             let remSleepPercentValue: Double = offset == 0 ? 0.21 : (0.16 + Double((offset * 5) % 12) * 0.01)
+            // Vary older nights so Core Sleep 7-night spark has shape; today ~55% (Solid).
+            let lightSleepPercentValue: Double = offset == 0 ? 0.55 : (0.42 + Double((offset * 4) % 16) * 0.01)
             let sleepOnsetMinutesValue: Double = offset == 0 ? 12 : (8 + Double((offset * 7) % 28))
             let hrvValue: Double = offset == 0 ? 58 : 48 + Double((offset * 7) % 21)
             let maxHRValue: Double? = offset == 0 ? 185 : nil
@@ -197,6 +199,7 @@ enum UIFixture {
                 sleepEfficiency: sleepEfficiencyValue,
                 deepSleepPercent: deepSleepPercentValue,
                 remSleepPercent: remSleepPercentValue,
+                lightSleepPercent: lightSleepPercentValue,
                 awakePercent: awakePercentValue,
                 sleepOnsetMinutes: sleepOnsetMinutesValue,
                 sleepStartTime: sleepStart,

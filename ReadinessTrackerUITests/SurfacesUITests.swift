@@ -1285,6 +1285,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-awake-hours.png")
     }
 
+    func testCoreSleepSurface() throws {
+        // Honest #117: WHOOP Core / Light sleep hours Tonight | Baseline on Today sleep stack.
+        var n = 0
+        let title = app.staticTexts["Core Sleep"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Core Sleep")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["sleep.core.card"].exists
+        _ = app.descendants(matching: .any)["sleep.core.baseline"].exists
+        _ = app.staticTexts["7-Night Core"].exists
+        _ = app.descendants(matching: .any)["sleep.core.spark"].exists
+        saveShot("verify-core-sleep.png")
+    }
+
 
 
 

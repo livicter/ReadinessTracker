@@ -777,6 +777,18 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.sleepRestorativeCard)
 
+
+            CoreSleepCard(
+                sleepHours: data.sleepHours,
+                lightPercent: data.lightSleepPercent,
+                history: history.map { ($0.date, $0.sleepHours, $0.lightSleepPercent) },
+                baselineHours: CoreSleep.baseline(
+                    from: history,
+                    fallback: CoreSleep.hours(asleep: data.sleepHours, lightPercent: data.lightSleepPercent)
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.coreSleepCard)
+
             if data.hrv > 0 {
                 SleepHRVCard(
                     currentHRV: data.hrv,
