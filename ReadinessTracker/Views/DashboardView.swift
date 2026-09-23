@@ -961,6 +961,21 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.walkingHRCard)
 
+            EnvironmentalAudioTonightBaselineCard(
+                exposureDBA: data.environmentalAudioExposureDBA,
+                history: history.compactMap { day in
+                    guard let dba = day.environmentalAudioExposureDBA else { return nil }
+                    return (day.date, dba)
+                },
+                baseline: EnvironmentalAudioBaseline.average(
+                    from: history,
+                    fallback: data.environmentalAudioExposureDBA ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.environmentalAudioCard)
+
+
+
 
 
             if let respRate = data.respiratoryRate {
