@@ -242,9 +242,14 @@ struct DashboardView: View {
     private func errorBanner(_ message: String) -> some View {
         NativeCard {
             HStack(spacing: 12) {
+                // Honest #93: Apple circular tint well on Today error banner.
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.system(size: 16))
+                    .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(RTColor.warning)
+                    .frame(width: 26, height: 26)
+                    .background(RTColor.warning.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
 
                 Text(message)
                     .font(.caption)
