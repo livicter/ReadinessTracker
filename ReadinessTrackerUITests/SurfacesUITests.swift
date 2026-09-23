@@ -1812,6 +1812,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-running-power-tonight-baseline.png")
     }
 
+    func testRunningSpeedTonightBaselineSurface() throws {
+        // Honest #160: Running Speed Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Running Speed"]
+        while !title.exists && n < 54 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Running Speed")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.runningSpeed.card"].exists
+        _ = app.descendants(matching: .any)["body.runningSpeed.baseline"].exists
+        _ = app.staticTexts["7-Day Running Speed"].exists
+        _ = app.descendants(matching: .any)["body.runningSpeed.spark"].exists
+        saveShot("verify-running-speed-tonight-baseline.png")
+    }
+
 
 
 
