@@ -46,13 +46,15 @@ struct NutritionSummary: Codable, Hashable {
     let vitaminKMcg: Double?
     /// Dietary vitamin B6 (mg) from HealthKit `dietaryVitaminB6` — Honest #205.
     let vitaminB6Mg: Double?
+    /// Dietary thiamin (mg) from HealthKit `dietaryThiamin` — Honest #206.
+    let thiaminMg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -80,6 +82,7 @@ struct NutritionSummary: Codable, Hashable {
         vitaminEMg: Double? = nil,
         vitaminKMcg: Double? = nil,
         vitaminB6Mg: Double? = nil,
+        thiaminMg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -106,6 +109,7 @@ struct NutritionSummary: Codable, Hashable {
         self.vitaminEMg = vitaminEMg
         self.vitaminKMcg = vitaminKMcg
         self.vitaminB6Mg = vitaminB6Mg
+        self.thiaminMg = thiaminMg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }

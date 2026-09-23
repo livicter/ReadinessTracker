@@ -2858,6 +2858,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-vitamin-b6-tonight-baseline.png")
     }
 
+    func testDietaryThiaminTonightBaselineSurface() throws {
+        // Honest #206: Dietary Thiamin Tonight | Baseline (HK dietaryThiamin).
+        var n = 0
+        while !app.descendants(matching: .any)["body.thiamin.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.thiamin.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Thiamin card")
+        XCTAssertTrue(app.staticTexts["Dietary Thiamin"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.thiamin.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Thiamin"].exists
+        _ = app.descendants(matching: .any)["body.thiamin.spark"].exists
+        saveShot("verify-dietary-thiamin-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
