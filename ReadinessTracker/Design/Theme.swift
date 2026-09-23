@@ -594,6 +594,7 @@ enum SurfaceID {
     static let trendsDetail = "trends.detail"
     static let trendsChartScrub = "trends.chart.scrub"
     static let trendsChartSelection = "trends.chart.selection"
+    /// Honest #250: Trends scrub enrichment (z/Δ reuse shared metric.chart.selection.* IDs).
     static let trendsSummary = "trends.summary"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"

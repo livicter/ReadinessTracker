@@ -387,25 +387,66 @@ struct TrendDetailView: View {
         }
     }
     
+    /// Map Trends primary toggle → MetricType for `analyze()` (metric unused for z/ROC series).
+    private var scrubAnalysisMetric: MetricType {
+        switch primaryDepthMetric {
+        case .readiness: return .sleep  // polarity: higher-is-better composite score
+        case .sleep: return .sleep
+        case .hrv: return .hrv
+        case .rhr: return .restingHR
+        case .calories: return .activeCalories
+        }
+    }
+
+    /// Honest #250: elevate unused AnalyzedDataPoint fields on Trends scrub.
+    private var scrubAnalyzedData: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: depthTimelinePoints, metric: scrubAnalysisMetric)
+    }
+
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
             if let selected = selectedScrubDay {
                 let xPos = proxy.position(forX: selected.date) ?? 0
                 let yPos = proxy.position(forY: scrubNormalizedValue(for: selected)) ?? 0
                 let valueText = formattedSummary(scrubRawValue(for: selected))
+                // Honest #250: mirror Metric Detail #246/#249 — zScore + Day Δ + % vs baseline.
+                let analyzed = scrubAnalyzedData.first {
+                    Calendar.current.isDate($0.date, inSameDayAs: selected.date)
+                }
+                let deviationStr: String? = {
+                    guard let a = analyzed else { return nil }
+                    let d = a.percentDeviation * 100
+                    let sign = d >= 0 ? "+" : ""
+                    return "\(sign)\(String(format: "%.1f", d))% vs baseline"
+                }()
+                let zScoreStr: String? = {
+                    guard let a = analyzed else { return nil }
+                    let sign = a.zScore >= 0 ? "+" : ""
+                    return "\(sign)\(String(format: "%.1f", a.zScore))σ"
+                }()
+                let dayDeltaStr: String? = {
+                    guard let roc = analyzed?.rateOfChange else { return nil }
+                    let s = roc >= 0 ? "+" : ""
+                    return "Day Δ \(s)\(String(format: "%.0f", roc * 100))%"
+                }()
                 ChartTooltip(
                     date: selected.date,
                     value: valueText,
                     unit: depthTimelineUnit,
-                    deviation: nil,
-                    isOutlier: false
+                    deviation: deviationStr,
+                    isOutlier: analyzed?.isOutlier ?? false,
+                    zScore: zScoreStr,
+                    dayDelta: dayDeltaStr
                 )
                 .accessibilityIdentifier(SurfaceID.trendsChartSelection)
                 .accessibilityLabel(
-                    ChartScrubSelection.calloutText(
+                    ChartScrubSelection.enrichedCalloutText(
                         date: selected.date,
                         value: valueText,
-                        unit: depthTimelineUnit
+                        unit: depthTimelineUnit,
+                        deviation: deviationStr,
+                        zScore: zScoreStr,
+                        dayDelta: dayDeltaStr
                     )
                 )
                 .position(
