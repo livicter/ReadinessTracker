@@ -44,6 +44,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let peripheralPerfusionIndexPercent: Double?  // PPI % — Honest #169
     let numberOfTimesFallen: Double?  // falls count — Honest #170
     let pushCount: Double?  // wheelchair pushes — Honest #171
+    let inhalerUsage: Double?  // inhaler puffs — Honest #178
     let environmentalAudioExposureDBA: Double?  // dB A-weighted — Honest #136
     let headphoneAudioExposureDBA: Double?  // dB A-weighted — Honest #137
     let environmentalSoundReductionDBA: Double?  // dB A-weighted — Honest #138
@@ -121,6 +122,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          peripheralPerfusionIndexPercent: Double? = nil,
          numberOfTimesFallen: Double? = nil,
          pushCount: Double? = nil,
+         inhalerUsage: Double? = nil,
          environmentalAudioExposureDBA: Double? = nil,
          headphoneAudioExposureDBA: Double? = nil,
          environmentalSoundReductionDBA: Double? = nil,
@@ -187,6 +189,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.peripheralPerfusionIndexPercent = peripheralPerfusionIndexPercent
         self.numberOfTimesFallen = numberOfTimesFallen
         self.pushCount = pushCount
+        self.inhalerUsage = inhalerUsage
         self.environmentalAudioExposureDBA = environmentalAudioExposureDBA
         self.headphoneAudioExposureDBA = headphoneAudioExposureDBA
         self.environmentalSoundReductionDBA = environmentalSoundReductionDBA
@@ -260,6 +263,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.peripheralPerfusionIndexPercent = nil
         self.numberOfTimesFallen = nil
         self.pushCount = nil
+        self.inhalerUsage = nil
         self.environmentalAudioExposureDBA = nil
         self.headphoneAudioExposureDBA = nil
         self.environmentalSoundReductionDBA = nil
@@ -305,7 +309,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, inhalerUsage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -344,6 +348,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.peripheralPerfusionIndexPercent = try container.decodeIfPresent(Double.self, forKey: .peripheralPerfusionIndexPercent)
         self.numberOfTimesFallen = try container.decodeIfPresent(Double.self, forKey: .numberOfTimesFallen)
         self.pushCount = try container.decodeIfPresent(Double.self, forKey: .pushCount)
+        self.inhalerUsage = try container.decodeIfPresent(Double.self, forKey: .inhalerUsage)
         self.environmentalAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalAudioExposureDBA)
         self.headphoneAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .headphoneAudioExposureDBA)
         self.environmentalSoundReductionDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalSoundReductionDBA)

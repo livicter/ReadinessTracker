@@ -1956,6 +1956,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.alcoholicBeveragesCard)
 
+
+                InhalerUsageTonightBaselineCard(
+                    count: data.inhalerUsage,
+                    history: history.compactMap { day in
+                        guard let c = day.inhalerUsage else { return nil }
+                        return (day.date, c)
+                    },
+                    baseline: InhalerUsageBaseline.average(
+                        from: history,
+                        fallback: data.inhalerUsage ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,
