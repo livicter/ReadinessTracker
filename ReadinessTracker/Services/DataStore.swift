@@ -278,6 +278,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 0.58 + Double((offset * 13) % 24) / 100.0 // 0.58…0.81
             }()
+            // Walking steadiness % (Honest #166). Completes gait set with balance score.
+            let walkingSteadinessPercentValue: Double? = {
+                if offset == 0 { return 78.0 }
+                if offset % 5 == 0 { return nil }
+                return 45.0 + Double((offset * 11) % 50) // 45…94
+            }()
             // Stair ascent speed m/s (Honest #149). Simulator often empty — seed for UI.
             let stairAscentSpeedMpsValue: Double? = {
                 if offset == 0 { return 0.42 }
@@ -434,6 +440,7 @@ enum UIFixture {
                 walkingAsymmetryPercent: walkingAsymmetryPercentValue,
                 walkingSpeedMps: walkingSpeedMpsValue,
                 walkingStepLengthMeters: walkingStepLengthMetersValue,
+                walkingSteadinessPercent: walkingSteadinessPercentValue,
                 stairAscentSpeedMps: stairAscentSpeedMpsValue,
                 stairDescentSpeedMps: stairDescentSpeedMpsValue,
                 sixMinuteWalkDistanceMeters: sixMinuteWalkDistanceMetersValue,

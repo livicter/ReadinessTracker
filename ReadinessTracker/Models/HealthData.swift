@@ -53,6 +53,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let walkingAsymmetryPercent: Double?  // gait asymmetry % — Honest #146
     let walkingSpeedMps: Double?  // gait walking speed m/s — Honest #147
     let walkingStepLengthMeters: Double?  // gait step length m — Honest #148
+    let walkingSteadinessPercent: Double?  // gait walking steadiness % — Honest #166
     let stairAscentSpeedMps: Double?  // stair ascent m/s — Honest #149
     let stairDescentSpeedMps: Double?  // stair descent m/s — Honest #150
     let sixMinuteWalkDistanceMeters: Double?  // 6MWT distance m — Honest #151
@@ -124,6 +125,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          walkingAsymmetryPercent: Double? = nil,
          walkingSpeedMps: Double? = nil,
          walkingStepLengthMeters: Double? = nil,
+         walkingSteadinessPercent: Double? = nil,
          stairAscentSpeedMps: Double? = nil,
          stairDescentSpeedMps: Double? = nil,
          sixMinuteWalkDistanceMeters: Double? = nil,
@@ -184,6 +186,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingAsymmetryPercent = walkingAsymmetryPercent
         self.walkingSpeedMps = walkingSpeedMps
         self.walkingStepLengthMeters = walkingStepLengthMeters
+        self.walkingSteadinessPercent = walkingSteadinessPercent
         self.stairAscentSpeedMps = stairAscentSpeedMps
         self.stairDescentSpeedMps = stairDescentSpeedMps
         self.sixMinuteWalkDistanceMeters = sixMinuteWalkDistanceMeters
@@ -251,6 +254,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingAsymmetryPercent = nil
         self.walkingSpeedMps = nil
         self.walkingStepLengthMeters = nil
+        self.walkingSteadinessPercent = nil
         self.stairAscentSpeedMps = nil
         self.stairDescentSpeedMps = nil
         self.sixMinuteWalkDistanceMeters = nil
@@ -281,7 +285,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -329,6 +333,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingAsymmetryPercent = try container.decodeIfPresent(Double.self, forKey: .walkingAsymmetryPercent)
         self.walkingSpeedMps = try container.decodeIfPresent(Double.self, forKey: .walkingSpeedMps)
         self.walkingStepLengthMeters = try container.decodeIfPresent(Double.self, forKey: .walkingStepLengthMeters)
+        self.walkingSteadinessPercent = try container.decodeIfPresent(Double.self, forKey: .walkingSteadinessPercent)
         self.stairAscentSpeedMps = try container.decodeIfPresent(Double.self, forKey: .stairAscentSpeedMps)
         self.stairDescentSpeedMps = try container.decodeIfPresent(Double.self, forKey: .stairDescentSpeedMps)
         self.sixMinuteWalkDistanceMeters = try container.decodeIfPresent(Double.self, forKey: .sixMinuteWalkDistanceMeters)
