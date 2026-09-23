@@ -1308,6 +1308,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-core-sleep.png")
     }
 
+    func testWorkoutMinutesSurface() throws {
+        // Honest #118: WHOOP Workout Minutes Tonight | Baseline on Recovery & Strain.
+        var n = 0
+        let title = app.staticTexts["Workout Minutes"]
+        while !title.exists && n < 16 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Workout Minutes")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["strain.workoutMinutes.card"].exists
+        _ = app.descendants(matching: .any)["strain.workoutMinutes.baseline"].exists
+        _ = app.staticTexts["7-Day Minutes"].exists
+        _ = app.descendants(matching: .any)["strain.workoutMinutes.spark"].exists
+        saveShot("verify-workout-minutes.png")
+    }
+
 
 
 

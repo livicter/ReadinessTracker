@@ -843,6 +843,16 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.strainRecoveryBalance)
             .accessibilityLabel("Strain recovery balance detail")
 
+            WorkoutMinutesCard(
+                currentMinutes: data.workoutMinutes,
+                history: history.map { ($0.date, Double($0.workoutMinutes)) },
+                baseline: WorkoutMinutes.baseline(
+                    from: history,
+                    fallback: Double(data.workoutMinutes)
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.workoutMinutesCard)
+
             RestingHRCard(
 
                 currentBPM: Double(data.restingHeartRate),
