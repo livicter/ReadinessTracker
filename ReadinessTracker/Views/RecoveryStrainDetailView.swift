@@ -340,6 +340,18 @@ struct RecoveryStrainDetailView: View {
                     history: tempHistory
                 )
             }
+
+            if let spo2 = data.bloodOxygen {
+                let spo2History = history.compactMap { d in
+                    d.bloodOxygen.map { (date: d.date, value: $0) }
+                }
+                let spo2Baseline = spo2History.map { $0.value }.reduce(0, +) / Double(max(1, spo2History.count))
+                BloodOxygenCard(
+                    currentSpO2: spo2,
+                    history: spo2History,
+                    baseline: spo2Baseline > 0 ? spo2Baseline : spo2
+                )
+            }
         }
     }
     

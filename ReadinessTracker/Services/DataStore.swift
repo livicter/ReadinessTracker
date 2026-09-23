@@ -162,6 +162,7 @@ enum UIFixture {
             let workoutMinutesValue: Int = offset == 0 ? 42 : 15 + ((offset * 11) % 45)
             let skinTemperatureValue: Double = offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05
             let respiratoryRateValue: Double = offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25
+            let bloodOxygenValue: Double = offset == 0 ? 97.0 : 95.5 + Double((offset * 5) % 7) * 0.3
             return DailyHealthData(
                 date: date,
                 source: .appleWatch,
@@ -187,7 +188,7 @@ enum UIFixture {
                 // Vary older nights so RR / Skin Temp 7-night spark / chart show real shape; today stays glance-stable.
                 skinTemperature: skinTemperatureValue,
                 respiratoryRate: respiratoryRateValue,
-                bloodOxygen: 97,
+                bloodOxygen: bloodOxygenValue,
                 nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
                 menstrualFlow: offset <= 2
