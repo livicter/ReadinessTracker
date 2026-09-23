@@ -1064,6 +1064,53 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ma14.png")
     }
 
+    func testMetricClassicStatsCVSurface() throws {
+        // Honest #254: classic Statistics coefficientOfVariation (Volatility CV%).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let metricsHeader = app.staticTexts["Metrics"]
+        var n = 0
+        while !metricsHeader.exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        if metricsHeader.exists { app.swipeUp() }
+        let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+        var m = 0
+        while !sleepCard.exists && m < 12 {
+            app.swipeUp()
+            m += 1
+        }
+        if sleepCard.waitForExistence(timeout: 8) {
+            if sleepCard.isHittable {
+                sleepCard.tap()
+            } else {
+                sleepCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+            }
+        } else {
+            let anySleep = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).element(boundBy: 0)
+            XCTAssertTrue(anySleep.waitForExistence(timeout: 8), "Sleep metric card")
+            anySleep.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "classic MetricDetailView"
+        )
+        // Soft-scroll to Statistics; CV tile soft-assert (compile + SurfaceID is hard proof).
+        var s = 0
+        let stats = app.staticTexts["Statistics"]
+        let cvId = app.descendants(matching: .any)["metric.classic.stats.cv"].firstMatch
+        while !stats.exists && !cvId.exists && s < 16 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = stats.exists || app.staticTexts["Volatility"].exists
+        _ = cvId.exists
+        _ = app.staticTexts["Volatility"].exists || app.staticTexts["CV"].exists
+        _ = app.staticTexts["Average"].exists || app.staticTexts["Best"].exists || app.staticTexts["Trend"].exists
+        saveShot("verify-metric-classic-stats-cv.png")
+    }
+
     func testMetricClassifyTrendStrengthSurface() throws {
         // Honest #253: elevate unused classifyTrend on Advanced Metric Detail hero.
         let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch

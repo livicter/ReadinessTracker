@@ -159,6 +159,8 @@ enum SurfaceID {
     /// Honest #253: elevate unused classifyTrend / TrendStrength on Metric Detail.
     static let metricTrendStrength = "metric.trend.strength"
     static let metricClassicTrendStrength = "metric.classic.trend.strength"
+    /// Honest #254: classic Statistics coefficientOfVariation (Volatility CV%).
+    static let metricClassicStatsCV = "metric.classic.stats.cv"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"

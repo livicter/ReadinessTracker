@@ -1013,20 +1013,25 @@ struct MetricDetailView: View {
 
     // MARK: - Stats Section
     private var statsSection: some View {
-        NativeCard {
+        let vals = values.map { $0.value }
+        let cv = TrendAnalysisEngine.coefficientOfVariation(values: vals)
+        return NativeCard {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Statistics")
                     .font(RTFont.headline)
                     .foregroundColor(RTColor.primaryText)
 
+                // Honest #254: elevate unused coefficientOfVariation (Advanced stats parity).
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
                     StatItem(label: "Average", value: formattedValue(baseline), unit: metric.unit)
-                    StatItem(label: "Best", value: formattedValue(values.map { $0.value }.max() ?? 0), unit: metric.unit)
-                    StatItem(label: "Worst", value: formattedValue(values.map { $0.value }.min() ?? 0), unit: metric.unit)
-                    StatItem(label: "Data Points", value: "\(values.count)", unit: "days")
+                    StatItem(label: "Best", value: formattedValue(vals.max() ?? 0), unit: metric.unit)
+                    StatItem(label: "Worst", value: formattedValue(vals.min() ?? 0), unit: metric.unit)
+                    StatItem(label: "Volatility", value: "\(Int(cv * 100))%", unit: "CV")
+                        .accessibilityIdentifier(SurfaceID.metricClassicStatsCV)
                 }
             }
         }
+        .accessibilityElement(children: .contain)
     }
 
     // MARK: - HealthKit Info Section
