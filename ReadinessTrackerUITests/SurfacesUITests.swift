@@ -1430,9 +1430,23 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-checkin-insights.png")
     }
 
-
-
-
+    func testJournalImpactTonightBaselineSurface() throws {
+        // Honest #124: Journal Impact Tonight | Baseline on Today (beyond Journal button / #82 wells).
+        var n = 0
+        while !app.descendants(matching: .any)["journal.impact.card"].exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["journal.impact.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Journal Impact card")
+        XCTAssertTrue(app.staticTexts["Journal Impact"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["journal.impact.baseline"].exists
+        _ = app.staticTexts["7-Day Journal"].exists
+        _ = app.descendants(matching: .any)["journal.impact.spark"].exists
+        saveShot("verify-journal-impact-tonight-baseline.png")
+    }
 
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).

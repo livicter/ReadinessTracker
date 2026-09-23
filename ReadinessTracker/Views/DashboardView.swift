@@ -101,6 +101,9 @@ struct DashboardView: View {
                             )
                             .accessibilityIdentifier(SurfaceID.checkInInsightsCard)
                             .slideIn(delay: 0.11)
+                            JournalImpactCard(entries: JournalImpact.loadEntries())
+                            .accessibilityIdentifier(SurfaceID.journalImpactCard)
+                            .slideIn(delay: 0.12)
                             journalButton
                                 .slideIn(delay: 0.13)
                             recommendationsSection(scores: finalScores)
