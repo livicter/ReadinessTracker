@@ -1651,6 +1651,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-swim-distance-tonight-baseline.png")
     }
 
+    func testSwimStrokesTonightBaselineSurface() throws {
+        // Honest #153: Swim Strokes Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Swim Strokes"]
+        while !title.exists && n < 40 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Swim Strokes")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.swimStrokes.card"].exists
+        _ = app.descendants(matching: .any)["body.swimStrokes.baseline"].exists
+        _ = app.staticTexts["7-Day Swim Strokes"].exists
+        _ = app.descendants(matching: .any)["body.swimStrokes.spark"].exists
+        saveShot("verify-swim-strokes-tonight-baseline.png")
+    }
+
 
 
 
