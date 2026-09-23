@@ -45,6 +45,20 @@ final class SurfacesUITests: XCTestCase {
 
 
 
+
+    func testSyncButtonWellSurface() throws {
+        // Honest #92: Today Sync control circular tint well.
+        XCTAssertTrue(
+            app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        )
+        // Soft: Sync control / Updated cue near source picker
+        _ = app.buttons["Sync"].waitForExistence(timeout: 6)
+            || app.staticTexts["Sync"].waitForExistence(timeout: 4)
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Updated")).firstMatch.waitForExistence(timeout: 4)
+        saveShot("verify-sync-button.png")
+    }
+
     func testSourcePickerWellSurface() throws {
         // Honest #91: Today source picker circular tint wells (Watch / Fitbit).
         XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)

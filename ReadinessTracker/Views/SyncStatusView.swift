@@ -39,15 +39,21 @@ struct SyncStatusView: View {
             
             // Sync button
             Button(action: onSync) {
-                HStack(spacing: 4) {
+                HStack(spacing: 6) {
+                    // Honest #92: Apple circular tint well on Today Sync control.
                     Image(systemName: "arrow.clockwise")
-                        .font(.caption2)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(isSyncing ? RTColor.optimal : RTColor.secondaryText)
+                        .frame(width: 22, height: 22)
+                        .background((isSyncing ? RTColor.optimal : RTColor.secondaryText).opacity(0.14))
+                        .clipShape(Circle())
                         .rotationEffect(.degrees(isSyncing ? 360 : 0))
                         .animation(isSyncing ? .linear(duration: 1.0).repeatForever(autoreverses: false) : .default, value: isSyncing)
+                        .accessibilityHidden(true)
                     Text(isSyncing ? "Syncing..." : "Sync")
                         .font(.caption2.weight(.semibold))
+                        .foregroundStyle(isSyncing ? RTColor.optimal : RTColor.secondaryText)
                 }
-                .foregroundStyle(isSyncing ? RTColor.optimal : RTColor.secondaryText)
             }
             .buttonStyle(.plain)
             .disabled(isSyncing)
