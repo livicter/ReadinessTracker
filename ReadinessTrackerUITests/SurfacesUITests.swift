@@ -1743,6 +1743,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cycling-power-tonight-baseline.png")
     }
 
+    func testCyclingFTPTonightBaselineSurface() throws {
+        // Honest #157: Cycling FTP Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Cycling FTP"]
+        while !title.exists && n < 48 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Cycling FTP")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.cyclingFTP.card"].exists
+        _ = app.descendants(matching: .any)["body.cyclingFTP.baseline"].exists
+        _ = app.staticTexts["7-Day Cycling FTP"].exists
+        _ = app.descendants(matching: .any)["body.cyclingFTP.spark"].exists
+        saveShot("verify-cycling-ftp-tonight-baseline.png")
+    }
+
 
 
 

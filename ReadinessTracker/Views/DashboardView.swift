@@ -1615,6 +1615,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
 
+                CyclingFTPTonightBaselineCard(
+                    watts: data.cyclingFTPWatts,
+                    history: history.compactMap { day in
+                        guard let w = day.cyclingFTPWatts else { return nil }
+                        return (day.date, w)
+                    },
+                    baseline: CyclingFTPBaseline.average(
+                        from: history,
+                        fallback: data.cyclingFTPWatts ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.cyclingFTPCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(

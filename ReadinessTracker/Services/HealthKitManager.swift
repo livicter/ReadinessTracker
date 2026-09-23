@@ -73,6 +73,9 @@ class HealthKitManager: ObservableObject {
             if let powerType = HKObjectType.quantityType(forIdentifier: .cyclingPower) {
                 typesToRead.insert(powerType)
             }
+            if let ftpType = HKObjectType.quantityType(forIdentifier: .cyclingFunctionalThresholdPower) {
+                typesToRead.insert(ftpType)
+            }
         }
 
         if #available(iOS 16.0, *) {
@@ -135,6 +138,7 @@ class HealthKitManager: ObservableObject {
         async let cycleCadence = fetchCyclingCadence(predicate: predicate)
         async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
         async let cyclePower = fetchCyclingPower(predicate: predicate)
+        async let cycleFTP = fetchCyclingFTP(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -200,6 +204,7 @@ class HealthKitManager: ObservableObject {
             cyclingCadenceRpm: await cycleCadence,
             underwaterDepthMeters: await underwaterDepth,
             cyclingPowerWatts: await cyclePower,
+            cyclingFTPWatts: await cycleFTP,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -266,6 +271,7 @@ class HealthKitManager: ObservableObject {
             async let cycleCadence = fetchCyclingCadence(predicate: predicate)
             async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
             async let cyclePower = fetchCyclingPower(predicate: predicate)
+            async let cycleFTP = fetchCyclingFTP(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -302,6 +308,7 @@ class HealthKitManager: ObservableObject {
             let cycleCadenceValue = await cycleCadence
             let underwaterDepthValue = await underwaterDepth
             let cyclePowerValue = await cyclePower
+            let cycleFTPValue = await cycleFTP
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -364,6 +371,7 @@ class HealthKitManager: ObservableObject {
                 cyclingCadenceRpm: cycleCadenceValue,
                 underwaterDepthMeters: underwaterDepthValue,
                 cyclingPowerWatts: cyclePowerValue,
+                cyclingFTPWatts: cycleFTPValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -771,6 +779,24 @@ class HealthKitManager: ObservableObject {
     private func fetchCyclingPower(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 17.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .cyclingPower) else { return nil }
+        let unit = HKUnit.watt()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day / latest cycling functional threshold power (watts). Sparse fitness — fixture seeds UI. iOS 17+.
+    private func fetchCyclingFTP(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 17.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .cyclingFunctionalThresholdPower) else { return nil }
         let unit = HKUnit.watt()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
