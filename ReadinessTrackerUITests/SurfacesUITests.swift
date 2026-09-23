@@ -1858,6 +1858,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-running-gct-tonight-baseline.png")
     }
 
+    func testRunningStrideTonightBaselineSurface() throws {
+        // Honest #162: Run Stride Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Run Stride"]
+        while !title.exists && n < 56 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Run Stride")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.runningStride.card"].exists
+        _ = app.descendants(matching: .any)["body.runningStride.baseline"].exists
+        _ = app.staticTexts["7-Day Run Stride"].exists
+        _ = app.descendants(matching: .any)["body.runningStride.spark"].exists
+        saveShot("verify-running-stride-tonight-baseline.png")
+    }
+
 
 
 
