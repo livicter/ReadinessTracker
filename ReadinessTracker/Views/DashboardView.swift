@@ -922,6 +922,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.peakHRCard)
 
+            VO2MaxTonightBaselineCard(
+                vo2Max: data.vo2Max,
+                history: history.compactMap { day in
+                    guard let v = day.vo2Max else { return nil }
+                    return (day.date, v)
+                },
+                baseline: VO2MaxBaseline.average(
+                    from: history,
+                    fallback: data.vo2Max ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.vo2MaxCard)
+
+
             if let respRate = data.respiratoryRate {
                 RespiratoryRateCard(
                     currentRate: respRate,
