@@ -808,6 +808,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-performance.png")
     }
 
+
+    func testTonightBaselineWellSurface() throws {
+        // Honest #95: Tonight|Baseline dual columns (Sleep HRV / Respiratory / Skin Temp) circular wells.
+        _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        // Prefer Sleep HRV card on Today WHOOP stack
+        var n = 0
+        while !app.staticTexts["Sleep HRV"].exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = app.staticTexts["Sleep HRV"].waitForExistence(timeout: 6)
+            || app.staticTexts["Respiratory Rate"].exists
+            || app.staticTexts["Skin Temperature"].exists
+        _ = app.staticTexts["Tonight"].exists || app.staticTexts["Baseline"].exists
+        saveShot("verify-tonight-baseline.png")
+    }
+
     func testSleepHRVSurface() throws {
         // Today WHOOP stack: elevated Sleep HRV Tonight | Baseline + 7-night spark + band.
         // Reveal title first — do not keep swiping for ids (overscrolls past the card).
