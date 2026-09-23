@@ -505,6 +505,11 @@ enum UIFixture {
                         if offset == 0 { return 210 }
                         if offset % 5 == 0 { return nil }
                         return 120 + Double((offset * 41) % 201) // 120…320
+                    }(),
+                    fatGrams: {
+                        if offset == 0 { return 68 }
+                        if offset % 5 == 0 { return nil }
+                        return 35 + Double((offset * 19) % 61) // 35…95
                     }()
                 ),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
