@@ -12,6 +12,7 @@ struct AdvancedMetricChartView: View {
     var showVolatility: Bool = true  // Honest #240: rolling CV strip
     var showMomentum: Bool = true  // Honest #241: momentum strip
     var showEMA: Bool = true  // Honest #242: EMA line on main chart
+    var showRateOfChange: Bool = true  // Honest #243: day-over-day ROC strip
     
     @State private var selectedPoint: AnalyzedDataPoint?
     @State private var lastHapticID: AnalyzedDataPoint.ID?
@@ -50,6 +51,9 @@ struct AdvancedMetricChartView: View {
             }
             if showMomentum {
                 momentumStrip
+            }
+            if showRateOfChange {
+                rateOfChangeStrip
             }
         }
         .background(AppBackground())
@@ -339,6 +343,9 @@ struct AdvancedMetricChartView: View {
             if showMomentum {
                 legendItem(color: RTColor.hrv, label: "Momentum", dashed: false)
             }
+            if showRateOfChange {
+                legendItem(color: RTColor.strain, label: "Day Δ", dashed: false)
+            }
         }
         .padding(.top, 4)
     }
@@ -574,6 +581,104 @@ struct AdvancedMetricChartView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.metricChartMomentum)
         .accessibilityLabel("Seven day momentum")
+    }
+
+    // MARK: - Rate of Change Strip (Honest #243)
+
+    /// Day-over-day fractional change — elevates unused `AnalyzedDataPoint.rateOfChange`
+    /// from `TrendAnalysisEngine.rateOfChange` (distinct from 7-day momentum).
+    private var rocPoints: [(date: Date, roc: Double)] {
+        analyzedData.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var latestROCBand: (label: String, color: Color) {
+        guard let roc = rocPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        let improving: Bool
+        if metric.higherIsBetter {
+            improving = roc > 0
+        } else {
+            improving = roc < 0
+        }
+        // Tighter bands than momentum — daily noise is larger.
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var rocYDomain: ClosedRange<Double> {
+        let vals = rocPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var rateOfChangeStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = rocPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, latestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !rocPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(rocPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            (metric.higherIsBetter ? point.roc >= 0 : point.roc <= 0)
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: rocYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [rocYDomain.lowerBound, 0, rocYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricChartROC)
+        .accessibilityLabel("Day over day rate of change")
     }
 
     // MARK: - Helpers
