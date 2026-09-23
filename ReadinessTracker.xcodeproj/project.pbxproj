@@ -121,6 +121,7 @@
 		J58K01M73I192031425HP /* CyclingCadenceTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HO /* CyclingCadenceTonightBaselineCard.swift */; };
 		J58K01M73I192031425HR /* UnderwaterDepthTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */; };
 		J58K01M73I192031425HT /* CyclingPowerTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */; };
+		J58K01M73I192031425HV /* CyclingFTPTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */; };
 		F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */; };
 		B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */; };
 		D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */; };
@@ -389,6 +390,7 @@
 		I58K01M73I192031425HO /* CyclingCadenceTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingCadenceTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingCadenceTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UnderwaterDepthTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/UnderwaterDepthTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingPowerTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingPowerTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingFTPTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingFTPTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeEpisodesCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WakeEpisodesCard.swift; sourceTree = SOURCE_ROOT; };
 		A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepMidpointCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepMidpointCard.swift; sourceTree = SOURCE_ROOT; };
 		C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeInBedCard.swift; path = ReadinessTracker/Views/WhoopFeatures/TimeInBedCard.swift; sourceTree = SOURCE_ROOT; };
@@ -701,6 +703,7 @@
 				I58K01M73I192031425HO /* CyclingCadenceTonightBaselineCard.swift */,
 				I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */,
 				I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */,
+				I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */,
 				E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */,
 				A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */,
 				C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */,
@@ -1234,6 +1237,7 @@
 				J58K01M73I192031425HP /* CyclingCadenceTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HR /* UnderwaterDepthTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HT /* CyclingPowerTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425HV /* CyclingFTPTonightBaselineCard.swift in Sources */,
 				F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */,
 				B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */,
 				D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */,
