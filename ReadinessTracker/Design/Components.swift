@@ -35,10 +35,15 @@ struct MetricCard: View {
                 VStack(alignment: .leading, spacing: 12) {
                     // Header: icon + title + trend
                     HStack {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 8) {
+                            // Honest #75: Apple circular tint well on MetricCard header.
                             Image(systemName: icon)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 11, weight: .semibold))
                                 .foregroundStyle(color)
+                                .frame(width: 26, height: 26)
+                                .background(color.opacity(0.14))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
                             Text(title)
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(RTColor.secondaryText)

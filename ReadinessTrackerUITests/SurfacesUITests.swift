@@ -85,6 +85,15 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-body-activity.png")
     }
 
+    func testMetricsSectionVisibleAfterScroll() throws {
+        // Honest #75: MetricCard header circular tint wells (Sleep/HRV/Resting HR/Active Cals).
+        revealText("Metrics")
+        XCTAssertTrue(app.staticTexts["Resting HR"].waitForExistence(timeout: 8), "Resting HR")
+        _ = app.staticTexts["Sleep"].exists
+        _ = app.staticTexts["Active Cals"].exists
+        saveShot("verify-metrics.png")
+    }
+
     func testBodyDetailSurface() throws {
         // Today Body Steps tile → Fitness / Google Health–style metric detail sheet.
         revealText("Body")
