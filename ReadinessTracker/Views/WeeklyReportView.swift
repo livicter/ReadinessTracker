@@ -58,10 +58,15 @@ struct WeeklyReportView: View {
                         .foregroundStyle(RTColor.secondaryText)
                 }
 
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    // Honest #83: Apple circular tint well on Weekly Report readiness trend.
                     Image(systemName: report.readinessTrend.systemImage)
-                        .font(.caption.weight(.semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(report.readinessTrend.color)
+                        .frame(width: 26, height: 26)
+                        .background(report.readinessTrend.color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text(trendText)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)

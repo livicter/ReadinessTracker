@@ -16,3 +16,4 @@
 | Metric Detail hero well | `metric-detail-hero-well.md` | Hero circular well |
 | Readiness Detail wells | `readiness-detail-wells.md` | Rec + component circular wells |
 | Journal Behavior Impact wells | `journal-behavior-wells.md` | Impact row circular wells |
+| Weekly Report trend well | `weekly-report-trend-well.md` | Readiness trend circular well |
