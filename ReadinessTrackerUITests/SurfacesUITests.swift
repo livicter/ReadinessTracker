@@ -1513,6 +1513,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-walking-asymmetry-tonight-baseline.png")
     }
 
+    func testWalkingSpeedTonightBaselineSurface() throws {
+        // Honest #147: Walking Speed Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Walking Speed"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Walking Speed")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.walkingSpeed.card"].exists
+        _ = app.descendants(matching: .any)["body.walkingSpeed.baseline"].exists
+        _ = app.staticTexts["7-Day Walking Speed"].exists
+        _ = app.descendants(matching: .any)["body.walkingSpeed.spark"].exists
+        saveShot("verify-walking-speed-tonight-baseline.png")
+    }
+
 
 
 
