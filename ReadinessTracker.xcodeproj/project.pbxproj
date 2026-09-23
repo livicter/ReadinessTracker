@@ -107,6 +107,7 @@
 		B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */; };
 		D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */; };
 		F28E9F012E3F415263748597 /* HydrationTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */; };
+		F51B234F563748596A7B8C9E /* CaffeineTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */; };
 		B39F012E3F415263748596A8 /* CheckInInsightsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39F012E3F415263748596A7 /* CheckInInsightsCard.swift */; };
 		D40A123F45263748596B7C8E /* JournalImpactCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40A123F45263748596B7C8D /* JournalImpactCard.swift */; };
 		85F5598095EC19DD37BC120D /* HRVCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDD5423DA5F87145875D338 /* HRVCalculator.swift */; };
@@ -343,6 +344,7 @@
 		A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CycleTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CycleTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/StepsTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HydrationTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/HydrationTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CaffeineTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CaffeineTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		A39F012E3F415263748596A7 /* CheckInInsightsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CheckInInsightsCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CheckInInsightsCard.swift; sourceTree = SOURCE_ROOT; };
 		C40A123F45263748596B7C8D /* JournalImpactCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JournalImpactCard.swift; path = ReadinessTracker/Views/WhoopFeatures/JournalImpactCard.swift; sourceTree = SOURCE_ROOT; };
 		8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDataExporter.swift; path = ReadinessTracker/Services/WidgetDataExporter.swift; sourceTree = SOURCE_ROOT; };
@@ -623,6 +625,7 @@
 				A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */,
 				C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */,
 				E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */,
+				E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */,
 				A39F012E3F415263748596A7 /* CheckInInsightsCard.swift */,
 				C40A123F45263748596B7C8D /* JournalImpactCard.swift */,
 				2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */,
@@ -1124,6 +1127,7 @@
 				B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */,
 				D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */,
 				F28E9F012E3F415263748597 /* HydrationTonightBaselineCard.swift in Sources */,
+				F51B234F563748596A7B8C9E /* CaffeineTonightBaselineCard.swift in Sources */,
 				B39F012E3F415263748596A8 /* CheckInInsightsCard.swift in Sources */,
 				D40A123F45263748596B7C8E /* JournalImpactCard.swift in Sources */,
 				5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */,
