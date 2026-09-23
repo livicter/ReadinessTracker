@@ -346,6 +346,49 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail.png")
     }
 
+    func testDayDetailCompareWellSurface() throws {
+        // Honest #87: Day Detail Sleep Cycles + vs Previous Day circular tint wells.
+        // Prefer History day row (same path as testDayDetailSurface).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            app.swipeUp()
+        }
+        XCTAssertTrue(opened, "History day row")
+        _ = app.navigationBars.firstMatch.waitForExistence(timeout: 8)
+        // Soft: Sleep Cycles / Recovery Context compare headers
+        let cycles = app.staticTexts["Sleep Cycles"]
+        var n = 0
+        while !cycles.exists && n < 10 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = cycles.exists
+        let prev = app.staticTexts["vs Previous Day"]
+        n = 0
+        while !prev.exists && n < 8 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = prev.exists || app.staticTexts["Recovery Context"].exists
+        saveShot("verify-day-detail-compare.png")
+    }
+
     func testHistoryTabSurface() throws {
         // Honest #64: History rows use circular tint metric wells.
         // Wait for Today chrome before switching tabs (heavier Body tiles can delay first paint).
