@@ -69,7 +69,8 @@ struct SkinTemperatureCard: View {
                         label: "Tonight",
                         value: currentTemp,
                         color: status.color,
-                        caption: deltaCaption
+                        caption: deltaCaption,
+                        icon: "thermometer.medium"
                     )
 
                     Rectangle()
@@ -81,7 +82,8 @@ struct SkinTemperatureCard: View {
                         label: "Baseline",
                         value: baselineTemp,
                         color: RTColor.secondaryText,
-                        caption: "personal average"
+                        caption: "personal average",
+                        icon: "chart.line.flattrend.xyaxis"
                     )
                 }
                 .accessibilityElement(children: .contain)
@@ -229,12 +231,23 @@ struct SkinTemperatureCard: View {
         label: String,
         value: Double,
         color: Color,
-        caption: String
+        caption: String,
+        icon: String
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+            HStack(spacing: 6) {
+                // Honest #95: Apple circular tint well on Tonight|Baseline dual columns.
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 22, height: 22)
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
 
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(String(format: "%.2f", value))
