@@ -105,6 +105,7 @@
 		J58K01M73I192031425V1 /* PeripheralPerfusionTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425V0 /* PeripheralPerfusionTonightBaselineCard.swift */; };
 		J58K01M73I192031425F1 /* FallsTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425F0 /* FallsTonightBaselineCard.swift */; };
 		J58K01M73I192031425W1 /* WheelchairPushesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425W0 /* WheelchairPushesTonightBaselineCard.swift */; };
+		J58K01M73I192031425E1 /* DietaryEnergyTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425E0 /* DietaryEnergyTonightBaselineCard.swift */; };
 		B01D34F06B425364758697A9 /* EnvironmentalAudioTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01D34F06B425364758697A8 /* EnvironmentalAudioTonightBaselineCard.swift */; };
 		D02E45G17C5364758697B1 /* HeadphoneAudioTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02E45G17C5364758697B0 /* HeadphoneAudioTonightBaselineCard.swift */; };
 		F03F56H28D647586970C3 /* EnvSoundReductionTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E03F56H28D647586970C2 /* EnvSoundReductionTonightBaselineCard.swift */; };
@@ -388,6 +389,7 @@
 		I58K01M73I192031425V0 /* PeripheralPerfusionTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeripheralPerfusionTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/PeripheralPerfusionTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425F0 /* FallsTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FallsTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/FallsTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425W0 /* WheelchairPushesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WheelchairPushesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WheelchairPushesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425E0 /* DietaryEnergyTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryEnergyTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryEnergyTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		A01D34F06B425364758697A8 /* EnvironmentalAudioTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnvironmentalAudioTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/EnvironmentalAudioTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		C02E45G17C5364758697B0 /* HeadphoneAudioTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeadphoneAudioTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/HeadphoneAudioTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E03F56H28D647586970C2 /* EnvSoundReductionTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnvSoundReductionTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/EnvSoundReductionTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -715,6 +717,7 @@
 				I58K01M73I192031425V0 /* PeripheralPerfusionTonightBaselineCard.swift */,
 				I58K01M73I192031425F0 /* FallsTonightBaselineCard.swift */,
 				I58K01M73I192031425W0 /* WheelchairPushesTonightBaselineCard.swift */,
+				I58K01M73I192031425E0 /* DietaryEnergyTonightBaselineCard.swift */,
 				A01D34F06B425364758697A8 /* EnvironmentalAudioTonightBaselineCard.swift */,
 				C02E45G17C5364758697B0 /* HeadphoneAudioTonightBaselineCard.swift */,
 				E03F56H28D647586970C2 /* EnvSoundReductionTonightBaselineCard.swift */,
@@ -1263,6 +1266,7 @@
 				J58K01M73I192031425V1 /* PeripheralPerfusionTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425F1 /* FallsTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425W1 /* WheelchairPushesTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425E1 /* DietaryEnergyTonightBaselineCard.swift in Sources */,
 				B01D34F06B425364758697A9 /* EnvironmentalAudioTonightBaselineCard.swift in Sources */,
 				D02E45G17C5364758697B1 /* HeadphoneAudioTonightBaselineCard.swift in Sources */,
 				F03F56H28D647586970C3 /* EnvSoundReductionTonightBaselineCard.swift in Sources */,
