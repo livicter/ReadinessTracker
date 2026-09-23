@@ -1283,6 +1283,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-heart-rate-recovery-tonight-baseline.png")
     }
 
+    func testAFBurdenTonightBaselineSurface() throws {
+        // Honest #168: AF Burden Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["AF Burden"]
+        while !title.exists && n < 40 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "AF Burden")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.afBurden.card"].exists
+        _ = app.descendants(matching: .any)["vitals.afBurden.baseline"].exists
+        _ = app.staticTexts["7-Day AF Burden"].exists
+        _ = app.descendants(matching: .any)["vitals.afBurden.spark"].exists
+        saveShot("verify-af-burden-tonight-baseline.png")
+    }
+
     func testEnvironmentalAudioTonightBaselineSurface() throws {
         // Honest #136: Environmental audio exposure Tonight | Baseline (new HK + model).
         var n = 0

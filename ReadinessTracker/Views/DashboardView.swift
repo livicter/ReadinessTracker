@@ -1014,6 +1014,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.heartRateRecoveryCard)
 
+            AFBurdenTonightBaselineCard(
+                percent: data.atrialFibrillationBurdenPercent,
+                history: history.compactMap { day in
+                    guard let p = day.atrialFibrillationBurdenPercent else { return nil }
+                    return (day.date, p)
+                },
+                baseline: AFBurdenBaseline.average(
+                    from: history,
+                    fallback: data.atrialFibrillationBurdenPercent ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.afBurdenCard)
+
+
 
             EnvironmentalAudioTonightBaselineCard(
                 exposureDBA: data.environmentalAudioExposureDBA,
