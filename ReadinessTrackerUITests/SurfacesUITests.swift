@@ -2524,6 +2524,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-inhaler-usage-tonight-baseline.png")
     }
 
+    func testInsulinDeliveryTonightBaselineSurface() throws {
+        // Honest #179: Insulin Delivery Tonight | Baseline (HK insulinDelivery).
+        var n = 0
+        while !app.descendants(matching: .any)["body.insulin.card"].exists && n < 36 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.insulin.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Insulin Delivery card")
+        XCTAssertTrue(app.staticTexts["Insulin Delivery"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.insulin.baseline"].exists
+        _ = app.staticTexts["7-Day Insulin"].exists
+        _ = app.descendants(matching: .any)["body.insulin.spark"].exists
+        saveShot("verify-insulin-delivery-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0
