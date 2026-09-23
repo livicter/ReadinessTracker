@@ -1329,6 +1329,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-peripheral-perfusion-tonight-baseline.png")
     }
 
+    func testFallsTonightBaselineSurface() throws {
+        // Honest #170: Falls Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Falls"]
+        while !title.exists && n < 44 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Falls")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.falls.card"].exists
+        _ = app.descendants(matching: .any)["body.falls.baseline"].exists
+        _ = app.staticTexts["7-Day Falls"].exists
+        _ = app.descendants(matching: .any)["body.falls.spark"].exists
+        saveShot("verify-falls-tonight-baseline.png")
+    }
+
     func testEnvironmentalAudioTonightBaselineSurface() throws {
         // Honest #136: Environmental audio exposure Tonight | Baseline (new HK + model).
         var n = 0

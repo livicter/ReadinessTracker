@@ -212,6 +212,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 0.8 + Double((offset * 11) % 50) / 10.0 // 0.8…5.7
             }()
+            // Falls count (Honest #170). Sparse mobility safety — seed for UI.
+            let numberOfTimesFallenValue: Double? = {
+                if offset == 0 { return 0 }
+                if offset % 5 == 0 { return nil }
+                return Double((offset * 3) % 4) // 0…3
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -447,6 +453,7 @@ enum UIFixture {
                 heartRateRecoveryOneMinuteBpm: heartRateRecoveryOneMinuteBpmValue,
                 atrialFibrillationBurdenPercent: atrialFibrillationBurdenPercentValue,
                 peripheralPerfusionIndexPercent: peripheralPerfusionIndexPercentValue,
+                numberOfTimesFallen: numberOfTimesFallenValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
