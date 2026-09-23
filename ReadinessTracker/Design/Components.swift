@@ -635,6 +635,131 @@ struct BodyMetricDetailView: View {
     }
 }
 
+
+// MARK: - Cycle detail (Apple Health / Google Health glance)
+
+/// Cycle status + recent flow days. Readiness still uses the existing −3 flow adjustment — no new scoring.
+struct CycleDetailView: View {
+    let data: DailyHealthData
+    let history: [DailyHealthData]
+
+    @Environment(\.dismiss) private var dismiss
+
+    private let cycleColor = Color(hex: "FF2D55")
+
+    private var recentDays: [(date: Date, flow: Bool)] {
+        let cal = Calendar.current
+        let sorted = history.sorted { $0.date > $1.date }
+        return Array(sorted.prefix(14)).map { ($0.date, $0.menstrualFlow) }
+    }
+
+    private var flowDaysInWindow: Int {
+        recentDays.filter(\.flow).count
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 28) {
+                    VStack(spacing: 8) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "circle.lefthalf.filled")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(cycleColor)
+                                .frame(width: 36, height: 36)
+                                .background(cycleColor.opacity(0.14))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
+                            Text("Cycle")
+                                .font(.title2.weight(.bold))
+                                .foregroundStyle(RTColor.primaryText)
+                        }
+                        Text(data.menstrualFlow ? "Flow reported" : "No flow")
+                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .foregroundStyle(cycleColor)
+                            .accessibilityIdentifier("body.cycle.status")
+                        Text("Today")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    .padding(.top, 8)
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Last 14 days")
+                            .font(.headline)
+                            .foregroundStyle(RTColor.primaryText)
+                        Text("\(flowDaysInWindow) day\(flowDaysInWindow == 1 ? "" : "s") with flow reported")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(RTColor.secondaryText)
+
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 7), spacing: 8) {
+                            ForEach(Array(recentDays.reversed().enumerated()), id: \.offset) { _, day in
+                                VStack(spacing: 4) {
+                                    Circle()
+                                        .fill(day.flow ? cycleColor : cycleColor.opacity(0.12))
+                                        .frame(width: 22, height: 22)
+                                    Text(shortDay(day.date))
+                                        .font(.caption2.weight(.medium))
+                                        .foregroundStyle(RTColor.tertiaryText)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .accessibilityLabel(day.flow ? "Flow" : "No flow")
+                            }
+                        }
+                        .accessibilityIdentifier("body.cycle.strip")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(RTColor.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "heart.text.square.fill")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(RTColor.recovery)
+                                .frame(width: 36, height: 36)
+                                .background(RTColor.recovery.opacity(0.14))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
+                            Text("Readiness")
+                                .font(.headline)
+                                .foregroundStyle(RTColor.primaryText)
+                        }
+                        Text(data.menstrualFlow
+                             ? "Flow reported today. Readiness and Recovery each apply a small −3 adjustment while cycle tracking is on — same rule as before, now visible here."
+                             : "No flow reported today. When flow is logged in Health, Readiness and Recovery apply a small −3 adjustment while cycle tracking is on.")
+                            .font(.subheadline)
+                            .foregroundStyle(RTColor.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(16)
+                    .background(RTColor.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+                .padding(20)
+            }
+            .background(AppBackground())
+            .navigationTitle("Cycle")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }
+                }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("body.cycle.detail")
+        }
+    }
+
+    private func shortDay(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "EEE"
+        return String(f.string(from: date).prefix(1))
+    }
+}
+
 /// Non-animated progress ring for Body tiles (keeps Today scroll light).
 private struct BodyCompactProgressRing: View {
     let progress: Double
