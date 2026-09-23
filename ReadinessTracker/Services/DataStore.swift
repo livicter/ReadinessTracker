@@ -178,6 +178,8 @@ enum UIFixture {
                 sleepEfficiency: 0.90,
                 deepSleepPercent: 0.17,
                 remSleepPercent: 0.21,
+                // Vary onset so Sleep Latency 7-night spark has shape; today ~12 min (Fast).
+                sleepOnsetMinutes: offset == 0 ? 12 : (8 + Double((offset * 7) % 28)),
                 sleepStartTime: sleepStart,
                 sleepEndTime: sleepEnd,
                 wakeEpisodes: wakeEpisodes,
