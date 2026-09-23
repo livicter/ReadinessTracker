@@ -68,13 +68,15 @@ struct NutritionSummary: Codable, Hashable {
     let phosphorusMg: Double?
     /// Dietary chromium (mcg) from HealthKit `dietaryChromium` — Honest #216.
     let chromiumMcg: Double?
+    /// Dietary molybdenum (mcg) from HealthKit `dietaryMolybdenum` — Honest #217.
+    let molybdenumMcg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && iodineMcg == nil && phosphorusMg == nil && chromiumMcg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && iodineMcg == nil && phosphorusMg == nil && chromiumMcg == nil && molybdenumMcg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -113,6 +115,7 @@ struct NutritionSummary: Codable, Hashable {
         iodineMcg: Double? = nil,
         phosphorusMg: Double? = nil,
         chromiumMcg: Double? = nil,
+        molybdenumMcg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -150,6 +153,7 @@ struct NutritionSummary: Codable, Hashable {
         self.iodineMcg = iodineMcg
         self.phosphorusMg = phosphorusMg
         self.chromiumMcg = chromiumMcg
+        self.molybdenumMcg = molybdenumMcg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
