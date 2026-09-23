@@ -1375,6 +1375,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cycle-tonight-baseline.png")
     }
 
+    func testStepsTonightBaselineSurface() throws {
+        // Honest #121: Steps Tonight | Baseline dual on Today Body.
+        var n = 0
+        let title = app.staticTexts["Steps"]
+        while !app.descendants(matching: .any)["body.steps.card"].exists && n < 18 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.steps.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Steps card")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.steps.baseline"].exists
+        _ = app.staticTexts["7-Day Steps"].exists
+        _ = app.descendants(matching: .any)["body.steps.spark"].exists
+        _ = title.exists
+        saveShot("verify-steps-tonight-baseline.png")
+    }
+
 
 
 
