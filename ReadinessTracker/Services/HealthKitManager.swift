@@ -167,6 +167,9 @@ class HealthKitManager: ObservableObject {
             if let skatingDistanceType = HKObjectType.quantityType(forIdentifier: .distanceSkatingSports) {
                 typesToRead.insert(skatingDistanceType)
             }
+            if let xcSkiDistanceType = HKObjectType.quantityType(forIdentifier: .distanceCrossCountrySkiing) {
+                typesToRead.insert(xcSkiDistanceType)
+            }
         }
 
         if #available(iOS 16.0, *) {
@@ -281,6 +284,7 @@ class HealthKitManager: ObservableObject {
         async let paddleDistance = fetchDistancePaddleSports(predicate: predicate)
         async let paddleSpeed = fetchPaddleSportsSpeed(predicate: predicate)
         async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
+        async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
         async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -387,6 +391,7 @@ class HealthKitManager: ObservableObject {
             distancePaddleSportsKm: await paddleDistance,
             paddleSportsSpeedMps: await paddleSpeed,
             distanceSkatingSportsKm: await skatingDistance,
+            distanceCrossCountrySkiingKm: await xcSkiDistance,
             cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             workoutEffortScore: await workoutEffort,
@@ -493,6 +498,7 @@ class HealthKitManager: ObservableObject {
             async let paddleDistance = fetchDistancePaddleSports(predicate: predicate)
             async let paddleSpeed = fetchPaddleSportsSpeed(predicate: predicate)
             async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
+            async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
             async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -569,6 +575,7 @@ class HealthKitManager: ObservableObject {
             let paddleDistanceValue = await paddleDistance
             let paddleSpeedValue = await paddleSpeed
             let skatingDistanceValue = await skatingDistance
+            let xcSkiDistanceValue = await xcSkiDistance
             let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let workoutEffortValue = await workoutEffort
@@ -672,6 +679,7 @@ class HealthKitManager: ObservableObject {
                 distancePaddleSportsKm: paddleDistanceValue,
                 paddleSportsSpeedMps: paddleSpeedValue,
                 distanceSkatingSportsKm: skatingDistanceValue,
+                distanceCrossCountrySkiingKm: xcSkiDistanceValue,
                 cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 workoutEffortScore: workoutEffortValue,
@@ -1373,6 +1381,15 @@ class HealthKitManager: ObservableObject {
     private func fetchDistanceSkatingSports(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 18.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .distanceSkatingSports) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
+    }
+
+
+    /// Day cumulative cross-country skiing distance in kilometers. Sparse niche sport — fixture seeds UI. iOS 18+.
+    private func fetchDistanceCrossCountrySkiing(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 18.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceCrossCountrySkiing) else { return nil }
         guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
         return meters / 1000.0
     }
