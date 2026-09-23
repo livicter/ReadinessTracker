@@ -3,7 +3,7 @@ import XCTest
 
 final class NutritionSummaryTests: XCTestCase {
     func testNutritionSummaryEncodingRoundTrip() throws {
-        let summary = NutritionSummary(waterLiters: 2.5, caffeineMg: 120, proteinGrams: 80, energyKcal: 2100, carbohydrateGrams: 210, fatGrams: 68, fiberGrams: 28, sugarGrams: 42)
+        let summary = NutritionSummary(waterLiters: 2.5, caffeineMg: 120, proteinGrams: 80, energyKcal: 2100, carbohydrateGrams: 210, fatGrams: 68, fiberGrams: 28, sugarGrams: 42, alcoholicBeverages: 1)
         let encoded = try JSONEncoder().encode(summary)
         let decoded = try JSONDecoder().decode(NutritionSummary.self, from: encoded)
         XCTAssertEqual(decoded.waterLiters, 2.5)
@@ -14,6 +14,7 @@ final class NutritionSummaryTests: XCTestCase {
         XCTAssertEqual(decoded.fatGrams, 68)
         XCTAssertEqual(decoded.fiberGrams, 28)
         XCTAssertEqual(decoded.sugarGrams, 42)
+        XCTAssertEqual(decoded.alcoholicBeverages, 1)
     }
     
     func testNutritionSummaryIsEmpty() {
