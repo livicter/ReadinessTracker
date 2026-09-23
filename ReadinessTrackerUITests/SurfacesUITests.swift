@@ -1130,6 +1130,19 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-latency.png")
     }
 
+    func testSleepEfficiencySurface() throws {
+        // Honest #110: WHOOP Sleep Efficiency Tonight | Baseline + 7-night spark on Today.
+        revealText("Sleep Efficiency")
+        XCTAssertTrue(app.staticTexts["Sleep Efficiency"].waitForExistence(timeout: 6))
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["sleep.efficiency.card"].exists
+        _ = app.descendants(matching: .any)["sleep.efficiency.baseline"].exists
+        _ = app.staticTexts["7-Night Efficiency"].exists
+        _ = app.descendants(matching: .any)["sleep.efficiency.spark"].exists
+        saveShot("verify-sleep-efficiency.png")
+    }
+
 
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
