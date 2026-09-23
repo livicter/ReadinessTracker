@@ -212,6 +212,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 8.0 + Double((offset * 7) % 22) // 8…29
             }()
+            // Time in daylight minutes (Honest #139). Simulator rarely has samples — seed for UI.
+            let timeInDaylightMinutesValue: Double? = {
+                if offset == 0 { return 95.0 }
+                if offset % 5 == 0 { return nil }
+                return 35.0 + Double((offset * 11) % 90) // 35…124
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -263,6 +269,7 @@ enum UIFixture {
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
+                timeInDaylightMinutes: timeInDaylightMinutesValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),

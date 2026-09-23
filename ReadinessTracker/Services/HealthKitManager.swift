@@ -25,7 +25,7 @@ class HealthKitManager: ObservableObject {
             return
         }
         
-        let typesToRead: Set<HKObjectType> = [
+        var typesToRead: Set<HKObjectType> = [
             HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!,
             HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
@@ -49,6 +49,12 @@ class HealthKitManager: ObservableObject {
         ]
         
         do {
+        if #available(iOS 17.0, *) {
+            if let daylightType = HKObjectType.quantityType(forIdentifier: .timeInDaylight) {
+                typesToRead.insert(daylightType)
+            }
+        }
+
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
             await MainActor.run {
                 isAuthorized = true
@@ -85,6 +91,7 @@ class HealthKitManager: ObservableObject {
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
+        async let daylight = fetchTimeInDaylight(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -132,6 +139,7 @@ class HealthKitManager: ObservableObject {
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
+            timeInDaylightMinutes: await daylight,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -180,6 +188,7 @@ class HealthKitManager: ObservableObject {
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
+            async let daylight = fetchTimeInDaylight(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -198,6 +207,7 @@ class HealthKitManager: ObservableObject {
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
+            let daylightValue = await daylight
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -242,6 +252,7 @@ class HealthKitManager: ObservableObject {
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
+                timeInDaylightMinutes: daylightValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -387,6 +398,17 @@ class HealthKitManager: ObservableObject {
             self.healthStore.execute(query)
         }
     }
+
+
+
+    /// Day cumulative time in daylight (minutes). Apple Watch outdoor daylight; iOS 17+, sparse on Simulator.
+    private func fetchTimeInDaylight(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 17.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .timeInDaylight) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .minute())
+    }
+
+
 
 
     private func fetchHeartbeatSeriesRRIntervals(predicate: NSPredicate) async -> [Double] {
