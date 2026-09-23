@@ -1421,6 +1421,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-distance-tonight-baseline.png")
     }
 
+    func testAppleExerciseTimeTonightBaselineSurface() throws {
+        // Honest #143: Apple Exercise Time Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Exercise Time"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Exercise Time")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["strain.exerciseTime.card"].exists
+        _ = app.descendants(matching: .any)["strain.exerciseTime.baseline"].exists
+        _ = app.staticTexts["7-Day Exercise Time"].exists
+        _ = app.descendants(matching: .any)["strain.exerciseTime.spark"].exists
+        saveShot("verify-apple-exercise-time-tonight-baseline.png")
+    }
+
+
 
 
 
