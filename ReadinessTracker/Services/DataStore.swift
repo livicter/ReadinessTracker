@@ -510,6 +510,11 @@ enum UIFixture {
                         if offset == 0 { return 68 }
                         if offset % 5 == 0 { return nil }
                         return 35 + Double((offset * 19) % 61) // 35…95
+                    }(),
+                    fiberGrams: {
+                        if offset == 0 { return 28 }
+                        if offset % 5 == 0 { return nil }
+                        return 12 + Double((offset * 7) % 29) // 12…40
                     }()
                 ),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
