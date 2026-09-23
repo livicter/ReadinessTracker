@@ -365,6 +365,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testWeeklyReportSurface() throws {
+        // Honest #68: Weekly Report metric tiles use circular tint icon wells.
         // History → Weekly Report sheet: fixture seeds 14 appleWatch days (≥3 needed).
         tapMainTab("History")
         XCTAssertTrue(app.staticTexts["Weekly Report"].waitForExistence(timeout: 8))
