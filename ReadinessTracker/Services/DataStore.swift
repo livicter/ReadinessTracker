@@ -272,6 +272,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 0.58 + Double((offset * 13) % 24) / 100.0 // 0.58…0.81
             }()
+            // Stair ascent speed m/s (Honest #149). Simulator often empty — seed for UI.
+            let stairAscentSpeedMpsValue: Double? = {
+                if offset == 0 { return 0.42 }
+                if offset % 5 == 0 { return nil }
+                return 0.28 + Double((offset * 11) % 22) / 100.0 // 0.28…0.49
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -333,6 +339,7 @@ enum UIFixture {
                 walkingAsymmetryPercent: walkingAsymmetryPercentValue,
                 walkingSpeedMps: walkingSpeedMpsValue,
                 walkingStepLengthMeters: walkingStepLengthMetersValue,
+                stairAscentSpeedMps: stairAscentSpeedMpsValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),
