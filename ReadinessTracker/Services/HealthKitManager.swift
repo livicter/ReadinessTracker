@@ -40,6 +40,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .walkingSpeed)!,
             HKObjectType.quantityType(forIdentifier: .walkingStepLength)!,
             HKObjectType.quantityType(forIdentifier: .stairAscentSpeed)!,
+            HKObjectType.quantityType(forIdentifier: .stairDescentSpeed)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -112,6 +113,7 @@ class HealthKitManager: ObservableObject {
         async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
         async let stepLength = fetchWalkingStepLength(predicate: predicate)
         async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
+        async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -170,6 +172,7 @@ class HealthKitManager: ObservableObject {
             walkingSpeedMps: await walkSpeed,
             walkingStepLengthMeters: await stepLength,
             stairAscentSpeedMps: await stairAscent,
+            stairDescentSpeedMps: await stairDescent,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -229,6 +232,7 @@ class HealthKitManager: ObservableObject {
             async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
             async let stepLength = fetchWalkingStepLength(predicate: predicate)
             async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
+            async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -258,6 +262,7 @@ class HealthKitManager: ObservableObject {
             let walkSpeedValue = await walkSpeed
             let stepLengthValue = await stepLength
             let stairAscentValue = await stairAscent
+            let stairDescentValue = await stairDescent
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -313,6 +318,7 @@ class HealthKitManager: ObservableObject {
                 walkingSpeedMps: walkSpeedValue,
                 walkingStepLengthMeters: stepLengthValue,
                 stairAscentSpeedMps: stairAscentValue,
+                stairDescentSpeedMps: stairDescentValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -618,6 +624,23 @@ class HealthKitManager: ObservableObject {
     /// Day average stair ascent speed (m/s). Sparse mobility — fixture seeds UI.
     private func fetchStairAscentSpeed(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .stairAscentSpeed) else { return nil }
+        let unit = HKUnit.meter().unitDivided(by: .second())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average stair descent speed (m/s). Sparse mobility — fixture seeds UI.
+    private func fetchStairDescentSpeed(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .stairDescentSpeed) else { return nil }
         let unit = HKUnit.meter().unitDivided(by: .second())
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
