@@ -1472,6 +1472,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.walkingDoubleSupportCard)
 
+                WalkingAsymmetryTonightBaselineCard(
+                    percent: data.walkingAsymmetryPercent,
+                    history: history.compactMap { day in
+                        guard let p = day.walkingAsymmetryPercent else { return nil }
+                        return (day.date, p)
+                    },
+                    baseline: WalkingAsymmetryBaseline.average(
+                        from: history,
+                        fallback: data.walkingAsymmetryPercent ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.walkingAsymmetryCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(

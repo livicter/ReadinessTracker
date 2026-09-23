@@ -254,6 +254,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 22.0 + Double((offset * 11) % 16) // 22…37
             }()
+            // Walking asymmetry % (Honest #146). Simulator often empty — seed for UI. Lower is more symmetric.
+            let walkingAsymmetryPercentValue: Double? = {
+                if offset == 0 { return 2.4 }
+                if offset % 5 == 0 { return nil }
+                return 1.0 + Double((offset * 7) % 12) / 2.0 // 1.0…6.5
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -312,6 +318,7 @@ enum UIFixture {
                 appleExerciseTimeMinutes: appleExerciseTimeMinutesValue,
                 appleStandHours: appleStandHoursValue,
                 walkingDoubleSupportPercent: walkingDoubleSupportPercentValue,
+                walkingAsymmetryPercent: walkingAsymmetryPercentValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),

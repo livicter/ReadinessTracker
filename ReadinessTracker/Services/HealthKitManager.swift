@@ -36,6 +36,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
+            HKObjectType.quantityType(forIdentifier: .walkingAsymmetryPercentage)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -104,6 +105,7 @@ class HealthKitManager: ObservableObject {
         async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
         async let standHours = fetchAppleStandHours(predicate: predicate)
         async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
+        async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -158,6 +160,7 @@ class HealthKitManager: ObservableObject {
             appleExerciseTimeMinutes: await exerciseTime,
             appleStandHours: await standHours,
             walkingDoubleSupportPercent: await doubleSupport,
+            walkingAsymmetryPercent: await asymmetry,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -213,6 +216,7 @@ class HealthKitManager: ObservableObject {
             async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
             async let standHours = fetchAppleStandHours(predicate: predicate)
             async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
+            async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -238,6 +242,7 @@ class HealthKitManager: ObservableObject {
             let exerciseTimeValue = await exerciseTime
             let standHoursValue = await standHours
             let doubleSupportValue = await doubleSupport
+            let asymmetryValue = await asymmetry
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -289,6 +294,7 @@ class HealthKitManager: ObservableObject {
                 appleExerciseTimeMinutes: exerciseTimeValue,
                 appleStandHours: standHoursValue,
                 walkingDoubleSupportPercent: doubleSupportValue,
+                walkingAsymmetryPercent: asymmetryValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -527,6 +533,28 @@ class HealthKitManager: ObservableObject {
                     return
                 }
                 // HK percent unit is 0…1 fraction; store as 0…100 for UI.
+                let pct = raw <= 1.0 ? raw * 100.0 : raw
+                continuation.resume(returning: pct)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average walking asymmetry percentage (left/right imbalance). Sparse gait — fixture seeds UI.
+    private func fetchWalkingAsymmetry(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .walkingAsymmetryPercentage) else { return nil }
+        let unit = HKUnit.percent()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let raw = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
                 let pct = raw <= 1.0 ? raw * 100.0 : raw
                 continuation.resume(returning: pct)
             }

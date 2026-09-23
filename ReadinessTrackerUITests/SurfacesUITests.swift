@@ -1490,6 +1490,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-walking-double-support-tonight-baseline.png")
     }
 
+    func testWalkingAsymmetryTonightBaselineSurface() throws {
+        // Honest #146: Walking Asymmetry Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Walking Asymmetry"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Walking Asymmetry")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.asymmetry.card"].exists
+        _ = app.descendants(matching: .any)["body.asymmetry.baseline"].exists
+        _ = app.staticTexts["7-Day Walking Asymmetry"].exists
+        _ = app.descendants(matching: .any)["body.asymmetry.spark"].exists
+        saveShot("verify-walking-asymmetry-tonight-baseline.png")
+    }
+
 
 
 
