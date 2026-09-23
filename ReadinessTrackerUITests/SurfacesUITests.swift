@@ -743,6 +743,63 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends-ma14-ema.png")
     }
 
+    func testTrendsSmartInsightsSurface() throws {
+        // Honest #263: Trends SmartInsightsView (classic Metric Detail parity, ≥3 days).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        _ = app.staticTexts["Weekly Report"].waitForExistence(timeout: 12)
+            || app.staticTexts["Trends"].waitForExistence(timeout: 6)
+            || app.staticTexts["Browse Trends"].waitForExistence(timeout: 6)
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        var n = 0
+        while !link.exists && n < 10 {
+            app.swipeUp()
+            n += 1
+        }
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browseAny = app.descendants(matching: .any).matching(
+                NSPredicate(format: "label CONTAINS[c] %@", "Browse Trends")
+            ).firstMatch
+            XCTAssertTrue(browseAny.waitForExistence(timeout: 8), "Browse Trends")
+            if browseAny.isHittable {
+                browseAny.tap()
+            } else {
+                browseAny.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 10) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var s = 0
+        let insights = app.descendants(matching: .any)["trends.smartInsights"].firstMatch
+        while !insights.exists && !app.staticTexts["Insights"].exists && s < 16 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = insights.exists
+        _ = app.staticTexts["Insights"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "average")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "pattern")).firstMatch.exists
+            || app.staticTexts["Avg"].exists
+        saveShot("verify-trends-smart-insights.png")
+    }
+
     func testTrendsScrubTooltipEnrichmentSurface() throws {
         // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

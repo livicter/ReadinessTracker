@@ -634,6 +634,8 @@ enum SurfaceID {
     static let trendsMA14Toggle = "trends.ma14.toggle"
     static let trendsEMA = "trends.ema"
     static let trendsEMAToggle = "trends.ema.toggle"
+    /// Honest #263: Trends SmartInsightsView (classic Metric Detail parity).
+    static let trendsSmartInsights = "trends.smartInsights"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"
