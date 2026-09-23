@@ -342,6 +342,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testJournalSurface() throws {
+        // Honest #76: Journal Log-7-days cue circular tint well (empty/low-data path).
         // Journal: Today NavigationLink → JournalView with ≥7 seeded fixture entries (Recent Entries).
         // Empty-state “Log 7 days…” remains for real users with <7 days; fixture seeds past that gate.
         revealText("Journal")

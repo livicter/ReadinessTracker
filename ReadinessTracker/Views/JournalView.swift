@@ -70,8 +70,14 @@ struct JournalView: View {
                         } else {
                             NativeCard {
                                 HStack(alignment: .top, spacing: 10) {
+                                    // Honest #76: Apple circular tint well on Journal Log-7-days cue.
                                     Image(systemName: "chart.bar")
+                                        .font(.system(size: 11, weight: .semibold))
                                         .foregroundStyle(RTColor.secondaryText)
+                                        .frame(width: 26, height: 26)
+                                        .background(RTColor.secondaryText.opacity(0.14))
+                                        .clipShape(Circle())
+                                        .accessibilityHidden(true)
                                     Text("Log 7 days to see how habits line up with next-day readiness.")
                                         .font(.subheadline)
                                         .foregroundStyle(RTColor.secondaryText)
