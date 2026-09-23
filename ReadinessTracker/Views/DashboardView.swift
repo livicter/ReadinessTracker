@@ -95,6 +95,12 @@ struct DashboardView: View {
 
                             checkInSection
                                 .slideIn(delay: 0.1)
+                            CheckInInsightsCard(
+                                tonight: metadataStore.metadataFor(date: Date(), timeOfDay: .morning),
+                                history: CheckInInsights.feelHistory(from: metadataStore)
+                            )
+                            .accessibilityIdentifier(SurfaceID.checkInInsightsCard)
+                            .slideIn(delay: 0.11)
                             journalButton
                                 .slideIn(delay: 0.13)
                             recommendationsSection(scores: finalScores)
