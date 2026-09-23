@@ -128,6 +128,17 @@ struct TrendDetailView: View {
                     .accessibilityIdentifier(SurfaceID.trendsSmartInsights)
                     .slideIn(delay: 0.14)
                 }
+
+                // Honest #264: WeeklyPatternView (classic Metric Detail parity, ≥7 days).
+                if depthTimelinePoints.count >= 7 {
+                    WeeklyPatternView(
+                        history: depthTimelinePoints,
+                        metric: scrubAnalysisMetric
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsWeeklyPattern)
+                    .slideIn(delay: 0.145)
+                }
                 
                 // Individual metric cards
                 metricCards
