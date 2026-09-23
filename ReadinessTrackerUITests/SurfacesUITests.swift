@@ -953,6 +953,54 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-nutrition.png")
     }
 
+    func testWorkoutSummarySurface() throws {
+        // Honest #108: WHOOP/Apple Fitness workout summary on Recovery & Strain.
+        revealText("Sleep Consistency")
+        app.swipeUp()
+        let byId = app.descendants(matching: .any)["strain.recovery.balance"].firstMatch
+        let byLabel = app.buttons["Strain recovery balance detail"].firstMatch
+        let balanceTitle = app.staticTexts["Balance"]
+        var n = 0
+        while !(byId.exists || byLabel.exists || balanceTitle.exists) && n < 6 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(
+            byId.waitForExistence(timeout: 6) ||
+            byLabel.waitForExistence(timeout: 4) ||
+            balanceTitle.waitForExistence(timeout: 4),
+            "strain.recovery.balance"
+        )
+        if byId.exists && byId.isHittable {
+            byId.tap()
+        } else if byLabel.exists && byLabel.isHittable {
+            byLabel.tap()
+        } else if balanceTitle.exists {
+            balanceTitle.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Recovery & Strain"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Strain Breakdown"].waitForExistence(timeout: 6),
+            "Recovery & Strain detail"
+        )
+        var z = 0
+        while !app.staticTexts["Workouts"].exists && z < 12 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(
+            app.staticTexts["Workouts"].waitForExistence(timeout: 6),
+            "Workouts title"
+        )
+        // Fixture seeds a Running session — leave empty copy.
+        XCTAssertFalse(app.staticTexts["No recorded workouts"].exists)
+        _ = app.descendants(matching: .any)["strain.workouts"].exists
+        _ = app.staticTexts["Running"].exists || app.staticTexts["Duration"].exists
+        _ = app.staticTexts["TRIMP"].exists || app.descendants(matching: .any)["strain.workout.trimp"].exists
+        saveShot("verify-workouts.png")
+    }
+
+
     func testStrainBalanceColumnWellSurface() throws {
         // Honest #97: Recovery|Strain balance dual columns circular wells.
         _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)

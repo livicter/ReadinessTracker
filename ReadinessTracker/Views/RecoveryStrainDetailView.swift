@@ -357,27 +357,9 @@ struct RecoveryStrainDetailView: View {
     
     // MARK: - Workouts
     private var workoutSection: some View {
-        NativeCard {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Workouts")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(RTColor.primaryText)
-                
-                if data.strainSessions.isEmpty {
-                    Text("No recorded workouts")
-                        .font(.subheadline)
-                        .foregroundStyle(RTColor.secondaryText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    VStack(spacing: 12) {
-                        ForEach(data.strainSessions) { session in
-                            WorkoutRow(session: session, trimp: session.trimp)
-                        }
-                    }
-                }
-            }
-        }
+        WorkoutSummaryCard(sessions: data.strainSessions, hrSamples: data.hrSamples)
     }
+
     
     // MARK: - Strain vs Recovery History
     private var strainRecoveryHistory: some View {
@@ -454,18 +436,3 @@ private struct RecoveryFactorRow: View {
     }
 }
 
-// MARK: - Workout Row
-private struct WorkoutRow: View {
-    let session: StrainSession
-    let trimp: Double
-
-    var body: some View {
-        AppListRow(
-            icon: "figure.run",
-            color: RTColor.strain,
-            label: session.workoutType,
-            value: "\(Int(session.durationMinutes)) min · \(Int(trimp)) TRIMP",
-            showChevron: false
-        )
-    }
-}

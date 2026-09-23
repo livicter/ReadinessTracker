@@ -159,7 +159,14 @@ enum UIFixture {
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
-            let workoutMinutesValue: Int = offset == 0 ? 42 : 15 + ((offset * 11) % 45)
+            let workoutMinutesValue: Int = offset == 0 ? 60 : 15 + ((offset * 11) % 45)
+            let rawSessions: [StrainSession] = Self.syntheticStrainSessions(on: date, offset: offset)
+            let strainSessionsValue: [StrainSession] = StrainCalculator.enrichSessions(
+                rawSessions,
+                hrSamples: hrSamplesValue,
+                restingHR: 54,
+                maxHR: maxHRValue
+            )
             let skinTemperatureValue: Double = offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05
             let respiratoryRateValue: Double = offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25
             let bloodOxygenValue: Double = offset == 0 ? 97.0 : 95.5 + Double((offset * 5) % 7) * 0.3
@@ -185,6 +192,7 @@ enum UIFixture {
                 workoutMinutes: workoutMinutesValue,
                 maxHeartRate: maxHRValue,
                 hrSamples: hrSamplesValue,
+                strainSessions: strainSessionsValue,
                 // Vary older nights so RR / Skin Temp 7-night spark / chart show real shape; today stays glance-stable.
                 skinTemperature: skinTemperatureValue,
                 respiratoryRate: respiratoryRateValue,
@@ -200,6 +208,33 @@ enum UIFixture {
     /// Daytime + workout HR progression so Recovery & Strain HR Zones render under -ui-fixture.
     static func syntheticHRSamples(on day: Date, resting: Double = 54, maxHR: Double = 185) -> [HRSample] {
         HRZoneAnalyzer.syntheticSamples(on: day, restingHR: resting, maxHR: maxHR, count: 120)
+    }
+
+
+    /// Fixture workouts aligned to synthetic HR peak window (07:30–08:30 Running today).
+    static func syntheticStrainSessions(on day: Date, offset: Int) -> [StrainSession] {
+        let cal = Calendar.current
+        if offset == 0 {
+            let start = cal.date(bySettingHour: 7, minute: 30, second: 0, of: day) ?? day
+            let end = cal.date(bySettingHour: 8, minute: 30, second: 0, of: day) ?? day.addingTimeInterval(3600)
+            return [
+                StrainSession(workoutType: "Running", startDate: start, endDate: end)
+            ]
+        }
+        if offset == 1 {
+            let start = cal.date(bySettingHour: 18, minute: 0, second: 0, of: day) ?? day
+            let end = cal.date(bySettingHour: 18, minute: 45, second: 0, of: day) ?? day.addingTimeInterval(2700)
+            return [
+                StrainSession(
+                    workoutType: "Strength Training",
+                    startDate: start,
+                    endDate: end,
+                    trimp: 72,
+                    contribution: 3.8
+                )
+            ]
+        }
+        return []
     }
 
     /// Fixture hypnogram night: contiguous stages from bed to wake with exactly one mid-sleep awake.
