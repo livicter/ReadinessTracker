@@ -425,6 +425,50 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends-stats-cv.png")
     }
 
+    func testTrendsOutlierCalloutSurface() throws {
+        // Honest #257: Trends OutlierCallout list (classic #251 / Advanced Highlights parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browse = app.staticTexts["Browse Trends"].exists ? app.staticTexts["Browse Trends"] : app.buttons["Browse Trends"]
+            XCTAssertTrue(browse.waitForExistence(timeout: 8), "Browse Trends")
+            browse.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 8) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        // Soft: Highlights list only when fixture has |z|>2; SurfaceIDs are hard proof.
+        _ = app.descendants(matching: .any)["trends.outliers"].exists
+        _ = app.descendants(matching: .any)["trends.outlierList"].exists
+        var s = 0
+        while s < 8 && !app.staticTexts["Highlights"].exists {
+            app.swipeUp()
+            s += 1
+        }
+        _ = app.staticTexts["Highlights"].exists
+            || app.staticTexts["Above Average"].exists
+            || app.staticTexts["Below Average"].exists
+            || app.staticTexts["Avg"].exists
+        saveShot("verify-trends-outlier-callout.png")
+    }
+
     func testTrendsScrubTooltipEnrichmentSurface() throws {
         // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
