@@ -1013,6 +1013,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.timeInDaylightCard)
 
+            UVExposureTonightBaselineCard(
+                uvIndex: data.uvExposureIndex,
+                history: history.compactMap { day in
+                    guard let idx = day.uvExposureIndex else { return nil }
+                    return (day.date, idx)
+                },
+                baseline: UVExposureBaseline.average(
+                    from: history,
+                    fallback: data.uvExposureIndex ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.uvExposureCard)
+
+
 
             if let respRate = data.respiratoryRate {
                 RespiratoryRateCard(

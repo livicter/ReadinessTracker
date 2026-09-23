@@ -1352,6 +1352,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-time-in-daylight-tonight-baseline.png")
     }
 
+    func testUVExposureTonightBaselineSurface() throws {
+        // Honest #140: UV exposure Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["UV Exposure"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "UV Exposure")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.uv.card"].exists
+        _ = app.descendants(matching: .any)["vitals.uv.baseline"].exists
+        _ = app.staticTexts["7-Day UV Exposure"].exists
+        _ = app.descendants(matching: .any)["vitals.uv.spark"].exists
+        saveShot("verify-uv-exposure-tonight-baseline.png")
+    }
+
+
 
 
 
