@@ -2505,6 +2505,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
 
+                ForcedVitalCapacityTonightBaselineCard(
+                    liters: data.forcedVitalCapacityLiters,
+                    history: history.compactMap { day in
+                        guard let v = day.forcedVitalCapacityLiters else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: ForcedVitalCapacityBaseline.average(
+                        from: history,
+                        fallback: data.forcedVitalCapacityLiters ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.forcedVitalCapacityCard)
+
                 InsulinDeliveryTonightBaselineCard(
                     iu: data.insulinDeliveryIU,
                     history: history.compactMap { day in

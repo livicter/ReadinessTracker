@@ -242,6 +242,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 280 + Double((offset * 23) % 221) // 280…500
             }()
+            // Forced vital capacity L (Honest #225). Sparse lung function — seed for UI.
+            let forcedVitalCapacityLitersValue: Double? = {
+                if offset == 0 { return 4.1 }
+                if offset % 5 == 0 { return nil }
+                return 2.6 + Double((offset * 11) % 27) / 10.0 // 2.6…5.2
+            }()
             // Insulin IU (Honest #179). Sparse medical — seed for UI.
             let insulinDeliveryIUValue: Double? = {
                 if offset == 0 { return 32 }
@@ -565,6 +571,7 @@ enum UIFixture {
                 distanceWheelchairKm: distanceWheelchairKmValue,
                 inhalerUsage: inhalerUsageValue,
                 peakExpiratoryFlowLpm: peakExpiratoryFlowLpmValue,
+                forcedVitalCapacityLiters: forcedVitalCapacityLitersValue,
                 insulinDeliveryIU: insulinDeliveryIUValue,
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,
                 bloodPressureSystolicMmHg: bloodPressureSystolicMmHgValue,
