@@ -813,7 +813,7 @@ final class SurfacesUITests: XCTestCase {
         _ = app.staticTexts["7-Day Volatility"].exists
             || app.staticTexts["Need ≥7 days for volatility"].exists
         _ = app.staticTexts["Baseline Bands"].exists
-        _ = app.staticTexts["Moving Avg"].exists
+        _ = app.staticTexts["MA7"].exists || app.staticTexts["Moving Avg"].exists
         saveShot("verify-metric-rolling-volatility.png")
     }
 
@@ -914,7 +914,7 @@ final class SurfacesUITests: XCTestCase {
         _ = app.descendants(matching: .any)["metric.chart.ema"].exists
         _ = app.staticTexts["7-day EMA"].exists
             || app.staticTexts["EMA responds faster than SMA to recent change"].exists
-        _ = app.staticTexts["Moving Avg"].exists
+        _ = app.staticTexts["MA7"].exists || app.staticTexts["Moving Avg"].exists
         _ = app.staticTexts["Momentum"].exists
         saveShot("verify-metric-ema.png")
     }
@@ -967,6 +967,57 @@ final class SurfacesUITests: XCTestCase {
         _ = app.staticTexts["EMA"].exists
         _ = app.staticTexts["Momentum"].exists
         saveShot("verify-metric-rate-of-change.png")
+    }
+
+    func testMetricMA14Surface() throws {
+        // Honest #244: SMA-14 (MA14) toggle + overlay on Advanced Metric Detail.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable {
+                sleepRow.tap()
+            } else {
+                app.swipeUp()
+                sleepRow.tap()
+            }
+        } else {
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            var m = 0
+            while !sleepCard.exists && m < 10 {
+                app.swipeDown()
+                m += 1
+            }
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        // Prefer 30D so MA14 has enough points under fixture.
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var z = 0
+        while !app.staticTexts["MA14"].exists && z < 8 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(app.staticTexts["MA14"].waitForExistence(timeout: 8), "MA14 toggle")
+        _ = app.descendants(matching: .any)["metric.chart.ma14.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.chart.ma14"].exists
+        _ = app.staticTexts["14-day MA"].exists
+            || app.staticTexts["MA14 smooths longer trends than MA7"].exists
+        _ = app.staticTexts["MA7"].exists
+        _ = app.staticTexts["EMA"].exists
+        saveShot("verify-metric-ma14.png")
     }
 
     func testStrainRecoveryBalanceSurface() throws {

@@ -128,6 +128,8 @@ enum SurfaceID {
     static let metricChartEMAToggle = "metric.chart.ema.toggle"
     static let metricChartROC = "metric.chart.roc"
     static let metricChartROCToggle = "metric.chart.roc.toggle"
+    static let metricChartMA14 = "metric.chart.ma14"
+    static let metricChartMA14Toggle = "metric.chart.ma14.toggle"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"
