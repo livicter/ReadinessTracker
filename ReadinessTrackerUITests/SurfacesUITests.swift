@@ -1973,6 +1973,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cycling-distance-tonight-baseline.png")
     }
 
+    func testCyclingSpeedTonightBaselineSurface() throws {
+        // Honest #222: Cycling Speed Tonight | Baseline (HK cyclingSpeed m/s).
+        var n = 0
+        let title = app.staticTexts["Cycling Speed"]
+        while !title.exists && n < 56 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Cycling Speed")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.cyclingSpeed.card"].exists
+        _ = app.descendants(matching: .any)["body.cyclingSpeed.baseline"].exists
+        _ = app.staticTexts["7-Day Cycling Speed"].exists
+        _ = app.descendants(matching: .any)["body.cyclingSpeed.spark"].exists
+        saveShot("verify-cycling-speed-tonight-baseline.png")
+    }
+
     func testPhysicalEffortTonightBaselineSurface() throws {
         // Honest #158: Physical Effort Tonight | Baseline (new HK + model).
         var n = 0

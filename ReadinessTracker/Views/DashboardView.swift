@@ -1751,6 +1751,18 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.cyclingDistanceCard)
 
+                CyclingSpeedTonightBaselineCard(
+                    metersPerSecond: data.cyclingSpeedMps,
+                    history: history.compactMap { day in
+                        guard let s = day.cyclingSpeedMps else { return nil }
+                        return (day.date, s)
+                    },
+                    baseline: CyclingSpeedBaseline.average(
+                        from: history,
+                        fallback: data.cyclingSpeedMps ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.cyclingSpeedCard)
 
                 PhysicalEffortTonightBaselineCard(
                     effort: data.physicalEffortKcalPerHrKg,

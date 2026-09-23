@@ -457,6 +457,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 8.0 + Double((offset * 17) % 45) // 8…52
             }()
+            // Cycling speed m/s (Honest #222). Completes cycling set — leftover after cadence/power/FTP/distance.
+            let cyclingSpeedMpsValue: Double? = {
+                if offset == 0 { return 6.8 }
+                if offset % 5 == 0 { return nil }
+                return 4.0 + Double((offset * 11) % 55) / 10.0 // 4.0…9.4
+            }()
             // Physical effort kcal/hr·kg (Honest #158). Simulator often empty — seed for UI.
             let physicalEffortKcalPerHrKgValue: Double? = {
                 if offset == 0 { return 3.8 }
@@ -583,6 +589,7 @@ enum UIFixture {
                 cyclingPowerWatts: cyclingPowerWattsValue,
                 cyclingFTPWatts: cyclingFTPWattsValue,
                 distanceCyclingKm: distanceCyclingKmValue,
+                cyclingSpeedMps: cyclingSpeedMpsValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 runningPowerWatts: runningPowerWattsValue,
                 runningSpeedMps: runningSpeedMpsValue,
