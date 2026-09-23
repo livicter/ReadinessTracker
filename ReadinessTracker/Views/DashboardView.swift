@@ -2335,6 +2335,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietaryManganeseCard)
 
 
+                DietaryIodineTonightBaselineCard(
+                    iodineMcg: data.nutrition.iodineMcg,
+                    history: history.compactMap { day in
+                        guard let v = day.nutrition.iodineMcg else { return nil }
+                        return (day.date, v)
+                    },
+                    baselineMcg: DietaryIodineBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.iodineMcg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryIodineCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
