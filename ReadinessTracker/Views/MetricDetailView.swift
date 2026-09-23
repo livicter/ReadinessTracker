@@ -10,12 +10,14 @@ struct MetricDetailView: View {
     @State private var selectedPeriod: TrendPeriod = .week
     @State private var selectedDataPoint: DailyHealthData?
     @State private var lastHapticID: DailyHealthData.ID?
-    /// Honest #247/#248: classic parity with Advanced overlays + strips.
+    /// Honest #247–#251: classic parity with Advanced overlays / strips / bands / outliers.
     @State private var showMA14 = true
     @State private var showEMA = true
     @State private var showVolatility = true
     @State private var showMomentum = true
     @State private var showRateOfChange = true
+    @State private var showBaselineBands = true
+    @State private var showOutliers = true
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -42,6 +44,11 @@ struct MetricDetailView: View {
         return vals.reduce(0, +) / Double(vals.count)
     }
 
+    /// Matches AdvancedMetricDetailView — used for ±2σ baseline bands.
+    var analysisStdDev: Double {
+        TrendAnalysisEngine.standardDeviation(values: values.map(\.value))
+    }
+
     var trend: TrendDirection {
         guard values.count >= 2 else { return .flat }
         let recent = values.suffix(3).map { $0.value }.reduce(0, +) / Double(min(3, values.count))
@@ -66,6 +73,10 @@ struct MetricDetailView: View {
                 // Main trend chart
                 trendChart
                     .slideIn(delay: 0.1)
+
+                // Honest #251: OutlierCallout list (Advanced Highlights parity)
+                classicOutlierSection
+                    .slideIn(delay: 0.11)
 
                 // Depth timeline (baseline band + MA7)
                 depthTimelineSection
@@ -254,6 +265,10 @@ struct MetricDetailView: View {
 
                 if values.count >= 2 {
                     Chart {
+                        if showBaselineBands {
+                            classicBaselineBandMarks
+                        }
+
                         ForEach(filteredHistory) { point in
                             LineMark(
                                 x: .value("Date", point.date, unit: .day),
@@ -280,8 +295,8 @@ struct MetricDetailView: View {
                                 x: .value("Date", point.date, unit: .day),
                                 y: .value("Value", metricValue(for: point))
                             )
-                            .foregroundStyle(point.date.isToday ? metric.color : metric.color.opacity(0.5))
-                            .symbolSize(point.date.isToday ? 80 : 40)
+                            .foregroundStyle(classicPointColor(for: point))
+                            .symbolSize(classicPointSize(for: point))
                         }
 
                         if showMA14 {
@@ -289,6 +304,12 @@ struct MetricDetailView: View {
                         }
                         if showEMA {
                             classicEMAMarks
+                        }
+                        if showOutliers {
+                            classicOutlierMarks
+                        }
+                        if showBaselineBands {
+                            classicBaselineRule
                         }
 
                         if let selected = selectedDataPoint {
@@ -347,6 +368,10 @@ struct MetricDetailView: View {
     private var classicOverlayToggles: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
+                    .accessibilityIdentifier(SurfaceID.metricClassicBaselineBandsToggle)
+                ToggleChip(label: "Outliers", isOn: $showOutliers)
+                    .accessibilityIdentifier(SurfaceID.metricClassicOutliersToggle)
                 ToggleChip(label: "MA14", isOn: $showMA14)
                     .accessibilityIdentifier(SurfaceID.metricClassicMA14Toggle)
                 ToggleChip(label: "EMA", isOn: $showEMA)
@@ -426,11 +451,124 @@ struct MetricDetailView: View {
                         .foregroundStyle(RTColor.secondaryText)
                 }
             }
+            if showBaselineBands {
+                HStack(spacing: 6) {
+                    Capsule()
+                        .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                        .frame(width: 18, height: 2)
+                    Text("Baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .accessibilityIdentifier(SurfaceID.metricClassicBaselineBands)
+                }
+            }
+            if showOutliers {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(.red.opacity(0.3))
+                        .frame(width: 8, height: 8)
+                    Text("Outlier")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .accessibilityIdentifier(SurfaceID.metricClassicOutliers)
+                }
+            }
             Spacer(minLength: 0)
         }
     }
 
+    // MARK: - Classic baseline bands + outliers (Honest #251)
 
+    @ChartContentBuilder
+    private var classicBaselineBandMarks: some ChartContent {
+        let cal = Calendar.current
+        let low = baseline - 2 * analysisStdDev
+        let high = baseline + 2 * analysisStdDev
+        ForEach(analyzedData) { point in
+            let endDate = cal.date(byAdding: .day, value: 1, to: point.date) ?? point.date
+            let color = classicBandColor(zScore: point.zScore).opacity(0.08)
+            RectangleMark(
+                xStart: .value("Date", point.date),
+                xEnd: .value("Date", endDate),
+                yStart: .value("Low", low),
+                yEnd: .value("High", high)
+            )
+            .foregroundStyle(color)
+        }
+    }
+
+    @ChartContentBuilder
+    private var classicOutlierMarks: some ChartContent {
+        ForEach(analyzedData.filter(\.isOutlier)) { point in
+            PointMark(
+                x: .value("Date", point.date, unit: .day),
+                y: .value("Value", point.rawValue)
+            )
+            .foregroundStyle(.red.opacity(0.3))
+            .symbolSize(200)
+        }
+    }
+
+    @ChartContentBuilder
+    private var classicBaselineRule: some ChartContent {
+        RuleMark(y: .value("Baseline", baseline))
+            .foregroundStyle(RTColor.primaryText.opacity(0.2))
+            .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+    }
+
+    private func classicBandColor(zScore: Double) -> Color {
+        let absZ = abs(zScore)
+        if absZ > 2 { return .red }
+        if absZ > 1 { return .orange }
+        return .green
+    }
+
+    private func classicPointIsOutlier(_ point: DailyHealthData) -> Bool {
+        guard showOutliers else { return false }
+        return analyzedData.first {
+            Calendar.current.isDate($0.date, inSameDayAs: point.date)
+        }?.isOutlier ?? false
+    }
+
+    private func classicPointColor(for point: DailyHealthData) -> Color {
+        if classicPointIsOutlier(point) { return .red }
+        return point.date.isToday ? metric.color : metric.color.opacity(0.5)
+    }
+
+    private func classicPointSize(for point: DailyHealthData) -> CGFloat {
+        if classicPointIsOutlier(point) { return 120 }
+        return point.date.isToday ? 80 : 40
+    }
+
+    @ViewBuilder
+    private var classicOutlierSection: some View {
+        let outliers = analyzedData.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let deviationStr = "\(point.zScore > 0 ? "+" : "")\(String(format: "%.1f", point.zScore))σ"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(formattedValue(point.rawValue)) \(metric.unit)",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.metricClassicOutlierList)
+            .accessibilityLabel("Outlier highlights")
+        }
+    }
 
     // MARK: - Classic strips (Honest #248) — Advanced #240–#243 parity
 

@@ -1064,6 +1064,50 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ma14.png")
     }
 
+    func testMetricClassicBaselineOutliersSurface() throws {
+        // Honest #251: classic Baseline Bands + OutlierCallout list (Advanced parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let metricsHeader = app.staticTexts["Metrics"]
+        var n = 0
+        while !metricsHeader.exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        if metricsHeader.exists { app.swipeUp() }
+        let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+        var m = 0
+        while !sleepCard.exists && m < 12 {
+            app.swipeUp()
+            m += 1
+        }
+        if sleepCard.waitForExistence(timeout: 8) {
+            if sleepCard.isHittable {
+                sleepCard.tap()
+            } else {
+                sleepCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+            }
+        } else {
+            let anySleep = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).element(boundBy: 0)
+            XCTAssertTrue(anySleep.waitForExistence(timeout: 8), "Sleep metric card")
+            anySleep.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "classic MetricDetailView"
+        )
+        // Soft: toggles + legend cues (Highlights list only when fixture has |z|>2).
+        _ = app.descendants(matching: .any)["metric.classic.baselineBands.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.classic.outliers.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.classic.baselineBands"].exists
+        _ = app.descendants(matching: .any)["metric.classic.outliers"].exists
+        _ = app.descendants(matching: .any)["metric.classic.outlierList"].exists
+        _ = app.staticTexts["Baseline"].exists || app.staticTexts["Baseline Bands"].exists
+        _ = app.staticTexts["Outlier"].exists || app.staticTexts["Outliers"].exists || app.staticTexts["Highlights"].exists
+        _ = app.staticTexts["Trend"].exists || app.staticTexts["Drag to inspect"].exists
+        saveShot("verify-metric-classic-baseline-outliers.png")
+    }
+
     func testMetricClassicScrubTooltipEnrichmentSurface() throws {
         // Honest #249: classic scrub tooltip enrichment (zScore + Day Δ) — mirror #246.
         // Soft-reveal Metrics → metric.card.Sleep; soft-scrub (selection clears on finger-up).

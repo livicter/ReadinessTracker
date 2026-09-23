@@ -148,6 +148,12 @@ enum SurfaceID {
     static let metricClassicROCToggle = "metric.classic.roc.toggle"
     /// Honest #249: classic scrub tooltip enrichment (mirrors #246; z/Δ use shared ChartTooltip IDs).
     static let metricClassicSelection = "metric.classic.selection"
+    /// Honest #251: classic Baseline Bands + OutlierCallout list (Advanced parity).
+    static let metricClassicBaselineBands = "metric.classic.baselineBands"
+    static let metricClassicBaselineBandsToggle = "metric.classic.baselineBands.toggle"
+    static let metricClassicOutliers = "metric.classic.outliers"
+    static let metricClassicOutliersToggle = "metric.classic.outliers.toggle"
+    static let metricClassicOutlierList = "metric.classic.outlierList"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"
