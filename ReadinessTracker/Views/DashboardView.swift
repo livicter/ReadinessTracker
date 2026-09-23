@@ -764,6 +764,20 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.strainRecoveryBalance)
             .accessibilityLabel("Strain recovery balance detail")
 
+            RestingHRCard(
+
+                currentBPM: Double(data.restingHeartRate),
+
+                history: history.map { ($0.date, Double($0.restingHeartRate)) },
+
+                baseline: BaselineManager.rhrBaseline(from: history)
+
+            )
+
+            .accessibilityIdentifier(SurfaceID.restingHRCard)
+
+
+
             if let respRate = data.respiratoryRate {
                 RespiratoryRateCard(
                     currentRate: respRate,

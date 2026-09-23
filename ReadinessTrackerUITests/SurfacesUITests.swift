@@ -226,7 +226,7 @@ final class SurfacesUITests: XCTestCase {
     func testMetricsSectionVisibleAfterScroll() throws {
         // Honest #75: MetricCard header circular tint wells (Sleep/HRV/Resting HR/Active Cals).
         revealText("Metrics")
-        XCTAssertTrue(app.staticTexts["Resting HR"].waitForExistence(timeout: 8), "Resting HR")
+        XCTAssertTrue(app.staticTexts["Resting Heart Rate"].waitForExistence(timeout: 8), "Resting HR")
         _ = app.staticTexts["Sleep"].exists
         _ = app.staticTexts["Active Cals"].exists
         saveShot("verify-metrics.png")
@@ -1167,6 +1167,30 @@ final class SurfacesUITests: XCTestCase {
         _ = app.descendants(matching: .any)["sleep.restorative.spark"].exists
         saveShot("verify-restorative-sleep.png")
     }
+
+    func testRestingHRSurface() throws {
+        // Honest #112: WHOOP Resting HR Tonight | Baseline on Today vitals stack.
+        var n = 0
+        let title = app.staticTexts["Resting Heart Rate"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Resting Heart Rate")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["resting.hr.card"].exists
+        _ = app.descendants(matching: .any)["resting.hr.baseline"].exists
+        _ = app.staticTexts["7-Night RHR"].exists
+        _ = app.descendants(matching: .any)["resting.hr.spark"].exists
+        saveShot("verify-resting-hr.png")
+    }
+
 
 
     func testRecommendationsSurface() throws {
