@@ -2265,6 +2265,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietaryNiacinCard)
 
 
+                DietaryPantothenicAcidTonightBaselineCard(
+                    pantothenicAcidMg: data.nutrition.pantothenicAcidMg,
+                    history: history.compactMap { day in
+                        guard let v = day.nutrition.pantothenicAcidMg else { return nil }
+                        return (day.date, v)
+                    },
+                    baselineMg: DietaryPantothenicAcidBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.pantothenicAcidMg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
