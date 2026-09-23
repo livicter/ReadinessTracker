@@ -2966,6 +2966,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-copper-tonight-baseline.png")
     }
 
+    func testDietarySeleniumTonightBaselineSurface() throws {
+        // Honest #212: Dietary Selenium Tonight | Baseline (HK dietarySelenium).
+        var n = 0
+        while !app.descendants(matching: .any)["body.selenium.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.selenium.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Selenium card")
+        XCTAssertTrue(app.staticTexts["Dietary Selenium"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.selenium.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Selenium"].exists
+        _ = app.descendants(matching: .any)["body.selenium.spark"].exists
+        saveShot("verify-dietary-selenium-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
