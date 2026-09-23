@@ -35,6 +35,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .appleMoveTime)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
+            HKObjectType.quantityType(forIdentifier: .numberOfTimesFallen)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
             HKObjectType.quantityType(forIdentifier: .walkingAsymmetryPercentage)!,
@@ -148,6 +149,7 @@ class HealthKitManager: ObservableObject {
         async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
         async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
         async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
+        async let falls = fetchNumberOfTimesFallen(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -226,6 +228,7 @@ class HealthKitManager: ObservableObject {
             heartRateRecoveryOneMinuteBpm: await hrr,
             atrialFibrillationBurdenPercent: await afBurden,
             peripheralPerfusionIndexPercent: await ppi,
+            numberOfTimesFallen: await falls,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -305,6 +308,7 @@ class HealthKitManager: ObservableObject {
             async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
             async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
             async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
+            async let falls = fetchNumberOfTimesFallen(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -354,6 +358,7 @@ class HealthKitManager: ObservableObject {
             let hrrValue = await hrr
             let afBurdenValue = await afBurden
             let ppiValue = await ppi
+            let fallsValue = await falls
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -429,6 +434,7 @@ class HealthKitManager: ObservableObject {
                 heartRateRecoveryOneMinuteBpm: hrrValue,
                 atrialFibrillationBurdenPercent: afBurdenValue,
                 peripheralPerfusionIndexPercent: ppiValue,
+                numberOfTimesFallen: fallsValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -616,6 +622,14 @@ class HealthKitManager: ObservableObject {
             }
             self.healthStore.execute(query)
         }
+    }
+
+
+
+    /// Day cumulative number of times fallen. Sparse mobility safety — fixture seeds UI.
+    private func fetchNumberOfTimesFallen(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .numberOfTimesFallen) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
     }
 
 

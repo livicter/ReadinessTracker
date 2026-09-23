@@ -1040,6 +1040,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
 
+            FallsTonightBaselineCard(
+                count: data.numberOfTimesFallen,
+                history: history.compactMap { day in
+                    guard let c = day.numberOfTimesFallen else { return nil }
+                    return (day.date, c)
+                },
+                baseline: FallsBaseline.average(
+                    from: history,
+                    fallback: data.numberOfTimesFallen ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.fallsCard)
+
+
 
 
 
