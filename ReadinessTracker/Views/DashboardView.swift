@@ -1628,6 +1628,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.cyclingFTPCard)
 
+                PhysicalEffortTonightBaselineCard(
+                    effort: data.physicalEffortKcalPerHrKg,
+                    history: history.compactMap { day in
+                        guard let e = day.physicalEffortKcalPerHrKg else { return nil }
+                        return (day.date, e)
+                    },
+                    baseline: PhysicalEffortBaseline.average(
+                        from: history,
+                        fallback: data.physicalEffortKcalPerHrKg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.physicalEffortCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
