@@ -809,6 +809,21 @@ final class SurfacesUITests: XCTestCase {
     }
 
 
+
+    func testSleepDebtColumnWellSurface() throws {
+        // Honest #96: Sleep Debt Banked|Debt / Last night dual columns circular wells.
+        _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Sleep Debt"].exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = app.staticTexts["Sleep Debt"].waitForExistence(timeout: 6)
+        _ = app.staticTexts["Last night"].exists || app.staticTexts["Debt"].exists || app.staticTexts["Banked"].exists
+        saveShot("verify-sleep-debt-columns.png")
+    }
+
     func testTonightBaselineWellSurface() throws {
         // Honest #95: Tonight|Baseline dual columns (Sleep HRV / Respiratory / Skin Temp) circular wells.
         _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)

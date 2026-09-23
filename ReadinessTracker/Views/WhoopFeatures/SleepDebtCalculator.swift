@@ -105,7 +105,8 @@ struct SleepDebtCalculator: View {
                         label: currentDebt >= 0 ? "Banked" : "Debt",
                         hours: abs(currentDebt),
                         color: debtStatus.color,
-                        caption: currentDebt >= 0 ? "surplus vs need" : "hours owed"
+                        caption: currentDebt >= 0 ? "surplus vs need" : "hours owed",
+                        icon: currentDebt >= 0 ? "checkmark.seal.fill" : "moon.zzz.fill"
                     )
 
                     Rectangle()
@@ -119,7 +120,8 @@ struct SleepDebtCalculator: View {
                         color: lastNightChange >= 0 ? RTColor.optimal : RTColor.warning,
                         caption: lastNightDeltaCaption,
                         signed: true,
-                        signedValue: lastNightChange
+                        signedValue: lastNightChange,
+                        icon: "bed.double.fill"
                     )
                 }
                 .accessibilityElement(children: .contain)
@@ -287,12 +289,23 @@ struct SleepDebtCalculator: View {
         color: Color,
         caption: String,
         signed: Bool = false,
-        signedValue: Double = 0
+        signedValue: Double = 0,
+        icon: String = "moon.zzz.fill"
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+            HStack(spacing: 6) {
+                // Honest #96: Apple circular tint well on Sleep Debt dual columns.
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 22, height: 22)
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
 
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 if signed {
