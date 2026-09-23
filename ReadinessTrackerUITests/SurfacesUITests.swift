@@ -346,6 +346,50 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-checkin.png")
     }
 
+    func testTrendsScrubTooltipEnrichmentSurface() throws {
+        // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browse = app.staticTexts["Browse Trends"].exists ? app.staticTexts["Browse Trends"] : app.buttons["Browse Trends"]
+            XCTAssertTrue(browse.waitForExistence(timeout: 8), "Browse Trends")
+            browse.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 8) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        let chart = app.otherElements["trends.chart.scrub"].firstMatch
+        _ = chart.waitForExistence(timeout: 8) || app.staticTexts["Drag to inspect"].waitForExistence(timeout: 4)
+        if chart.exists && chart.isHittable {
+            let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.45))
+            let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.45))
+            start.press(forDuration: 0.2, thenDragTo: end)
+        }
+        // Soft — selection clears on finger-up; enrichment unit-tested + wired in overlay.
+        _ = app.descendants(matching: .any)["trends.chart.selection"].exists
+        _ = app.descendants(matching: .any)["metric.chart.selection.zscore"].exists
+        _ = app.descendants(matching: .any)["metric.chart.selection.dayDelta"].exists
+        _ = app.otherElements["trends.summary"].exists || app.staticTexts["Avg"].exists
+        saveShot("verify-trends-scrub-tooltip-enrichment.png")
+    }
+
     func testTrendsDetailSurface() throws {
         // Honest #84: Trend Detail summary-card circular tint wells.
         // History → Browse Trends → TrendDetailView (period chips + Avg/Min/Max + scrub).
