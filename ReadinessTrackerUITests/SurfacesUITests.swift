@@ -778,6 +778,21 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-strain-wheel.png")
     }
 
+
+    func testSleepNeedGotWellSurface() throws {
+        // Honest #94: Sleep Performance Need|Got circular tint wells.
+        _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Sleep Performance"].exists && n < 12 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = app.staticTexts["Sleep Performance"].waitForExistence(timeout: 6)
+        _ = app.staticTexts["Need"].exists || app.staticTexts["Got"].exists
+        saveShot("verify-sleep-need-got.png")
+    }
+
     func testSleepPerformanceSurface() throws {
         // Today WHOOP stack: elevated Sleep Performance Need | Got dual metric + bar.
         // Reveal title first — do not keep swiping for ids (overscrolls past the card).
