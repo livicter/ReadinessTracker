@@ -44,6 +44,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .pushCount)!,
             HKObjectType.quantityType(forIdentifier: .distanceWheelchair)!,
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
+            HKObjectType.quantityType(forIdentifier: .peakExpiratoryFlowRate)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
             HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic)!,
@@ -213,6 +214,7 @@ class HealthKitManager: ObservableObject {
         async let pushes = fetchPushCount(predicate: predicate)
         async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
         async let inhaler = fetchInhalerUsage(predicate: predicate)
+        async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
         async let bp = fetchBloodPressure(predicate: predicate)
@@ -304,6 +306,7 @@ class HealthKitManager: ObservableObject {
             pushCount: await pushes,
             distanceWheelchairKm: await wheelchairDistance,
             inhalerUsage: await inhaler,
+            peakExpiratoryFlowLpm: await pef,
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
             bloodPressureSystolicMmHg: await bp.systolic,
@@ -405,6 +408,7 @@ class HealthKitManager: ObservableObject {
             async let pushes = fetchPushCount(predicate: predicate)
             async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
             async let inhaler = fetchInhalerUsage(predicate: predicate)
+            async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
             async let bp = fetchBloodPressure(predicate: predicate)
@@ -471,6 +475,7 @@ class HealthKitManager: ObservableObject {
             let pushesValue = await pushes
             let wheelchairDistanceValue = await wheelchairDistance
             let inhalerValue = await inhaler
+            let pefValue = await pef
             let insulinValue = await insulin
             let glucoseValue = await glucose
             let bpValue = await bp
@@ -559,6 +564,7 @@ class HealthKitManager: ObservableObject {
                 pushCount: pushesValue,
                 distanceWheelchairKm: wheelchairDistanceValue,
                 inhalerUsage: inhalerValue,
+                peakExpiratoryFlowLpm: pefValue,
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
                 bloodPressureSystolicMmHg: bpValue.systolic,
@@ -790,6 +796,23 @@ class HealthKitManager: ObservableObject {
     private func fetchInhalerUsage(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .inhalerUsage) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
+    }
+
+
+    /// Day average peak expiratory flow (L/min). Sparse lung function — fixture seeds UI.
+    private func fetchPeakExpiratoryFlow(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .peakExpiratoryFlowRate) else { return nil }
+        let unit = HKUnit.liter().unitDivided(by: .minute())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
     }
 
 

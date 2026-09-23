@@ -3233,6 +3233,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-inhaler-usage-tonight-baseline.png")
     }
 
+    func testPeakExpiratoryFlowTonightBaselineSurface() throws {
+        // Honest #224: Peak Expiratory Flow Tonight | Baseline (HK peakExpiratoryFlowRate).
+        var n = 0
+        while !app.descendants(matching: .any)["body.pef.card"].exists && n < 40 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.pef.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Peak Expiratory Flow card")
+        XCTAssertTrue(app.staticTexts["Peak Expiratory Flow"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.pef.baseline"].exists
+        _ = app.staticTexts["7-Day Peak Flow"].exists
+        _ = app.descendants(matching: .any)["body.pef.spark"].exists
+        saveShot("verify-peak-expiratory-flow-tonight-baseline.png")
+    }
+
     func testInsulinDeliveryTonightBaselineSurface() throws {
         // Honest #179: Insulin Delivery Tonight | Baseline (HK insulinDelivery).
         var n = 0

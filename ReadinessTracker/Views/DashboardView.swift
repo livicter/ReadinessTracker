@@ -2492,6 +2492,18 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
 
+                PeakExpiratoryFlowTonightBaselineCard(
+                    lpm: data.peakExpiratoryFlowLpm,
+                    history: history.compactMap { day in
+                        guard let v = day.peakExpiratoryFlowLpm else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: PeakExpiratoryFlowBaseline.average(
+                        from: history,
+                        fallback: data.peakExpiratoryFlowLpm ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
 
                 InsulinDeliveryTonightBaselineCard(
                     iu: data.insulinDeliveryIU,
