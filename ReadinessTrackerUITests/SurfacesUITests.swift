@@ -2578,6 +2578,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-body-mass-tonight-baseline.png")
     }
 
+    func testLeanBodyMassTonightBaselineSurface() throws {
+        // Honest #182: Lean Body Mass Tonight | Baseline (HK leanBodyMass).
+        var n = 0
+        while !app.descendants(matching: .any)["body.lean.card"].exists && n < 42 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.lean.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Lean Body Mass card")
+        XCTAssertTrue(app.staticTexts["Lean Body Mass"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.lean.baseline"].exists
+        _ = app.staticTexts["7-Day Lean Mass"].exists
+        _ = app.descendants(matching: .any)["body.lean.spark"].exists
+        saveShot("verify-lean-body-mass-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0
