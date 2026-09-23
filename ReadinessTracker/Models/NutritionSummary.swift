@@ -14,11 +14,13 @@ struct NutritionSummary: Codable, Hashable {
     let fiberGrams: Double?
     /// Dietary sugar (g) from HealthKit `dietarySugar` — Honest #176.
     let sugarGrams: Double?
+    /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
+    let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil
+            && fiberGrams == nil && sugarGrams == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -29,7 +31,8 @@ struct NutritionSummary: Codable, Hashable {
         carbohydrateGrams: Double? = nil,
         fatGrams: Double? = nil,
         fiberGrams: Double? = nil,
-        sugarGrams: Double? = nil
+        sugarGrams: Double? = nil,
+        alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
         self.caffeineMg = caffeineMg
@@ -39,5 +42,6 @@ struct NutritionSummary: Codable, Hashable {
         self.fatGrams = fatGrams
         self.fiberGrams = fiberGrams
         self.sugarGrams = sugarGrams
+        self.alcoholicBeverages = alcoholicBeverages
     }
 }

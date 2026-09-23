@@ -1942,6 +1942,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.dietarySugarCard)
 
+
+                AlcoholicBeveragesTonightBaselineCard(
+                    count: data.nutrition.alcoholicBeverages,
+                    history: history.compactMap { day in
+                        guard let c = day.nutrition.alcoholicBeverages else { return nil }
+                        return (day.date, c)
+                    },
+                    baseline: AlcoholicBeveragesBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.alcoholicBeverages ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.alcoholicBeveragesCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,

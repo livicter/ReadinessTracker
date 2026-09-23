@@ -2488,6 +2488,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-sugar-tonight-baseline.png")
     }
 
+    func testAlcoholicBeveragesTonightBaselineSurface() throws {
+        // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
+        var n = 0
+        while !app.descendants(matching: .any)["body.alcohol.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.alcohol.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Alcoholic Beverages card")
+        XCTAssertTrue(app.staticTexts["Alcoholic Beverages"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.alcohol.baseline"].exists
+        _ = app.staticTexts["7-Day Drinks"].exists
+        _ = app.descendants(matching: .any)["body.alcohol.spark"].exists
+        saveShot("verify-alcoholic-beverages-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0
