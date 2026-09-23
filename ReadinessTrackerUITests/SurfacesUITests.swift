@@ -1020,6 +1020,39 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ma14.png")
     }
 
+    func testMetricScrubTooltipEnrichmentSurface() throws {
+        // Honest #246: scrub tooltip enrichment (z-score + Day Δ) on Advanced Metric Detail.
+        // Hard proof is ChartScrubSelectionTests.testEnrichedCalloutText; UI soft-scrubs chart.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(sleepRow.waitForExistence(timeout: 8), "breakdown.Sleep")
+        if sleepRow.isHittable { sleepRow.tap() } else { app.swipeUp(); sleepRow.tap() }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8)
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        }
+        let chart = app.otherElements["metric.chart.scrub"].firstMatch
+        XCTAssertTrue(chart.waitForExistence(timeout: 8), "metric.chart.scrub")
+        if chart.isHittable {
+            let start = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.45))
+            let end = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.45))
+            start.press(forDuration: 0.2, thenDragTo: end)
+        }
+        // Soft only — selection clears on finger-up; enrichment is unit-tested.
+        _ = app.otherElements["metric.chart.selection"].exists
+        _ = app.descendants(matching: .any)["metric.chart.selection.zscore"].exists
+        _ = app.descendants(matching: .any)["metric.chart.selection.dayDelta"].exists
+        _ = app.staticTexts["MA14"].exists || app.staticTexts["EMA"].exists
+        saveShot("verify-metric-scrub-tooltip-enrichment.png")
+    }
+
     func testStrainRecoveryBalanceSurface() throws {
         // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.

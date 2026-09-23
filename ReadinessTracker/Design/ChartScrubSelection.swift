@@ -24,4 +24,20 @@ enum ChartScrubSelection {
         formatter.dateFormat = "MMM d"
         return "\(formatter.string(from: date)): \(value) \(unit)"
     }
+
+    /// Honest #246: enriched a11y — baseline %, z-score, day-over-day Δ.
+    static func enrichedCalloutText(
+        date: Date,
+        value: String,
+        unit: String,
+        deviation: String?,
+        zScore: String?,
+        dayDelta: String?
+    ) -> String {
+        var parts = [calloutText(date: date, value: value, unit: unit)]
+        if let deviation { parts.append(deviation) }
+        if let zScore { parts.append(zScore) }
+        if let dayDelta { parts.append(dayDelta) }
+        return parts.joined(separator: ", ")
+    }
 }

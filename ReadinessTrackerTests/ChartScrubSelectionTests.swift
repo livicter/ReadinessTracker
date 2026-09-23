@@ -47,4 +47,22 @@ final class ChartScrubSelectionTests: XCTestCase {
         XCTAssertTrue(text.contains("ms"))
         XCTAssertTrue(text.contains(":"))
     }
+
+    /// Honest #246: enriched scrub a11y includes z-score + day Δ.
+    func testEnrichedCalloutText() {
+        let d = day(0)
+        let text = ChartScrubSelection.enrichedCalloutText(
+            date: d,
+            value: "58",
+            unit: "ms",
+            deviation: "+2.1% vs baseline",
+            zScore: "+0.8σ",
+            dayDelta: "Day Δ -3%"
+        )
+        XCTAssertTrue(text.contains("58"))
+        XCTAssertTrue(text.contains("ms"))
+        XCTAssertTrue(text.contains("+2.1% vs baseline"))
+        XCTAssertTrue(text.contains("+0.8σ"))
+        XCTAssertTrue(text.contains("Day Δ -3%"))
+    }
 }
