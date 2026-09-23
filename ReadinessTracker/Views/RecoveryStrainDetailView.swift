@@ -294,33 +294,25 @@ struct RecoveryStrainDetailView: View {
     
     // MARK: - Nutrition
     private var nutritionSection: some View {
-        NativeCard {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Nutrition")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(RTColor.primaryText)
-                
-                if data.nutrition.isEmpty {
-                    Text("No nutrition data")
-                        .font(.subheadline)
-                        .foregroundStyle(RTColor.secondaryText)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    VStack(spacing: 12) {
-                        if let water = data.nutrition.waterLiters {
-                            NutritionRow(icon: "drop.fill", label: "Water", value: String(format: "%.1f", water), unit: "L", color: .cyan)
-                        }
-                        if let caffeine = data.nutrition.caffeineMg {
-                            NutritionRow(icon: "cup.and.saucer.fill", label: "Caffeine", value: "\(Int(caffeine))", unit: "mg", color: RTColor.caution)
-                        }
-                        if let protein = data.nutrition.proteinGrams {
-                            NutritionRow(icon: "fork.knife", label: "Protein", value: "\(Int(protein))", unit: "g", color: RTColor.good)
-                        }
+        Group {
+            if data.nutrition.isEmpty {
+                NativeCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Nutrition")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(RTColor.primaryText)
+                        Text("No nutrition data")
+                            .font(.subheadline)
+                            .foregroundStyle(RTColor.secondaryText)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
+            } else {
+                NutritionSummaryCard(nutrition: data.nutrition)
             }
         }
     }
+
     
     // MARK: - Advanced Metrics
     private var advancedMetrics: some View {
@@ -437,17 +429,6 @@ private struct StrainRow: View {
 }
 
 // MARK: - Nutrition Row
-private struct NutritionRow: View {
-    let icon: String
-    let label: String
-    let value: String
-    let unit: String
-    let color: Color
-
-    var body: some View {
-        AppListRow(icon: icon, color: color, label: label, value: "\(value) \(unit)", showChevron: false)
-    }
-}
 
 // MARK: - Recovery Factor Row
 private struct RecoveryFactorRow: View {
