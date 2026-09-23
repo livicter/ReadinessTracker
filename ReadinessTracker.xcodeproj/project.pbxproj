@@ -106,6 +106,7 @@
 		F95B6C7D8E9F012E3F415264 /* DailyTRIMPCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */; };
 		B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */; };
 		D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */; };
+		BB6E89AB1C9D0E1F20314254 /* ActiveCaloriesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */; };
 		F28E9F012E3F415263748597 /* HydrationTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */; };
 		F51B234F563748596A7B8C9E /* CaffeineTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */; };
 		B62C345F6748596A7B8C9D0F /* ProteinTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62C345F6748596A7B8C9D0E /* ProteinTonightBaselineCard.swift */; };
@@ -348,6 +349,7 @@
 		E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DailyTRIMPCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DailyTRIMPCard.swift; sourceTree = SOURCE_ROOT; };
 		A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CycleTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CycleTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/StepsTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActiveCaloriesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/ActiveCaloriesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HydrationTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/HydrationTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CaffeineTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CaffeineTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		A62C345F6748596A7B8C9D0E /* ProteinTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProteinTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/ProteinTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -634,6 +636,7 @@
 				E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */,
 				A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */,
 				C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */,
+				AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */,
 				E28E9F012E3F415263748596 /* HydrationTonightBaselineCard.swift */,
 				E51B234F563748596A7B8C9D /* CaffeineTonightBaselineCard.swift */,
 				A62C345F6748596A7B8C9D0E /* ProteinTonightBaselineCard.swift */,
@@ -1141,6 +1144,7 @@
 				F95B6C7D8E9F012E3F415264 /* DailyTRIMPCard.swift in Sources */,
 				B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */,
 				D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */,
+				BB6E89AB1C9D0E1F20314254 /* ActiveCaloriesTonightBaselineCard.swift in Sources */,
 				F28E9F012E3F415263748597 /* HydrationTonightBaselineCard.swift in Sources */,
 				F51B234F563748596A7B8C9E /* CaffeineTonightBaselineCard.swift in Sources */,
 				B62C345F6748596A7B8C9D0F /* ProteinTonightBaselineCard.swift in Sources */,

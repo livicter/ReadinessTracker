@@ -1394,6 +1394,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-steps-tonight-baseline.png")
     }
 
+    func testActiveCaloriesTonightBaselineSurface() throws {
+        // Honest #131: Active Calories Tonight | Baseline (HealthKit/Watch activeEnergyBurned).
+        var n = 0
+        while !app.descendants(matching: .any)["body.calories.card"].exists && n < 18 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.calories.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Active Calories card")
+        XCTAssertTrue(app.staticTexts["Active Calories"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.calories.baseline"].exists
+        _ = app.staticTexts["7-Day Active Calories"].exists
+        _ = app.descendants(matching: .any)["body.calories.spark"].exists
+        saveShot("verify-active-calories-tonight-baseline.png")
+    }
+
     func testHydrationTonightBaselineSurface() throws {
         // Honest #122: Hydration Tonight | Baseline dual on Today Body (beyond NutritionSummary glance).
         var n = 0
