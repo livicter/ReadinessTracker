@@ -101,6 +101,12 @@ struct DashboardView: View {
                             )
                             .accessibilityIdentifier(SurfaceID.checkInInsightsCard)
                             .slideIn(delay: 0.11)
+                            CognitiveLoadTonightBaselineCard(
+                                tonight: metadataStore.metadataFor(date: Date(), timeOfDay: .morning),
+                                history: CognitiveLoadBaseline.history(from: metadataStore)
+                            )
+                            .accessibilityIdentifier(SurfaceID.cognitiveLoadCard)
+                            .slideIn(delay: 0.112)
                             WorkoutRPETonightBaselineCard(
                                 tonight: metadataStore.metadataFor(date: Date(), timeOfDay: .evening),
                                 history: WorkoutRPEBaseline.history(from: metadataStore)
