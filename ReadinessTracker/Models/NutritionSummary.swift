@@ -28,13 +28,15 @@ struct NutritionSummary: Codable, Hashable {
     let vitaminDIU: Double?
     /// Dietary vitamin B12 (mcg) from HealthKit `dietaryVitaminB12` — Honest #196.
     let vitaminB12Mcg: Double?
+    /// Dietary iron (mg) from HealthKit `dietaryIron` — Honest #197.
+    let ironMg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -53,6 +55,7 @@ struct NutritionSummary: Codable, Hashable {
         vitaminCMg: Double? = nil,
         vitaminDIU: Double? = nil,
         vitaminB12Mcg: Double? = nil,
+        ironMg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -70,6 +73,7 @@ struct NutritionSummary: Codable, Hashable {
         self.vitaminCMg = vitaminCMg
         self.vitaminDIU = vitaminDIU
         self.vitaminB12Mcg = vitaminB12Mcg
+        self.ironMg = ironMg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
