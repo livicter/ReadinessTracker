@@ -1331,6 +1331,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-workout-minutes.png")
     }
 
+    func testDailyTRIMPSurface() throws {
+        // Honest #119: WHOOP Daily TRIMP Tonight | Baseline on Recovery & Strain.
+        var n = 0
+        let title = app.staticTexts["Daily TRIMP"]
+        while !title.exists && n < 16 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Daily TRIMP")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["strain.trimp.card"].exists
+        _ = app.descendants(matching: .any)["strain.trimp.baseline"].exists
+        _ = app.staticTexts["7-Day TRIMP"].exists
+        _ = app.descendants(matching: .any)["strain.trimp.spark"].exists
+        saveShot("verify-daily-trimp.png")
+    }
+
 
 
 

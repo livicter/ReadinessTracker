@@ -70,7 +70,9 @@ enum StrainCalculator {
 
         let enriched = sessions.map { session in
             let workoutSamples = hrSamples.filter { $0.timestamp >= session.startDate && $0.timestamp <= session.endDate }
-            let trimp = Self.trimp(from: workoutSamples, restingHR: restingHR, maxHR: effectiveMaxHR)
+            let computed = Self.trimp(from: workoutSamples, restingHR: restingHR, maxHR: effectiveMaxHR)
+            // Keep fixture/seeded TRIMP when the window has no HR samples (Honest #119 spark).
+            let trimp = computed > 0 ? computed : max(0, session.trimp)
             return StrainSession(
                 id: session.id,
                 workoutType: session.workoutType,

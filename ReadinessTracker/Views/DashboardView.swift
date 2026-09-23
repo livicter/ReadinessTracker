@@ -853,6 +853,17 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.workoutMinutesCard)
 
+            DailyTRIMPCard(
+                sessions: data.strainSessions,
+                history: history.map { ($0.date, DailyTRIMP.total(from: $0.strainSessions)) },
+                baseline: DailyTRIMP.baseline(
+                    from: history,
+                    fallback: DailyTRIMP.total(from: data.strainSessions)
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.dailyTRIMPCard)
+
+
             RestingHRCard(
 
                 currentBPM: Double(data.restingHeartRate),
