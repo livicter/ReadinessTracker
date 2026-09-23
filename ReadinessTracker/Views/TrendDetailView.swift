@@ -18,6 +18,8 @@ struct TrendDetailView: View {
     @State private var showVolatility = true
     /// Honest #260: Trends momentum strip (classic #248 / Advanced #241 parity).
     @State private var showMomentum = true
+    /// Honest #261: Trends Day Δ / rateOfChange strip (classic #248 triad complete).
+    @State private var showRateOfChange = true
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -735,6 +737,102 @@ struct TrendDetailView: View {
         .accessibilityLabel("Seven day momentum")
     }
 
+    // MARK: - Trends Day Δ strip (Honest #261)
+
+    private var trendsROCPoints: [(date: Date, roc: Double)] {
+        scrubAnalyzedData.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var trendsLatestROCBand: (label: String, color: Color) {
+        guard let roc = trendsROCPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        let improving: Bool
+        if scrubAnalysisMetric.higherIsBetter {
+            improving = roc > 0
+        } else {
+            improving = roc < 0
+        }
+        // Tighter bands than momentum — daily noise is larger.
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var trendsROCYDomain: ClosedRange<Double> {
+        let vals = trendsROCPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var trendsDayDeltaStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = trendsROCPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, trendsLatestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(trendsLatestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !trendsROCPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(trendsROCPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            (scrubAnalysisMetric.higherIsBetter ? point.roc >= 0 : point.roc <= 0)
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: trendsROCYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [trendsROCYDomain.lowerBound, 0, trendsROCYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.trendsDayDelta)
+        .accessibilityLabel("Day over day rate of change")
+    }
+
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
             if let selected = selectedScrubDay {
@@ -882,6 +980,8 @@ struct TrendDetailView: View {
                         .accessibilityIdentifier(SurfaceID.trendsVolatilityToggle)
                     ToggleChip(label: "Momentum", isOn: $showMomentum)
                         .accessibilityIdentifier(SurfaceID.trendsMomentumToggle)
+                    ToggleChip(label: "Day Δ", isOn: $showRateOfChange)
+                        .accessibilityIdentifier(SurfaceID.trendsDayDeltaToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -918,6 +1018,10 @@ struct TrendDetailView: View {
                 // Honest #260: elevate unused AnalyzedDataPoint.momentum.
                 if showMomentum {
                     trendsMomentumStrip
+                }
+                // Honest #261: elevate unused AnalyzedDataPoint.rateOfChange (Day Δ).
+                if showRateOfChange {
+                    trendsDayDeltaStrip
                 }
             }
         }
