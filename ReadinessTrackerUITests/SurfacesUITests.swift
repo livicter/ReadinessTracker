@@ -2616,6 +2616,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-blood-glucose-tonight-baseline.png")
     }
 
+
+    func testBloodPressureTonightBaselineSurface() throws {
+        // Honest #188: Blood Pressure Tonight | Baseline (HK systolic/diastolic).
+        var n = 0
+        while !app.descendants(matching: .any)["body.bp.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.bp.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Blood Pressure card")
+        XCTAssertTrue(app.staticTexts["Blood Pressure"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.bp.baseline"].exists
+        _ = app.staticTexts["7-Day Systolic"].exists
+        _ = app.descendants(matching: .any)["body.bp.spark"].exists
+        saveShot("verify-blood-pressure-tonight-baseline.png")
+    }
+
     func testBodyMassTonightBaselineSurface() throws {
         // Honest #181: Body Mass Tonight | Baseline (HK bodyMass).
         var n = 0

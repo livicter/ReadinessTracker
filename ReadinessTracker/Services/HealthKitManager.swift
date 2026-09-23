@@ -43,6 +43,8 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
+            HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic)!,
+            HKObjectType.quantityType(forIdentifier: .bloodPressureDiastolic)!,
             HKObjectType.quantityType(forIdentifier: .bodyMass)!,
             HKObjectType.quantityType(forIdentifier: .leanBodyMass)!,
             HKObjectType.quantityType(forIdentifier: .waistCircumference)!,
@@ -174,6 +176,7 @@ class HealthKitManager: ObservableObject {
         async let inhaler = fetchInhalerUsage(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
+        async let bp = fetchBloodPressure(predicate: predicate)
         async let mass = fetchBodyMass(predicate: predicate)
         async let lean = fetchLeanBodyMass(predicate: predicate)
         async let waist = fetchWaistCircumference(predicate: predicate)
@@ -261,6 +264,8 @@ class HealthKitManager: ObservableObject {
             inhalerUsage: await inhaler,
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
+            bloodPressureSystolicMmHg: await bp.systolic,
+            bloodPressureDiastolicMmHg: await bp.diastolic,
             bodyMassKg: await mass,
             leanBodyMassKg: await lean,
             waistCircumferenceCm: await waist,
@@ -355,6 +360,7 @@ class HealthKitManager: ObservableObject {
             async let inhaler = fetchInhalerUsage(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
+            async let bp = fetchBloodPressure(predicate: predicate)
             async let mass = fetchBodyMass(predicate: predicate)
             async let lean = fetchLeanBodyMass(predicate: predicate)
             async let waist = fetchWaistCircumference(predicate: predicate)
@@ -416,6 +422,7 @@ class HealthKitManager: ObservableObject {
             let inhalerValue = await inhaler
             let insulinValue = await insulin
             let glucoseValue = await glucose
+            let bpValue = await bp
             let massValue = await mass
             let leanValue = await lean
             let waistValue = await waist
@@ -500,6 +507,8 @@ class HealthKitManager: ObservableObject {
                 inhalerUsage: inhalerValue,
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
+                bloodPressureSystolicMmHg: bpValue.systolic,
+                bloodPressureDiastolicMmHg: bpValue.diastolic,
                 bodyMassKg: massValue,
                 leanBodyMassKg: leanValue,
                 waistCircumferenceCm: waistValue,
@@ -741,6 +750,20 @@ class HealthKitManager: ObservableObject {
             self.healthStore.execute(query)
         }
     }
+
+
+    /// Latest blood pressure (systolic/diastolic mmHg). Sparse vitals — fixture seeds UI.
+    private func fetchBloodPressure(predicate: NSPredicate) async -> (systolic: Double?, diastolic: Double?) {
+        guard let sysType = HKQuantityType.quantityType(forIdentifier: .bloodPressureSystolic),
+              let diaType = HKQuantityType.quantityType(forIdentifier: .bloodPressureDiastolic) else {
+            return (nil, nil)
+        }
+        let unit = HKUnit.millimeterOfMercury()
+        async let sys = fetchMostRecentQuantity(type: sysType, predicate: predicate, unit: unit)
+        async let dia = fetchMostRecentQuantity(type: diaType, predicate: predicate, unit: unit)
+        return (await sys, await dia)
+    }
+
 
 
     /// Latest body mass (kg). Sparse composition — fixture seeds UI.
