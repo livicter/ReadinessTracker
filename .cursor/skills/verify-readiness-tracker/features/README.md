@@ -32,3 +32,4 @@
 | Tonight|Baseline wells | `tonight-baseline-wells.md` | Sleep HRV/Resp/SkinTemp dual wells |
 | Sleep Need|Got wells | `sleep-need-got-wells.md` | Sleep Performance Need|Got circular wells |
 | Strain balance column wells | `strain-balance-column-wells.md` | Recovery|Strain dual column wells |
+| Watch dual-callout wells | `watch-dual-callout-wells.md` | Watch Hours|Eff / Recovery|Strain / HRV|RHR wells |
