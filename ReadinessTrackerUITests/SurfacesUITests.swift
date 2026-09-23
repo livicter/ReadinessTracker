@@ -1214,6 +1214,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-wake-episodes.png")
     }
 
+    func testSleepMidpointSurface() throws {
+        // Honest #114: WHOOP Sleep Midpoint Tonight | Baseline chronotype on Today sleep stack.
+        var n = 0
+        let title = app.staticTexts["Sleep Midpoint"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Sleep Midpoint")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["sleep.midpoint.card"].exists
+        _ = app.descendants(matching: .any)["sleep.midpoint.baseline"].exists
+        _ = app.staticTexts["7-Night Midpoint"].exists
+        _ = app.descendants(matching: .any)["sleep.midpoint.spark"].exists
+        saveShot("verify-sleep-midpoint.png")
+    }
+
+
 
 
 
