@@ -1054,6 +1054,20 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.fallsCard)
 
 
+            WheelchairPushesTonightBaselineCard(
+                count: data.pushCount,
+                history: history.compactMap { day in
+                    guard let c = day.pushCount else { return nil }
+                    return (day.date, c)
+                },
+                baseline: WheelchairPushesBaseline.average(
+                    from: history,
+                    fallback: data.pushCount ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.wheelchairPushesCard)
+
+
 
 
 
