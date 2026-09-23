@@ -224,6 +224,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 200 + Double((offset * 173) % 3001) // 200…3200
             }()
+            // Wheelchair distance km (Honest #223). Sparse mobility volume after pushes.
+            let distanceWheelchairKmValue: Double? = {
+                if offset == 0 { return 4.2 }
+                if offset % 5 == 0 { return nil }
+                return 0.8 + Double((offset * 17) % 73) / 10.0 // 0.8…8.0
+            }()
             // Inhaler puffs (Honest #178). Sparse medical — seed for UI.
             let inhalerUsageValue: Double? = {
                 if offset == 0 { return 0 }
@@ -550,6 +556,7 @@ enum UIFixture {
                 peripheralPerfusionIndexPercent: peripheralPerfusionIndexPercentValue,
                 numberOfTimesFallen: numberOfTimesFallenValue,
                 pushCount: pushCountValue,
+                distanceWheelchairKm: distanceWheelchairKmValue,
                 inhalerUsage: inhalerUsageValue,
                 insulinDeliveryIU: insulinDeliveryIUValue,
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,

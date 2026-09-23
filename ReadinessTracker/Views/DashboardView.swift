@@ -1081,6 +1081,20 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.wheelchairPushesCard)
 
 
+            WheelchairDistanceTonightBaselineCard(
+                kilometers: data.distanceWheelchairKm,
+                history: history.compactMap { day in
+                    guard let km = day.distanceWheelchairKm else { return nil }
+                    return (day.date, km)
+                },
+                baseline: WheelchairDistanceBaseline.average(
+                    from: history,
+                    fallback: data.distanceWheelchairKm ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.wheelchairDistanceCard)
+
+
 
 
 

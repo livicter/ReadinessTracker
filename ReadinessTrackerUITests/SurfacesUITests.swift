@@ -1375,6 +1375,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-wheelchair-pushes-tonight-baseline.png")
     }
 
+    func testWheelchairDistanceTonightBaselineSurface() throws {
+        // Honest #223: Wheelchair Distance Tonight | Baseline (HK distanceWheelchair).
+        var n = 0
+        let title = app.staticTexts["Wheelchair Distance"]
+        while !title.exists && n < 52 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Wheelchair Distance")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.wheelchairDistance.card"].exists
+        _ = app.descendants(matching: .any)["body.wheelchairDistance.baseline"].exists
+        _ = app.staticTexts["7-Day Wheelchair Distance"].exists
+        _ = app.descendants(matching: .any)["body.wheelchairDistance.spark"].exists
+        saveShot("verify-wheelchair-distance-tonight-baseline.png")
+    }
+
     func testEnvironmentalAudioTonightBaselineSurface() throws {
         // Honest #136: Environmental audio exposure Tonight | Baseline (new HK + model).
         var n = 0
