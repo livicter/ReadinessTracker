@@ -153,11 +153,20 @@ enum UIFixture {
             // Single source of truth: disturbance count matches awake periods in stages
             // (Today "N disturbance(s)" and DayDetail/SleepAnalysis hypnogram stay coherent).
             let wakeEpisodes = SleepCycleDetector.awakePeriods(from: stages).count
+            let sleepHoursValue: Double = offset == 0 ? 7.4 : 6.2 + Double((offset * 13) % 25) * 0.1
+            let hrvValue: Double = offset == 0 ? 58 : 48 + Double((offset * 7) % 21)
+            let maxHRValue: Double? = offset == 0 ? 185 : nil
+            let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
+            let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
+            let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
+            let workoutMinutesValue: Int = offset == 0 ? 42 : 15 + ((offset * 11) % 45)
+            let skinTemperatureValue: Double = offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05
+            let respiratoryRateValue: Double = offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25
             return DailyHealthData(
                 date: date,
                 source: .appleWatch,
                 // Vary older nights so Sleep Quality spark/bars show shape; today stays 7.4h.
-                sleepHours: offset == 0 ? 7.4 : 6.2 + Double((offset * 13) % 25) * 0.1,
+                sleepHours: sleepHoursValue,
                 sleepEfficiency: 0.90,
                 deepSleepPercent: 0.17,
                 remSleepPercent: 0.21,
@@ -166,22 +175,30 @@ enum UIFixture {
                 wakeEpisodes: wakeEpisodes,
                 sleepStages: stages,
                 // Vary older nights so Sleep HRV 7-night spark / chart show real shape; today stays 58.
-                hrv: offset == 0 ? 58 : 48 + Double((offset * 7) % 21),
+                hrv: hrvValue,
                 hrvIsRMSSD: true,
                 restingHeartRate: 54,
                 // Vary older days so Body tiles show real sparklines; today stays glance-stable.
-                activeCalories: offset == 0 ? 420 : 280 + Double((offset * 53) % 280),
-                steps: offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500),
-                workoutMinutes: offset == 0 ? 42 : 15 + ((offset * 11) % 45),
+                activeCalories: activeCaloriesValue,
+                steps: stepsValue,
+                workoutMinutes: workoutMinutesValue,
+                maxHeartRate: maxHRValue,
+                hrSamples: hrSamplesValue,
                 // Vary older nights so RR / Skin Temp 7-night spark / chart show real shape; today stays glance-stable.
-                skinTemperature: offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05,
-                respiratoryRate: offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25,
+                skinTemperature: skinTemperatureValue,
+                respiratoryRate: respiratoryRateValue,
                 bloodOxygen: 97,
                 nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
                 menstrualFlow: offset <= 2
             )
         }
+    }
+
+
+    /// Daytime + workout HR progression so Recovery & Strain HR Zones render under -ui-fixture.
+    static func syntheticHRSamples(on day: Date, resting: Double = 54, maxHR: Double = 185) -> [HRSample] {
+        HRZoneAnalyzer.syntheticSamples(on: day, restingHR: resting, maxHR: maxHR, count: 120)
     }
 
     /// Fixture hypnogram night: contiguous stages from bed to wake with exactly one mid-sleep awake.

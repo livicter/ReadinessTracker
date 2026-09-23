@@ -60,6 +60,10 @@ struct RecoveryStrainDetailView: View {
                 // Strain detail
                 strainDetail
                     .slideIn(delay: 0.1)
+
+                // Honest #105: WHOOP/Apple Fitness HR zones (%HRR)
+                HeartRateZonesCard(data: data)
+                    .slideIn(delay: 0.12)
                 
                 // Recovery detail
                 recoveryDetail

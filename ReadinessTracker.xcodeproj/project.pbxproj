@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0D80F6655B854E14A02126F1 /* HRVFrequencyAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */; };
+		56F4F492351341BDBD8C8569 /* HRZoneAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D52E5A5B824443682FB278A /* HRZoneAnalysis.swift */; };
 		F10A71AB7ABBA40001B10001 /* FloatingPillTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */; };
 		00BC10E3DD13EF2BC2276280 /* StrainRecoveryBalanceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B0DA072454C458C48F95EAD /* StrainRecoveryBalanceCard.swift */; };
 		0667BB02BE7E4EBFBAFE99D6999B53F1 /* StrainCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F371515D46F540FD8094CED0B52AEE3A /* StrainCalculator.swift */; };
@@ -78,6 +79,7 @@
 		68B3F90497051845053C11FE9205D816 /* RecoveryStrainDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A856E35F0744D01AC94A1AFD57A51E6 /* RecoveryStrainDetailView.swift */; };
 		6A61E9382920864A09CB1138 /* TrendAnalysisEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE3726965C8A625B069AB691 /* TrendAnalysisEngine.swift */; };
 		6B24AF7FD20BF954A1C522A1 /* SleepHRVCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E678C92BEC966084F4FB29E6 /* SleepHRVCard.swift */; };
+		B15B073F6B934BB7AAA42AFE /* HeartRateZonesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED4DCF7630F64A9BAF9F7F59 /* HeartRateZonesCard.swift */; };
 		6B7F34B5D04F79535AD30C5B /* BaselineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 264C12BD4BDC41159DBA14B7 /* BaselineManager.swift */; };
 		6CE8A7ACC28ED78129F0091A /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DC90D2ADB45EC5D1985C2A7 /* DashboardView.swift */; };
 		6FB8615A93A9843C86C23F1E /* ReadinessTrackerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6723B71151F1714D1ADFB238 /* ReadinessTrackerWidget.swift */; };
@@ -288,6 +290,7 @@
 		5CCCDF3441063EDB71939BC3 /* RecoveryTrajectoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecoveryTrajectoryView.swift; path = ReadinessTracker/Views/RecoveryTrajectoryView.swift; sourceTree = SOURCE_ROOT; };
 		60195A9C493E18B3114E43BF /* DayDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DayDetailView.swift; path = ReadinessTracker/Views/DayDetailView.swift; sourceTree = SOURCE_ROOT; };
 		62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRVFrequencyAnalysis.swift; path = ReadinessTracker/Models/HRVFrequencyAnalysis.swift; sourceTree = SOURCE_ROOT; };
+		9D52E5A5B824443682FB278A /* HRZoneAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HRZoneAnalysis.swift; path = ReadinessTracker/Models/HRZoneAnalysis.swift; sourceTree = SOURCE_ROOT; };
 		6486CB9C71DF96B78F03DB23 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = ReadinessTracker/Design/HapticFeedback.swift; sourceTree = SOURCE_ROOT; };
 		667E1BFE6863B497FB5F7ADD /* SleepDebtCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepDebtCalculator.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepDebtCalculator.swift; sourceTree = SOURCE_ROOT; };
 		6723B71151F1714D1ADFB238 /* ReadinessTrackerWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ReadinessTrackerWidget.swift; path = ReadinessTrackerWidget.swift; sourceTree = "<group>"; };
@@ -337,6 +340,7 @@
 		D551B1384E980CF2EC373C72 /* SyncStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SyncStatusView.swift; path = ReadinessTracker/Views/SyncStatusView.swift; sourceTree = SOURCE_ROOT; };
 		E26DF2562B91AB2F789E7365 /* FitbitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FitbitManager.swift; sourceTree = "<group>"; };
 		E678C92BEC966084F4FB29E6 /* SleepHRVCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepHRVCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepHRVCard.swift; sourceTree = SOURCE_ROOT; };
+		ED4DCF7630F64A9BAF9F7F59 /* HeartRateZonesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeartRateZonesCard.swift; path = ReadinessTracker/Views/WhoopFeatures/HeartRateZonesCard.swift; sourceTree = SOURCE_ROOT; };
 		EAA12504EA33256D8743B223 /* HealthData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthData.swift; sourceTree = "<group>"; };
 		F0DD894DB33F04AB4A143C85 /* MetricDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricDetailView.swift; sourceTree = "<group>"; };
 		F1F79529A2A8242489D12E09 /* MetricType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricType.swift; sourceTree = "<group>"; };
@@ -524,6 +528,7 @@
 				CCA90E3B855B871337DEB0A0 /* UserMetadata.swift */,
 				F1F79529A2A8242489D12E09 /* MetricType.swift */,
 				62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */,
+				9D52E5A5B824443682FB278A /* HRZoneAnalysis.swift */,
 				4EFECBF49ABD42C5892F03B2 /* HRSample.swift */,
 				0518368B65DA466798DA533A /* UserSettings.swift */,
 				F371515D46F540FD8094CED0B52AEE3A /* StrainCalculator.swift */,
@@ -570,6 +575,7 @@
 				985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */,
 				667E1BFE6863B497FB5F7ADD /* SleepDebtCalculator.swift */,
 				E678C92BEC966084F4FB29E6 /* SleepHRVCard.swift */,
+				ED4DCF7630F64A9BAF9F7F59 /* HeartRateZonesCard.swift */,
 				CC304F6A5570CE5B45776AF0 /* SleepDisturbanceTracker.swift */,
 				C96E99869EDEA83FC2F54D7C /* SleepQualityTrend.swift */,
 			);
@@ -1053,7 +1059,9 @@
 				DA351070FEEEB49A1DB55DEF /* SleepConsistencyTracker.swift in Sources */,
 				CA56CC34ABACD11B57AF2BBC /* SleepDebtCalculator.swift in Sources */,
 				6B24AF7FD20BF954A1C522A1 /* SleepHRVCard.swift in Sources */,
+				B15B073F6B934BB7AAA42AFE /* HeartRateZonesCard.swift in Sources */,
 				0D80F6655B854E14A02126F1 /* HRVFrequencyAnalysis.swift in Sources */,
+				56F4F492351341BDBD8C8569 /* HRZoneAnalysis.swift in Sources */,
 				C5B78A67D82B0EBF244499A0 /* SleepDisturbanceTracker.swift in Sources */,
 				F3A6DC794EDA044BC7F3EF5C /* SleepQualityTrend.swift in Sources */,
 				EA1C997340E8B855CC18A6D1 /* AppleNativeTheme.swift in Sources */,
