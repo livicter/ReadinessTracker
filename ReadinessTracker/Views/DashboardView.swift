@@ -702,6 +702,26 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.sleepEfficiencyCard)
 
+
+
+            WakeEpisodesCard(
+
+
+                currentCount: data.wakeEpisodes,
+
+
+                history: history.map { ($0.date, Double($0.wakeEpisodes)) },
+
+
+                baseline: wakeEpisodesBaseline(from: history, fallback: Double(data.wakeEpisodes))
+
+
+            )
+
+
+            .accessibilityIdentifier(SurfaceID.wakeEpisodesCard)
+
+
             RestorativeSleepCard(
                 sleepHours: data.sleepHours,
                 deepPercent: data.deepSleepPercent,
@@ -835,6 +855,12 @@ struct DashboardView: View {
 
     private func sleepEfficiencyBaseline(from history: [DailyHealthData], fallback: Double) -> Double {
         let vals = history.map { $0.sleepEfficiency }.filter { $0 > 0 }
+        guard !vals.isEmpty else { return fallback }
+        return vals.reduce(0, +) / Double(vals.count)
+    }
+
+    private func wakeEpisodesBaseline(from history: [DailyHealthData], fallback: Double) -> Double {
+        let vals = history.map { Double($0.wakeEpisodes) }.filter { $0 >= 0 }
         guard !vals.isEmpty else { return fallback }
         return vals.reduce(0, +) / Double(vals.count)
     }

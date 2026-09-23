@@ -149,7 +149,9 @@ enum UIFixture {
                 sleepStart = cal.date(bySettingHour: bedTotal / 60, minute: bedTotal % 60, second: 0, of: previous)!
                 sleepEnd = cal.date(bySettingHour: wakeTotal / 60, minute: wakeTotal % 60, second: 0, of: date)!
             }
-            let stages = coherentSleepStages(sleepStart: sleepStart, sleepEnd: sleepEnd)
+            // Vary older nights so Wake Episodes 7-night spark has shape; today 1 wake (Calm).
+            let wakeTarget = offset == 0 ? 1 : (offset % 4) // 1,2,3,0,1,...
+            let stages = coherentSleepStages(sleepStart: sleepStart, sleepEnd: sleepEnd, wakeCount: wakeTarget)
             // Single source of truth: disturbance count matches awake periods in stages
             // (Today "N disturbance(s)" and DayDetail/SleepAnalysis hypnogram stay coherent).
             let wakeEpisodes = SleepCycleDetector.awakePeriods(from: stages).count
@@ -242,9 +244,10 @@ enum UIFixture {
         return []
     }
 
-    /// Fixture hypnogram night: contiguous stages from bed to wake with exactly one mid-sleep awake.
+    /// Fixture hypnogram night: contiguous stages from bed to wake with `wakeCount` mid-sleep awakes.
     /// Keeps Today disturbance count aligned with `SleepCycleDetector.awakePeriods` / HypnogramView.
-    static func coherentSleepStages(sleepStart: Date, sleepEnd: Date) -> [SleepStageInterval] {
+    /// Default `wakeCount: 1` preserves prior single-awake shape for callers/tests.
+    static func coherentSleepStages(sleepStart: Date, sleepEnd: Date, wakeCount: Int = 1) -> [SleepStageInterval] {
         let total = sleepEnd.timeIntervalSince(sleepStart)
         guard total >= 60 * 60 else { return [] }
 
@@ -252,18 +255,67 @@ enum UIFixture {
             sleepStart.addingTimeInterval(total * fraction)
         }
 
-        // Proportions approximate a normal night; awake is short (~8 min on an 8h night)
-        // and sits mid-sleep so HealthKit-style wake counting and awakePeriods both equal 1.
-        return [
-            SleepStageInterval(stage: .light, startDate: at(0.00), endDate: at(0.12)),
-            SleepStageInterval(stage: .deep,  startDate: at(0.12), endDate: at(0.28)),
-            SleepStageInterval(stage: .light, startDate: at(0.28), endDate: at(0.40)),
-            SleepStageInterval(stage: .rem,   startDate: at(0.40), endDate: at(0.48)),
-            SleepStageInterval(stage: .awake, startDate: at(0.48), endDate: at(0.50)),
-            SleepStageInterval(stage: .light, startDate: at(0.50), endDate: at(0.62)),
-            SleepStageInterval(stage: .deep,  startDate: at(0.62), endDate: at(0.72)),
-            SleepStageInterval(stage: .rem,   startDate: at(0.72), endDate: at(0.88)),
-            SleepStageInterval(stage: .light, startDate: at(0.88), endDate: at(1.00))
+        let wakes = max(0, min(3, wakeCount))
+        // Short awake slices (~2% of night each) placed mid-cycle so awakePeriods == wakes.
+        let wakeCenters: [Double]
+        switch wakes {
+        case 0: wakeCenters = []
+        case 1: wakeCenters = [0.49]
+        case 2: wakeCenters = [0.33, 0.66]
+        default: wakeCenters = [0.25, 0.50, 0.75]
+        }
+        let half: Double = 0.01
+
+        var cursor = 0.0
+        let sleepCycle: [(SleepStage, Double)] = [
+            (.light, 0.14), (.deep, 0.16), (.light, 0.12), (.rem, 0.10),
+            (.light, 0.12), (.deep, 0.10), (.rem, 0.14), (.light, 0.12)
         ]
+        // Build contiguous sleep, then splice awake windows at centers (overwrite sleep).
+        var filled: [(SleepStage, Double, Double)] = [] // stage, startFrac, endFrac
+        for (stage, dur) in sleepCycle {
+            let end = min(1.0, cursor + dur)
+            if end > cursor {
+                filled.append((stage, cursor, end))
+            }
+            cursor = end
+            if cursor >= 1.0 { break }
+        }
+        if let last = filled.last, last.2 < 1.0 {
+            filled[filled.count - 1] = (last.0, last.1, 1.0)
+        }
+
+        // Split filled segments around awake windows.
+        var result: [(SleepStage, Double, Double)] = []
+        let awakeWindows = wakeCenters.map { ($0 - half, $0 + half) }
+        for (stage, start, end) in filled {
+            var pieces: [(SleepStage, Double, Double)] = [(stage, start, end)]
+            for (a0, a1) in awakeWindows {
+                var next: [(SleepStage, Double, Double)] = []
+                for (st, s0, s1) in pieces {
+                    if a1 <= s0 || a0 >= s1 {
+                        next.append((st, s0, s1))
+                    } else {
+                        if a0 > s0 { next.append((st, s0, a0)) }
+                        next.append((.awake, max(s0, a0), min(s1, a1)))
+                        if a1 < s1 { next.append((st, a1, s1)) }
+                    }
+                }
+                pieces = next
+            }
+            result.append(contentsOf: pieces)
+        }
+
+        // Merge adjacent same-stage fragments and drop empties.
+        var merged: [(SleepStage, Double, Double)] = []
+        for seg in result where seg.2 - seg.1 > 0.0001 {
+            if let last = merged.last, last.0 == seg.0, abs(last.2 - seg.1) < 0.0001 {
+                merged[merged.count - 1] = (last.0, last.1, seg.2)
+            } else {
+                merged.append(seg)
+            }
+        }
+
+        return merged.map { SleepStageInterval(stage: $0.0, startDate: at($0.1), endDate: at($0.2)) }
     }
 }
