@@ -9,6 +9,8 @@ struct DepthTimelineChart: View {
     let color: Color
     let points: [(date: Date, value: Double)]
     var period: TrendPeriod = .week
+    /// Honest #258: toggle ±2σ baseline bands (classic/Advanced parity). Default on.
+    var showBaselineBands: Bool = true
 
     @State private var selectedIndex: Int?
 
@@ -59,20 +61,31 @@ struct DepthTimelineChart: View {
 
             if filteredPoints.count >= 2 {
                 Chart {
-                    // ±2σ baseline band
-                    if stats.stdDev > 0 {
-                        RectangleMark(
-                            xStart: .value("s", filteredPoints.first!.date),
-                            xEnd: .value("e", filteredPoints.last!.date),
-                            yStart: .value("lo", stats.baseline - 2 * stats.stdDev),
-                            yEnd: .value("hi", stats.baseline + 2 * stats.stdDev)
-                        )
-                        .foregroundStyle(color.opacity(0.08))
-                    }
+                    // Honest #258: ±2σ z-score colored bands + baseline rule (classic/Advanced parity).
+                    if showBaselineBands, stats.stdDev > 0 {
+                        let cal = Calendar.current
+                        let low = stats.baseline - 2 * stats.stdDev
+                        let high = stats.baseline + 2 * stats.stdDev
+                        ForEach(Array(filteredPoints.enumerated()), id: \.offset) { _, point in
+                            let z = TrendAnalysisEngine.zScore(
+                                value: point.value,
+                                baseline: stats.baseline,
+                                stdDev: stats.stdDev
+                            )
+                            let endDate = cal.date(byAdding: .day, value: 1, to: point.date) ?? point.date
+                            RectangleMark(
+                                xStart: .value("Date", point.date),
+                                xEnd: .value("Date", endDate),
+                                yStart: .value("Low", low),
+                                yEnd: .value("High", high)
+                            )
+                            .foregroundStyle(bandColor(zScore: z).opacity(0.08))
+                        }
 
-                    RuleMark(y: .value("Baseline", stats.baseline))
-                        .foregroundStyle(RTColor.primaryText.opacity(0.25))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                        RuleMark(y: .value("Baseline", stats.baseline))
+                            .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                    }
 
                     ForEach(Array(filteredPoints.enumerated()), id: \.offset) { i, point in
                         LineMark(
@@ -169,6 +182,14 @@ struct DepthTimelineChart: View {
                     .frame(maxWidth: .infinity)
             }
         }
+    }
+
+    /// Classic/Advanced parity: green <|z|<1, orange <|z|<2, red |z|>2.
+    private func bandColor(zScore: Double) -> Color {
+        let absZ = abs(zScore)
+        if absZ > 2 { return .red }
+        if absZ > 1 { return .orange }
+        return .green
     }
 
     private func formatted(_ value: Double) -> String {
