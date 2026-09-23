@@ -1582,6 +1582,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-stair-ascent-speed-tonight-baseline.png")
     }
 
+    func testStairDescentSpeedTonightBaselineSurface() throws {
+        // Honest #150: Stair Descent Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Stair Descent"]
+        while !title.exists && n < 34 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Stair Descent")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.stairDescent.card"].exists
+        _ = app.descendants(matching: .any)["body.stairDescent.baseline"].exists
+        _ = app.staticTexts["7-Day Stair Descent"].exists
+        _ = app.descendants(matching: .any)["body.stairDescent.spark"].exists
+        saveShot("verify-stair-descent-speed-tonight-baseline.png")
+    }
+
 
 
 
