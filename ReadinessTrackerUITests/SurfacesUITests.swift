@@ -1143,6 +1143,31 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-efficiency.png")
     }
 
+    func testRestorativeSleepSurface() throws {
+        // Honest #111: WHOOP Restorative Sleep Deep | REM hours on Today.
+        // Soft scroll: avoid strict isOnScreen (can thrash on large WHOOP stack).
+        var n = 0
+        let title = app.staticTexts["Restorative Sleep"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            // Nudge into view if present but partially off-screen.
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Restorative Sleep")
+        XCTAssertTrue(app.staticTexts["Deep"].exists)
+        XCTAssertTrue(app.staticTexts["REM"].exists)
+        _ = app.descendants(matching: .any)["sleep.restorative.card"].exists
+        _ = app.descendants(matching: .any)["sleep.restorative.dual"].exists
+        _ = app.staticTexts["7-Night Restorative"].exists
+        _ = app.descendants(matching: .any)["sleep.restorative.spark"].exists
+        saveShot("verify-restorative-sleep.png")
+    }
+
 
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
