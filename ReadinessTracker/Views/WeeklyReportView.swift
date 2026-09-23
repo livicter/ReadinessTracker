@@ -75,17 +75,17 @@ struct WeeklyReportView: View {
         let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
         return LazyVGrid(columns: columns, spacing: 12) {
-            StatGridItem(label: "Gym", value: "\(Int(report.avgGymScore))", unit: "%", trend: nil)
-            StatGridItem(label: "Work", value: "\(Int(report.avgWorkScore))", unit: "%", trend: nil)
-            StatGridItem(label: "Sleep", value: "\(Int(report.avgSleepScore))", unit: "%", trend: nil)
+            StatGridItem(label: "Gym", value: "\(Int(report.avgGymScore))", unit: "%", trend: nil, icon: "dumbbell.fill", tint: RTColor.optimal)
+            StatGridItem(label: "Work", value: "\(Int(report.avgWorkScore))", unit: "%", trend: nil, icon: "briefcase.fill", tint: RTColor.caution)
+            StatGridItem(label: "Sleep", value: "\(Int(report.avgSleepScore))", unit: "%", trend: nil, icon: "bed.double.fill", tint: RTColor.sleep)
             if let cycles = report.avgSleepCycles {
-                StatGridItem(label: "Cycles", value: String(format: "%.1f", cycles), unit: "avg", trend: nil)
+                StatGridItem(label: "Cycles", value: String(format: "%.1f", cycles), unit: "avg", trend: nil, icon: "circle.hexagongrid.fill", tint: RTColor.sleep)
             }
-            StatGridItem(label: "HRV", value: "\(Int(report.avgHRV))", unit: "ms", trend: nil)
-            StatGridItem(label: "RHR", value: "\(Int(report.avgRHR))", unit: "bpm", trend: nil)
-            StatGridItem(label: "Strain", value: String(format: "%.1f", report.avgStrain), unit: "/21", trend: nil)
-            StatGridItem(label: "Workouts", value: "\(report.totalWorkouts)", unit: "", trend: nil)
-            StatGridItem(label: "Avg RPE", value: "\(Int(report.avgWorkoutRPE))", unit: "/10", trend: nil)
+            StatGridItem(label: "HRV", value: "\(Int(report.avgHRV))", unit: "ms", trend: nil, icon: "waveform.path.ecg", tint: RTColor.hrv)
+            StatGridItem(label: "RHR", value: "\(Int(report.avgRHR))", unit: "bpm", trend: nil, icon: "heart.fill", tint: RTColor.warning)
+            StatGridItem(label: "Strain", value: String(format: "%.1f", report.avgStrain), unit: "/21", trend: nil, icon: "flame.fill", tint: RTColor.strain)
+            StatGridItem(label: "Workouts", value: "\(report.totalWorkouts)", unit: "", trend: nil, icon: "figure.run", tint: RTColor.optimal)
+            StatGridItem(label: "Avg RPE", value: "\(Int(report.avgWorkoutRPE))", unit: "/10", trend: nil, icon: "gauge.with.dots.needle.67percent", tint: RTColor.caution)
         }
     }
 
@@ -100,9 +100,18 @@ struct WeeklyReportView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(report.highlights, id: \.self) { highlight in
-                            Label(highlight, systemImage: "checkmark.circle.fill")
-                                .font(.subheadline)
-                                .foregroundStyle(RTColor.optimal)
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(RTColor.optimal)
+                                    .frame(width: 26, height: 26)
+                                    .background(RTColor.optimal.opacity(0.14))
+                                    .clipShape(Circle())
+                                Text(highlight)
+                                    .font(.subheadline)
+                                    .foregroundStyle(RTColor.primaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
                 }
@@ -122,9 +131,18 @@ struct WeeklyReportView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(report.recommendations, id: \.self) { rec in
-                            Label(rec, systemImage: "lightbulb.fill")
-                                .font(.subheadline)
-                                .foregroundStyle(RTColor.caution)
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "lightbulb.fill")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(RTColor.caution)
+                                    .frame(width: 26, height: 26)
+                                    .background(RTColor.caution.opacity(0.14))
+                                    .clipShape(Circle())
+                                Text(rec)
+                                    .font(.subheadline)
+                                    .foregroundStyle(RTColor.primaryText)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
                         }
                     }
                 }

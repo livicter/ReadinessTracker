@@ -251,13 +251,26 @@ struct StatGridItem: View {
     let value: String
     let unit: String
     let trend: TrendDirection?
-    
+    var icon: String? = nil
+    var tint: Color = RTColor.secondaryText
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption.weight(.medium))
-                .foregroundStyle(RTColor.secondaryText)
-            
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(tint)
+                        .frame(width: 26, height: 26)
+                        .background(tint.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
+                }
+                Text(label)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+
             HStack(alignment: .lastTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.title3.weight(.semibold))
@@ -266,7 +279,7 @@ struct StatGridItem: View {
                     .font(.caption)
                     .foregroundStyle(RTColor.secondaryText)
             }
-            
+
             if let trend = trend {
                 CompactTrendIndicator(direction: trend, percentChange: nil)
             }
