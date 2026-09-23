@@ -515,6 +515,11 @@ enum UIFixture {
                         if offset == 0 { return 28 }
                         if offset % 5 == 0 { return nil }
                         return 12 + Double((offset * 7) % 29) // 12…40
+                    }(),
+                    sugarGrams: {
+                        if offset == 0 { return 42 }
+                        if offset % 5 == 0 { return nil }
+                        return 15 + Double((offset * 11) % 76) // 15…90
                     }()
                 ),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
