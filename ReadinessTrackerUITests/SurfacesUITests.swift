@@ -1214,6 +1214,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-peak-hr-tonight-baseline.png")
     }
 
+    func testVO2MaxTonightBaselineSurface() throws {
+        // Honest #133: VO2 Max Tonight | Baseline (new DailyHealthData + HK vo2Max).
+        var n = 0
+        let title = app.staticTexts["VO2 Max"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "VO2 Max")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.vo2.card"].exists
+        _ = app.descendants(matching: .any)["vitals.vo2.baseline"].exists
+        _ = app.staticTexts["7-Day VO2 Max"].exists
+        _ = app.descendants(matching: .any)["vitals.vo2.spark"].exists
+        saveShot("verify-vo2-max-tonight-baseline.png")
+    }
+
+
 
     func testWakeEpisodesSurface() throws {
         // Honest #113: WHOOP Wake Episodes Tonight | Baseline on Today sleep stack.

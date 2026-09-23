@@ -37,6 +37,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let skinTemperature: Double?  // Celsius, deviation from baseline
     let respiratoryRate: Double?  // breaths per minute
     let bloodOxygen: Double?      // SpO2 percentage
+    let vo2Max: Double?           // ml/(kg·min) — Honest #133
     
     // Cardiovascular strain data
     let maxHeartRate: Double?
@@ -76,6 +77,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          maxHeartRate: Double? = nil, hrSamples: [HRSample] = [],
          strainSessions: [StrainSession] = [],
          skinTemperature: Double? = nil, respiratoryRate: Double? = nil, bloodOxygen: Double? = nil,
+         vo2Max: Double? = nil,
          nutrition: NutritionSummary = NutritionSummary(),
          menstrualFlow: Bool = false) {
         self.id = id
@@ -104,6 +106,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.skinTemperature = skinTemperature
         self.respiratoryRate = respiratoryRate
         self.bloodOxygen = bloodOxygen
+        self.vo2Max = vo2Max
         self.nutrition = nutrition
         self.menstrualFlow = menstrualFlow
     }
@@ -139,6 +142,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.skinTemperature = nil
         self.respiratoryRate = nil
         self.bloodOxygen = nil
+        self.vo2Max = nil
         self.nutrition = NutritionSummary()
         self.menstrualFlow = false
     }
@@ -153,7 +157,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max
         case nutrition, menstrualFlow
     }
     
@@ -185,6 +189,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.skinTemperature = try container.decodeIfPresent(Double.self, forKey: .skinTemperature)
         self.respiratoryRate = try container.decodeIfPresent(Double.self, forKey: .respiratoryRate)
         self.bloodOxygen = try container.decodeIfPresent(Double.self, forKey: .bloodOxygen)
+        self.vo2Max = try container.decodeIfPresent(Double.self, forKey: .vo2Max)
         self.nutrition = try container.decodeIfPresent(NutritionSummary.self, forKey: .nutrition) ?? NutritionSummary()
         self.menstrualFlow = try container.decodeIfPresent(Bool.self, forKey: .menstrualFlow) ?? false
     }

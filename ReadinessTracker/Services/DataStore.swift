@@ -182,6 +182,12 @@ enum UIFixture {
                 if offset % 4 == 0 { return nil }
                 return 155 + Double((offset * 7) % 30)
             }()
+            // VO2 Max ml/kg/min (Honest #133). Sparse metric — most days have a reading.
+            let vo2MaxValue: Double? = {
+                if offset == 0 { return 48.5 }
+                if offset % 5 == 0 { return nil }
+                return 42.0 + Double((offset * 11) % 90) / 10.0 // 42.0…50.9
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -228,6 +234,7 @@ enum UIFixture {
                 skinTemperature: skinTemperatureValue,
                 respiratoryRate: respiratoryRateValue,
                 bloodOxygen: bloodOxygenValue,
+                vo2Max: vo2MaxValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),
