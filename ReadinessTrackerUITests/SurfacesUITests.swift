@@ -43,6 +43,22 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-rings.png")
     }
 
+    func testReadinessDetailSurface() throws {
+        // Honest #81: Readiness Detail recommendation + component circular wells.
+        // Open via Today score / readiness hero when available.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let score = app.descendants(matching: .any)["readiness.score"].firstMatch
+        if score.waitForExistence(timeout: 4), score.isHittable {
+            score.tap()
+        } else {
+            // Fallback: tap large readiness numerals / hero card.
+            let hero = app.descendants(matching: .any)["today.hero"].firstMatch
+            if hero.exists, hero.isHittable { hero.tap() }
+        }
+        _ = app.staticTexts["Recommendation"].waitForExistence(timeout: 6) || app.staticTexts["Component Detail"].waitForExistence(timeout: 4)
+        saveShot("verify-readiness-detail.png")
+    }
+
     func testRingDetailSurface() throws {
         // Today legend Gym → Apple Fitness–style ring detail sheet.
         XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8))
