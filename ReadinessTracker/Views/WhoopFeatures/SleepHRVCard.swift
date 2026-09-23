@@ -44,7 +44,7 @@ struct SleepHRVCard: View {
     /// Synthetic RR series for Poincaré when HealthKit beat-to-beat samples are absent.
     /// Mean RR ~1000 ms; successive differences scaled so RMSSD ≈ currentHRV.
     private var syntheticRRIntervals: [Double] {
-        let n = 64
+        let n = 280  // ≥256 for frequency-domain Welch/FFT
         let meanRR = 1000.0
         let targetRMSSD = max(10.0, currentHRV)
         var rr: [Double] = []
@@ -66,6 +66,10 @@ struct SleepHRVCard: View {
             prev = sample
         }
         return rr
+    }
+
+    private var frequencyMetrics: HRVFrequencyMetrics? {
+        HRVFrequencyAnalyzer.analyze(rrIntervals: syntheticRRIntervals)
     }
 
 
@@ -232,6 +236,41 @@ struct SleepHRVCard: View {
                 }
                 .padding(.top, 4)
 
+
+                // Honest #104: LF/HF frequency strip (wires unused HRVFrequencyAnalyzer).
+                if let freq = frequencyMetrics {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Frequency Domain")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+
+                        HStack(spacing: 10) {
+                            frequencyPill(
+                                title: "LF",
+                                value: freq.lfPower,
+                                total: freq.totalPower,
+                                color: RTColor.caution,
+                                id: SurfaceID.sleepHRVLF
+                            )
+                            frequencyPill(
+                                title: "HF",
+                                value: freq.hfPower,
+                                total: freq.totalPower,
+                                color: RTColor.optimal,
+                                id: SurfaceID.sleepHRVHF
+                            )
+                            frequencyRatioPill(ratio: freq.lfHfRatio)
+                        }
+                        .accessibilityIdentifier(SurfaceID.sleepHRVFrequency)
+
+                        Text(freq.interpretation)
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.top, 4)
+                }
+
                 // Sleep Quality chip (compact one-liner; trend is now the dual + spark)
                 HStack(spacing: 8) {
                     Image(systemName: "bed.double.fill")
@@ -357,4 +396,68 @@ struct SleepHRVCard: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(label) \(Int(ms.rounded())) milliseconds")
     }
+
+    private func frequencyPill(
+        title: String,
+        value: Double,
+        total: Double,
+        color: Color,
+        id: String
+    ) -> some View {
+        let pct = total > 0 ? (value / total) * 100.0 : 0.0
+        return VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Text(String(title.prefix(1)))
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
+                    .foregroundStyle(color)
+                    .frame(width: 22, height: 22)
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Text("\(Int(pct.rounded()))%")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(color)
+                .monospacedDigit()
+            Text("of power")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(id)
+        .accessibilityLabel("\(title) \(Int(pct.rounded())) percent of spectral power")
+    }
+
+    private func frequencyRatioPill(ratio: Double) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: "divide")
+                    .font(.system(size: 9, weight: .bold))
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(width: 22, height: 22)
+                    .background(RTColor.secondaryText.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text("LF/HF")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Text(String(format: "%.1f", ratio))
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(RTColor.primaryText)
+                .monospacedDigit()
+            Text("ratio")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.sleepHRVLFHF)
+        .accessibilityLabel("LF over HF ratio \(String(format: "%.1f", ratio))")
+    }
+
 }
