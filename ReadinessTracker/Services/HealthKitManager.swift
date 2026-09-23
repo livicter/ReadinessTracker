@@ -44,6 +44,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .stairDescentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .sixMinuteWalkTestDistance)!,
             HKObjectType.quantityType(forIdentifier: .distanceSwimming)!,
+            HKObjectType.quantityType(forIdentifier: .distanceCycling)!,
             HKObjectType.quantityType(forIdentifier: .swimmingStrokeCount)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
@@ -159,6 +160,7 @@ class HealthKitManager: ObservableObject {
         async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
         async let cyclePower = fetchCyclingPower(predicate: predicate)
         async let cycleFTP = fetchCyclingFTP(predicate: predicate)
+        async let cycleDistance = fetchDistanceCycling(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let runPower = fetchRunningPower(predicate: predicate)
         async let runSpeed = fetchRunningSpeed(predicate: predicate)
@@ -232,6 +234,7 @@ class HealthKitManager: ObservableObject {
             underwaterDepthMeters: await underwaterDepth,
             cyclingPowerWatts: await cyclePower,
             cyclingFTPWatts: await cycleFTP,
+            distanceCyclingKm: await cycleDistance,
             physicalEffortKcalPerHrKg: await physicalEffort,
             runningPowerWatts: await runPower,
             runningSpeedMps: await runSpeed,
@@ -306,6 +309,7 @@ class HealthKitManager: ObservableObject {
             async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
             async let cyclePower = fetchCyclingPower(predicate: predicate)
             async let cycleFTP = fetchCyclingFTP(predicate: predicate)
+            async let cycleDistance = fetchDistanceCycling(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let runPower = fetchRunningPower(predicate: predicate)
             async let runSpeed = fetchRunningSpeed(predicate: predicate)
@@ -350,6 +354,7 @@ class HealthKitManager: ObservableObject {
             let underwaterDepthValue = await underwaterDepth
             let cyclePowerValue = await cyclePower
             let cycleFTPValue = await cycleFTP
+            let cycleDistanceValue = await cycleDistance
             let physicalEffortValue = await physicalEffort
             let runPowerValue = await runPower
             let runSpeedValue = await runSpeed
@@ -420,6 +425,7 @@ class HealthKitManager: ObservableObject {
                 underwaterDepthMeters: underwaterDepthValue,
                 cyclingPowerWatts: cyclePowerValue,
                 cyclingFTPWatts: cycleFTPValue,
+                distanceCyclingKm: cycleDistanceValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 runningPowerWatts: runPowerValue,
                 runningSpeedMps: runSpeedValue,
@@ -792,6 +798,15 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .distanceSwimming) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .meter())
     }
+
+
+    /// Day cumulative cycling distance in kilometers. Sparse activity — fixture seeds UI.
+    private func fetchDistanceCycling(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceCycling) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
+    }
+
 
 
     /// Day cumulative swimming stroke count. Sparse activity — fixture seeds UI.

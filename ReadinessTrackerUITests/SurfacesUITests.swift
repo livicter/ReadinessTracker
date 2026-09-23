@@ -1789,6 +1789,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cycling-ftp-tonight-baseline.png")
     }
 
+    func testCyclingDistanceTonightBaselineSurface() throws {
+        // Honest #165: Cycling Distance Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Cycling Distance"]
+        while !title.exists && n < 52 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Cycling Distance")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.cyclingDistance.card"].exists
+        _ = app.descendants(matching: .any)["body.cyclingDistance.baseline"].exists
+        _ = app.staticTexts["7-Day Cycling Distance"].exists
+        _ = app.descendants(matching: .any)["body.cyclingDistance.spark"].exists
+        saveShot("verify-cycling-distance-tonight-baseline.png")
+    }
+
     func testPhysicalEffortTonightBaselineSurface() throws {
         // Honest #158: Physical Effort Tonight | Baseline (new HK + model).
         var n = 0
