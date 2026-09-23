@@ -1329,6 +1329,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-env-sound-reduction-tonight-baseline.png")
     }
 
+    func testTimeInDaylightTonightBaselineSurface() throws {
+        // Honest #139: Time in daylight Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Time in Daylight"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Time in Daylight")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.daylight.card"].exists
+        _ = app.descendants(matching: .any)["vitals.daylight.baseline"].exists
+        _ = app.staticTexts["7-Day Time in Daylight"].exists
+        _ = app.descendants(matching: .any)["vitals.daylight.spark"].exists
+        saveShot("verify-time-in-daylight-tonight-baseline.png")
+    }
+
+
 
 
 

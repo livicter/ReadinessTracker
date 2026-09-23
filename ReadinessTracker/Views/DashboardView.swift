@@ -1000,6 +1000,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.envSoundReductionCard)
 
+            TimeInDaylightTonightBaselineCard(
+                minutes: data.timeInDaylightMinutes,
+                history: history.compactMap { day in
+                    guard let m = day.timeInDaylightMinutes else { return nil }
+                    return (day.date, m)
+                },
+                baseline: TimeInDaylightBaseline.average(
+                    from: history,
+                    fallback: data.timeInDaylightMinutes ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.timeInDaylightCard)
+
+
             if let respRate = data.respiratoryRate {
                 RespiratoryRateCard(
                     currentRate: respRate,
