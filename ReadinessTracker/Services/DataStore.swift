@@ -242,6 +242,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 10.0 + Double((offset * 7) % 40) // 10…49
             }()
+            // Apple Stand Hours (Honest #144). Simulator often empty — seed for UI.
+            let appleStandHoursValue: Double? = {
+                if offset == 0 { return 10.0 }
+                if offset % 5 == 0 { return nil }
+                return 4.0 + Double((offset * 3) % 9) // 4…12
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -298,6 +304,7 @@ enum UIFixture {
                 flightsClimbed: flightsClimbedValue,
                 distanceWalkingRunningKm: distanceWalkingRunningKmValue,
                 appleExerciseTimeMinutes: appleExerciseTimeMinutesValue,
+                appleStandHours: appleStandHoursValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),

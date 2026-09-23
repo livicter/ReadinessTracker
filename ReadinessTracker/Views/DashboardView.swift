@@ -899,6 +899,19 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.appleExerciseTimeCard)
 
+            AppleStandHoursTonightBaselineCard(
+                hours: data.appleStandHours,
+                history: history.compactMap { day in
+                    guard let h = day.appleStandHours else { return nil }
+                    return (day.date, h)
+                },
+                baseline: AppleStandHoursBaseline.average(
+                    from: history,
+                    fallback: data.appleStandHours ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.appleStandHoursCard)
+
 
             DailyTRIMPCard(
                 sessions: data.strainSessions,

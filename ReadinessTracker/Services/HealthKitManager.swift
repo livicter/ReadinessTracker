@@ -31,6 +31,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
+            HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
@@ -100,6 +101,7 @@ class HealthKitManager: ObservableObject {
         async let flights = fetchFlightsClimbed(predicate: predicate)
         async let distance = fetchDistanceWalkingRunning(predicate: predicate)
         async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
+        async let standHours = fetchAppleStandHours(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -152,6 +154,7 @@ class HealthKitManager: ObservableObject {
             flightsClimbed: await flights,
             distanceWalkingRunningKm: await distance,
             appleExerciseTimeMinutes: await exerciseTime,
+            appleStandHours: await standHours,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -205,6 +208,7 @@ class HealthKitManager: ObservableObject {
             async let flights = fetchFlightsClimbed(predicate: predicate)
             async let distance = fetchDistanceWalkingRunning(predicate: predicate)
             async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
+            async let standHours = fetchAppleStandHours(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -228,6 +232,7 @@ class HealthKitManager: ObservableObject {
             let flightsValue = await flights
             let distanceValue = await distance
             let exerciseTimeValue = await exerciseTime
+            let standHoursValue = await standHours
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -277,6 +282,7 @@ class HealthKitManager: ObservableObject {
                 flightsClimbed: flightsValue,
                 distanceWalkingRunningKm: distanceValue,
                 appleExerciseTimeMinutes: exerciseTimeValue,
+                appleStandHours: standHoursValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -475,6 +481,28 @@ class HealthKitManager: ObservableObject {
     private func fetchAppleExerciseTime(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .appleExerciseTime) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .minute())
+    }
+
+
+    /// Count of hours where user stood ≥1 min (Activity Stand ring). Sparse on Simulator — fixture seeds UI.
+    private func fetchAppleStandHours(predicate: NSPredicate) async -> Double? {
+        guard let type = HKObjectType.categoryType(forIdentifier: .appleStandHour) else { return nil }
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: type,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, _ in
+                guard let samples = samples as? [HKCategorySample], !samples.isEmpty else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let stood = samples.filter { $0.value == HKCategoryValueAppleStandHour.stood.rawValue }.count
+                continuation.resume(returning: Double(stood))
+            }
+            self.healthStore.execute(query)
+        }
     }
 
 
