@@ -2082,6 +2082,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.waistCircumferenceCard)
 
+
+                BodyFatTonightBaselineCard(
+                    percent: data.bodyFatPercent,
+                    history: history.compactMap { day in
+                        guard let v = day.bodyFatPercent else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: BodyFatBaseline.average(
+                        from: history,
+                        fallback: data.bodyFatPercent ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.bodyFatCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,

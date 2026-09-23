@@ -2670,6 +2670,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-waist-circumference-tonight-baseline.png")
     }
 
+
+    func testBodyFatTonightBaselineSurface() throws {
+        // Honest #187: Body Fat Tonight | Baseline (HK bodyFatPercentage).
+        var n = 0
+        while !app.descendants(matching: .any)["body.fat.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.fat.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Body Fat card")
+        XCTAssertTrue(app.staticTexts["Body Fat"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.fat.baseline"].exists
+        _ = app.staticTexts["7-Day Body Fat"].exists
+        _ = app.descendants(matching: .any)["body.fat.spark"].exists
+        saveShot("verify-body-fat-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0
