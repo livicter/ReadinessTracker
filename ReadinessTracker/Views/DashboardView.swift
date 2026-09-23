@@ -2041,6 +2041,22 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.bloodGlucoseCard)
 
 
+                BloodPressureTonightBaselineCard(
+                    systolic: data.bloodPressureSystolicMmHg,
+                    diastolic: data.bloodPressureDiastolicMmHg,
+                    history: history.compactMap { day in
+                        guard let s = day.bloodPressureSystolicMmHg,
+                              let d = day.bloodPressureDiastolicMmHg else { return nil }
+                        return (day.date, s, d)
+                    },
+                    baselineSystolic: BloodPressureBaseline.averageSystolic(
+                        from: history,
+                        fallback: data.bloodPressureSystolicMmHg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.bloodPressureCard)
+
+
                 BodyMassTonightBaselineCard(
                     kg: data.bodyMassKg,
                     history: history.compactMap { day in

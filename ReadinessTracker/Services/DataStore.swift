@@ -242,6 +242,17 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 85 + Double((offset * 9) % 56) // 85…140
             }()
+            // Blood pressure mmHg (Honest #188). Sparse vitals — seed for UI.
+            let bloodPressureSystolicMmHgValue: Double? = {
+                if offset == 0 { return 118 }
+                if offset % 5 == 0 { return nil }
+                return 110 + Double((offset * 5) % 25) // 110…134
+            }()
+            let bloodPressureDiastolicMmHgValue: Double? = {
+                if offset == 0 { return 74 }
+                if offset % 5 == 0 { return nil }
+                return 68 + Double((offset * 3) % 16) // 68…83
+            }()
             // Body mass kg (Honest #181). Sparse composition — seed for UI.
             let bodyMassKgValue: Double? = {
                 if offset == 0 { return 72.4 }
@@ -524,6 +535,8 @@ enum UIFixture {
                 inhalerUsage: inhalerUsageValue,
                 insulinDeliveryIU: insulinDeliveryIUValue,
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,
+                bloodPressureSystolicMmHg: bloodPressureSystolicMmHgValue,
+                bloodPressureDiastolicMmHg: bloodPressureDiastolicMmHgValue,
                 bodyMassKg: bodyMassKgValue,
                 leanBodyMassKg: leanBodyMassKgValue,
                 waistCircumferenceCm: waistCircumferenceCmValue,

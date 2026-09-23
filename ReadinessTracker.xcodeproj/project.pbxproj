@@ -114,6 +114,7 @@
 		J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */; };
 		J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */; };
 		J58K01M73I192031425G1 /* BloodGlucoseTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425G0 /* BloodGlucoseTonightBaselineCard.swift */; };
+		J58K01M73I192031425Z1 /* BloodPressureTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425Z0 /* BloodPressureTonightBaselineCard.swift */; };
 		J58K01M73I192031425M1 /* BodyMassTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425M0 /* BodyMassTonightBaselineCard.swift */; };
 		J58K01M73I192031425L1 /* LeanBodyMassTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425L0 /* LeanBodyMassTonightBaselineCard.swift */; };
 		J58K01M73I192031425Y1 /* WaistCircumferenceTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425Y0 /* WaistCircumferenceTonightBaselineCard.swift */; };
@@ -413,6 +414,7 @@
 		I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InhalerUsageTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InhalerUsageTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InsulinDeliveryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InsulinDeliveryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425G0 /* BloodGlucoseTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BloodGlucoseTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/BloodGlucoseTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425Z0 /* BloodPressureTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BloodPressureTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/BloodPressureTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425M0 /* BodyMassTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BodyMassTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/BodyMassTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425L0 /* LeanBodyMassTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LeanBodyMassTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/LeanBodyMassTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425Y0 /* WaistCircumferenceTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaistCircumferenceTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WaistCircumferenceTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -756,6 +758,7 @@
 				I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */,
 				I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */,
 				I58K01M73I192031425G0 /* BloodGlucoseTonightBaselineCard.swift */,
+				I58K01M73I192031425Z0 /* BloodPressureTonightBaselineCard.swift */,
 				I58K01M73I192031425M0 /* BodyMassTonightBaselineCard.swift */,
 				I58K01M73I192031425L0 /* LeanBodyMassTonightBaselineCard.swift */,
 				I58K01M73I192031425Y0 /* WaistCircumferenceTonightBaselineCard.swift */,
@@ -1320,6 +1323,7 @@
 				J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425G1 /* BloodGlucoseTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425Z1 /* BloodPressureTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425M1 /* BodyMassTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425L1 /* LeanBodyMassTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425Y1 /* WaistCircumferenceTonightBaselineCard.swift in Sources */,
