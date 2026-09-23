@@ -31,6 +31,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
+            HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -94,6 +95,7 @@ class HealthKitManager: ObservableObject {
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
         async let daylight = fetchTimeInDaylight(predicate: predicate)
         async let uv = fetchUVExposure(predicate: predicate)
+        async let flights = fetchFlightsClimbed(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -143,6 +145,7 @@ class HealthKitManager: ObservableObject {
             environmentalSoundReductionDBA: await soundReduction,
             timeInDaylightMinutes: await daylight,
             uvExposureIndex: await uv,
+            flightsClimbed: await flights,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -193,6 +196,7 @@ class HealthKitManager: ObservableObject {
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
             async let daylight = fetchTimeInDaylight(predicate: predicate)
             async let uv = fetchUVExposure(predicate: predicate)
+            async let flights = fetchFlightsClimbed(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -213,6 +217,7 @@ class HealthKitManager: ObservableObject {
             let soundReductionValue = await soundReduction
             let daylightValue = await daylight
             let uvValue = await uv
+            let flightsValue = await flights
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -259,6 +264,7 @@ class HealthKitManager: ObservableObject {
                 environmentalSoundReductionDBA: soundReductionValue,
                 timeInDaylightMinutes: daylightValue,
                 uvExposureIndex: uvValue,
+                flightsClimbed: flightsValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -432,6 +438,14 @@ class HealthKitManager: ObservableObject {
             }
             self.healthStore.execute(query)
         }
+    }
+
+
+
+    /// Day cumulative flights climbed (floors). Sparse-ish on Simulator — fixture seeds UI.
+    private func fetchFlightsClimbed(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .flightsClimbed) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
     }
 
 

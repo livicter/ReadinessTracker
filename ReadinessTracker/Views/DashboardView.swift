@@ -1406,6 +1406,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.stepsCard)
 
+                FlightsClimbedTonightBaselineCard(
+                    flights: data.flightsClimbed,
+                    history: history.compactMap { day in
+                        guard let f = day.flightsClimbed else { return nil }
+                        return (day.date, f)
+                    },
+                    baseline: FlightsClimbedBaseline.average(
+                        from: history,
+                        fallback: data.flightsClimbed ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.flightsClimbedCard)
+
+
                 ActiveCaloriesTonightBaselineCard(
                     currentCalories: data.activeCalories,
                     history: history.map { ($0.date, $0.activeCalories) },
