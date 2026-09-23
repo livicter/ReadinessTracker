@@ -1838,6 +1838,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
 
+
+                WaterTemperatureTonightBaselineCard(
+                    celsius: data.waterTemperatureCelsius,
+                    history: history.compactMap { day in
+                        guard let c = day.waterTemperatureCelsius else { return nil }
+                        return (day.date, c)
+                    },
+                    baseline: WaterTemperatureBaseline.average(
+                        from: history,
+                        fallback: data.waterTemperatureCelsius ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.waterTemperatureCard)
+
                 CyclingPowerTonightBaselineCard(
                     watts: data.cyclingPowerWatts,
                     history: history.compactMap { day in

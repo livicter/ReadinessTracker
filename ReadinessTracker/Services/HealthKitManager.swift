@@ -185,6 +185,9 @@ class HealthKitManager: ObservableObject {
             if let depthType = HKObjectType.quantityType(forIdentifier: .underwaterDepth) {
                 typesToRead.insert(depthType)
             }
+            if let waterTempType = HKObjectType.quantityType(forIdentifier: .waterTemperature) {
+                typesToRead.insert(waterTempType)
+            }
             if let runPowerType = HKObjectType.quantityType(forIdentifier: .runningPower) {
                 typesToRead.insert(runPowerType)
             }
@@ -285,6 +288,7 @@ class HealthKitManager: ObservableObject {
         async let swimStrokes = fetchSwimmingStrokeCount(predicate: predicate)
         async let cycleCadence = fetchCyclingCadence(predicate: predicate)
         async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
+        async let waterTemp = fetchWaterTemperature(predicate: predicate)
         async let cyclePower = fetchCyclingPower(predicate: predicate)
         async let cycleFTP = fetchCyclingFTP(predicate: predicate)
         async let cycleDistance = fetchDistanceCycling(predicate: predicate)
@@ -394,6 +398,7 @@ class HealthKitManager: ObservableObject {
             swimmingStrokeCount: await swimStrokes,
             cyclingCadenceRpm: await cycleCadence,
             underwaterDepthMeters: await underwaterDepth,
+            waterTemperatureCelsius: await waterTemp,
             cyclingPowerWatts: await cyclePower,
             cyclingFTPWatts: await cycleFTP,
             distanceCyclingKm: await cycleDistance,
@@ -503,6 +508,7 @@ class HealthKitManager: ObservableObject {
             async let swimStrokes = fetchSwimmingStrokeCount(predicate: predicate)
             async let cycleCadence = fetchCyclingCadence(predicate: predicate)
             async let underwaterDepth = fetchUnderwaterDepth(predicate: predicate)
+            async let waterTemp = fetchWaterTemperature(predicate: predicate)
             async let cyclePower = fetchCyclingPower(predicate: predicate)
             async let cycleFTP = fetchCyclingFTP(predicate: predicate)
             async let cycleDistance = fetchDistanceCycling(predicate: predicate)
@@ -582,6 +588,7 @@ class HealthKitManager: ObservableObject {
             let swimStrokesValue = await swimStrokes
             let cycleCadenceValue = await cycleCadence
             let underwaterDepthValue = await underwaterDepth
+            let waterTempValue = await waterTemp
             let cyclePowerValue = await cyclePower
             let cycleFTPValue = await cycleFTP
             let cycleDistanceValue = await cycleDistance
@@ -688,6 +695,7 @@ class HealthKitManager: ObservableObject {
                 swimmingStrokeCount: swimStrokesValue,
                 cyclingCadenceRpm: cycleCadenceValue,
                 underwaterDepthMeters: underwaterDepthValue,
+                waterTemperatureCelsius: waterTempValue,
                 cyclingPowerWatts: cyclePowerValue,
                 cyclingFTPWatts: cycleFTPValue,
                 distanceCyclingKm: cycleDistanceValue,
@@ -1483,6 +1491,24 @@ class HealthKitManager: ObservableObject {
 
 
     /// Day average cycling power (watts). Sparse activity — fixture seeds UI. iOS 17+.
+
+    /// Day average water temperature (°C). Sparse dive/pool — fixture seeds UI. iOS 16+.
+    private func fetchWaterTemperature(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .waterTemperature) else { return nil }
+        let unit = HKUnit.degreeCelsius()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
     private func fetchCyclingPower(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 17.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .cyclingPower) else { return nil }

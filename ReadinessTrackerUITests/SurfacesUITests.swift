@@ -3467,6 +3467,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-downhill-snow-sports-distance-tonight-baseline.png")
     }
 
+    func testWaterTemperatureTonightBaselineSurface() throws {
+        // Honest #237: Water Temperature Tonight | Baseline (HK waterTemperature).
+        var n = 0
+        while !app.descendants(matching: .any)["body.waterTemperature.card"].exists && n < 68 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.waterTemperature.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Water Temperature card")
+        XCTAssertTrue(app.staticTexts["Water Temperature"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.waterTemperature.baseline"].exists
+        _ = app.staticTexts["7-Day Water Temp"].exists
+        _ = app.descendants(matching: .any)["body.waterTemperature.spark"].exists
+        saveShot("verify-water-temperature-tonight-baseline.png")
+    }
+
+
 
 
 
