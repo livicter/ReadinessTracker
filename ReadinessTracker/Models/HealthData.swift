@@ -57,6 +57,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let sixMinuteWalkDistanceMeters: Double?  // 6MWT distance m — Honest #151
     let distanceSwimmingMeters: Double?  // swim distance m — Honest #152
     let swimmingStrokeCount: Double?  // swim stroke count — Honest #153
+    let cyclingCadenceRpm: Double?  // cycling cadence rpm — Honest #154
     
     // Cardiovascular strain data
     let maxHeartRate: Double?
@@ -116,6 +117,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          sixMinuteWalkDistanceMeters: Double? = nil,
          distanceSwimmingMeters: Double? = nil,
          swimmingStrokeCount: Double? = nil,
+         cyclingCadenceRpm: Double? = nil,
          nutrition: NutritionSummary = NutritionSummary(),
          menstrualFlow: Bool = false) {
         self.id = id
@@ -164,6 +166,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.sixMinuteWalkDistanceMeters = sixMinuteWalkDistanceMeters
         self.distanceSwimmingMeters = distanceSwimmingMeters
         self.swimmingStrokeCount = swimmingStrokeCount
+        self.cyclingCadenceRpm = cyclingCadenceRpm
         self.nutrition = nutrition
         self.menstrualFlow = menstrualFlow
     }
@@ -219,6 +222,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.sixMinuteWalkDistanceMeters = nil
         self.distanceSwimmingMeters = nil
         self.swimmingStrokeCount = nil
+        self.cyclingCadenceRpm = nil
         self.nutrition = NutritionSummary()
         self.menstrualFlow = false
     }
@@ -233,7 +237,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm
         case nutrition, menstrualFlow
     }
     
@@ -285,6 +289,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.sixMinuteWalkDistanceMeters = try container.decodeIfPresent(Double.self, forKey: .sixMinuteWalkDistanceMeters)
         self.distanceSwimmingMeters = try container.decodeIfPresent(Double.self, forKey: .distanceSwimmingMeters)
         self.swimmingStrokeCount = try container.decodeIfPresent(Double.self, forKey: .swimmingStrokeCount)
+        self.cyclingCadenceRpm = try container.decodeIfPresent(Double.self, forKey: .cyclingCadenceRpm)
         self.nutrition = try container.decodeIfPresent(NutritionSummary.self, forKey: .nutrition) ?? NutritionSummary()
         self.menstrualFlow = try container.decodeIfPresent(Bool.self, forKey: .menstrualFlow) ?? false
     }

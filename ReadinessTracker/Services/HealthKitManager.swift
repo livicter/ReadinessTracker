@@ -67,6 +67,9 @@ class HealthKitManager: ObservableObject {
             if let daylightType = HKObjectType.quantityType(forIdentifier: .timeInDaylight) {
                 typesToRead.insert(daylightType)
             }
+            if let cadenceType = HKObjectType.quantityType(forIdentifier: .cyclingCadence) {
+                typesToRead.insert(cadenceType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -120,6 +123,7 @@ class HealthKitManager: ObservableObject {
         async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
         async let swimDistance = fetchDistanceSwimming(predicate: predicate)
         async let swimStrokes = fetchSwimmingStrokeCount(predicate: predicate)
+        async let cycleCadence = fetchCyclingCadence(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -182,6 +186,7 @@ class HealthKitManager: ObservableObject {
             sixMinuteWalkDistanceMeters: await sixMWT,
             distanceSwimmingMeters: await swimDistance,
             swimmingStrokeCount: await swimStrokes,
+            cyclingCadenceRpm: await cycleCadence,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -245,6 +250,7 @@ class HealthKitManager: ObservableObject {
             async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
             async let swimDistance = fetchDistanceSwimming(predicate: predicate)
             async let swimStrokes = fetchSwimmingStrokeCount(predicate: predicate)
+            async let cycleCadence = fetchCyclingCadence(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -278,6 +284,7 @@ class HealthKitManager: ObservableObject {
             let sixMWTValue = await sixMWT
             let swimDistanceValue = await swimDistance
             let swimStrokesValue = await swimStrokes
+            let cycleCadenceValue = await cycleCadence
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -337,6 +344,7 @@ class HealthKitManager: ObservableObject {
                 sixMinuteWalkDistanceMeters: sixMWTValue,
                 distanceSwimmingMeters: swimDistanceValue,
                 swimmingStrokeCount: swimStrokesValue,
+                cyclingCadenceRpm: cycleCadenceValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -701,6 +709,24 @@ class HealthKitManager: ObservableObject {
     private func fetchSwimmingStrokeCount(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .swimmingStrokeCount) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
+    }
+
+
+    /// Day average cycling cadence (rpm). Sparse activity — fixture seeds UI. iOS 17+.
+    private func fetchCyclingCadence(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 17.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .cyclingCadence) else { return nil }
+        let unit = HKUnit.count().unitDivided(by: .minute())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
     }
 
 

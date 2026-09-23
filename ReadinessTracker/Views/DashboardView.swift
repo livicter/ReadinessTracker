@@ -1576,6 +1576,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.swimStrokesCard)
 
+                CyclingCadenceTonightBaselineCard(
+                    rpm: data.cyclingCadenceRpm,
+                    history: history.compactMap { day in
+                        guard let r = day.cyclingCadenceRpm else { return nil }
+                        return (day.date, r)
+                    },
+                    baseline: CyclingCadenceBaseline.average(
+                        from: history,
+                        fallback: data.cyclingCadenceRpm ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
