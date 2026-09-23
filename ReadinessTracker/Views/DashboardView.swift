@@ -1928,6 +1928,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.dietaryFiberCard)
 
+
+                DietarySugarTonightBaselineCard(
+                    sugarGrams: data.nutrition.sugarGrams,
+                    history: history.compactMap { day in
+                        guard let g = day.nutrition.sugarGrams else { return nil }
+                        return (day.date, g)
+                    },
+                    baselineGrams: DietarySugarBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.sugarGrams ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietarySugarCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,

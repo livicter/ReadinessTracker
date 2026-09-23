@@ -2470,6 +2470,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-fiber-tonight-baseline.png")
     }
 
+    func testDietarySugarTonightBaselineSurface() throws {
+        // Honest #176: Dietary Sugar Tonight | Baseline (HK dietarySugar).
+        var n = 0
+        while !app.descendants(matching: .any)["body.sugar.card"].exists && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.sugar.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Sugar card")
+        XCTAssertTrue(app.staticTexts["Dietary Sugar"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.sugar.baseline"].exists
+        _ = app.staticTexts["7-Day Sugar"].exists
+        _ = app.descendants(matching: .any)["body.sugar.spark"].exists
+        saveShot("verify-dietary-sugar-tonight-baseline.png")
+    }
+
     func testCheckInInsightsSurface() throws {
         // Honest #123: Check-in Insights Tonight | Baseline (feel / alcohol / stress).
         var n = 0

@@ -69,6 +69,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryCarbohydrates)!,
             HKObjectType.quantityType(forIdentifier: .dietaryFatTotal)!,
             HKObjectType.quantityType(forIdentifier: .dietaryFiber)!,
+            HKObjectType.quantityType(forIdentifier: .dietarySugar)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
         
@@ -1432,6 +1433,12 @@ class HealthKitManager: ObservableObject {
             predicate: predicate,
             unit: .gram()
         ).map { $0 }
+
+        let sugar = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietarySugar)!,
+            predicate: predicate,
+            unit: .gram()
+        ).map { $0 }
         
         return NutritionSummary(
             waterLiters: water,
@@ -1440,7 +1447,8 @@ class HealthKitManager: ObservableObject {
             energyKcal: energy,
             carbohydrateGrams: carbs,
             fatGrams: fat,
-            fiberGrams: fiber
+            fiberGrams: fiber,
+            sugarGrams: sugar
         )
     }
     
