@@ -2768,6 +2768,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-zinc-tonight-baseline.png")
     }
 
+    func testDietaryFolateTonightBaselineSurface() throws {
+        // Honest #201: Dietary Folate Tonight | Baseline (HK dietaryFolate).
+        var n = 0
+        while !app.descendants(matching: .any)["body.folate.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.folate.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Folate card")
+        XCTAssertTrue(app.staticTexts["Dietary Folate"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.folate.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Folate"].exists
+        _ = app.descendants(matching: .any)["body.folate.spark"].exists
+        saveShot("verify-dietary-folate-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
