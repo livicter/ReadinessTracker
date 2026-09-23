@@ -13,13 +13,15 @@ struct WatchComplicationEntry: TimelineEntry {
     let gymScore: Int
     let workScore: Int
     let sleepScore: Int
+    let strain: Double
 
     static let sample = WatchComplicationEntry(
         date: Date(),
         readiness: 79,
         gymScore: 82,
         workScore: 75,
-        sleepScore: 80
+        sleepScore: 80,
+        strain: 11.4
     )
 }
 
@@ -39,12 +41,14 @@ enum WatchComplicationStore {
         let sleep = dict["sleepScore"] as? Int ?? 0
         let readiness = dict["readiness"] as? Int
             ?? Int(((gym + work + sleep) / 3))
+        let strain = dict["strain"] as? Double ?? 0
         return WatchComplicationEntry(
             date: date,
             readiness: readiness,
             gymScore: gym,
             workScore: work,
-            sleepScore: sleep
+            sleepScore: sleep,
+            strain: strain
         )
     }
 }
@@ -132,6 +136,14 @@ struct WatchRectangularComplicationView: View {
                     .monospacedDigit()
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
+                if entry.strain > 0 {
+                    Text(String(format: "Strain %.1f", entry.strain))
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
                 HStack(spacing: 4) {
                     WatchAccessoryCue(letter: "G", score: entry.gymScore, color: gymColor)
                     WatchAccessoryCue(letter: "W", score: entry.workScore, color: workColor)
