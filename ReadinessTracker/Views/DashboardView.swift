@@ -1999,6 +1999,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietarySugarCard)
 
 
+                DietarySodiumTonightBaselineCard(
+                    sodiumMg: data.nutrition.sodiumMg,
+                    history: history.compactMap { day in
+                        guard let m = day.nutrition.sodiumMg else { return nil }
+                        return (day.date, m)
+                    },
+                    baselineMg: DietarySodiumBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.sodiumMg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietarySodiumCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
