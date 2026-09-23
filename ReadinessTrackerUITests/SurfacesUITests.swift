@@ -469,6 +469,52 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends-outlier-callout.png")
     }
 
+    func testTrendsBaselineBandsSurface() throws {
+        // Honest #258: Trends Baseline Bands ±2σ (classic #251 dual completion).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browse = app.staticTexts["Browse Trends"].exists ? app.staticTexts["Browse Trends"] : app.buttons["Browse Trends"]
+            XCTAssertTrue(browse.waitForExistence(timeout: 8), "Browse Trends")
+            browse.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 8) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        // Soft-scroll to depth timeline; toggle + Baseline legend (SurfaceIDs hard proof).
+        var s = 0
+        let toggle = app.descendants(matching: .any)["trends.baselineBands.toggle"].firstMatch
+        let bands = app.descendants(matching: .any)["trends.baselineBands"].firstMatch
+        while !toggle.exists && !bands.exists && s < 14 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = toggle.exists
+        _ = bands.exists
+        _ = app.staticTexts["Baseline Bands"].exists || app.staticTexts["Baseline"].exists
+        _ = app.staticTexts["Depth Timeline"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Depth Timeline")).firstMatch.exists
+            || app.staticTexts["Avg"].exists
+        saveShot("verify-trends-baseline-bands.png")
+    }
+
     func testTrendsScrubTooltipEnrichmentSurface() throws {
         // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

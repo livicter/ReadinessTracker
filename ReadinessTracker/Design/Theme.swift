@@ -617,6 +617,9 @@ enum SurfaceID {
     /// Honest #257: Trends OutlierCallout list (classic #251 / Advanced Highlights parity).
     static let trendsOutliers = "trends.outliers"
     static let trendsOutlierList = "trends.outlierList"
+    /// Honest #258: Trends Baseline Bands ±2σ (classic #251 dual completion).
+    static let trendsBaselineBands = "trends.baselineBands"
+    static let trendsBaselineBandsToggle = "trends.baselineBands.toggle"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"

@@ -12,6 +12,8 @@ struct TrendDetailView: View {
     @State private var readinessScores: [UUID: Int] = [:]
     @State private var selectedScrubDay: DailyHealthData?
     @State private var lastHapticID: DailyHealthData.ID?
+    /// Honest #258: Trends Baseline Bands ±2σ (classic #251 dual completion).
+    @State private var showBaselineBands = true
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -655,13 +657,40 @@ struct TrendDetailView: View {
 
     private var depthTimelineSection: some View {
         NativeCard {
-            DepthTimelineChart(
-                title: "\(primaryDepthMetric.rawValue) Depth Timeline",
-                unit: depthTimelineUnit,
-                color: primaryDepthMetric.color,
-                points: depthTimelinePoints,
-                period: selectedPeriod
-            )
+            VStack(alignment: .leading, spacing: 12) {
+                // Honest #258: Baseline Bands toggle (classic #251 / Advanced parity).
+                HStack(spacing: 8) {
+                    ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
+                        .accessibilityIdentifier(SurfaceID.trendsBaselineBandsToggle)
+                    Spacer(minLength: 0)
+                }
+
+                DepthTimelineChart(
+                    title: "\(primaryDepthMetric.rawValue) Depth Timeline",
+                    unit: depthTimelineUnit,
+                    color: primaryDepthMetric.color,
+                    points: depthTimelinePoints,
+                    period: selectedPeriod,
+                    showBaselineBands: showBaselineBands
+                )
+
+                if showBaselineBands {
+                    HStack(spacing: 6) {
+                        Capsule()
+                            .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                            .frame(width: 18, height: 2)
+                        Text("Baseline")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                            .accessibilityIdentifier(SurfaceID.trendsBaselineBands)
+                        Text("±2σ")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
+                        Spacer(minLength: 0)
+                    }
+                    .accessibilityLabel("Baseline bands plus or minus two sigma")
+                }
+            }
         }
     }
 
