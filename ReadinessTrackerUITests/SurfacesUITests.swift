@@ -3092,6 +3092,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-chloride-tonight-baseline.png")
     }
 
+    func testDietaryMufaTonightBaselineSurface() throws {
+        // Honest #219: Dietary Monounsaturated Fat Tonight | Baseline (HK dietaryFatMonounsaturated).
+        var n = 0
+        while !app.descendants(matching: .any)["body.mufa.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.mufa.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary MUFA card")
+        XCTAssertTrue(app.staticTexts["Dietary Monounsaturated Fat"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.mufa.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary MUFA"].exists
+        _ = app.descendants(matching: .any)["body.mufa.spark"].exists
+        saveShot("verify-dietary-mufa-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0

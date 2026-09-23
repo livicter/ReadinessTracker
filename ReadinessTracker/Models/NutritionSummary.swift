@@ -72,13 +72,15 @@ struct NutritionSummary: Codable, Hashable {
     let molybdenumMcg: Double?
     /// Dietary chloride (mg) from HealthKit `dietaryChloride` — Honest #218.
     let chlorideMg: Double?
+    /// Dietary monounsaturated fat (g) from HealthKit `dietaryFatMonounsaturated` — Honest #219.
+    let monounsaturatedFatGrams: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && iodineMcg == nil && phosphorusMg == nil && chromiumMcg == nil && molybdenumMcg == nil && chlorideMg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && iodineMcg == nil && phosphorusMg == nil && chromiumMcg == nil && molybdenumMcg == nil && chlorideMg == nil && monounsaturatedFatGrams == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -119,6 +121,7 @@ struct NutritionSummary: Codable, Hashable {
         chromiumMcg: Double? = nil,
         molybdenumMcg: Double? = nil,
         chlorideMg: Double? = nil,
+        monounsaturatedFatGrams: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -158,6 +161,7 @@ struct NutritionSummary: Codable, Hashable {
         self.chromiumMcg = chromiumMcg
         self.molybdenumMcg = molybdenumMcg
         self.chlorideMg = chlorideMg
+        self.monounsaturatedFatGrams = monounsaturatedFatGrams
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
