@@ -30,6 +30,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testTodayHeroBright() throws {
+        // Honest #72: Morning|Evening CheckInStatusCard circular tint wells.
         XCTAssertTrue(app.staticTexts["Readiness"].waitForExistence(timeout: 8))
         XCTAssertTrue(app.staticTexts["HealthKit"].exists)
         saveShot("verify-dashboard.png")
