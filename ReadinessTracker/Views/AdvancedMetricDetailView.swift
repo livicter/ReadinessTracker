@@ -15,6 +15,7 @@ struct AdvancedMetricDetailView: View {
     @State private var showVolatility = true  // Honest #240: rolling CV overlay
     @State private var showMomentum = true  // Honest #241: windowed momentum
     @State private var showEMA = true  // Honest #242: exponential MA overlay
+    @State private var showMA14 = true  // Honest #244: SMA-14 overlay
     @State private var showRateOfChange = true  // Honest #243: day-over-day ROC
     @Environment(\.dismiss) private var dismiss
     
@@ -96,6 +97,7 @@ struct AdvancedMetricDetailView: View {
                             showVolatility: showVolatility,
                             showMomentum: showMomentum,
                             showEMA: showEMA,
+                            showMA14: showMA14,
                             showRateOfChange: showRateOfChange
                         )
                     }
@@ -251,7 +253,9 @@ struct AdvancedMetricDetailView: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
                 ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
-                ToggleChip(label: "Moving Avg", isOn: $showMovingAverage)
+                ToggleChip(label: "MA7", isOn: $showMovingAverage)
+                ToggleChip(label: "MA14", isOn: $showMA14)
+                    .accessibilityIdentifier(SurfaceID.metricChartMA14Toggle)
                 ToggleChip(label: "Outliers", isOn: $showOutliers)
             }
             HStack(spacing: 12) {
