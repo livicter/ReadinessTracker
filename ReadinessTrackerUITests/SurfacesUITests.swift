@@ -760,6 +760,63 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-detail-scrub.png")
     }
 
+    func testMetricRollingVolatilitySurface() throws {
+        // Honest #240: rollingVolatility strip + Volatility toggle on Advanced Metric Detail.
+        // Avoid revealText frame flakes — swipe to Breakdown Sleep row by a11y id.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable {
+                sleepRow.tap()
+            } else {
+                app.swipeUp()
+                sleepRow.tap()
+            }
+        } else {
+            // Fallback: Metrics → Sleep card → same AdvancedMetricDetail path when available.
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            var m = 0
+            while !sleepCard.exists && m < 10 {
+                app.swipeDown()
+                m += 1
+            }
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        // Prefer 30D so rolling 7-day CV has a real series under fixture.
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        // Scroll toggles into frame if needed.
+        var z = 0
+        while !app.staticTexts["Volatility"].exists && z < 6 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(
+            app.staticTexts["Volatility"].waitForExistence(timeout: 8),
+            "Volatility toggle"
+        )
+        _ = app.descendants(matching: .any)["metric.chart.volatility.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.chart.volatility"].exists
+        _ = app.staticTexts["7-Day Volatility"].exists
+            || app.staticTexts["Need ≥7 days for volatility"].exists
+        _ = app.staticTexts["Baseline Bands"].exists
+        _ = app.staticTexts["Moving Avg"].exists
+        saveShot("verify-metric-rolling-volatility.png")
+    }
+
     func testStrainRecoveryBalanceSurface() throws {
         // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.

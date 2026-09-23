@@ -120,6 +120,8 @@ enum SurfaceID {
     static let settingsDataSources = "settings.dataSources"
     static let metricChartScrub = "metric.chart.scrub"
     static let metricChartSelection = "metric.chart.selection"
+    static let metricChartVolatility = "metric.chart.volatility"
+    static let metricChartVolatilityToggle = "metric.chart.volatility.toggle"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"
