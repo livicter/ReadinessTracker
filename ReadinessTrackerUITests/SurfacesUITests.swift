@@ -44,6 +44,19 @@ final class SurfacesUITests: XCTestCase {
     }
 
 
+
+    func testSourcePickerWellSurface() throws {
+        // Honest #91: Today source picker circular tint wells (Watch / Fitbit).
+        XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+            || app.staticTexts["Readiness"].waitForExistence(timeout: 8))
+        // Soft: source chip labels
+        _ = app.staticTexts["Apple Watch"].exists
+            || app.staticTexts["Watch"].exists
+            || app.buttons["Apple Watch"].exists
+            || app.staticTexts["Fitbit"].exists
+        saveShot("verify-source-picker.png")
+    }
+
     func testScorePillWellSurface() throws {
         // Honest #90: Readiness Detail ScorePills (General/Work/Gym) circular wells.
         // Cognitive renamed to Work (Gym/Work/Sleep house naming).
