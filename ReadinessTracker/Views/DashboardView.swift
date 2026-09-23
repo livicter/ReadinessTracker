@@ -1245,6 +1245,14 @@ struct DashboardView: View {
                         .accessibilityIdentifier("body.tile.cycle")
                     }
                 }
+
+                if UserSettings.load().trackMenstrualCycle {
+                    CycleTonightBaselineCard(
+                        hasFlowTonight: data.menstrualFlow,
+                        history: history.map { ($0.date, $0.menstrualFlow) }
+                    )
+                    .accessibilityIdentifier(SurfaceID.cycleCard)
+                }
             }
         }
         .accessibilityElement(children: .contain)
