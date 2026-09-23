@@ -111,6 +111,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietaryPhosphorus)!,
             HKObjectType.quantityType(forIdentifier: .dietaryChromium)!,
             HKObjectType.quantityType(forIdentifier: .dietaryMolybdenum)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryChloride)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1879,6 +1880,12 @@ class HealthKitManager: ObservableObject {
             unit: .gramUnit(with: .micro)
         ).map { $0 }
 
+        let chloride = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryChloride)!,
+            predicate: predicate,
+            unit: .gramUnit(with: .milli)
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1922,6 +1929,7 @@ class HealthKitManager: ObservableObject {
             phosphorusMg: phosphorus,
             chromiumMcg: chromium,
             molybdenumMcg: molybdenum,
+            chlorideMg: chloride,
             alcoholicBeverages: alcohol
         )
     }
