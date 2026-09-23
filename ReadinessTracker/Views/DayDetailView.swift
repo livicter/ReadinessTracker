@@ -231,21 +231,24 @@ struct DayDetailView: View {
                     label: "Asleep",
                     value: String(format: "%.1f", data.sleepHours),
                     unit: "h",
-                    color: RTColor.sleep
+                    color: RTColor.sleep,
+                    icon: "moon.fill"
                 )
                 nightMetricDivider
                 nightMetricColumn(
                     label: "In Bed",
                     value: String(format: "%.1f", timeInBedHours),
                     unit: "h",
-                    color: RTColor.primaryText
+                    color: RTColor.primaryText,
+                    icon: "bed.double.fill"
                 )
                 nightMetricDivider
                 nightMetricColumn(
                     label: "Efficiency",
                     value: "\(Int(data.sleepEfficiency * 100))",
                     unit: "%",
-                    color: data.sleepEfficiency >= 0.85 ? RTColor.optimal : RTColor.caution
+                    color: data.sleepEfficiency >= 0.85 ? RTColor.optimal : RTColor.caution,
+                    icon: "bolt.fill"
                 )
             }
             .frame(maxWidth: .infinity)
@@ -259,11 +262,21 @@ struct DayDetailView: View {
             .padding(.horizontal, 6)
     }
 
-    private func nightMetricColumn(label: String, value: String, unit: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label)
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+    private func nightMetricColumn(label: String, value: String, unit: String, color: Color, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 6) {
+                // Honest #98: Apple circular tint well on Day Detail night metrics.
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 22, height: 22)
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text(label)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(value)
                     .font(.system(size: 22, weight: .bold, design: .rounded))
