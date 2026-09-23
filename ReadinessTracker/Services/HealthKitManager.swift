@@ -42,6 +42,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .stairAscentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .stairDescentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .sixMinuteWalkTestDistance)!,
+            HKObjectType.quantityType(forIdentifier: .distanceSwimming)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -116,6 +117,7 @@ class HealthKitManager: ObservableObject {
         async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
         async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
         async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
+        async let swimDistance = fetchDistanceSwimming(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -176,6 +178,7 @@ class HealthKitManager: ObservableObject {
             stairAscentSpeedMps: await stairAscent,
             stairDescentSpeedMps: await stairDescent,
             sixMinuteWalkDistanceMeters: await sixMWT,
+            distanceSwimmingMeters: await swimDistance,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -237,6 +240,7 @@ class HealthKitManager: ObservableObject {
             async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
             async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
             async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
+            async let swimDistance = fetchDistanceSwimming(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -268,6 +272,7 @@ class HealthKitManager: ObservableObject {
             let stairAscentValue = await stairAscent
             let stairDescentValue = await stairDescent
             let sixMWTValue = await sixMWT
+            let swimDistanceValue = await swimDistance
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -325,6 +330,7 @@ class HealthKitManager: ObservableObject {
                 stairAscentSpeedMps: stairAscentValue,
                 stairDescentSpeedMps: stairDescentValue,
                 sixMinuteWalkDistanceMeters: sixMWTValue,
+                distanceSwimmingMeters: swimDistanceValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -675,6 +681,13 @@ class HealthKitManager: ObservableObject {
             }
             self.healthStore.execute(query)
         }
+    }
+
+
+    /// Day cumulative swimming distance (meters). Sparse activity — fixture seeds UI.
+    private func fetchDistanceSwimming(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceSwimming) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .meter())
     }
 
 
