@@ -579,6 +579,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testRespiratoryRateSurface() throws {
+        // Honest #70: vitals insight cues use circular tint wells.
         // Today WHOOP stack: elevated Respiratory Rate Tonight | Baseline + 7-night spark + band.
         // Reveal title first — do not keep swiping for ids (overscrolls past the card).
         revealText("Respiratory Rate")
@@ -594,6 +595,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSkinTemperatureSurface() throws {
+        // Honest #70: vitals insight cues use circular tint wells.
         // Today WHOOP stack: elevated Skin Temperature Tonight | Baseline + 7-night spark + band.
         revealText("Skin Temperature")
         XCTAssertTrue(app.staticTexts["Skin Temperature"].exists)

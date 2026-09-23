@@ -186,7 +186,12 @@ struct SkinTemperatureCard: View {
                 if abs(deviation) > 0.5 {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle.fill")
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(RTColor.caution)
+                            .frame(width: 26, height: 26)
+                            .background((RTColor.caution).opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text(deviation > 0
                              ? "Elevated skin temperature can indicate your body is fighting something or recovering from intense strain."
