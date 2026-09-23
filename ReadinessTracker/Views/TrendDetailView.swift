@@ -20,6 +20,9 @@ struct TrendDetailView: View {
     @State private var showMomentum = true
     /// Honest #261: Trends Day Δ / rateOfChange strip (classic #248 triad complete).
     @State private var showRateOfChange = true
+    /// Honest #262: Trends MA14 + EMA overlays (classic #247 parity).
+    @State private var showMA14 = true
+    @State private var showEMA = true
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -972,7 +975,7 @@ struct TrendDetailView: View {
     private var depthTimelineSection: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 12) {
-                // Honest #258/#259: Baseline Bands + Volatility strip toggles.
+                // Honest #258–#261: strip / band toggles.
                 HStack(spacing: 8) {
                     ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
                         .accessibilityIdentifier(SurfaceID.trendsBaselineBandsToggle)
@@ -985,14 +988,26 @@ struct TrendDetailView: View {
                     Spacer(minLength: 0)
                 }
 
+                // Honest #262: MA14 + EMA overlay toggles (classic #247 parity).
+                HStack(spacing: 8) {
+                    ToggleChip(label: "MA14", isOn: $showMA14)
+                        .accessibilityIdentifier(SurfaceID.trendsMA14Toggle)
+                    ToggleChip(label: "EMA", isOn: $showEMA)
+                        .accessibilityIdentifier(SurfaceID.trendsEMAToggle)
+                    Spacer(minLength: 0)
+                }
+
                 DepthTimelineChart(
                     title: "\(primaryDepthMetric.rawValue) Depth Timeline",
                     unit: depthTimelineUnit,
                     color: primaryDepthMetric.color,
                     points: depthTimelinePoints,
                     period: selectedPeriod,
-                    showBaselineBands: showBaselineBands
+                    showBaselineBands: showBaselineBands,
+                    showMA14: showMA14,
+                    showEMA: showEMA
                 )
+
 
                 if showBaselineBands {
                     HStack(spacing: 6) {
@@ -1009,6 +1024,44 @@ struct TrendDetailView: View {
                         Spacer(minLength: 0)
                     }
                     .accessibilityLabel("Baseline bands plus or minus two sigma")
+                }
+
+                if showMA14 || showEMA {
+                    HStack(spacing: 16) {
+                        if showMA14 {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.recovery.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                                    .frame(width: 18, height: 2)
+                                Text("MA14")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.trendsMA14)
+                            }
+                        }
+                        if showEMA {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.hrv.opacity(0.85), style: StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                                    .frame(width: 18, height: 2)
+                                Text("EMA")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.trendsEMA)
+                            }
+                        }
+                        Spacer(minLength: 0)
+                    }
+                    if showEMA {
+                        Text("EMA responds faster than SMA to recent change")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    if showMA14 {
+                        Text("MA14 smooths longer trends than MA7")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
                 }
 
                 // Honest #259: elevate unused AnalyzedDataPoint.volatility / rollingVolatility.

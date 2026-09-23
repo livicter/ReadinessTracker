@@ -11,6 +11,9 @@ struct DepthTimelineChart: View {
     var period: TrendPeriod = .week
     /// Honest #258: toggle ±2σ baseline bands (classic/Advanced parity). Default on.
     var showBaselineBands: Bool = true
+    /// Honest #262: MA14 / EMA7 overlays (classic #247 parity). Default on.
+    var showMA14: Bool = true
+    var showEMA: Bool = true
 
     @State private var selectedIndex: Int?
 
@@ -31,6 +34,14 @@ struct DepthTimelineChart: View {
 
     private var ma7: [Double] {
         TrendAnalysisEngine.movingAverage(values: values, window: 7)
+    }
+
+    private var ma14: [Double] {
+        TrendAnalysisEngine.movingAverage(values: values, window: 14)
+    }
+
+    private var ema7: [Double] {
+        TrendAnalysisEngine.exponentialMovingAverage(values: values, window: 7)
     }
 
     private func isOutlier(_ value: Double, baseline: Double, stdDev: Double) -> Bool {
@@ -121,6 +132,36 @@ struct DepthTimelineChart: View {
                             .foregroundStyle(RTColor.primaryText.opacity(0.7))
                             .symbol(.circle)
                             .symbolSize(12)
+                        }
+                    }
+
+                    // Honest #262: MA14 LineMark (classic #247 / Advanced #244 parity).
+                    if showMA14 {
+                        ForEach(Array(filteredPoints.enumerated()), id: \.offset) { i, point in
+                            if i - 13 >= 0 && i - 13 < ma14.count {
+                                LineMark(
+                                    x: .value("Date", point.date, unit: .day),
+                                    y: .value("MA14", ma14[i - 13])
+                                )
+                                .foregroundStyle(RTColor.recovery.opacity(0.9))
+                                .lineStyle(StrokeStyle(lineWidth: 1.75, dash: [8, 4]))
+                                .interpolationMethod(.catmullRom)
+                            }
+                        }
+                    }
+
+                    // Honest #262: EMA7 LineMark (classic #247 / Advanced #242 parity).
+                    if showEMA {
+                        ForEach(Array(filteredPoints.enumerated()), id: \.offset) { i, point in
+                            if i < ema7.count {
+                                LineMark(
+                                    x: .value("Date", point.date, unit: .day),
+                                    y: .value("EMA7", ema7[i])
+                                )
+                                .foregroundStyle(RTColor.hrv.opacity(0.85))
+                                .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                                .interpolationMethod(.catmullRom)
+                            }
                         }
                     }
                 }
