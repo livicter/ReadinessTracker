@@ -741,19 +741,44 @@ struct MetricDetailView: View {
                 let xPos = proxy.position(forX: selected.date) ?? 0
                 let yPos = proxy.position(forY: metricValue(for: selected)) ?? 0
                 let valueText = formattedValue(metricValue(for: selected))
+                // Honest #249: mirror Advanced #246 — elevate AnalyzedDataPoint zScore + Day Δ.
+                let analyzed = analyzedData.first {
+                    Calendar.current.isDate($0.date, inSameDayAs: selected.date)
+                }
+                let deviationStr: String? = {
+                    guard let a = analyzed else { return nil }
+                    let d = a.percentDeviation * 100
+                    let sign = d >= 0 ? "+" : ""
+                    return "\(sign)\(String(format: "%.1f", d))% vs baseline"
+                }()
+                let zScoreStr: String? = {
+                    guard let a = analyzed else { return nil }
+                    let sign = a.zScore >= 0 ? "+" : ""
+                    return "\(sign)\(String(format: "%.1f", a.zScore))σ"
+                }()
+                let dayDeltaStr: String? = {
+                    guard let roc = analyzed?.rateOfChange else { return nil }
+                    let s = roc >= 0 ? "+" : ""
+                    return "Day Δ \(s)\(String(format: "%.0f", roc * 100))%"
+                }()
                 ChartTooltip(
                     date: selected.date,
                     value: valueText,
                     unit: metric.unit,
-                    deviation: nil,
-                    isOutlier: false
+                    deviation: deviationStr,
+                    isOutlier: analyzed?.isOutlier ?? false,
+                    zScore: zScoreStr,
+                    dayDelta: dayDeltaStr
                 )
-                .accessibilityIdentifier(SurfaceID.metricChartSelection)
+                .accessibilityIdentifier(SurfaceID.metricClassicSelection)
                 .accessibilityLabel(
-                    ChartScrubSelection.calloutText(
+                    ChartScrubSelection.enrichedCalloutText(
                         date: selected.date,
                         value: valueText,
-                        unit: metric.unit
+                        unit: metric.unit,
+                        deviation: deviationStr,
+                        zScore: zScoreStr,
+                        dayDelta: dayDeltaStr
                     )
                 )
                 .position(

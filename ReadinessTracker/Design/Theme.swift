@@ -146,6 +146,8 @@ enum SurfaceID {
     static let metricClassicMomentumToggle = "metric.classic.momentum.toggle"
     static let metricClassicROC = "metric.classic.roc"
     static let metricClassicROCToggle = "metric.classic.roc.toggle"
+    /// Honest #249: classic scrub tooltip enrichment (mirrors #246; z/Δ use shared ChartTooltip IDs).
+    static let metricClassicSelection = "metric.classic.selection"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"
