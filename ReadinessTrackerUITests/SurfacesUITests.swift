@@ -441,6 +441,31 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail.png")
     }
 
+
+    func testDayDetailNightMetricWellSurface() throws {
+        // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
+        // Prefer History day row (same path as testDayDetailSurface).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            app.swipeUp()
+        }
+        XCTAssertTrue(opened, "History day row")
+        _ = app.staticTexts["Asleep"].waitForExistence(timeout: 6)
+            || app.staticTexts["Efficiency"].waitForExistence(timeout: 4)
+        saveShot("verify-day-detail-night-metrics.png")
+    }
+
     func testDayDetailCompareWellSurface() throws {
         // Honest #87: Day Detail Sleep Cycles + vs Previous Day circular tint wells.
         // Prefer History day row (same path as testDayDetailSurface).
