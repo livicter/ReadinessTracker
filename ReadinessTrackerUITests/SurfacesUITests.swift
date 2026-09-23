@@ -255,6 +255,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends.png")
     }
 
+
     func testDayDetailSurface() throws {
         // Honest #79: Day Detail stage-row + metric-chip circular tint wells.
         // History → day row → DayDetailView (WHOOP night-detail: header metrics, stage % chips, hypnogram, cycles).
@@ -433,6 +434,22 @@ final class SurfacesUITests: XCTestCase {
         _ = app.staticTexts["Gym"].exists
         _ = app.staticTexts["HRV"].exists
         saveShot("verify-weekly-report.png")
+    }
+
+    func testSleepAnalysisTimingSurface() throws {
+        // Honest #85: Sleep Analysis timing-card circular tint wells.
+        revealText("Sleep Stages")
+        let stagesCard = app.buttons["Sleep Stages"].exists ? app.buttons["Sleep Stages"] : app.staticTexts["Sleep Stages"]
+        stagesCard.tap()
+        XCTAssertTrue(
+            app.navigationBars["Sleep Analysis"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Sleep Analysis"].waitForExistence(timeout: 8)
+        )
+        // Timing cards (bedtime / wake / efficiency) — soft reveal; titles vary by fixture.
+        revealText("Sleep Timeline")
+        _ = app.staticTexts["Sleep Efficiency"].exists
+        _ = app.staticTexts["Bedtime"].exists || app.staticTexts["Wake"].exists
+        saveShot("verify-sleep-analysis.png")
     }
 
     func testSleepStagesSurface() throws {

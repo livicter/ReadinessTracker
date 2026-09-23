@@ -374,9 +374,14 @@ struct SleepAnalysisView: View {
         NativeCard {
             VStack(spacing: 8) {
                 HStack {
+                    // Honest #85: Apple circular tint well on Sleep Analysis timing cards.
                     Image(systemName: icon)
-                        .font(.system(size: 14))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(color)
+                        .frame(width: 26, height: 26)
+                        .background(color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Spacer()
                 }
 
