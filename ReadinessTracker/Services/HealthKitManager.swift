@@ -51,6 +51,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
             HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
+            HKObjectType.quantityType(forIdentifier: .peripheralPerfusionIndex)!,
             HKObjectType.quantityType(forIdentifier: .vo2Max)!,
             HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
             HKObjectType.quantityType(forIdentifier: .environmentalAudioExposure)!,
@@ -146,6 +147,7 @@ class HealthKitManager: ObservableObject {
         async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
         async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
         async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
+        async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -223,6 +225,7 @@ class HealthKitManager: ObservableObject {
             walkingHeartRateAverage: await walkingHR,
             heartRateRecoveryOneMinuteBpm: await hrr,
             atrialFibrillationBurdenPercent: await afBurden,
+            peripheralPerfusionIndexPercent: await ppi,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -301,6 +304,7 @@ class HealthKitManager: ObservableObject {
             async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
             async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
             async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
+            async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -349,6 +353,7 @@ class HealthKitManager: ObservableObject {
             let walkingHRValue = await walkingHR
             let hrrValue = await hrr
             let afBurdenValue = await afBurden
+            let ppiValue = await ppi
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -423,6 +428,7 @@ class HealthKitManager: ObservableObject {
                 walkingHeartRateAverage: walkingHRValue,
                 heartRateRecoveryOneMinuteBpm: hrrValue,
                 atrialFibrillationBurdenPercent: afBurdenValue,
+                peripheralPerfusionIndexPercent: ppiValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -571,6 +577,29 @@ class HealthKitManager: ObservableObject {
     private func fetchAtrialFibrillationBurden(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 16.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .atrialFibrillationBurden) else { return nil }
+        let unit = HKUnit.percent()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let raw = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let pct = raw <= 1.0 ? raw * 100.0 : raw
+                continuation.resume(returning: pct)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day average peripheral perfusion index (0–100%). Sparse SpO2-adjacent — fixture seeds UI.
+    private func fetchPeripheralPerfusionIndex(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .peripheralPerfusionIndex) else { return nil }
         let unit = HKUnit.percent()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(

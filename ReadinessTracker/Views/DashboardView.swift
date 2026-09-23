@@ -1027,6 +1027,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.afBurdenCard)
 
+            PeripheralPerfusionTonightBaselineCard(
+                percent: data.peripheralPerfusionIndexPercent,
+                history: history.compactMap { day in
+                    guard let p = day.peripheralPerfusionIndexPercent else { return nil }
+                    return (day.date, p)
+                },
+                baseline: PeripheralPerfusionBaseline.average(
+                    from: history,
+                    fallback: data.peripheralPerfusionIndexPercent ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
+
+
 
 
             EnvironmentalAudioTonightBaselineCard(

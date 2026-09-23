@@ -1306,6 +1306,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-af-burden-tonight-baseline.png")
     }
 
+    func testPeripheralPerfusionTonightBaselineSurface() throws {
+        // Honest #169: Perfusion Index Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Perfusion Index"]
+        while !title.exists && n < 42 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Perfusion Index")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.ppi.card"].exists
+        _ = app.descendants(matching: .any)["vitals.ppi.baseline"].exists
+        _ = app.staticTexts["7-Day Perfusion Index"].exists
+        _ = app.descendants(matching: .any)["vitals.ppi.spark"].exists
+        saveShot("verify-peripheral-perfusion-tonight-baseline.png")
+    }
+
     func testEnvironmentalAudioTonightBaselineSurface() throws {
         // Honest #136: Environmental audio exposure Tonight | Baseline (new HK + model).
         var n = 0
