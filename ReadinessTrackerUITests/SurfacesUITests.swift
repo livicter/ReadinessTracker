@@ -1720,6 +1720,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-underwater-depth-tonight-baseline.png")
     }
 
+    func testCyclingPowerTonightBaselineSurface() throws {
+        // Honest #156: Cycling Power Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Cycling Power"]
+        while !title.exists && n < 46 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Cycling Power")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.cyclingPower.card"].exists
+        _ = app.descendants(matching: .any)["body.cyclingPower.baseline"].exists
+        _ = app.staticTexts["7-Day Cycling Power"].exists
+        _ = app.descendants(matching: .any)["body.cyclingPower.spark"].exists
+        saveShot("verify-cycling-power-tonight-baseline.png")
+    }
+
 
 
 

@@ -1602,6 +1602,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
 
+                CyclingPowerTonightBaselineCard(
+                    watts: data.cyclingPowerWatts,
+                    history: history.compactMap { day in
+                        guard let w = day.cyclingPowerWatts else { return nil }
+                        return (day.date, w)
+                    },
+                    baseline: CyclingPowerBaseline.average(
+                        from: history,
+                        fallback: data.cyclingPowerWatts ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
