@@ -45,6 +45,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .distanceWheelchair)!,
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
             HKObjectType.quantityType(forIdentifier: .peakExpiratoryFlowRate)!,
+            HKObjectType.quantityType(forIdentifier: .forcedVitalCapacity)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
             HKObjectType.quantityType(forIdentifier: .bloodPressureSystolic)!,
@@ -215,6 +216,7 @@ class HealthKitManager: ObservableObject {
         async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
         async let inhaler = fetchInhalerUsage(predicate: predicate)
         async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
+        async let fvc = fetchForcedVitalCapacity(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
         async let bp = fetchBloodPressure(predicate: predicate)
@@ -307,6 +309,7 @@ class HealthKitManager: ObservableObject {
             distanceWheelchairKm: await wheelchairDistance,
             inhalerUsage: await inhaler,
             peakExpiratoryFlowLpm: await pef,
+            forcedVitalCapacityLiters: await fvc,
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
             bloodPressureSystolicMmHg: await bp.systolic,
@@ -409,6 +412,7 @@ class HealthKitManager: ObservableObject {
             async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
             async let inhaler = fetchInhalerUsage(predicate: predicate)
             async let pef = fetchPeakExpiratoryFlow(predicate: predicate)
+            async let fvc = fetchForcedVitalCapacity(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
             async let bp = fetchBloodPressure(predicate: predicate)
@@ -476,6 +480,7 @@ class HealthKitManager: ObservableObject {
             let wheelchairDistanceValue = await wheelchairDistance
             let inhalerValue = await inhaler
             let pefValue = await pef
+            let fvcValue = await fvc
             let insulinValue = await insulin
             let glucoseValue = await glucose
             let bpValue = await bp
@@ -565,6 +570,7 @@ class HealthKitManager: ObservableObject {
                 distanceWheelchairKm: wheelchairDistanceValue,
                 inhalerUsage: inhalerValue,
                 peakExpiratoryFlowLpm: pefValue,
+                forcedVitalCapacityLiters: fvcValue,
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
                 bloodPressureSystolicMmHg: bpValue.systolic,
@@ -803,6 +809,24 @@ class HealthKitManager: ObservableObject {
     private func fetchPeakExpiratoryFlow(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .peakExpiratoryFlowRate) else { return nil }
         let unit = HKUnit.liter().unitDivided(by: .minute())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day average forced vital capacity (L). Sparse lung function — fixture seeds UI.
+    private func fetchForcedVitalCapacity(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .forcedVitalCapacity) else { return nil }
+        let unit = HKUnit.liter()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
                 quantityType: type,
