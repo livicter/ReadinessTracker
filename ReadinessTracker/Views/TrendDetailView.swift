@@ -16,6 +16,8 @@ struct TrendDetailView: View {
     @State private var showBaselineBands = true
     /// Honest #259: Trends rollingVolatility strip (classic #248 / Advanced #240 parity).
     @State private var showVolatility = true
+    /// Honest #260: Trends momentum strip (classic #248 / Advanced #241 parity).
+    @State private var showMomentum = true
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -623,6 +625,116 @@ struct TrendDetailView: View {
         .accessibilityLabel("Seven day rolling volatility")
     }
 
+    // MARK: - Trends Momentum strip (Honest #260)
+
+    private var trendsMomentumPoints: [(date: Date, mom: Double)] {
+        scrubAnalyzedData.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var trendsLatestMomentumBand: (label: String, color: Color) {
+        guard let mom = trendsMomentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        let improving: Bool
+        if scrubAnalysisMetric.higherIsBetter {
+            improving = mom > 0
+        } else {
+            improving = mom < 0
+        }
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var trendsMomentumYDomain: ClosedRange<Double> {
+        let vals = trendsMomentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var trendsMomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = trendsMomentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, trendsLatestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(trendsLatestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !trendsMomentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(trendsMomentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            (scrubAnalysisMetric.higherIsBetter ? point.mom >= 0 : point.mom <= 0)
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: trendsMomentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [trendsMomentumYDomain.lowerBound, 0, trendsMomentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.trendsMomentum)
+        .accessibilityLabel("Seven day momentum")
+    }
+
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
             if let selected = selectedScrubDay {
@@ -768,6 +880,8 @@ struct TrendDetailView: View {
                         .accessibilityIdentifier(SurfaceID.trendsBaselineBandsToggle)
                     ToggleChip(label: "Volatility", isOn: $showVolatility)
                         .accessibilityIdentifier(SurfaceID.trendsVolatilityToggle)
+                    ToggleChip(label: "Momentum", isOn: $showMomentum)
+                        .accessibilityIdentifier(SurfaceID.trendsMomentumToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -800,6 +914,10 @@ struct TrendDetailView: View {
                 // Honest #259: elevate unused AnalyzedDataPoint.volatility / rollingVolatility.
                 if showVolatility {
                     trendsVolatilityStrip
+                }
+                // Honest #260: elevate unused AnalyzedDataPoint.momentum.
+                if showMomentum {
+                    trendsMomentumStrip
                 }
             }
         }
