@@ -16,6 +16,7 @@ struct PoincarePlotView: View {
     private var sd1: Double {
         // Short-term variability (perpendicular to line of identity)
         let diffs = points.map { $0.y - $0.x }
+        guard !diffs.isEmpty else { return 0 }
         let mean = diffs.reduce(0, +) / Double(diffs.count)
         let variance = diffs.map { pow($0 - mean, 2) }.reduce(0, +) / Double(diffs.count)
         return sqrt(variance / 2)
@@ -24,6 +25,7 @@ struct PoincarePlotView: View {
     private var sd2: Double {
         // Long-term variability (along line of identity)
         let sums = points.map { $0.y + $0.x }
+        guard !sums.isEmpty else { return 0 }
         let mean = sums.reduce(0, +) / Double(sums.count)
         let variance = sums.map { pow($0 - mean, 2) }.reduce(0, +) / Double(sums.count)
         return sqrt(variance / 2)
@@ -43,7 +45,7 @@ struct PoincarePlotView: View {
                 let allValues = rrIntervals
                 let minVal = allValues.min() ?? 0
                 let maxVal = allValues.max() ?? 1
-                let range = maxVal - minVal
+                let range = max(maxVal - minVal, 1)
                 
                 ZStack {
                     // Background
