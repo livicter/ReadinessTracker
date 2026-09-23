@@ -2013,6 +2013,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietarySodiumCard)
 
 
+                DietaryPotassiumTonightBaselineCard(
+                    potassiumMg: data.nutrition.potassiumMg,
+                    history: history.compactMap { day in
+                        guard let m = day.nutrition.potassiumMg else { return nil }
+                        return (day.date, m)
+                    },
+                    baselineMg: DietaryPotassiumBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.potassiumMg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryPotassiumCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
