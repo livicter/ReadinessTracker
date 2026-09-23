@@ -817,6 +817,58 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-rolling-volatility.png")
     }
 
+    func testMetricMomentumSurface() throws {
+        // Honest #241: momentum strip + Momentum toggle on Advanced Metric Detail.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable {
+                sleepRow.tap()
+            } else {
+                app.swipeUp()
+                sleepRow.tap()
+            }
+        } else {
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            var m = 0
+            while !sleepCard.exists && m < 10 {
+                app.swipeDown()
+                m += 1
+            }
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var z = 0
+        while !app.staticTexts["Momentum"].exists && z < 8 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(
+            app.staticTexts["Momentum"].waitForExistence(timeout: 8),
+            "Momentum toggle"
+        )
+        _ = app.descendants(matching: .any)["metric.chart.momentum.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.chart.momentum"].exists
+        _ = app.staticTexts["7-Day Momentum"].exists
+            || app.staticTexts["Need ≥8 days for momentum"].exists
+        _ = app.staticTexts["Volatility"].exists
+        saveShot("verify-metric-momentum.png")
+    }
+
     func testStrainRecoveryBalanceSurface() throws {
         // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.

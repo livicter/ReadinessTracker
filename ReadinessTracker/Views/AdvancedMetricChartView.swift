@@ -10,6 +10,7 @@ struct AdvancedMetricChartView: View {
     let showMovingAverage: Bool
     let showOutliers: Bool
     var showVolatility: Bool = true  // Honest #240: rolling CV strip
+    var showMomentum: Bool = true  // Honest #241: momentum strip
     
     @State private var selectedPoint: AnalyzedDataPoint?
     @State private var lastHapticID: AnalyzedDataPoint.ID?
@@ -39,6 +40,9 @@ struct AdvancedMetricChartView: View {
             legendView
             if showVolatility {
                 volatilityStrip
+            }
+            if showMomentum {
+                momentumStrip
             }
         }
         .background(AppBackground())
@@ -303,6 +307,9 @@ struct AdvancedMetricChartView: View {
             if showVolatility {
                 legendItem(color: RTColor.caution, label: "Volatility", dashed: false)
             }
+            if showMomentum {
+                legendItem(color: RTColor.hrv, label: "Momentum", dashed: false)
+            }
         }
         .padding(.top, 4)
     }
@@ -426,6 +433,118 @@ struct AdvancedMetricChartView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.metricChartVolatility)
         .accessibilityLabel("Seven day rolling volatility")
+    }
+
+    // MARK: - Momentum Strip (Honest #241)
+
+    /// 7-day windowed % change — elevates unused `TrendAnalysisEngine.momentum`.
+    private var momentumPoints: [(date: Date, mom: Double)] {
+        analyzedData.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var latestMomentumBand: (label: String, color: Color) {
+        guard let mom = momentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        // Soft glance bands on fractional 7-day change.
+        let improving: Bool
+        if metric.higherIsBetter {
+            improving = mom > 0
+        } else {
+            improving = mom < 0
+        }
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var momentumYDomain: ClosedRange<Double> {
+        let vals = momentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var momentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = momentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, latestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !momentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(momentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            (metric.higherIsBetter ? point.mom >= 0 : point.mom <= 0)
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: momentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [momentumYDomain.lowerBound, 0, momentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricChartMomentum)
+        .accessibilityLabel("Seven day momentum")
     }
 
     // MARK: - Helpers
