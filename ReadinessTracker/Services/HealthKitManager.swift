@@ -42,6 +42,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.quantityType(forIdentifier: .numberOfTimesFallen)!,
             HKObjectType.quantityType(forIdentifier: .pushCount)!,
+            HKObjectType.quantityType(forIdentifier: .distanceWheelchair)!,
             HKObjectType.quantityType(forIdentifier: .inhalerUsage)!,
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
@@ -210,6 +211,7 @@ class HealthKitManager: ObservableObject {
         async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
         async let falls = fetchNumberOfTimesFallen(predicate: predicate)
         async let pushes = fetchPushCount(predicate: predicate)
+        async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
         async let inhaler = fetchInhalerUsage(predicate: predicate)
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
@@ -300,6 +302,7 @@ class HealthKitManager: ObservableObject {
             peripheralPerfusionIndexPercent: await ppi,
             numberOfTimesFallen: await falls,
             pushCount: await pushes,
+            distanceWheelchairKm: await wheelchairDistance,
             inhalerUsage: await inhaler,
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
@@ -400,6 +403,7 @@ class HealthKitManager: ObservableObject {
             async let ppi = fetchPeripheralPerfusionIndex(predicate: predicate)
             async let falls = fetchNumberOfTimesFallen(predicate: predicate)
             async let pushes = fetchPushCount(predicate: predicate)
+            async let wheelchairDistance = fetchDistanceWheelchair(predicate: predicate)
             async let inhaler = fetchInhalerUsage(predicate: predicate)
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
@@ -465,6 +469,7 @@ class HealthKitManager: ObservableObject {
             let ppiValue = await ppi
             let fallsValue = await falls
             let pushesValue = await pushes
+            let wheelchairDistanceValue = await wheelchairDistance
             let inhalerValue = await inhaler
             let insulinValue = await insulin
             let glucoseValue = await glucose
@@ -552,6 +557,7 @@ class HealthKitManager: ObservableObject {
                 peripheralPerfusionIndexPercent: ppiValue,
                 numberOfTimesFallen: fallsValue,
                 pushCount: pushesValue,
+                distanceWheelchairKm: wheelchairDistanceValue,
                 inhalerUsage: inhalerValue,
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
@@ -769,6 +775,14 @@ class HealthKitManager: ObservableObject {
     private func fetchPushCount(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .pushCount) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
+    }
+
+
+    /// Day cumulative wheelchair distance in kilometers. Sparse mobility — fixture seeds UI.
+    private func fetchDistanceWheelchair(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceWheelchair) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
     }
 
 
