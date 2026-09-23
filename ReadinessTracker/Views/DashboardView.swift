@@ -721,6 +721,20 @@ struct DashboardView: View {
 
             .accessibilityIdentifier(SurfaceID.wakeEpisodesCard)
 
+            SleepMidpointCard(
+                currentMinutes: SleepMidpoint.minutes(start: data.sleepStartTime, end: data.sleepEndTime) ?? 0,
+                history: history.compactMap { day -> (Date, Double)? in
+                    guard let m = SleepMidpoint.minutes(start: day.sleepStartTime, end: day.sleepEndTime) else { return nil }
+                    return (day.date, m)
+                },
+                baseline: sleepMidpointBaseline(
+                    from: history,
+                    fallback: SleepMidpoint.minutes(start: data.sleepStartTime, end: data.sleepEndTime) ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.sleepMidpointCard)
+
+
 
             RestorativeSleepCard(
                 sleepHours: data.sleepHours,
@@ -863,6 +877,11 @@ struct DashboardView: View {
         let vals = history.map { Double($0.wakeEpisodes) }.filter { $0 >= 0 }
         guard !vals.isEmpty else { return fallback }
         return vals.reduce(0, +) / Double(vals.count)
+    }
+
+    private func sleepMidpointBaseline(from history: [DailyHealthData], fallback: Double) -> Double {
+        let vals = history.compactMap { SleepMidpoint.minutes(start: $0.sleepStartTime, end: $0.sleepEndTime) }
+        return SleepMidpoint.baseline(from: vals, fallback: fallback)
     }
 
     private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
