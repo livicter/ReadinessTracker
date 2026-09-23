@@ -145,8 +145,8 @@ struct SleepPerformanceScore: View {
 
                 // Efficiency / Consistency one-liners (unchanged role)
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                    SleepMetricItem(label: "Efficiency", value: "\(Int(efficiency))%", icon: "bolt.fill")
-                    SleepMetricItem(label: "Consistency", value: "\(Int(consistency))%", icon: "clock.arrow.circlepath")
+                    SleepMetricItem(label: "Efficiency", value: "\(Int(efficiency))%", icon: "bolt.fill", tint: RTColor.caution)
+                    SleepMetricItem(label: "Consistency", value: "\(Int(consistency))%", icon: "clock.arrow.circlepath", tint: RTColor.sleep)
                 }
             }
         }
@@ -197,10 +197,17 @@ private struct SleepMetricItem: View {
     let label: String
     let value: String
     let icon: String
+    var tint: Color = RTColor.secondaryText
 
     var body: some View {
         HStack(spacing: 8) {
-            AppIconTile(systemName: icon, color: RTColor.secondaryText, size: 24)
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
             Text(label)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(RTColor.primaryText)
@@ -220,5 +227,6 @@ private struct SleepMetricItem: View {
             RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
                 .fill(RTColor.surface)
         )
+        .accessibilityElement(children: .combine)
     }
 }
