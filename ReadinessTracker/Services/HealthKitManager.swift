@@ -35,6 +35,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
+            HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -102,6 +103,7 @@ class HealthKitManager: ObservableObject {
         async let distance = fetchDistanceWalkingRunning(predicate: predicate)
         async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
         async let standHours = fetchAppleStandHours(predicate: predicate)
+        async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -155,6 +157,7 @@ class HealthKitManager: ObservableObject {
             distanceWalkingRunningKm: await distance,
             appleExerciseTimeMinutes: await exerciseTime,
             appleStandHours: await standHours,
+            walkingDoubleSupportPercent: await doubleSupport,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -209,6 +212,7 @@ class HealthKitManager: ObservableObject {
             async let distance = fetchDistanceWalkingRunning(predicate: predicate)
             async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
             async let standHours = fetchAppleStandHours(predicate: predicate)
+            async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -233,6 +237,7 @@ class HealthKitManager: ObservableObject {
             let distanceValue = await distance
             let exerciseTimeValue = await exerciseTime
             let standHoursValue = await standHours
+            let doubleSupportValue = await doubleSupport
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -283,6 +288,7 @@ class HealthKitManager: ObservableObject {
                 distanceWalkingRunningKm: distanceValue,
                 appleExerciseTimeMinutes: exerciseTimeValue,
                 appleStandHours: standHoursValue,
+                walkingDoubleSupportPercent: doubleSupportValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -500,6 +506,29 @@ class HealthKitManager: ObservableObject {
                 }
                 let stood = samples.filter { $0.value == HKCategoryValueAppleStandHour.stood.rawValue }.count
                 continuation.resume(returning: Double(stood))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average walking double-support percentage (both feet down). Sparse gait metric — fixture seeds UI.
+    private func fetchWalkingDoubleSupport(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .walkingDoubleSupportPercentage) else { return nil }
+        let unit = HKUnit.percent()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let raw = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                // HK percent unit is 0…1 fraction; store as 0…100 for UI.
+                let pct = raw <= 1.0 ? raw * 100.0 : raw
+                continuation.resume(returning: pct)
             }
             self.healthStore.execute(query)
         }

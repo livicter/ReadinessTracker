@@ -1459,6 +1459,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.distanceCard)
 
+                WalkingDoubleSupportTonightBaselineCard(
+                    percent: data.walkingDoubleSupportPercent,
+                    history: history.compactMap { day in
+                        guard let p = day.walkingDoubleSupportPercent else { return nil }
+                        return (day.date, p)
+                    },
+                    baseline: WalkingDoubleSupportBaseline.average(
+                        from: history,
+                        fallback: data.walkingDoubleSupportPercent ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.walkingDoubleSupportCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
