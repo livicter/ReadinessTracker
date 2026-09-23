@@ -921,6 +921,12 @@ final class SurfacesUITests: XCTestCase {
         // Honest #103: Poincaré RR scatter under Sleep HRV (soft — may need scroll).
         _ = app.staticTexts["Poincaré Plot"].exists
         _ = app.descendants(matching: .any)["sleep.hrv.poincare"].exists
+        // Honest #104: LF/HF frequency strip.
+        _ = app.staticTexts["Frequency Domain"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.frequency"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.lf"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.hf"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.lfhf"].exists
         saveShot("verify-sleep-hrv.png")
     }
 

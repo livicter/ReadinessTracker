@@ -38,8 +38,14 @@ class HRVFrequencyAnalyzer {
         // Apply Hamming window
         let windowed = applyHammingWindow(detrended)
         
+        // FFT requires power-of-two length; trim to largest 2^k ≤ count (min 256).
+        let log2Floor = Int(floor(log2(Double(windowed.count))))
+        let fftCount = 1 << log2Floor
+        guard fftCount >= 256 else { return nil }
+        let fftInput = Array(windowed.prefix(fftCount))
+
         // Compute FFT
-        guard let fft = computeFFT(windowed) else { return nil }
+        guard let fft = computeFFT(fftInput) else { return nil }
         
         // Compute power spectral density
         let n = fft.count
