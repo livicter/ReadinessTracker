@@ -2362,6 +2362,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-basal-energy-tonight-baseline.png")
     }
 
+
+    func testToothbrushingTonightBaselineSurface() throws {
+        // Honest #185: Toothbrushing Tonight | Baseline (HK toothbrushingEvent duration).
+        var n = 0
+        while !app.descendants(matching: .any)["body.brush.card"].exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.brush.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Toothbrushing card")
+        XCTAssertTrue(app.staticTexts["Toothbrushing"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.brush.baseline"].exists
+        _ = app.staticTexts["7-Day Brush"].exists
+        _ = app.descendants(matching: .any)["body.brush.spark"].exists
+        saveShot("verify-toothbrushing-tonight-baseline.png")
+    }
+
     func testHydrationTonightBaselineSurface() throws {
         // Honest #122: Hydration Tonight | Baseline dual on Today Body (beyond NutritionSummary glance).
         var n = 0
