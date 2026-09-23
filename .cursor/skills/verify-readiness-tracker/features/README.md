@@ -8,3 +8,4 @@
 | Today check-in status wells | `checkin-status-wells.md` | Morning|Evening circular wells |
 | Today sleep disturbance well | `sleep-disturbance-well.md` | Sleep Stages cue circular well |
 | Today strain balance header well | `strain-balance-well.md` | Balance header circular well |
+| Today MetricCard wells | `metric-card-wells.md` | Metric tile circular wells |
