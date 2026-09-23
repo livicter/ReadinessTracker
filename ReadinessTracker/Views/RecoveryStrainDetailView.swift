@@ -68,6 +68,12 @@ struct RecoveryStrainDetailView: View {
                 // Honest #105: WHOOP/Apple Fitness HR zones (%HRR)
                 HeartRateZonesCard(data: data)
                     .slideIn(delay: 0.12)
+
+                // Honest #239: multi-day strain soft-band distribution
+                StrainZoneDistributionCard(
+                    history: historicalStrainData.map { ($0.date, $0.strain) }
+                )
+                .slideIn(delay: 0.13)
                 
                 // Recovery detail
                 recoveryDetail

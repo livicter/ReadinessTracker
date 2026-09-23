@@ -977,7 +977,13 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.watchStrainCard)
 
-
+            // Honest #239: WHOOP soft-band days-in-zone via TrendAnalysisEngine.zoneDistribution
+            StrainZoneDistributionCard(
+                history: history.map { day in
+                    (day.date, StrainCalculator.calculate(from: day, history: history))
+                }
+            )
+            .accessibilityIdentifier(SurfaceID.strainZoneDistCard)
 
             RestingHRCard(
 
