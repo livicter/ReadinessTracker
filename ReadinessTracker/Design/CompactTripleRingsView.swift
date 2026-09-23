@@ -825,8 +825,8 @@ struct WatchDashboardChrome: View {
             )
 
             HStack(spacing: 12) {
-                dualCallout(label: "HRV", value: "\(Int(hrv))", unit: "ms", color: hrvColor)
-                dualCallout(label: "RHR", value: "\(Int(restingHeartRate))", unit: "bpm", color: rhrColor)
+                dualCallout(label: "HRV", value: "\(Int(hrv))", unit: "ms", color: hrvColor, icon: "waveform.path.ecg")
+                dualCallout(label: "RHR", value: "\(Int(restingHeartRate))", unit: "bpm", color: rhrColor, icon: "heart.fill")
             }
 
             HStack(spacing: 6) {
@@ -861,11 +861,23 @@ struct WatchDashboardChrome: View {
         .background(Color.black)
     }
 
-    private func dualCallout(label: String, value: String, unit: String, color: Color) -> some View {
-        VStack(spacing: 2) {
-            Text(label)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(Color.white.opacity(0.55))
+    private func dualCallout(label: String, value: String, unit: String, color: Color, icon: String? = nil) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 5) {
+                // Honest #99: compact circular tint well on Watch/widget dual callouts.
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(color)
+                        .frame(width: 18, height: 18)
+                        .background(color.opacity(0.22))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
+                }
+                Text(label)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.55))
+            }
             HStack(alignment: .firstTextBaseline, spacing: 1) {
                 Text(value)
                     .font(.system(size: 26, weight: .bold, design: .rounded))

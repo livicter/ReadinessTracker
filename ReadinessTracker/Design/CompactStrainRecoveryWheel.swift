@@ -118,13 +118,15 @@ struct WatchStrainChrome: View {
                     label: "Recovery",
                     value: "\(Int(recoveryScore.rounded()))",
                     unit: "%",
-                    color: recoveryColor
+                    color: recoveryColor,
+                    icon: "heart.fill"
                 )
                 dualCallout(
                     label: "Strain",
                     value: String(format: "%.1f", strainScore),
                     unit: "/21",
-                    color: strainColor
+                    color: strainColor,
+                    icon: "flame.fill"
                 )
             }
 
@@ -151,11 +153,23 @@ struct WatchStrainChrome: View {
         .background(Color.black)
     }
 
-    private func dualCallout(label: String, value: String, unit: String, color: Color) -> some View {
-        VStack(spacing: 2) {
-            Text(label)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(Color.white.opacity(0.55))
+    private func dualCallout(label: String, value: String, unit: String, color: Color, icon: String? = nil) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 5) {
+                // Honest #99: compact circular tint well on Watch/widget dual callouts.
+                if let icon {
+                    Image(systemName: icon)
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(color)
+                        .frame(width: 18, height: 18)
+                        .background(color.opacity(0.22))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
+                }
+                Text(label)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundStyle(Color.white.opacity(0.55))
+            }
             HStack(alignment: .firstTextBaseline, spacing: 1) {
                 Text(value)
                     .font(.system(size: 26, weight: .bold, design: .rounded))
