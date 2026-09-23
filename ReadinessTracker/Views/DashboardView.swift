@@ -688,6 +688,13 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.sleepPerformance)
 
+            SleepLatencyCard(
+                currentMinutes: data.sleepOnsetMinutes,
+                history: history.map { ($0.date, $0.sleepOnsetMinutes) },
+                baseline: sleepLatencyBaseline(from: history, fallback: data.sleepOnsetMinutes)
+            )
+            .accessibilityIdentifier(SurfaceID.sleepLatencyCard)
+
             if data.hrv > 0 {
                 SleepHRVCard(
                     currentHRV: data.hrv,
@@ -789,6 +796,12 @@ struct DashboardView: View {
             }
         }
         .accessibilityIdentifier(SurfaceID.whoopSection)
+    }
+
+    private func sleepLatencyBaseline(from history: [DailyHealthData], fallback: Double) -> Double {
+        let vals = history.map { $0.sleepOnsetMinutes }.filter { $0 > 0 }
+        guard !vals.isEmpty else { return fallback }
+        return vals.reduce(0, +) / Double(vals.count)
     }
 
     private func calculateSleepConsistency(history: [DailyHealthData]) -> Double {
