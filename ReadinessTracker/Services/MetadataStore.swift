@@ -64,7 +64,7 @@ class MetadataStore: ObservableObject {
         return metadataFor(date: yesterday, timeOfDay: .evening)
     }
     
-    /// Fixture morning + evening check-ins so Insights / Cognitive Load / RPE
+    /// Fixture morning + evening check-ins so Insights / Cognitive Load / RPE / Plan
     /// sparks have shape under `-ui-fixture`.
     func seedUIFixtureCheckIns() {
         let cal = Calendar.current
@@ -116,13 +116,30 @@ class MetadataStore: ObservableObject {
                 rpe = 4 + ((offset * 2) % 6) // 4…9
                 type = offset % 2 == 0 ? "Run" : "Strength"
             }
+            // Planned intensity for tomorrow (Honest #129). Skip plan on some rest-ish days.
+            let intensities = ["Light", "Moderate", "Heavy"]
+            let planTomorrow: Bool
+            let planIntensity: String?
+            let planType: String?
+            if offset == 0 {
+                planTomorrow = true; planIntensity = "Moderate"; planType = "Zones 2"
+            } else if offset % 4 == 0 {
+                planTomorrow = false; planIntensity = nil; planType = nil
+            } else {
+                planTomorrow = true
+                planIntensity = intensities[(offset * 2) % 3]
+                planType = offset % 2 == 0 ? "Run" : "Strength"
+            }
             let evening = UserMetadata(
                 date: date,
                 timeOfDay: .evening,
                 workoutToday: didWorkout,
                 workoutType: type,
                 workoutRPE: rpe,
-                workoutDurationMinutes: didWorkout ? (30 + offset * 5) : nil
+                workoutDurationMinutes: didWorkout ? (30 + offset * 5) : nil,
+                plannedWorkoutTomorrow: planTomorrow,
+                plannedWorkoutType: planType,
+                plannedWorkoutIntensity: planIntensity
             )
             entries.append(evening)
         }
