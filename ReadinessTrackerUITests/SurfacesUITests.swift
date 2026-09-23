@@ -113,6 +113,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSleepQualitySurfaceVisibleAfterScroll() throws {
+        // Honest #71: Bedtime|Wake dual columns use circular tint wells.
         // Today WHOOP stack: elevated Sleep Quality + Consistency (score rings, spark, bedtime dots/bars).
         revealText("Sleep Consistency")
         XCTAssertTrue(app.staticTexts["Sleep Quality Trend"].exists)
