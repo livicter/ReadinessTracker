@@ -59,6 +59,21 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-readiness-detail.png")
     }
 
+
+    func testRingDetailHeroWellSurface() throws {
+        // Honest #88: Ring Detail hero circular tint well (Gym/Work/Sleep).
+        // Today legend Gym → RingDetailView sheet (same path as testRingDetailSurface).
+        XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8))
+        let gym = app.descendants(matching: .any)["ring.legend.gym"].firstMatch
+        XCTAssertTrue(gym.waitForExistence(timeout: 8), "ring.legend.gym")
+        gym.tap()
+        XCTAssertTrue(
+            app.staticTexts["Last 7 days"].waitForExistence(timeout: 8) ||
+            app.otherElements["ring.detail.score"].waitForExistence(timeout: 6)
+        )
+        saveShot("verify-ring-detail-hero.png")
+    }
+
     func testRingDetailSurface() throws {
         // Today legend Gym → Apple Fitness–style ring detail sheet.
         XCTAssertTrue(app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8))

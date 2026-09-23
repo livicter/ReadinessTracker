@@ -270,10 +270,15 @@ struct RingDetailView: View {
             ScrollView {
                 VStack(spacing: 28) {
                     VStack(spacing: 8) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: 10) {
+                            // Honest #88: Apple circular tint well on Ring Detail hero.
                             Image(systemName: kind.icon)
-                                .font(.title3.weight(.semibold))
+                                .font(.system(size: 16, weight: .semibold))
                                 .foregroundStyle(kind.color)
+                                .frame(width: 36, height: 36)
+                                .background(kind.color.opacity(0.14))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
                             Text(kind.label)
                                 .font(.title2.weight(.bold))
                                 .foregroundStyle(RTColor.primaryText)
