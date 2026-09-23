@@ -1246,6 +1246,16 @@ struct DashboardView: View {
                     }
                 }
 
+                StepsTonightBaselineCard(
+                    currentSteps: data.steps,
+                    history: history.map { ($0.date, Double($0.steps)) },
+                    baseline: StepsBaseline.average(
+                        from: history,
+                        fallback: Double(data.steps)
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.stepsCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,
