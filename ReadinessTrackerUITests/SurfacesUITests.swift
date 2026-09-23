@@ -341,6 +341,13 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-disturbances.png")
     }
 
+    func testJournalButtonSurface() throws {
+        // Honest #77: Today Journal button circular tint well.
+        revealText("Journal")
+        XCTAssertTrue(app.staticTexts["Journal"].waitForExistence(timeout: 8) || app.buttons["Journal"].waitForExistence(timeout: 2), "Journal")
+        saveShot("verify-journal-button.png")
+    }
+
     func testJournalSurface() throws {
         // Honest #76: Journal Log-7-days cue circular tint well (empty/low-data path).
         // Journal: Today NavigationLink → JournalView with ≥7 seeded fixture entries (Recent Entries).

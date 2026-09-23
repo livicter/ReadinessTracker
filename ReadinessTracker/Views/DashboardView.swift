@@ -409,12 +409,14 @@ struct DashboardView: View {
         NavigationLink(destination: JournalView()) {
             NativeCard {
                 HStack(spacing: 12) {
+                    // Honest #77: Apple circular tint well on Today Journal button.
                     Image(systemName: "book.closed.fill")
-                        .font(.system(size: 18))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(RTColor.optimal)
                         .frame(width: 36, height: 36)
-                        .background(RTColor.optimal.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .background(RTColor.optimal.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Journal")
