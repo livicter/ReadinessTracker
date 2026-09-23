@@ -190,11 +190,13 @@ struct SleepHRVCard: View {
 
                 // Sleep Quality chip (compact one-liner; trend is now the dual + spark)
                 HStack(spacing: 8) {
-                    AppIconTile(
-                        systemName: "bed.double.fill",
-                        color: sleepQuality > 0.8 ? RTColor.optimal : (sleepQuality > 0.6 ? RTColor.caution : RTColor.warning),
-                        size: 24
-                    )
+                    Image(systemName: "bed.double.fill")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(sleepQuality > 0.8 ? RTColor.optimal : (sleepQuality > 0.6 ? RTColor.caution : RTColor.warning))
+                        .frame(width: 26, height: 26)
+                        .background((sleepQuality > 0.8 ? RTColor.optimal : (sleepQuality > 0.6 ? RTColor.caution : RTColor.warning)).opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text("Sleep Quality")
                         .font(.caption.weight(.medium))
                         .foregroundStyle(RTColor.primaryText)
@@ -218,7 +220,12 @@ struct SleepHRVCard: View {
                 if abs(hRVDeviation) > 10 {
                     HStack(spacing: 8) {
                         Image(systemName: "lightbulb.fill")
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(RTColor.caution)
+                            .frame(width: 26, height: 26)
+                            .background(RTColor.caution.opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text(hRVInsight)
                             .font(.caption)

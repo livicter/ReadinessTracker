@@ -66,6 +66,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testWhoopStackVisibleAfterScroll() throws {
+        // Honest #67: sleep-stack footer chips use circular tint wells.
         revealText("Sleep HRV")
         XCTAssertTrue(app.staticTexts["Sleep Debt"].exists)
         saveShot("verify-whoop-stack.png")

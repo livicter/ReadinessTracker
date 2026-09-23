@@ -173,9 +173,12 @@ struct SleepDebtCalculator: View {
                 // Payback cue
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: hoursOwed > 0.05 ? "moon.zzz.fill" : "checkmark.seal.fill")
-                        .font(.caption.weight(.semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(hoursOwed > 0.05 ? debtStatus.color : RTColor.optimal)
-                        .padding(.top, 1)
+                        .frame(width: 26, height: 26)
+                        .background((hoursOwed > 0.05 ? debtStatus.color : RTColor.optimal).opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text(paybackCue)
                         .font(.caption)
                         .foregroundStyle(RTColor.secondaryText)
