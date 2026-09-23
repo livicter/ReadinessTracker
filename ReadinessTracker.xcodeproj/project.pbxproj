@@ -123,6 +123,7 @@
 		J58K01M73I192031425HR /* UnderwaterDepthTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */; };
 		J58K01M73I192031425HT /* CyclingPowerTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */; };
 		J58K01M73I192031425HV /* CyclingFTPTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */; };
+		J58K01M73I192031425N1 /* CyclingDistanceTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425N0 /* CyclingDistanceTonightBaselineCard.swift */; };
 		J58K01M73I192031425HX /* PhysicalEffortTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HW /* PhysicalEffortTonightBaselineCard.swift */; };
 		J58K01M73I192031425HZ /* RunningPowerTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HY /* RunningPowerTonightBaselineCard.swift */; };
 		J58K01M73I192031425I1 /* RunningSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */; };
@@ -399,6 +400,7 @@
 		I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UnderwaterDepthTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/UnderwaterDepthTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingPowerTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingPowerTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingFTPTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingFTPTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425N0 /* CyclingDistanceTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CyclingDistanceTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CyclingDistanceTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HW /* PhysicalEffortTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PhysicalEffortTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/PhysicalEffortTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HY /* RunningPowerTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningPowerTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningPowerTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -719,6 +721,7 @@
 				I58K01M73I192031425HQ /* UnderwaterDepthTonightBaselineCard.swift */,
 				I58K01M73I192031425HS /* CyclingPowerTonightBaselineCard.swift */,
 				I58K01M73I192031425HU /* CyclingFTPTonightBaselineCard.swift */,
+				I58K01M73I192031425N0 /* CyclingDistanceTonightBaselineCard.swift */,
 				I58K01M73I192031425HW /* PhysicalEffortTonightBaselineCard.swift */,
 				I58K01M73I192031425HY /* RunningPowerTonightBaselineCard.swift */,
 				I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */,
@@ -1260,6 +1263,7 @@
 				J58K01M73I192031425HR /* UnderwaterDepthTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HT /* CyclingPowerTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HV /* CyclingFTPTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425N1 /* CyclingDistanceTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HX /* PhysicalEffortTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HZ /* RunningPowerTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425I1 /* RunningSpeedTonightBaselineCard.swift in Sources */,

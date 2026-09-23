@@ -332,6 +332,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 220.0 + Double((offset * 7) % 50) // 220…269
             }()
+            // Cycling distance km (Honest #165). Completes cycling set with cadence/power/FTP.
+            let distanceCyclingKmValue: Double? = {
+                if offset == 0 { return 28.5 }
+                if offset % 5 == 0 { return nil }
+                return 8.0 + Double((offset * 17) % 45) // 8…52
+            }()
             // Physical effort kcal/hr·kg (Honest #158). Simulator often empty — seed for UI.
             let physicalEffortKcalPerHrKgValue: Double? = {
                 if offset == 0 { return 3.8 }
@@ -437,6 +443,7 @@ enum UIFixture {
                 underwaterDepthMeters: underwaterDepthMetersValue,
                 cyclingPowerWatts: cyclingPowerWattsValue,
                 cyclingFTPWatts: cyclingFTPWattsValue,
+                distanceCyclingKm: distanceCyclingKmValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 runningPowerWatts: runningPowerWattsValue,
                 runningSpeedMps: runningSpeedMpsValue,

@@ -62,6 +62,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let underwaterDepthMeters: Double?  // max underwater depth m — Honest #155
     let cyclingPowerWatts: Double?  // cycling power W — Honest #156
     let cyclingFTPWatts: Double?  // cycling FTP W — Honest #157
+    let distanceCyclingKm: Double?  // cycling distance km — Honest #165
     let physicalEffortKcalPerHrKg: Double?  // physical effort kcal/hr·kg — Honest #158
     let runningPowerWatts: Double?  // running power W — Honest #159
     let runningSpeedMps: Double?  // running speed m/s — Honest #160
@@ -132,6 +133,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          underwaterDepthMeters: Double? = nil,
          cyclingPowerWatts: Double? = nil,
          cyclingFTPWatts: Double? = nil,
+         distanceCyclingKm: Double? = nil,
          physicalEffortKcalPerHrKg: Double? = nil,
          runningPowerWatts: Double? = nil,
          runningSpeedMps: Double? = nil,
@@ -191,6 +193,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.underwaterDepthMeters = underwaterDepthMeters
         self.cyclingPowerWatts = cyclingPowerWatts
         self.cyclingFTPWatts = cyclingFTPWatts
+        self.distanceCyclingKm = distanceCyclingKm
         self.physicalEffortKcalPerHrKg = physicalEffortKcalPerHrKg
         self.runningPowerWatts = runningPowerWatts
         self.runningSpeedMps = runningSpeedMps
@@ -257,6 +260,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.underwaterDepthMeters = nil
         self.cyclingPowerWatts = nil
         self.cyclingFTPWatts = nil
+        self.distanceCyclingKm = nil
         self.physicalEffortKcalPerHrKg = nil
         self.runningPowerWatts = nil
         self.runningSpeedMps = nil
@@ -277,7 +281,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -334,6 +338,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.underwaterDepthMeters = try container.decodeIfPresent(Double.self, forKey: .underwaterDepthMeters)
         self.cyclingPowerWatts = try container.decodeIfPresent(Double.self, forKey: .cyclingPowerWatts)
         self.cyclingFTPWatts = try container.decodeIfPresent(Double.self, forKey: .cyclingFTPWatts)
+        self.distanceCyclingKm = try container.decodeIfPresent(Double.self, forKey: .distanceCyclingKm)
         self.physicalEffortKcalPerHrKg = try container.decodeIfPresent(Double.self, forKey: .physicalEffortKcalPerHrKg)
         self.runningPowerWatts = try container.decodeIfPresent(Double.self, forKey: .runningPowerWatts)
         self.runningSpeedMps = try container.decodeIfPresent(Double.self, forKey: .runningSpeedMps)
