@@ -22,3 +22,4 @@
 | Weekly Report trend well | `weekly-report-trend-well.md` | Readiness trend circular well |
 | Trend Detail summary wells | `trend-detail-wells.md` | Summary card circular wells |
 | Sleep Analysis timing wells | `sleep-analysis-timing-wells.md` | Timing card circular wells |
+| Missing metric wells | `missing-metric-wells.md` | Not-recorded overnight metric wells |

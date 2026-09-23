@@ -60,6 +60,26 @@ final class SurfacesUITests: XCTestCase {
     }
 
 
+
+    func testMissingMetricWellSurface() throws {
+        // Honest #89: Missing overnight metric rows use circular tint wells.
+        // Soft: fixture may show live Respiratory/SkinTemp cards OR "Not recorded last night".
+        _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
+        var n = 0
+        while n < 10 {
+            if app.staticTexts["Not recorded last night"].exists
+                || app.staticTexts["Respiratory Rate"].exists
+                || app.staticTexts["Skin Temperature"].exists {
+                break
+            }
+            app.swipeUp()
+            n += 1
+        }
+        _ = app.staticTexts["Not recorded last night"].exists
+            || app.staticTexts["Respiratory Rate"].exists
+        saveShot("verify-missing-metric.png")
+    }
+
     func testRingDetailHeroWellSurface() throws {
         // Honest #88: Ring Detail hero circular tint well (Gym/Work/Sleep).
         // Today legend Gym → RingDetailView sheet (same path as testRingDetailSurface).

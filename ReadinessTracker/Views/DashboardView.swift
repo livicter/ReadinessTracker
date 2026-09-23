@@ -672,7 +672,7 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.sleepHRVCard)
             } else {
-                MissingMetricRow(title: "Sleep HRV")
+                MissingMetricRow(title: "Sleep HRV", icon: "waveform.path.ecg", tint: RTColor.optimal)
                     .accessibilityIdentifier(SurfaceID.sleepHRVCard)
             }
 
@@ -691,11 +691,11 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.sleepConsistency)
             } else {
-                MissingMetricRow(title: "Sleep Debt")
+                MissingMetricRow(title: "Sleep Debt", icon: "bed.double.fill", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.sleepDebtCard)
-                MissingMetricRow(title: "Sleep Quality Trend")
+                MissingMetricRow(title: "Sleep Quality Trend", icon: "chart.line.uptrend.xyaxis", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
-                MissingMetricRow(title: "Sleep Consistency")
+                MissingMetricRow(title: "Sleep Consistency", icon: "calendar", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.sleepConsistency)
             }
 
@@ -727,7 +727,7 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.respiratoryCard)
             } else {
-                MissingMetricRow(title: "Respiratory Rate")
+                MissingMetricRow(title: "Respiratory Rate", icon: "lungs.fill", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.respiratoryCard)
             }
 
@@ -743,7 +743,7 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.skinTempCard)
             } else {
-                MissingMetricRow(title: "Skin Temperature")
+                MissingMetricRow(title: "Skin Temperature", icon: "thermometer.medium", tint: RTColor.caution)
                     .accessibilityIdentifier(SurfaceID.skinTempCard)
             }
         }
