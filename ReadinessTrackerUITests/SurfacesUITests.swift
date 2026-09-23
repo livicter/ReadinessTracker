@@ -2400,6 +2400,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-handwashing-tonight-baseline.png")
     }
 
+
+    func testMindfulTonightBaselineSurface() throws {
+        // Honest #189: Mindful Tonight | Baseline (HK mindfulSession duration).
+        var n = 0
+        while !app.descendants(matching: .any)["body.mindful.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.mindful.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Mindful card")
+        XCTAssertTrue(app.staticTexts["Mindful"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.mindful.baseline"].exists
+        _ = app.staticTexts["7-Day Mindful"].exists
+        _ = app.descendants(matching: .any)["body.mindful.spark"].exists
+        saveShot("verify-mindful-tonight-baseline.png")
+    }
+
     func testHydrationTonightBaselineSurface() throws {
         // Honest #122: Hydration Tonight | Baseline dual on Today Body (beyond NutritionSummary glance).
         var n = 0
