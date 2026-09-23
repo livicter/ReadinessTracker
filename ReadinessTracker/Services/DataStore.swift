@@ -188,6 +188,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 42.0 + Double((offset * 11) % 90) / 10.0 // 42.0…50.9
             }()
+            // Walking HR average bpm (Honest #134). Simulator has no samples — seed for UI.
+            let walkingHeartRateAverageValue: Double? = {
+                if offset == 0 { return 98 }
+                if offset % 4 == 0 { return nil }
+                return 88 + Double((offset * 5) % 22) // 88…109
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -235,6 +241,7 @@ enum UIFixture {
                 respiratoryRate: respiratoryRateValue,
                 bloodOxygen: bloodOxygenValue,
                 vo2Max: vo2MaxValue,
+                walkingHeartRateAverage: walkingHeartRateAverageValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),

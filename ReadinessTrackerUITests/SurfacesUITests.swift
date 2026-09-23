@@ -1237,6 +1237,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-vo2-max-tonight-baseline.png")
     }
 
+    func testWalkingHRTonightBaselineSurface() throws {
+        // Honest #134: Walking HR average Tonight | Baseline (new DailyHealthData + HK).
+        var n = 0
+        let title = app.staticTexts["Walking Heart Rate"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Walking Heart Rate")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.walkinghr.card"].exists
+        _ = app.descendants(matching: .any)["vitals.walkinghr.baseline"].exists
+        _ = app.staticTexts["7-Day Walking HR"].exists
+        _ = app.descendants(matching: .any)["vitals.walkinghr.spark"].exists
+        saveShot("verify-walking-hr-tonight-baseline.png")
+    }
+
+
 
 
     func testWakeEpisodesSurface() throws {

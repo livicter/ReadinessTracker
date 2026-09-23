@@ -935,6 +935,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.vo2MaxCard)
 
+            WalkingHRTonightBaselineCard(
+                walkingHR: data.walkingHeartRateAverage,
+                history: history.compactMap { day in
+                    guard let bpm = day.walkingHeartRateAverage else { return nil }
+                    return (day.date, bpm)
+                },
+                baseline: WalkingHRBaseline.average(
+                    from: history,
+                    fallback: data.walkingHeartRateAverage ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.walkingHRCard)
+
+
 
             if let respRate = data.respiratoryRate {
                 RespiratoryRateCard(
