@@ -2069,6 +2069,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietaryVitaminCCard)
 
 
+                DietaryVitaminDTonightBaselineCard(
+                    vitaminDIU: data.nutrition.vitaminDIU,
+                    history: history.compactMap { day in
+                        guard let v = day.nutrition.vitaminDIU else { return nil }
+                        return (day.date, v)
+                    },
+                    baselineIU: DietaryVitaminDBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.vitaminDIU ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryVitaminDCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
