@@ -125,9 +125,14 @@ struct MetricDetailView: View {
         NativeCard {
             VStack(spacing: 16) {
                 HStack(spacing: 12) {
+                    // Honest #80: Apple circular tint well on Metric Detail hero.
                     Image(systemName: metric.icon)
-                        .font(.system(size: 32))
-                        .foregroundColor(metric.color)
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(metric.color)
+                        .frame(width: 44, height: 44)
+                        .background(metric.color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(metric.title)

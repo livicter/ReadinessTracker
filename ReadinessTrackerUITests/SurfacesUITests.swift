@@ -439,6 +439,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testMetricDetailChartScrubSurface() throws {
+        // Honest #80: Metric Detail hero circular tint well.
         // Today → Metrics → Sleep card → MetricDetailView (period selector + ChartScrubSelection).
         revealText("Metrics")
         let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
