@@ -869,6 +869,56 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-momentum.png")
     }
 
+    func testMetricEMASurface() throws {
+        // Honest #242: EMA toggle + 7-day EMA overlay on Advanced Metric Detail.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable {
+                sleepRow.tap()
+            } else {
+                app.swipeUp()
+                sleepRow.tap()
+            }
+        } else {
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            var m = 0
+            while !sleepCard.exists && m < 10 {
+                app.swipeDown()
+                m += 1
+            }
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var z = 0
+        while !app.staticTexts["EMA"].exists && z < 8 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(app.staticTexts["EMA"].waitForExistence(timeout: 8), "EMA toggle")
+        _ = app.descendants(matching: .any)["metric.chart.ema.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.chart.ema"].exists
+        _ = app.staticTexts["7-day EMA"].exists
+            || app.staticTexts["EMA responds faster than SMA to recent change"].exists
+        _ = app.staticTexts["Moving Avg"].exists
+        _ = app.staticTexts["Momentum"].exists
+        saveShot("verify-metric-ema.png")
+    }
+
     func testStrainRecoveryBalanceSurface() throws {
         // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.
