@@ -3,6 +3,7 @@
 | Feature | File | Proof |
 |---------|------|-------|
 | Unit test suite | `unit-tests.md` | `./scripts/ci-verify.sh` exits 0 |
+| Error banner well | `error-banner-well.md` | Today error banner circular well |
 | Sync button well | `sync-button-well.md` | Today Sync control circular well |
 | Source picker wells | `source-picker-wells.md` | Today Watch/Fitbit source chip wells |
 | Today dashboard (bright) | `today-dashboard.md` | Light-mode screenshot after launch |
