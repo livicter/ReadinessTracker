@@ -629,6 +629,11 @@ enum SurfaceID {
     /// Honest #261: Trends Day Δ / rateOfChange strip (classic #248 triad complete).
     static let trendsDayDelta = "trends.dayDelta"
     static let trendsDayDeltaToggle = "trends.dayDelta.toggle"
+    /// Honest #262: Trends MA14 + EMA overlays on depth timeline (classic #247 parity).
+    static let trendsMA14 = "trends.ma14"
+    static let trendsMA14Toggle = "trends.ma14.toggle"
+    static let trendsEMA = "trends.ema"
+    static let trendsEMAToggle = "trends.ema.toggle"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"
