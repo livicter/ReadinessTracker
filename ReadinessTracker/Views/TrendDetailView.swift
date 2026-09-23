@@ -139,6 +139,18 @@ struct TrendDetailView: View {
                     .accessibilityIdentifier(SurfaceID.trendsWeeklyPattern)
                     .slideIn(delay: 0.145)
                 }
+
+                // Honest #265: RecoveryTrajectoryView (classic Metric Detail parity, ≥5 + strain).
+                if filteredHistory.count >= 5 {
+                    RecoveryTrajectoryView(
+                        history: depthTimelinePoints,
+                        strainHistory: filteredHistory.map { ($0.date, $0.activeCalories) },
+                        metric: scrubAnalysisMetric
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsRecoveryTrajectory)
+                    .slideIn(delay: 0.148)
+                }
                 
                 // Individual metric cards
                 metricCards
