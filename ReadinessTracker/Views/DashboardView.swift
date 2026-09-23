@@ -2361,6 +2361,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.dietaryPhosphorusCard)
 
+                DietaryChromiumTonightBaselineCard(
+                    chromiumMcg: data.nutrition.chromiumMcg,
+                    history: history.compactMap { day in
+                        guard let v = day.nutrition.chromiumMcg else { return nil }
+                        return (day.date, v)
+                    },
+                    baselineMcg: DietaryChromiumBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.chromiumMcg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryChromiumCard)
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
