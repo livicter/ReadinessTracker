@@ -912,6 +912,19 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.appleStandHoursCard)
 
+            AppleMoveTimeTonightBaselineCard(
+                minutes: data.appleMoveTimeMinutes,
+                history: history.compactMap { day in
+                    guard let m = day.appleMoveTimeMinutes else { return nil }
+                    return (day.date, m)
+                },
+                baseline: AppleMoveTimeBaseline.average(
+                    from: history,
+                    fallback: data.appleMoveTimeMinutes ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.appleMoveTimeCard)
+
 
             DailyTRIMPCard(
                 sessions: data.strainSessions,

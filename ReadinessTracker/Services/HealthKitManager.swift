@@ -32,6 +32,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
             HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
+            HKObjectType.quantityType(forIdentifier: .appleMoveTime)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
@@ -144,6 +145,7 @@ class HealthKitManager: ObservableObject {
         async let distance = fetchDistanceWalkingRunning(predicate: predicate)
         async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
         async let standHours = fetchAppleStandHours(predicate: predicate)
+        async let moveTime = fetchAppleMoveTime(predicate: predicate)
         async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
         async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
         async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
@@ -216,6 +218,7 @@ class HealthKitManager: ObservableObject {
             distanceWalkingRunningKm: await distance,
             appleExerciseTimeMinutes: await exerciseTime,
             appleStandHours: await standHours,
+            appleMoveTimeMinutes: await moveTime,
             walkingDoubleSupportPercent: await doubleSupport,
             walkingAsymmetryPercent: await asymmetry,
             walkingSpeedMps: await walkSpeed,
@@ -289,6 +292,7 @@ class HealthKitManager: ObservableObject {
             async let distance = fetchDistanceWalkingRunning(predicate: predicate)
             async let exerciseTime = fetchAppleExerciseTime(predicate: predicate)
             async let standHours = fetchAppleStandHours(predicate: predicate)
+            async let moveTime = fetchAppleMoveTime(predicate: predicate)
             async let doubleSupport = fetchWalkingDoubleSupport(predicate: predicate)
             async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
             async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
@@ -332,6 +336,7 @@ class HealthKitManager: ObservableObject {
             let distanceValue = await distance
             let exerciseTimeValue = await exerciseTime
             let standHoursValue = await standHours
+            let moveTimeValue = await moveTime
             let doubleSupportValue = await doubleSupport
             let asymmetryValue = await asymmetry
             let walkSpeedValue = await walkSpeed
@@ -401,6 +406,7 @@ class HealthKitManager: ObservableObject {
                 distanceWalkingRunningKm: distanceValue,
                 appleExerciseTimeMinutes: exerciseTimeValue,
                 appleStandHours: standHoursValue,
+                appleMoveTimeMinutes: moveTimeValue,
                 walkingDoubleSupportPercent: doubleSupportValue,
                 walkingAsymmetryPercent: asymmetryValue,
                 walkingSpeedMps: walkSpeedValue,
@@ -641,6 +647,14 @@ class HealthKitManager: ObservableObject {
             self.healthStore.execute(query)
         }
     }
+
+
+    /// Day cumulative Apple Move Time (Activity Move ring minutes). Sparse on Simulator — fixture seeds UI.
+    private func fetchAppleMoveTime(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .appleMoveTime) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .minute())
+    }
+
 
 
     /// Day average walking double-support percentage (both feet down). Sparse gait metric — fixture seeds UI.

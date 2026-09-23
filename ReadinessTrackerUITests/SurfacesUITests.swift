@@ -1467,6 +1467,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-apple-stand-hours-tonight-baseline.png")
     }
 
+    func testAppleMoveTimeTonightBaselineSurface() throws {
+        // Honest #164: Apple Move Time Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Move Time"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Move Time")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["strain.moveTime.card"].exists
+        _ = app.descendants(matching: .any)["strain.moveTime.baseline"].exists
+        _ = app.staticTexts["7-Day Move Time"].exists
+        _ = app.descendants(matching: .any)["strain.moveTime.spark"].exists
+        saveShot("verify-apple-move-time-tonight-baseline.png")
+    }
+
     func testWalkingDoubleSupportTonightBaselineSurface() throws {
         // Honest #145: Walking Double Support Tonight | Baseline (new HK + model).
         var n = 0
