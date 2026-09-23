@@ -14,3 +14,4 @@
 | Today QuickTrend wells | `quick-trend-wells.md` | Quick Trends circular wells |
 | Day Detail wells | `day-detail-wells.md` | Stage/metric circular wells |
 | Metric Detail hero well | `metric-detail-hero-well.md` | Hero circular well |
+| Readiness Detail wells | `readiness-detail-wells.md` | Rec + component circular wells |

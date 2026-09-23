@@ -251,9 +251,15 @@ struct ReadinessDetailView: View {
         NativeCard {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
+                    // Honest #81: Apple circular tint well on Readiness Detail recommendation.
                     Image(systemName: "lightbulb.fill")
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(RTColor.caution)
-                    
+                        .frame(width: 26, height: 26)
+                        .background(RTColor.caution.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
+
                     Text("Recommendation")
                         .font(.headline.weight(.semibold))
                         .foregroundStyle(RTColor.primaryText)
@@ -302,12 +308,14 @@ private struct ComponentRow: View {
     
     var body: some View {
         HStack(spacing: 12) {
+            // Honest #81: circular tint well on Readiness Detail component rows.
             Image(systemName: icon)
-                .font(.system(size: 14))
+                .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(color)
                 .frame(width: 32, height: 32)
-                .background(color.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .background(color.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
