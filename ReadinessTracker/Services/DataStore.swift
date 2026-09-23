@@ -499,6 +499,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 3.0 + Double((offset * 7) % 61) / 10.0 // 3.0…9.0
             }()
+            // Estimated workout effort score 0–10 (Honest #228). Sparse strain — seed for UI.
+            let estimatedWorkoutEffortScoreValue: Double? = {
+                if offset == 0 { return 5.8 }
+                if offset % 5 == 0 { return nil }
+                return 2.8 + Double((offset * 9) % 58) / 10.0 // 2.8…8.5
+            }()
             // Running power watts (Honest #159). Simulator often empty — seed for UI.
             let runningPowerWattsValue: Double? = {
                 if offset == 0 { return 268.0 }
@@ -626,6 +632,7 @@ enum UIFixture {
                 cyclingSpeedMps: cyclingSpeedMpsValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 workoutEffortScore: workoutEffortScoreValue,
+                estimatedWorkoutEffortScore: estimatedWorkoutEffortScoreValue,
                 runningPowerWatts: runningPowerWattsValue,
                 runningSpeedMps: runningSpeedMpsValue,
                 runningGroundContactMs: runningGroundContactMsValue,

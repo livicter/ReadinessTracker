@@ -149,6 +149,9 @@ class HealthKitManager: ObservableObject {
             if let workoutEffortType = HKObjectType.quantityType(forIdentifier: .workoutEffortScore) {
                 typesToRead.insert(workoutEffortType)
             }
+            if let estimatedEffortType = HKObjectType.quantityType(forIdentifier: .estimatedWorkoutEffortScore) {
+                typesToRead.insert(estimatedEffortType)
+            }
         }
 
         if #available(iOS 16.0, *) {
@@ -261,6 +264,7 @@ class HealthKitManager: ObservableObject {
         async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
+        async let estimatedWorkoutEffort = fetchEstimatedWorkoutEffortScore(predicate: predicate)
         async let runPower = fetchRunningPower(predicate: predicate)
         async let runSpeed = fetchRunningSpeed(predicate: predicate)
         async let runGCT = fetchRunningGroundContact(predicate: predicate)
@@ -361,6 +365,7 @@ class HealthKitManager: ObservableObject {
             cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             workoutEffortScore: await workoutEffort,
+            estimatedWorkoutEffortScore: await estimatedWorkoutEffort,
             runningPowerWatts: await runPower,
             runningSpeedMps: await runSpeed,
             runningGroundContactMs: await runGCT,
@@ -461,6 +466,7 @@ class HealthKitManager: ObservableObject {
             async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
+            async let estimatedWorkoutEffort = fetchEstimatedWorkoutEffortScore(predicate: predicate)
             async let runPower = fetchRunningPower(predicate: predicate)
             async let runSpeed = fetchRunningSpeed(predicate: predicate)
             async let runGCT = fetchRunningGroundContact(predicate: predicate)
@@ -531,6 +537,7 @@ class HealthKitManager: ObservableObject {
             let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let workoutEffortValue = await workoutEffort
+            let estimatedWorkoutEffortValue = await estimatedWorkoutEffort
             let runPowerValue = await runPower
             let runSpeedValue = await runSpeed
             let runGCTValue = await runGCT
@@ -628,6 +635,7 @@ class HealthKitManager: ObservableObject {
                 cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 workoutEffortScore: workoutEffortValue,
+                estimatedWorkoutEffortScore: estimatedWorkoutEffortValue,
                 runningPowerWatts: runPowerValue,
                 runningSpeedMps: runSpeedValue,
                 runningGroundContactMs: runGCTValue,
@@ -1368,6 +1376,24 @@ class HealthKitManager: ObservableObject {
     private func fetchWorkoutEffortScore(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 18.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .workoutEffortScore) else { return nil }
+        let unit = HKUnit.appleEffortScore()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average estimated workout effort score (0–10 appleEffortScore). Sparse strain — fixture seeds UI. iOS 18+.
+    private func fetchEstimatedWorkoutEffortScore(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 18.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .estimatedWorkoutEffortScore) else { return nil }
         let unit = HKUnit.appleEffortScore()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(

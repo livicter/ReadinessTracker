@@ -3305,6 +3305,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-workout-effort-tonight-baseline.png")
     }
 
+    func testEstimatedWorkoutEffortTonightBaselineSurface() throws {
+        // Honest #228: Estimated Workout Effort Tonight | Baseline (HK estimatedWorkoutEffortScore).
+        var n = 0
+        while !app.descendants(matching: .any)["body.estimatedWorkoutEffort.card"].exists && n < 50 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.estimatedWorkoutEffort.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Estimated Workout Effort card")
+        XCTAssertTrue(app.staticTexts["Estimated Workout Effort"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.estimatedWorkoutEffort.baseline"].exists
+        _ = app.staticTexts["7-Day Est. Effort"].exists
+        _ = app.descendants(matching: .any)["body.estimatedWorkoutEffort.spark"].exists
+        saveShot("verify-estimated-workout-effort-tonight-baseline.png")
+    }
+
+
 
     func testInsulinDeliveryTonightBaselineSurface() throws {
         // Honest #179: Insulin Delivery Tonight | Baseline (HK insulinDelivery).
