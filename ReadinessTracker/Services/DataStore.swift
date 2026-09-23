@@ -246,16 +246,20 @@ enum UIFixture {
                 StrainSession(workoutType: "Running", startDate: start, endDate: end)
             ]
         }
-        if offset == 1 {
-            let start = cal.date(bySettingHour: 18, minute: 0, second: 0, of: day) ?? day
-            let end = cal.date(bySettingHour: 18, minute: 45, second: 0, of: day) ?? day.addingTimeInterval(2700)
+        // Older days: seed TRIMP so Daily TRIMP 7-day spark has shape (enrich preserves when no HR).
+        if offset <= 6 {
+            let start = cal.date(bySettingHour: 17 + (offset % 2), minute: (offset * 7) % 50, second: 0, of: day) ?? day
+            let durationMin = 25 + ((offset * 11) % 40) // 25…64
+            let end = start.addingTimeInterval(Double(durationMin) * 60)
+            let types = ["Strength Training", "Cycling", "Running", "HIIT", "Yoga", "Walking"]
+            let trimp = 40.0 + Double((offset * 17) % 80) // 40…119
             return [
                 StrainSession(
-                    workoutType: "Strength Training",
+                    workoutType: types[(offset - 1) % types.count],
                     startDate: start,
                     endDate: end,
-                    trimp: 72,
-                    contribution: 3.8
+                    trimp: trimp,
+                    contribution: 0
                 )
             ]
         }
