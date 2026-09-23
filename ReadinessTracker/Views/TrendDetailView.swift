@@ -628,10 +628,15 @@ private struct TrendStatCard: View {
     var body: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    // Honest #84: Apple circular tint well on Trend Detail summary cards.
                     Image(systemName: icon)
-                        .font(.system(size: 12))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(color)
+                        .frame(width: 26, height: 26)
+                        .background(color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text(label)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)

@@ -202,6 +202,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testTrendsDetailSurface() throws {
+        // Honest #84: Trend Detail summary-card circular tint wells.
         // History → Browse Trends → TrendDetailView (period chips + Avg/Min/Max + scrub).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
