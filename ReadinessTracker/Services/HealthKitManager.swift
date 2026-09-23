@@ -103,6 +103,9 @@ class HealthKitManager: ObservableObject {
             if let voType = HKObjectType.quantityType(forIdentifier: .runningVerticalOscillation) {
                 typesToRead.insert(voType)
             }
+            if let hrrType = HKObjectType.quantityType(forIdentifier: .heartRateRecoveryOneMinute) {
+                typesToRead.insert(hrrType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -138,6 +141,7 @@ class HealthKitManager: ObservableObject {
         async let maxHR = fetchMaxHeartRate(predicate: predicate)
         async let vo2 = fetchVO2Max()
         async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
+        async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -213,6 +217,7 @@ class HealthKitManager: ObservableObject {
             bloodOxygen: await spO2,
             vo2Max: await vo2,
             walkingHeartRateAverage: await walkingHR,
+            heartRateRecoveryOneMinuteBpm: await hrr,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -289,6 +294,7 @@ class HealthKitManager: ObservableObject {
             async let maxHR = fetchMaxHeartRate(predicate: predicate)
             async let vo2 = fetchVO2Max()
             async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
+            async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -335,6 +341,7 @@ class HealthKitManager: ObservableObject {
             let maxHRValue = await maxHR
             let vo2Value = await vo2
             let walkingHRValue = await walkingHR
+            let hrrValue = await hrr
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -407,6 +414,7 @@ class HealthKitManager: ObservableObject {
                 strainSessions: enrichedSessions,
                 vo2Max: vo2Value,
                 walkingHeartRateAverage: walkingHRValue,
+                heartRateRecoveryOneMinuteBpm: hrrValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -517,6 +525,25 @@ class HealthKitManager: ObservableObject {
     /// Day walking heart-rate average (bpm). Apple Watch quantity; sparse on Simulator.
     private func fetchWalkingHeartRateAverage(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .walkingHeartRateAverage) else { return nil }
+        let unit = HKUnit.count().unitDivided(by: .minute())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day average heart-rate recovery (bpm drop in first minute). Sparse readiness — fixture seeds UI. iOS 16+.
+    private func fetchHeartRateRecoveryOneMinute(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .heartRateRecoveryOneMinute) else { return nil }
         let unit = HKUnit.count().unitDivided(by: .minute())
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(

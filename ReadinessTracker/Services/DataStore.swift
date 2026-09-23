@@ -194,6 +194,12 @@ enum UIFixture {
                 if offset % 4 == 0 { return nil }
                 return 88 + Double((offset * 5) % 22) // 88…109
             }()
+            // Heart rate recovery 1-min bpm (Honest #167). Sparse — seed for UI.
+            let heartRateRecoveryOneMinuteBpmValue: Double? = {
+                if offset == 0 { return 22.0 }
+                if offset % 5 == 0 { return nil }
+                return 12.0 + Double((offset * 7) % 20) // 12…31
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -426,6 +432,7 @@ enum UIFixture {
                 bloodOxygen: bloodOxygenValue,
                 vo2Max: vo2MaxValue,
                 walkingHeartRateAverage: walkingHeartRateAverageValue,
+                heartRateRecoveryOneMinuteBpm: heartRateRecoveryOneMinuteBpmValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

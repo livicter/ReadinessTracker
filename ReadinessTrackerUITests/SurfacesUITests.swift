@@ -1260,6 +1260,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-walking-hr-tonight-baseline.png")
     }
 
+    func testHeartRateRecoveryTonightBaselineSurface() throws {
+        // Honest #167: HR Recovery Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["HR Recovery"]
+        while !title.exists && n < 36 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "HR Recovery")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.hrr.card"].exists
+        _ = app.descendants(matching: .any)["vitals.hrr.baseline"].exists
+        _ = app.staticTexts["7-Day HR Recovery"].exists
+        _ = app.descendants(matching: .any)["vitals.hrr.spark"].exists
+        saveShot("verify-heart-rate-recovery-tonight-baseline.png")
+    }
+
     func testEnvironmentalAudioTonightBaselineSurface() throws {
         // Honest #136: Environmental audio exposure Tonight | Baseline (new HK + model).
         var n = 0
