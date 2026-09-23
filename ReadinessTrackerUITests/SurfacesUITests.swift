@@ -1484,6 +1484,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cognitive-load-tonight-baseline.png")
     }
 
+    func testNapTonightBaselineSurface() throws {
+        // Honest #130: Morning hadNap / napQuality Tonight | Baseline (unused check-in).
+        var n = 0
+        while !app.descendants(matching: .any)["checkin.nap.card"].exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["checkin.nap.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Nap card")
+        XCTAssertTrue(app.staticTexts["Nap"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["checkin.nap.baseline"].exists
+        _ = app.staticTexts["7-Day Nap Quality"].exists
+        _ = app.descendants(matching: .any)["checkin.nap.spark"].exists
+        saveShot("verify-nap-tonight-baseline.png")
+    }
+
     func testWorkoutRPETonightBaselineSurface() throws {
         // Honest #127: Evening check-in Workout RPE Tonight | Baseline (unused load signal).
         var n = 0
