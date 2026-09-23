@@ -22,10 +22,15 @@ struct QuickTrendCard: View {
         NativeCard {
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
+                        // Honest #78: Apple circular tint well on QuickTrendCard header.
                         Image(systemName: metric.icon)
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(metric.color)
+                            .frame(width: 26, height: 26)
+                            .background(metric.color.opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text(metric.title)
                             .font(.subheadline.weight(.medium))
