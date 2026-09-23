@@ -965,6 +965,14 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.postStrainRecoveryCard)
 
+            // Honest #245: WHOOP Green/Yellow/Red recovery days-in-zone
+            RecoveryZoneDistributionCard(
+                history: history.map { day in
+                    (day.date, RecoveryCalculator.dashboardWheelScore(from: day, history: history))
+                }
+            )
+            .accessibilityIdentifier(SurfaceID.recoveryZoneDistCard)
+
             WatchStrainTonightBaselineCard(
                 tonightStrain: StrainCalculator.calculate(from: data, history: history),
                 history: history.map { day in

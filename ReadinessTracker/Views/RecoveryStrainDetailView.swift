@@ -60,6 +60,12 @@ struct RecoveryStrainDetailView: View {
                 // Honest #238: WHOOP post-strain recovery trajectory
                 postStrainRecoverySection
                     .slideIn(delay: 0.07)
+
+                // Honest #245: WHOOP Green/Yellow/Red recovery days-in-zone
+                RecoveryZoneDistributionCard(
+                    history: historicalStrainData.map { ($0.date, Double($0.recovery)) }
+                )
+                .slideIn(delay: 0.08)
                 
                 // Strain detail
                 strainDetail
