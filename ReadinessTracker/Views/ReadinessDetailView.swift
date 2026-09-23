@@ -55,9 +55,9 @@ struct ReadinessDetailView: View {
                 )
                 
                 HStack(spacing: 16) {
-                    ScorePill(label: "General", score: scores.general, color: RTColor.optimal)
-                    ScorePill(label: "Cognitive", score: scores.cognitive, color: RTColor.hrv)
-                    ScorePill(label: "Gym", score: scores.gym, color: RTColor.strain)
+                    ScorePill(label: "General", score: scores.general, color: RTColor.optimal, icon: "star.fill")
+                    ScorePill(label: "Work", score: scores.cognitive, color: RTColor.hrv, icon: "laptopcomputer")
+                    ScorePill(label: "Gym", score: scores.gym, color: RTColor.strain, icon: "dumbbell.fill")
                 }
             }
             .padding(.vertical, 24)
@@ -279,9 +279,19 @@ private struct ScorePill: View {
     let label: String
     let score: Int
     let color: Color
+    var icon: String = "circle.fill"
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 8) {
+            // Honest #90: Apple circular tint well on Readiness Detail ScorePills.
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(color)
+                .frame(width: 26, height: 26)
+                .background(color.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
             Text("\(score)")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundStyle(color)

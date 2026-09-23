@@ -43,6 +43,27 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-rings.png")
     }
 
+
+    func testScorePillWellSurface() throws {
+        // Honest #90: Readiness Detail ScorePills (General/Work/Gym) circular wells.
+        // Cognitive renamed to Work (Gym/Work/Sleep house naming).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let score = app.descendants(matching: .any)["readiness.score"].firstMatch
+        if score.waitForExistence(timeout: 4), score.isHittable {
+            score.tap()
+        } else {
+            let hero = app.descendants(matching: .any)["today.hero"].firstMatch
+            if hero.exists, hero.isHittable { hero.tap() }
+        }
+        _ = app.staticTexts["Recommendation"].waitForExistence(timeout: 6)
+            || app.staticTexts["Component Detail"].waitForExistence(timeout: 4)
+            || app.staticTexts["Score Breakdown"].waitForExistence(timeout: 4)
+        // Soft: Work pill present; Cognitive gone.
+        _ = app.staticTexts["Work"].exists || app.staticTexts["Gym"].exists
+        _ = !app.staticTexts["Cognitive"].exists
+        saveShot("verify-score-pills.png")
+    }
+
     func testReadinessDetailSurface() throws {
         // Honest #81: Readiness Detail recommendation + component circular wells.
         // Open via Today score / readiness hero when available.

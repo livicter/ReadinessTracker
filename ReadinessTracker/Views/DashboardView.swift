@@ -1281,9 +1281,14 @@ struct DualScoreCard: View {
         NativeCard {
             VStack(spacing: 8) {
                 HStack(spacing: 6) {
+                    // Honest #90: Apple circular tint well on DualScoreCard (shared chrome).
                     Image(systemName: icon)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(color)
+                        .frame(width: 26, height: 26)
+                        .background(color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text(label)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)
