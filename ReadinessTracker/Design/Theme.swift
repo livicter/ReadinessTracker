@@ -132,6 +132,12 @@ enum SurfaceID {
     static let metricChartROCToggle = "metric.chart.roc.toggle"
     static let metricChartMA14 = "metric.chart.ma14"
     static let metricChartMA14Toggle = "metric.chart.ma14.toggle"
+    /// Honest #247: classic MetricDetailView overlay parity (MA14 + EMA subset).
+    static let metricClassicOverlays = "metric.classic.overlays"
+    static let metricClassicMA14 = "metric.classic.ma14"
+    static let metricClassicMA14Toggle = "metric.classic.ma14.toggle"
+    static let metricClassicEMA = "metric.classic.ema"
+    static let metricClassicEMAToggle = "metric.classic.ema.toggle"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"
