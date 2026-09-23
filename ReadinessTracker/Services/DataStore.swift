@@ -156,6 +156,22 @@ enum UIFixture {
             // (Today "N disturbance(s)" and DayDetail/SleepAnalysis hypnogram stay coherent).
             let wakeEpisodes = SleepCycleDetector.awakePeriods(from: stages).count
             let sleepHoursValue: Double = offset == 0 ? 7.4 : 6.2 + Double((offset * 13) % 25) * 0.1
+            let sleepEfficiencyValue: Double = offset == 0 ? 0.91 : (0.78 + Double((offset * 5) % 17) * 0.01)
+            // Stage-awake ÷ bed→wake window so Awake Hours spark follows wakeCount; today ~one short wake.
+            var stageAwakeSeconds: TimeInterval = 0
+            for interval in stages where interval.stage == .awake {
+                stageAwakeSeconds += interval.endDate.timeIntervalSince(interval.startDate)
+            }
+            let bedWindowSeconds = sleepEnd.timeIntervalSince(sleepStart)
+            let awakePercentValue: Double
+            if bedWindowSeconds > 60 {
+                awakePercentValue = min(0.35, max(0.01, stageAwakeSeconds / bedWindowSeconds))
+            } else {
+                awakePercentValue = 0.05
+            }
+            let deepSleepPercentValue: Double = offset == 0 ? 0.17 : (0.12 + Double((offset * 3) % 10) * 0.01)
+            let remSleepPercentValue: Double = offset == 0 ? 0.21 : (0.16 + Double((offset * 5) % 12) * 0.01)
+            let sleepOnsetMinutesValue: Double = offset == 0 ? 12 : (8 + Double((offset * 7) % 28))
             let hrvValue: Double = offset == 0 ? 58 : 48 + Double((offset * 7) % 21)
             let maxHRValue: Double? = offset == 0 ? 185 : nil
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
@@ -178,12 +194,11 @@ enum UIFixture {
                 // Vary older nights so Sleep Quality spark/bars show shape; today stays 7.4h.
                 sleepHours: sleepHoursValue,
                 // Vary older nights so Sleep Efficiency 7-night spark has shape; today ~91% (Excellent).
-                sleepEfficiency: offset == 0 ? 0.91 : (0.78 + Double((offset * 5) % 17) * 0.01),
-                // Vary older nights so Restorative Sleep Deep|REM spark has shape; today ~17%/21%.
-                deepSleepPercent: offset == 0 ? 0.17 : (0.12 + Double((offset * 3) % 10) * 0.01),
-                remSleepPercent: offset == 0 ? 0.21 : (0.16 + Double((offset * 5) % 12) * 0.01),
-                // Vary onset so Sleep Latency 7-night spark has shape; today ~12 min (Fast).
-                sleepOnsetMinutes: offset == 0 ? 12 : (8 + Double((offset * 7) % 28)),
+                sleepEfficiency: sleepEfficiencyValue,
+                deepSleepPercent: deepSleepPercentValue,
+                remSleepPercent: remSleepPercentValue,
+                awakePercent: awakePercentValue,
+                sleepOnsetMinutes: sleepOnsetMinutesValue,
                 sleepStartTime: sleepStart,
                 sleepEndTime: sleepEnd,
                 wakeEpisodes: wakeEpisodes,

@@ -1262,6 +1262,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-time-in-bed.png")
     }
 
+    func testAwakeHoursSurface() throws {
+        // Honest #116: WHOOP Awake Hours Tonight | Baseline on Today sleep stack.
+        var n = 0
+        let title = app.staticTexts["Awake Hours"]
+        while !title.exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<3 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Awake Hours")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["sleep.awake.card"].exists
+        _ = app.descendants(matching: .any)["sleep.awake.baseline"].exists
+        _ = app.staticTexts["7-Night Awake"].exists
+        _ = app.descendants(matching: .any)["sleep.awake.spark"].exists
+        saveShot("verify-awake-hours.png")
+    }
+
 
 
 
