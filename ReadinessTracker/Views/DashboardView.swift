@@ -113,6 +113,12 @@ struct DashboardView: View {
                             )
                             .accessibilityIdentifier(SurfaceID.workoutRPECard)
                             .slideIn(delay: 0.115)
+                            PlannedIntensityTonightBaselineCard(
+                                tonight: metadataStore.metadataFor(date: Date(), timeOfDay: .evening),
+                                history: PlannedIntensityBaseline.history(from: metadataStore)
+                            )
+                            .accessibilityIdentifier(SurfaceID.plannedIntensityCard)
+                            .slideIn(delay: 0.117)
                             JournalImpactCard(entries: JournalImpact.loadEntries())
                             .accessibilityIdentifier(SurfaceID.journalImpactCard)
                             .slideIn(delay: 0.12)

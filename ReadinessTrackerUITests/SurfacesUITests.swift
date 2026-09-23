@@ -1502,6 +1502,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-workout-rpe-tonight-baseline.png")
     }
 
+    func testPlannedIntensityTonightBaselineSurface() throws {
+        // Honest #129: Evening plannedWorkoutIntensity Tonight | Baseline (tomorrow load plan).
+        var n = 0
+        while !app.descendants(matching: .any)["checkin.plan.card"].exists && n < 14 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["checkin.plan.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Tomorrow Plan card")
+        XCTAssertTrue(app.staticTexts["Tomorrow's Plan"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["checkin.plan.baseline"].exists
+        _ = app.staticTexts["7-Day Planned Intensity"].exists
+        _ = app.descendants(matching: .any)["checkin.plan.spark"].exists
+        saveShot("verify-planned-intensity-tonight-baseline.png")
+    }
+
     func testJournalImpactTonightBaselineSurface() throws {
         // Honest #124: Journal Impact Tonight | Baseline on Today (beyond Journal button / #82 wells).
         var n = 0
