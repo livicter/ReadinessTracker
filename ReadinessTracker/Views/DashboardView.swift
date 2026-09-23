@@ -702,6 +702,14 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.sleepEfficiencyCard)
 
+            RestorativeSleepCard(
+                sleepHours: data.sleepHours,
+                deepPercent: data.deepSleepPercent,
+                remPercent: data.remSleepPercent,
+                history: history.map { ($0.date, $0.sleepHours, $0.deepSleepPercent, $0.remSleepPercent) }
+            )
+            .accessibilityIdentifier(SurfaceID.sleepRestorativeCard)
+
             if data.hrv > 0 {
                 SleepHRVCard(
                     currentHRV: data.hrv,

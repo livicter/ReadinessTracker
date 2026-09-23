@@ -177,8 +177,9 @@ enum UIFixture {
                 sleepHours: sleepHoursValue,
                 // Vary older nights so Sleep Efficiency 7-night spark has shape; today ~91% (Excellent).
                 sleepEfficiency: offset == 0 ? 0.91 : (0.78 + Double((offset * 5) % 17) * 0.01),
-                deepSleepPercent: 0.17,
-                remSleepPercent: 0.21,
+                // Vary older nights so Restorative Sleep Deep|REM spark has shape; today ~17%/21%.
+                deepSleepPercent: offset == 0 ? 0.17 : (0.12 + Double((offset * 3) % 10) * 0.01),
+                remSleepPercent: offset == 0 ? 0.21 : (0.16 + Double((offset * 5) % 12) * 0.01),
                 // Vary onset so Sleep Latency 7-night spark has shape; today ~12 min (Fast).
                 sleepOnsetMinutes: offset == 0 ? 12 : (8 + Double((offset * 7) % 28)),
                 sleepStartTime: sleepStart,
