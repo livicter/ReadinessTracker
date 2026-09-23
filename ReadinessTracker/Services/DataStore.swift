@@ -200,6 +200,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 12.0 + Double((offset * 7) % 20) // 12…31
             }()
+            // AF burden % (Honest #168). Sparse — seed clear/low values for UI.
+            let atrialFibrillationBurdenPercentValue: Double? = {
+                if offset == 0 { return 0.4 }
+                if offset % 5 == 0 { return nil }
+                return Double((offset * 3) % 40) / 10.0 // 0.0…3.9
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -433,6 +439,7 @@ enum UIFixture {
                 vo2Max: vo2MaxValue,
                 walkingHeartRateAverage: walkingHeartRateAverageValue,
                 heartRateRecoveryOneMinuteBpm: heartRateRecoveryOneMinuteBpmValue,
+                atrialFibrillationBurdenPercent: atrialFibrillationBurdenPercentValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

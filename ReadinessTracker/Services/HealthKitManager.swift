@@ -106,6 +106,9 @@ class HealthKitManager: ObservableObject {
             if let hrrType = HKObjectType.quantityType(forIdentifier: .heartRateRecoveryOneMinute) {
                 typesToRead.insert(hrrType)
             }
+            if let afType = HKObjectType.quantityType(forIdentifier: .atrialFibrillationBurden) {
+                typesToRead.insert(afType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -142,6 +145,7 @@ class HealthKitManager: ObservableObject {
         async let vo2 = fetchVO2Max()
         async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
         async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
+        async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -218,6 +222,7 @@ class HealthKitManager: ObservableObject {
             vo2Max: await vo2,
             walkingHeartRateAverage: await walkingHR,
             heartRateRecoveryOneMinuteBpm: await hrr,
+            atrialFibrillationBurdenPercent: await afBurden,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -295,6 +300,7 @@ class HealthKitManager: ObservableObject {
             async let vo2 = fetchVO2Max()
             async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
             async let hrr = fetchHeartRateRecoveryOneMinute(predicate: predicate)
+            async let afBurden = fetchAtrialFibrillationBurden(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -342,6 +348,7 @@ class HealthKitManager: ObservableObject {
             let vo2Value = await vo2
             let walkingHRValue = await walkingHR
             let hrrValue = await hrr
+            let afBurdenValue = await afBurden
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -415,6 +422,7 @@ class HealthKitManager: ObservableObject {
                 vo2Max: vo2Value,
                 walkingHeartRateAverage: walkingHRValue,
                 heartRateRecoveryOneMinuteBpm: hrrValue,
+                atrialFibrillationBurdenPercent: afBurdenValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -552,6 +560,30 @@ class HealthKitManager: ObservableObject {
                 options: .discreteAverage
             ) { _, stats, _ in
                 continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day average atrial fibrillation burden (0–100%). Sparse cardio — fixture seeds UI. iOS 16+.
+    private func fetchAtrialFibrillationBurden(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .atrialFibrillationBurden) else { return nil }
+        let unit = HKUnit.percent()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let raw = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let pct = raw <= 1.0 ? raw * 100.0 : raw
+                continuation.resume(returning: pct)
             }
             self.healthStore.execute(query)
         }
