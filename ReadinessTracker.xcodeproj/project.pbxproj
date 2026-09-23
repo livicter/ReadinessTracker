@@ -140,6 +140,7 @@
 		J58K01M73I192031425BC1 /* DietaryMolybdenumTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BC0 /* DietaryMolybdenumTonightBaselineCard.swift */; };
 		J58K01M73I192031425BD1 /* DietaryChlorideTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BD0 /* DietaryChlorideTonightBaselineCard.swift */; };
 		J58K01M73I192031425BE1 /* DietaryMufaTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BE0 /* DietaryMufaTonightBaselineCard.swift */; };
+		J58K01M73I192031425BF1 /* DietaryPufaTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BF0 /* DietaryPufaTonightBaselineCard.swift */; };
 		J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */; };
 		J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */; };
 		J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */; };
@@ -471,6 +472,7 @@
 		I58K01M73I192031425BC0 /* DietaryMolybdenumTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryMolybdenumTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryMolybdenumTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425BD0 /* DietaryChlorideTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryChlorideTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryChlorideTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425BE0 /* DietaryMufaTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryMufaTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryMufaTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425BF0 /* DietaryPufaTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryPufaTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryPufaTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AlcoholicBeveragesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AlcoholicBeveragesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InhalerUsageTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InhalerUsageTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InsulinDeliveryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InsulinDeliveryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -846,6 +848,7 @@
 				I58K01M73I192031425BC0 /* DietaryMolybdenumTonightBaselineCard.swift */,
 				I58K01M73I192031425BD0 /* DietaryChlorideTonightBaselineCard.swift */,
 				I58K01M73I192031425BE0 /* DietaryMufaTonightBaselineCard.swift */,
+				I58K01M73I192031425BF0 /* DietaryPufaTonightBaselineCard.swift */,
 				I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */,
 				I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */,
 				I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */,
@@ -1442,6 +1445,7 @@
 				J58K01M73I192031425BC1 /* DietaryMolybdenumTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425BD1 /* DietaryChlorideTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425BE1 /* DietaryMufaTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425BF1 /* DietaryPufaTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */,
