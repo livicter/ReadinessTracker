@@ -150,6 +150,9 @@ enum SurfaceID {
     static let dayDetailCycles = "day.detail.cycles"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
+    static let breathingSession = "breathing.session"
+    static let breathingStart = "breathing.start"
+    static let breathingPhase = "breathing.phase"
 }
 
 enum ScoreZone {
