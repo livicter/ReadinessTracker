@@ -33,6 +33,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!,
             HKObjectType.categoryType(forIdentifier: .toothbrushingEvent)!,
             HKObjectType.categoryType(forIdentifier: .handwashingEvent)!,
+            HKObjectType.categoryType(forIdentifier: .mindfulSession)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
             HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
             HKObjectType.quantityType(forIdentifier: .appleMoveTime)!,
@@ -158,6 +159,7 @@ class HealthKitManager: ObservableObject {
         async let basal = fetchBasalEnergy(predicate: predicate)
         async let brush = fetchToothbrushingMinutes(predicate: predicate)
         async let wash = fetchHandwashingMinutes(predicate: predicate)
+        async let mindful = fetchMindfulMinutes(predicate: predicate)
         async let steps = fetchSteps(predicate: predicate)
         async let sleep = fetchSleepData(startOfDay: startOfDay)
         async let workouts = fetchWorkouts(startOfDay: startOfDay)
@@ -273,6 +275,7 @@ class HealthKitManager: ObservableObject {
             basalEnergyKcal: await basal,
             toothbrushingMinutes: await brush,
             handwashingMinutes: await wash,
+            mindfulMinutes: await mindful,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -345,6 +348,7 @@ class HealthKitManager: ObservableObject {
             async let basal = fetchBasalEnergy(predicate: predicate)
             async let brush = fetchToothbrushingMinutes(predicate: predicate)
             async let wash = fetchHandwashingMinutes(predicate: predicate)
+            async let mindful = fetchMindfulMinutes(predicate: predicate)
             async let steps = fetchSteps(predicate: predicate)
             async let sleep = fetchSleepDataForDate(startOfDay: startOfDay, endOfDay: endOfDay)
             async let workouts = fetchWorkouts(startOfDay: startOfDay, endOfDay: endOfDay)
@@ -406,6 +410,7 @@ class HealthKitManager: ObservableObject {
             let basalValue = await basal
             let brushValue = await brush
             let washValue = await wash
+            let mindfulValue = await mindful
             let stepsValue = await steps
             let sleepValue = await sleep
             let workoutsValue = await workouts
@@ -516,6 +521,7 @@ class HealthKitManager: ObservableObject {
                 basalEnergyKcal: basalValue,
                 toothbrushingMinutes: brushValue,
                 handwashingMinutes: washValue,
+                mindfulMinutes: mindfulValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -1408,6 +1414,31 @@ class HealthKitManager: ObservableObject {
             self.healthStore.execute(query)
         }
     }
+
+
+    /// Day total mindful session duration (minutes) from HKCategory mindfulSession samples.
+    private func fetchMindfulMinutes(predicate: NSPredicate) async -> Double? {
+        guard let type = HKObjectType.categoryType(forIdentifier: .mindfulSession) else { return nil }
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: type,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, _ in
+                guard let samples = samples as? [HKCategorySample], !samples.isEmpty else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let totalSeconds = samples.reduce(0.0) { partial, sample in
+                    partial + sample.endDate.timeIntervalSince(sample.startDate)
+                }
+                continuation.resume(returning: totalSeconds / 60.0)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
 
 
 

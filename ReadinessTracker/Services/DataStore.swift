@@ -295,6 +295,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 0.3 + Double((offset * 5) % 18) / 10.0 // 0.3…2.0
             }()
+            // Mindful minutes (Honest #189). Recovery sessions — seed for UI.
+            let mindfulMinutesValue: Double? = {
+                if offset == 0 { return 12.0 }
+                if offset % 5 == 0 { return nil }
+                return 5.0 + Double((offset * 11) % 16) // 5…20
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -544,6 +550,7 @@ enum UIFixture {
                 basalEnergyKcal: basalEnergyKcalValue,
                 toothbrushingMinutes: toothbrushingMinutesValue,
                 handwashingMinutes: handwashingMinutesValue,
+                mindfulMinutes: mindfulMinutesValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

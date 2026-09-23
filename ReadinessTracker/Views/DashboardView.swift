@@ -1873,6 +1873,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.handwashingCard)
 
+
+                MindfulTonightBaselineCard(
+                    minutes: data.mindfulMinutes,
+                    history: history.compactMap { day in
+                        guard let v = day.mindfulMinutes else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: MindfulBaseline.average(
+                        from: history,
+                        fallback: data.mindfulMinutes ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.mindfulCard)
+
                 HydrationTonightBaselineCard(
                     waterLiters: data.nutrition.waterLiters,
                     caffeineMg: data.nutrition.caffeineMg,
