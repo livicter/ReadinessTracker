@@ -91,6 +91,19 @@ class MetadataStore: ObservableObject {
                 fatigue = 1 + ((offset * 2) % 5) // 1…5
                 stress = 1 + ((offset * 3) % 5)  // 1…5
             }
+            // Nap (Honest #130): nap most days; skip every 3rd older day.
+            let napped: Bool
+            let napMins: Int?
+            let napQ: Int?
+            if offset == 0 {
+                napped = true; napMins = 25; napQ = 4
+            } else if offset % 3 == 0 {
+                napped = false; napMins = nil; napQ = nil
+            } else {
+                napped = true
+                napMins = 15 + offset * 5 // 20…40
+                napQ = 2 + ((offset * 2) % 4) // 2…5
+            }
             let morning = UserMetadata(
                 date: date,
                 timeOfDay: .morning,
@@ -99,7 +112,10 @@ class MetadataStore: ObservableObject {
                 mentalFatigue: fatigue,
                 alcoholConsumed: drinks > 0,
                 alcoholDrinks: drinks > 0 ? drinks : nil,
-                isStressed: stressed
+                isStressed: stressed,
+                hadNap: napped,
+                napDurationMinutes: napMins,
+                napQuality: napQ
             )
             entries.append(morning)
 
