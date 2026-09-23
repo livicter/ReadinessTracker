@@ -3020,6 +3020,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-iodine-tonight-baseline.png")
     }
 
+    func testDietaryPhosphorusTonightBaselineSurface() throws {
+        // Honest #215: Dietary Phosphorus Tonight | Baseline (HK dietaryPhosphorus).
+        var n = 0
+        while !app.descendants(matching: .any)["body.phosphorus.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.phosphorus.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Phosphorus card")
+        XCTAssertTrue(app.staticTexts["Dietary Phosphorus"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.phosphorus.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Phosphorus"].exists
+        _ = app.descendants(matching: .any)["body.phosphorus.spark"].exists
+        saveShot("verify-dietary-phosphorus-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
