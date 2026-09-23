@@ -3359,6 +3359,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-rowing-speed-tonight-baseline.png")
     }
 
+    func testPaddleSportsDistanceTonightBaselineSurface() throws {
+        // Honest #231: Paddle Sports Distance Tonight | Baseline (HK distancePaddleSports).
+        var n = 0
+        while !app.descendants(matching: .any)["body.paddleSportsDistance.card"].exists && n < 56 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.paddleSportsDistance.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Paddle Sports Distance card")
+        XCTAssertTrue(app.staticTexts["Paddle Sports Distance"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.paddleSportsDistance.baseline"].exists
+        _ = app.staticTexts["7-Day Paddle Distance"].exists
+        _ = app.descendants(matching: .any)["body.paddleSportsDistance.spark"].exists
+        saveShot("verify-paddle-sports-distance-tonight-baseline.png")
+    }
+
+
 
 
 
