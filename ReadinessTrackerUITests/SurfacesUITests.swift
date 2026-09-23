@@ -2840,6 +2840,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-vitamin-k-tonight-baseline.png")
     }
 
+    func testDietaryVitaminB6TonightBaselineSurface() throws {
+        // Honest #205: Vitamin B6 Tonight | Baseline (HK dietaryVitaminB6).
+        var n = 0
+        while !app.descendants(matching: .any)["body.b6.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.b6.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Vitamin B6 card")
+        XCTAssertTrue(app.staticTexts["Vitamin B6"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.b6.baseline"].exists
+        _ = app.staticTexts["7-Day Vitamin B6"].exists
+        _ = app.descendants(matching: .any)["body.b6.spark"].exists
+        saveShot("verify-dietary-vitamin-b6-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
