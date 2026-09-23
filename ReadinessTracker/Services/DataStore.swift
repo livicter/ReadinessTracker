@@ -631,6 +631,11 @@ enum UIFixture {
                         if offset % 5 == 0 { return nil }
                         return 8 + Double((offset * 5) % 25) // 8…32
                     }(),
+                    vitaminCMg: {
+                        if offset == 0 { return 95 }
+                        if offset % 5 == 0 { return nil }
+                        return 40 + Double((offset * 13) % 101) // 40…140
+                    }(),
                     alcoholicBeverages: {
                         if offset == 0 { return 0 }
                         if offset % 5 == 0 { return nil }
