@@ -101,6 +101,33 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-body-activity.png")
     }
 
+    func testMetricAboutWellSurface() throws {
+        // Honest #86: Metric Detail / Advanced Metric About circular tint wells.
+        // Today → Metrics → Sleep card → MetricDetailView; soft-scroll About / older-data cue.
+        revealText("Metrics")
+        let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+        if sleepCard.waitForExistence(timeout: 6) {
+            sleepCard.tap()
+        } else {
+            let sleepButton = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).firstMatch
+            XCTAssertTrue(sleepButton.waitForExistence(timeout: 8), "Sleep metric card")
+            sleepButton.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8)
+        )
+        // Soft: About / older-data copy may sit below the chart — scroll without hard assert.
+        let cue = app.staticTexts["Why can't I see older data?"]
+        var n = 0
+        while !cue.exists && n < 12 {
+            app.swipeUp()
+            n += 1
+        }
+        _ = cue.exists || app.staticTexts["About This Data"].exists
+        saveShot("verify-metric-about.png")
+    }
+
     func testMetricsSectionVisibleAfterScroll() throws {
         // Honest #75: MetricCard header circular tint wells (Sleep/HRV/Resting HR/Active Cals).
         revealText("Metrics")
