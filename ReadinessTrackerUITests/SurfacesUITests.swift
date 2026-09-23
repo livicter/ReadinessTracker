@@ -316,6 +316,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testSleepDisturbanceSurfaceVisibleAfterScroll() throws {
+        // Honest #73: Sleep Stages disturbance cue circular tint well.
         // Today Sleep Stages card: fixture wakeEpisodes: 1 → "1 disturbance" + a11y "Sleep disturbances".
         revealText("Sleep Stages")
         let row = app.descendants(matching: .any)["Sleep disturbances"].firstMatch
