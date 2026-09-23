@@ -2027,6 +2027,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietaryPotassiumCard)
 
 
+                DietaryCholesterolTonightBaselineCard(
+                    cholesterolMg: data.nutrition.cholesterolMg,
+                    history: history.compactMap { day in
+                        guard let m = day.nutrition.cholesterolMg else { return nil }
+                        return (day.date, m)
+                    },
+                    baselineMg: DietaryCholesterolBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.cholesterolMg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryCholesterolCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
