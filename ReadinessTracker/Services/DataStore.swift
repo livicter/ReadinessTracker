@@ -218,6 +218,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return Double((offset * 3) % 4) // 0…3
             }()
+            // Wheelchair push count (Honest #171). Sparse mobility — seed for UI.
+            let pushCountValue: Double? = {
+                if offset == 0 { return 1240 }
+                if offset % 5 == 0 { return nil }
+                return 200 + Double((offset * 173) % 3001) // 200…3200
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -454,6 +460,7 @@ enum UIFixture {
                 atrialFibrillationBurdenPercent: atrialFibrillationBurdenPercentValue,
                 peripheralPerfusionIndexPercent: peripheralPerfusionIndexPercentValue,
                 numberOfTimesFallen: numberOfTimesFallenValue,
+                pushCount: pushCountValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
