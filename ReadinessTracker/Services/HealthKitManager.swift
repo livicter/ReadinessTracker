@@ -31,6 +31,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!,
+            HKObjectType.categoryType(forIdentifier: .toothbrushingEvent)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
             HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
             HKObjectType.quantityType(forIdentifier: .appleMoveTime)!,
@@ -151,6 +152,7 @@ class HealthKitManager: ObservableObject {
         async let rhr = fetchRestingHR(predicate: predicate)
         async let calories = fetchActiveCalories(predicate: predicate)
         async let basal = fetchBasalEnergy(predicate: predicate)
+        async let brush = fetchToothbrushingMinutes(predicate: predicate)
         async let steps = fetchSteps(predicate: predicate)
         async let sleep = fetchSleepData(startOfDay: startOfDay)
         async let workouts = fetchWorkouts(startOfDay: startOfDay)
@@ -259,6 +261,7 @@ class HealthKitManager: ObservableObject {
             leanBodyMassKg: await lean,
             waistCircumferenceCm: await waist,
             basalEnergyKcal: await basal,
+            toothbrushingMinutes: await brush,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -329,6 +332,7 @@ class HealthKitManager: ObservableObject {
             async let rhr = fetchRestingHR(predicate: predicate)
             async let calories = fetchActiveCalories(predicate: predicate)
             async let basal = fetchBasalEnergy(predicate: predicate)
+            async let brush = fetchToothbrushingMinutes(predicate: predicate)
             async let steps = fetchSteps(predicate: predicate)
             async let sleep = fetchSleepDataForDate(startOfDay: startOfDay, endOfDay: endOfDay)
             async let workouts = fetchWorkouts(startOfDay: startOfDay, endOfDay: endOfDay)
@@ -386,6 +390,7 @@ class HealthKitManager: ObservableObject {
             let rhrValue = await rhr
             let calValue = await calories
             let basalValue = await basal
+            let brushValue = await brush
             let stepsValue = await steps
             let sleepValue = await sleep
             let workoutsValue = await workouts
@@ -489,6 +494,7 @@ class HealthKitManager: ObservableObject {
                 leanBodyMassKg: leanValue,
                 waistCircumferenceCm: waistValue,
                 basalEnergyKcal: basalValue,
+                toothbrushingMinutes: brushValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -1308,6 +1314,31 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .basalEnergyBurned) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .kilocalorie())
     }
+
+
+    /// Day total toothbrushing duration (minutes) from HKCategory toothbrushingEvent samples.
+    private func fetchToothbrushingMinutes(predicate: NSPredicate) async -> Double? {
+        guard let type = HKObjectType.categoryType(forIdentifier: .toothbrushingEvent) else { return nil }
+        return await withCheckedContinuation { continuation in
+            let query = HKSampleQuery(
+                sampleType: type,
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, _ in
+                guard let samples = samples as? [HKCategorySample], !samples.isEmpty else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let totalSeconds = samples.reduce(0.0) { partial, sample in
+                    partial + sample.endDate.timeIntervalSince(sample.startDate)
+                }
+                continuation.resume(returning: totalSeconds / 60.0)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
 
     
     private func fetchSteps(predicate: NSPredicate) async -> Int {

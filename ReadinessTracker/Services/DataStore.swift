@@ -266,6 +266,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 1500 + Double((offset * 17) % 351) // 1500…1850
             }()
+            // Toothbrushing minutes (Honest #185). Hygiene duration — seed for UI.
+            let toothbrushingMinutesValue: Double? = {
+                if offset == 0 { return 4.2 }
+                if offset % 5 == 0 { return nil }
+                return 1.5 + Double((offset * 7) % 35) / 10.0 // 1.5…4.9
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -510,6 +516,7 @@ enum UIFixture {
                 leanBodyMassKg: leanBodyMassKgValue,
                 waistCircumferenceCm: waistCircumferenceCmValue,
                 basalEnergyKcal: basalEnergyKcalValue,
+                toothbrushingMinutes: toothbrushingMinutesValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
