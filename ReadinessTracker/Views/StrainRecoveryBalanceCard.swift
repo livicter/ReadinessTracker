@@ -60,7 +60,8 @@ struct StrainRecoveryBalanceCard: View {
                             value: "\(recovery)",
                             unit: "%",
                             color: RTColor.optimal,
-                            delta: recoveryDelta.map { Self.formatDelta(Int($0)) }
+                            delta: recoveryDelta.map { Self.formatDelta(Int($0)) },
+                            icon: "heart.fill"
                         )
 
                         Rectangle()
@@ -73,7 +74,8 @@ struct StrainRecoveryBalanceCard: View {
                             value: String(format: "%.1f", strain),
                             unit: "/21",
                             color: RTColor.caution,
-                            delta: strainDelta.map { Self.formatDelta($0, decimals: 1) }
+                            delta: strainDelta.map { Self.formatDelta($0, decimals: 1) },
+                            icon: "flame.fill"
                         )
                     }
                     .accessibilityElement(children: .contain)
@@ -124,12 +126,23 @@ struct StrainRecoveryBalanceCard: View {
         value: String,
         unit: String,
         color: Color,
-        delta: String?
+        delta: String?,
+        icon: String
     ) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+            HStack(spacing: 6) {
+                // Honest #97: Apple circular tint well on Recovery|Strain dual columns.
+                Image(systemName: icon)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(color)
+                    .frame(width: 22, height: 22)
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
 
             HStack(alignment: .firstTextBaseline, spacing: 2) {
                 Text(value)

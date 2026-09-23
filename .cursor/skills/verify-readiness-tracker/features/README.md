@@ -30,3 +30,4 @@
 | Sleep Debt column wells | `sleep-debt-column-wells.md` | Sleep Debt dual column circular wells |
 | Tonight|Baseline wells | `tonight-baseline-wells.md` | Sleep HRV/Resp/SkinTemp dual wells |
 | Sleep Need|Got wells | `sleep-need-got-wells.md` | Sleep Performance Need|Got circular wells |
+| Strain balance column wells | `strain-balance-column-wells.md` | Recovery|Strain dual column wells |
