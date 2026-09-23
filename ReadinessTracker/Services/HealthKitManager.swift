@@ -130,6 +130,9 @@ class HealthKitManager: ObservableObject {
             if let powerType = HKObjectType.quantityType(forIdentifier: .cyclingPower) {
                 typesToRead.insert(powerType)
             }
+            if let cycleSpeedType = HKObjectType.quantityType(forIdentifier: .cyclingSpeed) {
+                typesToRead.insert(cycleSpeedType)
+            }
             if let ftpType = HKObjectType.quantityType(forIdentifier: .cyclingFunctionalThresholdPower) {
                 typesToRead.insert(ftpType)
             }
@@ -241,6 +244,7 @@ class HealthKitManager: ObservableObject {
         async let cyclePower = fetchCyclingPower(predicate: predicate)
         async let cycleFTP = fetchCyclingFTP(predicate: predicate)
         async let cycleDistance = fetchDistanceCycling(predicate: predicate)
+        async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let runPower = fetchRunningPower(predicate: predicate)
         async let runSpeed = fetchRunningSpeed(predicate: predicate)
@@ -335,6 +339,7 @@ class HealthKitManager: ObservableObject {
             cyclingPowerWatts: await cyclePower,
             cyclingFTPWatts: await cycleFTP,
             distanceCyclingKm: await cycleDistance,
+            cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             runningPowerWatts: await runPower,
             runningSpeedMps: await runSpeed,
@@ -429,6 +434,7 @@ class HealthKitManager: ObservableObject {
             async let cyclePower = fetchCyclingPower(predicate: predicate)
             async let cycleFTP = fetchCyclingFTP(predicate: predicate)
             async let cycleDistance = fetchDistanceCycling(predicate: predicate)
+            async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let runPower = fetchRunningPower(predicate: predicate)
             async let runSpeed = fetchRunningSpeed(predicate: predicate)
@@ -493,6 +499,7 @@ class HealthKitManager: ObservableObject {
             let cyclePowerValue = await cyclePower
             let cycleFTPValue = await cycleFTP
             let cycleDistanceValue = await cycleDistance
+            let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let runPowerValue = await runPower
             let runSpeedValue = await runSpeed
@@ -584,6 +591,7 @@ class HealthKitManager: ObservableObject {
                 cyclingPowerWatts: cyclePowerValue,
                 cyclingFTPWatts: cycleFTPValue,
                 distanceCyclingKm: cycleDistanceValue,
+                cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 runningPowerWatts: runPowerValue,
                 runningSpeedMps: runSpeedValue,
@@ -1281,6 +1289,24 @@ class HealthKitManager: ObservableObject {
     private func fetchRunningSpeed(predicate: NSPredicate) async -> Double? {
         guard #available(iOS 16.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .runningSpeed) else { return nil }
+        let unit = HKUnit.meter().unitDivided(by: .second())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average cycling speed (m/s). Sparse ride activity — fixture seeds UI. iOS 17+.
+    private func fetchCyclingSpeed(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 17.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .cyclingSpeed) else { return nil }
         let unit = HKUnit.meter().unitDivided(by: .second())
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
