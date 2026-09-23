@@ -886,6 +886,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.workoutMinutesCard)
 
+            AppleExerciseTimeTonightBaselineCard(
+                minutes: data.appleExerciseTimeMinutes,
+                history: history.compactMap { day in
+                    guard let m = day.appleExerciseTimeMinutes else { return nil }
+                    return (day.date, m)
+                },
+                baseline: AppleExerciseTimeBaseline.average(
+                    from: history,
+                    fallback: data.appleExerciseTimeMinutes ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.appleExerciseTimeCard)
+
+
             DailyTRIMPCard(
                 sessions: data.strainSessions,
                 history: history.map { ($0.date, DailyTRIMP.total(from: $0.strainSessions)) },
