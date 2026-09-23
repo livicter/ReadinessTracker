@@ -344,6 +344,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 2.40 + Double((offset * 13) % 120) / 100.0 // 2.40…3.59
             }()
+            // Running ground contact ms (Honest #161). Simulator often empty — seed for UI.
+            let runningGroundContactMsValue: Double? = {
+                if offset == 0 { return 242.0 }
+                if offset % 5 == 0 { return nil }
+                return 210.0 + Double((offset * 11) % 80) // 210…289
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -417,6 +423,7 @@ enum UIFixture {
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 runningPowerWatts: runningPowerWattsValue,
                 runningSpeedMps: runningSpeedMpsValue,
+                runningGroundContactMs: runningGroundContactMsValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),

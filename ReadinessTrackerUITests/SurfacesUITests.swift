@@ -1835,6 +1835,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-running-speed-tonight-baseline.png")
     }
 
+    func testRunningGCTTonightBaselineSurface() throws {
+        // Honest #161: Ground Contact Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Ground Contact"]
+        while !title.exists && n < 56 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Ground Contact")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.runningGCT.card"].exists
+        _ = app.descendants(matching: .any)["body.runningGCT.baseline"].exists
+        _ = app.staticTexts["7-Day Ground Contact"].exists
+        _ = app.descendants(matching: .any)["body.runningGCT.spark"].exists
+        saveShot("verify-running-gct-tonight-baseline.png")
+    }
+
 
 
 
