@@ -202,6 +202,9 @@ struct ChartTooltip: View {
     let unit: String
     let deviation: String?
     let isOutlier: Bool
+    /// Honest #246: Apple Health–style inspect extras (optional for classic callers).
+    var zScore: String? = nil
+    var dayDelta: String? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -222,6 +225,20 @@ struct ChartTooltip: View {
                 Text(deviation)
                     .font(.caption2)
                     .foregroundStyle(deviation.hasPrefix("+") ? RTColor.optimal : RTColor.warning)
+            }
+
+            if let zScore {
+                Text(zScore)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(RTColor.secondaryText)
+                    .accessibilityIdentifier(SurfaceID.metricChartSelectionZScore)
+            }
+
+            if let dayDelta {
+                Text(dayDelta)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(dayDelta.contains("-") ? RTColor.warning : RTColor.optimal)
+                    .accessibilityIdentifier(SurfaceID.metricChartSelectionDayDelta)
             }
             
             if isOutlier {

@@ -262,21 +262,33 @@ struct AdvancedMetricChartView: View {
                 
                 let deviation = selected.percentDeviation * 100
                 let sign = deviation >= 0 ? "+" : ""
-                let deviationStr = "\(sign)\(String(format: "%.1f", deviation))%"
+                let deviationStr = "\(sign)\(String(format: "%.1f", deviation))% vs baseline"
+                let zSign = selected.zScore >= 0 ? "+" : ""
+                let zScoreStr = "\(zSign)\(String(format: "%.1f", selected.zScore))σ"
+                let dayDeltaStr: String? = {
+                    guard let roc = selected.rateOfChange else { return nil }
+                    let s = roc >= 0 ? "+" : ""
+                    return "Day Δ \(s)\(String(format: "%.0f", roc * 100))%"
+                }()
                 
                 ChartTooltip(
                     date: selected.date,
                     value: formattedValue(selected.rawValue),
                     unit: metric.unit,
                     deviation: deviationStr,
-                    isOutlier: selected.isOutlier
+                    isOutlier: selected.isOutlier,
+                    zScore: zScoreStr,
+                    dayDelta: dayDeltaStr
                 )
                 .accessibilityIdentifier(SurfaceID.metricChartSelection)
                 .accessibilityLabel(
-                    ChartScrubSelection.calloutText(
+                    ChartScrubSelection.enrichedCalloutText(
                         date: selected.date,
                         value: formattedValue(selected.rawValue),
-                        unit: metric.unit
+                        unit: metric.unit,
+                        deviation: deviationStr,
+                        zScore: zScoreStr,
+                        dayDelta: dayDeltaStr
                     )
                 )
                 .position(
