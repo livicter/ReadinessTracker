@@ -190,7 +190,12 @@ struct RespiratoryRateCard: View {
                 if abs(deviation) > 10 {
                     HStack(spacing: 8) {
                         Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(RTColor.caution)
+                            .frame(width: 26, height: 26)
+                            .background((RTColor.caution).opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text(deviation > 0
                              ? "Elevated respiratory rate may indicate your body is working harder to recover."
