@@ -232,6 +232,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metrics.png")
     }
 
+    func testBodyCycleDetailSurface() throws {
+        // Honest #101: Body Cycle tile → Apple Health / Google Health–style cycle detail.
+        // -ui-fixture enables trackMenstrualCycle + seeds a short flow streak.
+        revealText("Body")
+        let cycleTile = app.descendants(matching: .any)["body.tile.cycle"].firstMatch
+        XCTAssertTrue(cycleTile.waitForExistence(timeout: 8), "body.tile.cycle")
+        if cycleTile.isHittable {
+            cycleTile.tap()
+        } else {
+            cycleTile.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+        }
+        let detail = app.descendants(matching: .any)["body.cycle.detail"].firstMatch
+        XCTAssertTrue(
+            detail.waitForExistence(timeout: 8) ||
+            app.navigationBars["Cycle"].waitForExistence(timeout: 8),
+            "body.cycle.detail"
+        )
+        _ = app.staticTexts["Flow reported"].exists || app.staticTexts["No flow"].exists
+        _ = app.staticTexts["Last 14 days"].exists
+        _ = app.descendants(matching: .any)["body.cycle.status"].exists
+        saveShot("verify-body-cycle.png")
+    }
+
     func testBodyDetailSurface() throws {
         // Today Body Steps tile → Fitness / Google Health–style metric detail sheet.
         revealText("Body")

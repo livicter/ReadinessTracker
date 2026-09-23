@@ -90,6 +90,10 @@ enum UIFixture {
         guard isRequested else { return }
         DataStore.shared.seedUIFixture()
         seedJournalEntries()
+        // Google Health / Apple Health Cycle glance: show Cycle tile under -ui-fixture.
+        var settings = UserSettings.load()
+        settings.trackMenstrualCycle = true
+        settings.save()
         HealthKitManager.shared.dataSource = "Whoop"
         HealthKitManager.shared.isAuthorized = true
         HealthKitManager.shared.errorMessage = nil
@@ -173,7 +177,9 @@ enum UIFixture {
                 skinTemperature: offset == 0 ? 36.40 : 36.15 + Double((offset * 7) % 11) * 0.05,
                 respiratoryRate: offset == 0 ? 15.2 : 14.2 + Double((offset * 3) % 9) * 0.25,
                 bloodOxygen: 97,
-                nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95)
+                nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95),
+                // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
+                menstrualFlow: offset <= 2
             )
         }
     }

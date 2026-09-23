@@ -2,6 +2,20 @@ import SwiftUI
 import Charts
 import UIKit
 
+
+/// Single sheet host — SwiftUI only reliably presents one `.sheet` per view.
+private enum BodyPresentation: Identifiable {
+    case metric(BodyMetricKind)
+    case cycle
+
+    var id: String {
+        switch self {
+        case .metric(let kind): return "metric-\(kind.rawValue)"
+        case .cycle: return "cycle"
+        }
+    }
+}
+
 struct DashboardView: View {
     @StateObject private var healthKit = HealthKitManager.shared
     @StateObject private var fitbit = FitbitManager.shared
@@ -15,7 +29,7 @@ struct DashboardView: View {
     @State private var dismissedError: String?
     @State private var isWeeklyReportPresented = false
     @State private var selectedRing: RingKind?
-    @State private var selectedBodyMetric: BodyMetricKind?
+    @State private var presentedBody: BodyPresentation?
     @Environment(\.openURL) private var openURL
 
     private var latestData: DailyHealthData? {
@@ -1020,33 +1034,39 @@ struct DashboardView: View {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     ForEach(kinds) { kind in
                         BodyMetricTile(kind: kind, data: data, history: history) {
-                            selectedBodyMetric = kind
+                            presentedBody = .metric(kind)
                         }
                     }
                     if UserSettings.load().trackMenstrualCycle {
-                        // Cycle remains informational (no dedicated metric kind / detail yet).
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack(spacing: 8) {
-                                Image(systemName: "circle.lefthalf.filled")
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundStyle(RTColor.secondaryText)
-                                    .frame(width: 26, height: 26)
-                                    .background(RTColor.secondaryText.opacity(0.12))
-                                    .clipShape(Circle())
-                                Text("Cycle")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(RTColor.secondaryText)
+                        // Honest #101: Cycle tile opens Google Health / Apple Health–style detail.
+                        Button {
+                            presentedBody = .cycle
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "circle.lefthalf.filled")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundStyle(Color(hex: "FF2D55"))
+                                        .frame(width: 26, height: 26)
+                                        .background(Color(hex: "FF2D55").opacity(0.14))
+                                        .clipShape(Circle())
+                                        .accessibilityHidden(true)
+                                    Text("Cycle")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(RTColor.secondaryText)
+                                }
+                                Text(data.menstrualFlow ? "Flow reported" : "No flow")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(RTColor.primaryText)
                             }
-                            Text(data.menstrualFlow ? "Flow reported" : "No flow")
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(RTColor.primaryText)
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
+                                    .fill(RTColor.surfaceHighlight.opacity(0.55))
+                            )
                         }
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous)
-                                .fill(RTColor.surfaceHighlight.opacity(0.55))
-                        )
+                        .buttonStyle(.plain)
                         .accessibilityIdentifier("body.tile.cycle")
                     }
                 }
@@ -1055,8 +1075,13 @@ struct DashboardView: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Body")
         .accessibilityIdentifier(SurfaceID.bodyActivitySection)
-        .sheet(item: $selectedBodyMetric) { kind in
-            BodyMetricDetailView(kind: kind, data: data, history: history)
+        .sheet(item: $presentedBody) { item in
+            switch item {
+            case .metric(let kind):
+                BodyMetricDetailView(kind: kind, data: data, history: history)
+            case .cycle:
+                CycleDetailView(data: data, history: history)
+            }
         }
     }
 
