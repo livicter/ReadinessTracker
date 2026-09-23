@@ -1589,6 +1589,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
 
+                UnderwaterDepthTonightBaselineCard(
+                    meters: data.underwaterDepthMeters,
+                    history: history.compactMap { day in
+                        guard let m = day.underwaterDepthMeters else { return nil }
+                        return (day.date, m)
+                    },
+                    baseline: UnderwaterDepthBaseline.average(
+                        from: history,
+                        fallback: data.underwaterDepthMeters ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(

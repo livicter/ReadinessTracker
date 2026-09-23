@@ -1697,6 +1697,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cycling-cadence-tonight-baseline.png")
     }
 
+    func testUnderwaterDepthTonightBaselineSurface() throws {
+        // Honest #155: Underwater Depth Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Underwater Depth"]
+        while !title.exists && n < 44 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Underwater Depth")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.underwaterDepth.card"].exists
+        _ = app.descendants(matching: .any)["body.underwaterDepth.baseline"].exists
+        _ = app.staticTexts["7-Day Underwater Depth"].exists
+        _ = app.descendants(matching: .any)["body.underwaterDepth.spark"].exists
+        saveShot("verify-underwater-depth-tonight-baseline.png")
+    }
+
 
 
 
