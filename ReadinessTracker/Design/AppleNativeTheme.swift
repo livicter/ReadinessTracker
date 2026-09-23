@@ -429,9 +429,19 @@ struct AppEmptyState: View {
 
 struct MissingMetricRow: View {
     let title: String
+    var icon: String = "moon.zzz.fill"
+    var tint: Color = RTColor.secondaryText
 
     var body: some View {
-        HStack {
+        HStack(spacing: 10) {
+            // Honest #89: Apple circular tint well on missing overnight metric rows.
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
             Text(title)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(RTColor.primaryText)
