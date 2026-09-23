@@ -859,6 +859,54 @@ final class SurfacesUITests: XCTestCase {
 
 
 
+
+    func testHeartRateZonesSurface() throws {
+        // Honest #105: WHOOP/Apple Fitness HR zones (%HRR) on Recovery & Strain.
+        revealText("Sleep Consistency")
+        app.swipeUp()
+        let byId = app.descendants(matching: .any)["strain.recovery.balance"].firstMatch
+        let byLabel = app.buttons["Strain recovery balance detail"].firstMatch
+        let balanceTitle = app.staticTexts["Balance"]
+        var n = 0
+        while !(byId.exists || byLabel.exists || balanceTitle.exists) && n < 6 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(
+            byId.waitForExistence(timeout: 6) ||
+            byLabel.waitForExistence(timeout: 4) ||
+            balanceTitle.waitForExistence(timeout: 4),
+            "strain.recovery.balance"
+        )
+        if byId.exists && byId.isHittable {
+            byId.tap()
+        } else if byLabel.exists && byLabel.isHittable {
+            byLabel.tap()
+        } else if balanceTitle.exists {
+            balanceTitle.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Recovery & Strain"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Strain Breakdown"].waitForExistence(timeout: 6),
+            "Recovery & Strain detail"
+        )
+        // Scroll into HR Zones card under fixture samples.
+        var z = 0
+        while !app.staticTexts["Heart Rate Zones"].exists && z < 8 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(
+            app.staticTexts["Heart Rate Zones"].waitForExistence(timeout: 6),
+            "Heart Rate Zones title"
+        )
+        _ = app.descendants(matching: .any)["strain.hr.zones"].exists
+        _ = app.staticTexts["Rest"].exists || app.staticTexts["Light"].exists
+        _ = app.staticTexts["Moderate"].exists || app.staticTexts["Hard"].exists || app.staticTexts["Peak"].exists
+        _ = app.descendants(matching: .any)["strain.hr.zone.light"].exists
+        saveShot("verify-hr-zones.png")
+    }
+
     func testStrainBalanceColumnWellSurface() throws {
         // Honest #97: Recovery|Strain balance dual columns circular wells.
         _ = app.staticTexts["TODAY'S READINESS"].waitForExistence(timeout: 8)
