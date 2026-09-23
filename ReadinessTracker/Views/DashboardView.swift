@@ -1998,6 +1998,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.bloodGlucoseCard)
 
+
+                BodyMassTonightBaselineCard(
+                    kg: data.bodyMassKg,
+                    history: history.compactMap { day in
+                        guard let v = day.bodyMassKg else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: BodyMassBaseline.average(
+                        from: history,
+                        fallback: data.bodyMassKg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.bodyMassCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,
