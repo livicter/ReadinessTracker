@@ -2012,6 +2012,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.bodyMassCard)
 
+
+                LeanBodyMassTonightBaselineCard(
+                    kg: data.leanBodyMassKg,
+                    history: history.compactMap { day in
+                        guard let v = day.leanBodyMassKg else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: LeanBodyMassBaseline.average(
+                        from: history,
+                        fallback: data.leanBodyMassKg ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.leanBodyMassCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,

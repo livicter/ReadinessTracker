@@ -248,6 +248,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 71.0 + Double((offset * 3) % 31) / 10.0 // 71.0…74.0
             }()
+            // Lean body mass kg (Honest #182). Sparse composition — seed for UI.
+            let leanBodyMassKgValue: Double? = {
+                if offset == 0 { return 56.8 }
+                if offset % 5 == 0 { return nil }
+                return 55.5 + Double((offset * 5) % 26) / 10.0 // 55.5…58.0
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -489,6 +495,7 @@ enum UIFixture {
                 insulinDeliveryIU: insulinDeliveryIUValue,
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,
                 bodyMassKg: bodyMassKgValue,
+                leanBodyMassKg: leanBodyMassKgValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

@@ -41,6 +41,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .insulinDelivery)!,
             HKObjectType.quantityType(forIdentifier: .bloodGlucose)!,
             HKObjectType.quantityType(forIdentifier: .bodyMass)!,
+            HKObjectType.quantityType(forIdentifier: .leanBodyMass)!,
             HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.quantityType(forIdentifier: .walkingDoubleSupportPercentage)!,
             HKObjectType.quantityType(forIdentifier: .walkingAsymmetryPercentage)!,
@@ -166,6 +167,7 @@ class HealthKitManager: ObservableObject {
         async let insulin = fetchInsulinDelivery(predicate: predicate)
         async let glucose = fetchBloodGlucose(predicate: predicate)
         async let mass = fetchBodyMass(predicate: predicate)
+        async let lean = fetchLeanBodyMass(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -250,6 +252,7 @@ class HealthKitManager: ObservableObject {
             insulinDeliveryIU: await insulin,
             bloodGlucoseMgDl: await glucose,
             bodyMassKg: await mass,
+            leanBodyMassKg: await lean,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -335,6 +338,7 @@ class HealthKitManager: ObservableObject {
             async let insulin = fetchInsulinDelivery(predicate: predicate)
             async let glucose = fetchBloodGlucose(predicate: predicate)
             async let mass = fetchBodyMass(predicate: predicate)
+            async let lean = fetchLeanBodyMass(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
@@ -390,6 +394,7 @@ class HealthKitManager: ObservableObject {
             let insulinValue = await insulin
             let glucoseValue = await glucose
             let massValue = await mass
+            let leanValue = await lean
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
@@ -471,6 +476,7 @@ class HealthKitManager: ObservableObject {
                 insulinDeliveryIU: insulinValue,
                 bloodGlucoseMgDl: glucoseValue,
                 bodyMassKg: massValue,
+                leanBodyMassKg: leanValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -712,6 +718,14 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .bodyMass) else { return nil }
         return await fetchMostRecentQuantity(type: type, predicate: predicate, unit: .gramUnit(with: .kilo))
     }
+
+
+    /// Latest lean body mass (kg). Sparse composition — fixture seeds UI.
+    private func fetchLeanBodyMass(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .leanBodyMass) else { return nil }
+        return await fetchMostRecentQuantity(type: type, predicate: predicate, unit: .gramUnit(with: .kilo))
+    }
+
 
 
 
