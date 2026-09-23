@@ -1667,6 +1667,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.runningSpeedCard)
 
+                RunningGCTTonightBaselineCard(
+                    milliseconds: data.runningGroundContactMs,
+                    history: history.compactMap { day in
+                        guard let m = day.runningGroundContactMs else { return nil }
+                        return (day.date, m)
+                    },
+                    baseline: RunningGCTBaseline.average(
+                        from: history,
+                        fallback: data.runningGroundContactMs ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.runningGCTCard)
+
 
 
                 ActiveCaloriesTonightBaselineCard(
