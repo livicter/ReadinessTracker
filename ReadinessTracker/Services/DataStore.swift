@@ -175,7 +175,8 @@ enum UIFixture {
                 source: .appleWatch,
                 // Vary older nights so Sleep Quality spark/bars show shape; today stays 7.4h.
                 sleepHours: sleepHoursValue,
-                sleepEfficiency: 0.90,
+                // Vary older nights so Sleep Efficiency 7-night spark has shape; today ~91% (Excellent).
+                sleepEfficiency: offset == 0 ? 0.91 : (0.78 + Double((offset * 5) % 17) * 0.01),
                 deepSleepPercent: 0.17,
                 remSleepPercent: 0.21,
                 // Vary onset so Sleep Latency 7-night spark has shape; today ~12 min (Fast).
