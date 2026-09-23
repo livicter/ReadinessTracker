@@ -493,6 +493,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 1.4 + Double((offset * 11) % 28) / 10.0 // 1.4…4.1
             }()
+            // Paddle sports distance km (Honest #231). Sparse niche sport — seed for UI.
+            let distancePaddleSportsKmValue: Double? = {
+                if offset == 0 { return 7.2 }
+                if offset % 5 == 0 { return nil }
+                return 1.2 + Double((offset * 17) % 108) / 10.0 // 1.2…11.9
+            }()
             // Cycling speed m/s (Honest #222). Completes cycling set — leftover after cadence/power/FTP/distance.
             let cyclingSpeedMpsValue: Double? = {
                 if offset == 0 { return 6.8 }
@@ -643,6 +649,7 @@ enum UIFixture {
                 distanceCyclingKm: distanceCyclingKmValue,
                 distanceRowingKm: distanceRowingKmValue,
                 rowingSpeedMps: rowingSpeedMpsValue,
+                distancePaddleSportsKm: distancePaddleSportsKmValue,
                 cyclingSpeedMps: cyclingSpeedMpsValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 workoutEffortScore: workoutEffortScoreValue,

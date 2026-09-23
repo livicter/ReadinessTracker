@@ -158,6 +158,9 @@ class HealthKitManager: ObservableObject {
             if let rowingSpeedType = HKObjectType.quantityType(forIdentifier: .rowingSpeed) {
                 typesToRead.insert(rowingSpeedType)
             }
+            if let paddleDistanceType = HKObjectType.quantityType(forIdentifier: .distancePaddleSports) {
+                typesToRead.insert(paddleDistanceType)
+            }
         }
 
         if #available(iOS 16.0, *) {
@@ -269,6 +272,7 @@ class HealthKitManager: ObservableObject {
         async let cycleDistance = fetchDistanceCycling(predicate: predicate)
         async let rowingDistance = fetchDistanceRowing(predicate: predicate)
         async let rowingSpeed = fetchRowingSpeed(predicate: predicate)
+        async let paddleDistance = fetchDistancePaddleSports(predicate: predicate)
         async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -372,6 +376,7 @@ class HealthKitManager: ObservableObject {
             distanceCyclingKm: await cycleDistance,
             distanceRowingKm: await rowingDistance,
             rowingSpeedMps: await rowingSpeed,
+            distancePaddleSportsKm: await paddleDistance,
             cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             workoutEffortScore: await workoutEffort,
@@ -475,6 +480,7 @@ class HealthKitManager: ObservableObject {
             async let cycleDistance = fetchDistanceCycling(predicate: predicate)
             async let rowingDistance = fetchDistanceRowing(predicate: predicate)
             async let rowingSpeed = fetchRowingSpeed(predicate: predicate)
+            async let paddleDistance = fetchDistancePaddleSports(predicate: predicate)
             async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -548,6 +554,7 @@ class HealthKitManager: ObservableObject {
             let cycleDistanceValue = await cycleDistance
             let rowingDistanceValue = await rowingDistance
             let rowingSpeedValue = await rowingSpeed
+            let paddleDistanceValue = await paddleDistance
             let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let workoutEffortValue = await workoutEffort
@@ -648,6 +655,7 @@ class HealthKitManager: ObservableObject {
                 distanceCyclingKm: cycleDistanceValue,
                 distanceRowingKm: rowingDistanceValue,
                 rowingSpeedMps: rowingSpeedValue,
+                distancePaddleSportsKm: paddleDistanceValue,
                 cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 workoutEffortScore: workoutEffortValue,
@@ -1315,6 +1323,15 @@ class HealthKitManager: ObservableObject {
             }
             self.healthStore.execute(query)
         }
+    }
+
+
+    /// Day cumulative paddle sports distance in kilometers. Sparse niche sport — fixture seeds UI. iOS 18+.
+    private func fetchDistancePaddleSports(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 18.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distancePaddleSports) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
     }
 
     private func fetchSwimmingStrokeCount(predicate: NSPredicate) async -> Double? {
