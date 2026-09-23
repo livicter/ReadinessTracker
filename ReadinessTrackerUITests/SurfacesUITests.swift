@@ -1055,6 +1055,19 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-skin-temp.png")
     }
 
+    func testBloodOxygenSurface() throws {
+        // Honest #107: WHOOP/GHealth Blood Oxygen Tonight | Baseline + 7-night spark + band.
+        revealText("Blood Oxygen")
+        XCTAssertTrue(app.staticTexts["Blood Oxygen"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].waitForExistence(timeout: 4))
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["blood.oxygen.card"].exists
+        _ = app.descendants(matching: .any)["blood.oxygen.baseline"].exists
+        _ = app.staticTexts["7-Night SpO₂"].exists || app.staticTexts["7-Night SpO2"].exists
+        _ = app.descendants(matching: .any)["blood.oxygen.spark"].exists
+        saveShot("verify-blood-oxygen.png")
+    }
+
     func testRecommendationsSurface() throws {
         // Today Recommendations: WHOOP-style actionable cards (≥1 under -ui-fixture).
         revealText("Recommendations")

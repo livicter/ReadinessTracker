@@ -91,6 +91,7 @@
 		7DBD9150E09A04993544873B /* HealthData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAA12504EA33256D8743B223 /* HealthData.swift */; };
 		8101771D43D7B94A2B429611 /* SmartInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99D4B77F38260D5C0D8B47B8 /* SmartInsightsView.swift */; };
 		823E33C920B69115FA3F814A /* RespiratoryRateCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9659B149E7D7989F93C74A /* RespiratoryRateCard.swift */; };
+		D0F6B24C5E7E91D34C2B4399 /* BloodOxygenCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9E5A13B4F6D80C23B1A3288 /* BloodOxygenCard.swift */; };
 		85F5598095EC19DD37BC120D /* HRVCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDD5423DA5F87145875D338 /* HRVCalculator.swift */; };
 		88655F0BEB2B5D453C78C1F7 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */; };
 		8F292D10ACBA04D41A651C9E /* CoachingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43563FD2952CE3C129D08D18 /* CoachingEngineTests.swift */; };
@@ -310,6 +311,7 @@
 		8AF7EEDF89A57D2C8EE67CED /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		8CE5E39CEF2C51B85DE581D1 /* SleepStageBreakdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepStageBreakdown.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepStageBreakdown.swift; sourceTree = SOURCE_ROOT; };
 		8E9659B149E7D7989F93C74A /* RespiratoryRateCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RespiratoryRateCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RespiratoryRateCard.swift; sourceTree = SOURCE_ROOT; };
+		C9E5A13B4F6D80C23B1A3288 /* BloodOxygenCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BloodOxygenCard.swift; path = ReadinessTracker/Views/WhoopFeatures/BloodOxygenCard.swift; sourceTree = SOURCE_ROOT; };
 		8FA01CA1752510AA4C95800D /* WidgetDataExporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDataExporter.swift; path = ReadinessTracker/Services/WidgetDataExporter.swift; sourceTree = SOURCE_ROOT; };
 		964793E8536881915509FC96 /* StrainSession.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrainSession.swift; sourceTree = "<group>"; };
 		985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepConsistencyTracker.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepConsistencyTracker.swift; sourceTree = SOURCE_ROOT; };
@@ -572,6 +574,7 @@
 				AF7752D98AAEC3B97BECBA33 /* SleepPerformanceScore.swift */,
 				3E128320003B1E4D9832FC65 /* JournalEntryView.swift */,
 				8E9659B149E7D7989F93C74A /* RespiratoryRateCard.swift */,
+				C9E5A13B4F6D80C23B1A3288 /* BloodOxygenCard.swift */,
 				2F9436D6DC5DE88878AAD4FC /* SkinTemperatureCard.swift */,
 				8CE5E39CEF2C51B85DE581D1 /* SleepStageBreakdown.swift */,
 				985ECE6CE69B18D8FD3BF1BD /* SleepConsistencyTracker.swift */,
@@ -1055,6 +1058,7 @@
 				3EBF1CB0F58E0BA805DB213C /* StrainRecoveryWheel.swift in Sources */,
 				2CC8C6BF536BEF7EAF0B84E6 /* SleepPerformanceScore.swift in Sources */,
 				823E33C920B69115FA3F814A /* RespiratoryRateCard.swift in Sources */,
+				D0F6B24C5E7E91D34C2B4399 /* BloodOxygenCard.swift in Sources */,
 				5A7EFA5B8720395105D3555D /* SkinTemperatureCard.swift in Sources */,
 				298A51EEAC859F0333313C78 /* JournalEntryView.swift in Sources */,
 				7B5950BAD4C02A8C75454B73 /* DayDetailView.swift in Sources */,
