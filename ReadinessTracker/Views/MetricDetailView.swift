@@ -10,9 +10,12 @@ struct MetricDetailView: View {
     @State private var selectedPeriod: TrendPeriod = .week
     @State private var selectedDataPoint: DailyHealthData?
     @State private var lastHapticID: DailyHealthData.ID?
-    /// Honest #247: classic parity with Advanced MA14 / EMA overlays (subset; strips → #248).
+    /// Honest #247/#248: classic parity with Advanced overlays + strips.
     @State private var showMA14 = true
     @State private var showEMA = true
+    @State private var showVolatility = true
+    @State private var showMomentum = true
+    @State private var showRateOfChange = true
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -246,6 +249,9 @@ struct MetricDetailView: View {
                         .accessibilityIdentifier(SurfaceID.metricClassicMA14)
                 }
 
+                // Honest #248: Advanced strip stack on classic MetricDetailView.
+                classicStripStack
+
                 if values.count >= 2 {
                     Chart {
                         ForEach(filteredHistory) { point in
@@ -339,15 +345,33 @@ struct MetricDetailView: View {
     }
 
     private var classicOverlayToggles: some View {
-        HStack(spacing: 8) {
-            ToggleChip(label: "MA14", isOn: $showMA14)
-                .accessibilityIdentifier(SurfaceID.metricClassicMA14Toggle)
-            ToggleChip(label: "EMA", isOn: $showEMA)
-                .accessibilityIdentifier(SurfaceID.metricClassicEMAToggle)
-            Spacer(minLength: 0)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ToggleChip(label: "MA14", isOn: $showMA14)
+                    .accessibilityIdentifier(SurfaceID.metricClassicMA14Toggle)
+                ToggleChip(label: "EMA", isOn: $showEMA)
+                    .accessibilityIdentifier(SurfaceID.metricClassicEMAToggle)
+                ToggleChip(label: "Volatility", isOn: $showVolatility)
+                    .accessibilityIdentifier(SurfaceID.metricClassicVolatilityToggle)
+                ToggleChip(label: "Momentum", isOn: $showMomentum)
+                    .accessibilityIdentifier(SurfaceID.metricClassicMomentumToggle)
+                ToggleChip(label: "Day Δ", isOn: $showRateOfChange)
+                    .accessibilityIdentifier(SurfaceID.metricClassicROCToggle)
+            }
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.metricClassicOverlays)
+    }
+
+    @ViewBuilder
+    private var classicStripStack: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if showVolatility { classicVolatilityStrip }
+            if showMomentum { classicMomentumStrip }
+            if showRateOfChange { classicRateOfChangeStrip }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricClassicStrips)
     }
 
     @ChartContentBuilder
@@ -406,6 +430,310 @@ struct MetricDetailView: View {
         }
     }
 
+
+
+    // MARK: - Classic strips (Honest #248) — Advanced #240–#243 parity
+
+    private var volatilityPoints: [(date: Date, cv: Double)] {
+        analyzedData.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var latestVolatilityBand: (label: String, color: Color) {
+        guard let cv = volatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var volatilityYDomain: ClosedRange<Double> {
+        let vals = volatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var classicVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = volatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, latestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !volatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", volatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(volatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: volatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricClassicVolatility)
+        .accessibilityLabel("Seven day rolling volatility")
+    }
+
+    private var momentumPoints: [(date: Date, mom: Double)] {
+        analyzedData.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var latestMomentumBand: (label: String, color: Color) {
+        guard let mom = momentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        let improving: Bool
+        if metric.higherIsBetter {
+            improving = mom > 0
+        } else {
+            improving = mom < 0
+        }
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var momentumYDomain: ClosedRange<Double> {
+        let vals = momentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var classicMomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = momentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, latestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !momentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(momentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            (metric.higherIsBetter ? point.mom >= 0 : point.mom <= 0)
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: momentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [momentumYDomain.lowerBound, 0, momentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricClassicMomentum)
+        .accessibilityLabel("Seven day momentum")
+    }
+
+    private var rocPoints: [(date: Date, roc: Double)] {
+        analyzedData.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var latestROCBand: (label: String, color: Color) {
+        guard let roc = rocPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        let improving: Bool
+        if metric.higherIsBetter {
+            improving = roc > 0
+        } else {
+            improving = roc < 0
+        }
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var rocYDomain: ClosedRange<Double> {
+        let vals = rocPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var classicRateOfChangeStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = rocPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, latestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !rocPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(rocPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            (metric.higherIsBetter ? point.roc >= 0 : point.roc <= 0)
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: rocYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [rocYDomain.lowerBound, 0, rocYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricClassicROC)
+        .accessibilityLabel("Day over day rate of change")
+    }
 
     private func classicAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
