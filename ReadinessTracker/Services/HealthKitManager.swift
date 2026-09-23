@@ -39,6 +39,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
             HKObjectType.quantityType(forIdentifier: .environmentalAudioExposure)!,
             HKObjectType.quantityType(forIdentifier: .headphoneAudioExposure)!,
+            HKObjectType.quantityType(forIdentifier: .environmentalSoundReduction)!,
             HKObjectType.quantityType(forIdentifier: .bodyTemperature)!,
             HKSeriesType.heartbeat(),
             HKObjectType.quantityType(forIdentifier: .dietaryWater)!,
@@ -83,6 +84,7 @@ class HealthKitManager: ObservableObject {
         async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
         async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
+        async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -129,6 +131,7 @@ class HealthKitManager: ObservableObject {
             walkingHeartRateAverage: await walkingHR,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
+            environmentalSoundReductionDBA: await soundReduction,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -176,6 +179,7 @@ class HealthKitManager: ObservableObject {
             async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
             async let envAudio = fetchEnvironmentalAudioExposure(predicate: predicate)
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
+            async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -193,6 +197,7 @@ class HealthKitManager: ObservableObject {
             let walkingHRValue = await walkingHR
             let envAudioValue = await envAudio
             let headphoneAudioValue = await headphoneAudio
+            let soundReductionValue = await soundReduction
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -236,6 +241,7 @@ class HealthKitManager: ObservableObject {
                 walkingHeartRateAverage: walkingHRValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
+                environmentalSoundReductionDBA: soundReductionValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -351,6 +357,24 @@ class HealthKitManager: ObservableObject {
     /// Day headphone audio exposure average (dB A-weighted). Sparse on Simulator.
     private func fetchHeadphoneAudioExposure(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .headphoneAudioExposure) else { return nil }
+        let unit = HKUnit.decibelAWeightedSoundPressureLevel()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day environmental sound reduction average (dB A-weighted). AirPods Pro ANC delta; sparse on Simulator.
+    private func fetchEnvironmentalSoundReduction(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .environmentalSoundReduction) else { return nil }
         let unit = HKUnit.decibelAWeightedSoundPressureLevel()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(

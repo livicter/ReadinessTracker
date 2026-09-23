@@ -41,6 +41,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let walkingHeartRateAverage: Double?  // bpm — Honest #134
     let environmentalAudioExposureDBA: Double?  // dB A-weighted — Honest #136
     let headphoneAudioExposureDBA: Double?  // dB A-weighted — Honest #137
+    let environmentalSoundReductionDBA: Double?  // dB A-weighted — Honest #138
     
     // Cardiovascular strain data
     let maxHeartRate: Double?
@@ -84,6 +85,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          walkingHeartRateAverage: Double? = nil,
          environmentalAudioExposureDBA: Double? = nil,
          headphoneAudioExposureDBA: Double? = nil,
+         environmentalSoundReductionDBA: Double? = nil,
          nutrition: NutritionSummary = NutritionSummary(),
          menstrualFlow: Bool = false) {
         self.id = id
@@ -116,6 +118,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = walkingHeartRateAverage
         self.environmentalAudioExposureDBA = environmentalAudioExposureDBA
         self.headphoneAudioExposureDBA = headphoneAudioExposureDBA
+        self.environmentalSoundReductionDBA = environmentalSoundReductionDBA
         self.nutrition = nutrition
         self.menstrualFlow = menstrualFlow
     }
@@ -155,6 +158,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = nil
         self.environmentalAudioExposureDBA = nil
         self.headphoneAudioExposureDBA = nil
+        self.environmentalSoundReductionDBA = nil
         self.nutrition = NutritionSummary()
         self.menstrualFlow = false
     }
@@ -169,7 +173,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA
         case nutrition, menstrualFlow
     }
     
@@ -205,6 +209,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = try container.decodeIfPresent(Double.self, forKey: .walkingHeartRateAverage)
         self.environmentalAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalAudioExposureDBA)
         self.headphoneAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .headphoneAudioExposureDBA)
+        self.environmentalSoundReductionDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalSoundReductionDBA)
         self.nutrition = try container.decodeIfPresent(NutritionSummary.self, forKey: .nutrition) ?? NutritionSummary()
         self.menstrualFlow = try container.decodeIfPresent(Bool.self, forKey: .menstrualFlow) ?? false
     }
