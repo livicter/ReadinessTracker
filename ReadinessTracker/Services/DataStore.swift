@@ -355,6 +355,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 4.0 + Double((offset * 3) % 9) // 4…12
             }()
+            // Apple Stand Time minutes (Honest #221). Cumulative minutes stood — distinct from stand hours.
+            let appleStandTimeMinutesValue: Double? = {
+                if offset == 0 { return 95.0 }
+                if offset % 5 == 0 { return nil }
+                return 35.0 + Double((offset * 13) % 80) // 35…114
+            }()
             // Apple Move Time minutes (Honest #164). Completes Activity ring trio.
             let appleMoveTimeMinutesValue: Double? = {
                 if offset == 0 { return 48.0 }
@@ -560,6 +566,7 @@ enum UIFixture {
                 distanceWalkingRunningKm: distanceWalkingRunningKmValue,
                 appleExerciseTimeMinutes: appleExerciseTimeMinutesValue,
                 appleStandHours: appleStandHoursValue,
+                appleStandTimeMinutes: appleStandTimeMinutesValue,
                 appleMoveTimeMinutes: appleMoveTimeMinutesValue,
                 walkingDoubleSupportPercent: walkingDoubleSupportPercentValue,
                 walkingAsymmetryPercent: walkingAsymmetryPercentValue,
