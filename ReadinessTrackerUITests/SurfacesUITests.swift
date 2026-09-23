@@ -392,6 +392,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testJournalImpactSurface() throws {
+        // Honest #82: Journal Behavior Impact row circular tint wells.
         // Journal Behavior Impact chart under -ui-fixture (≥7 seeded entries with readiness scores).
         revealText("Journal")
         let journalRow = app.buttons["Journal"].exists ? app.buttons["Journal"] : app.staticTexts["Journal"]

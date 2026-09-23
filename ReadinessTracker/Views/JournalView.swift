@@ -128,12 +128,14 @@ struct JournalView: View {
                 
                 ForEach(behaviorScores.sorted { $0.impact > $1.impact }, id: \.behavior) { item in
                     HStack(spacing: 12) {
+                        // Honest #82: Apple circular tint well on Journal Behavior Impact rows.
                         Image(systemName: item.icon)
-                            .font(.system(size: 14))
+                            .font(.system(size: 12, weight: .semibold))
                             .foregroundStyle(item.color)
                             .frame(width: 28, height: 28)
-                            .background(item.color.opacity(0.12))
-                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .background(item.color.opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
                         
                         VStack(alignment: .leading, spacing: 2) {
                             Text(item.behavior)
