@@ -2894,6 +2894,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-riboflavin-tonight-baseline.png")
     }
 
+    func testDietaryNiacinTonightBaselineSurface() throws {
+        // Honest #208: Dietary Niacin Tonight | Baseline (HK dietaryNiacin).
+        var n = 0
+        while !app.descendants(matching: .any)["body.niacin.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.niacin.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Niacin card")
+        XCTAssertTrue(app.staticTexts["Dietary Niacin"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.niacin.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Niacin"].exists
+        _ = app.descendants(matching: .any)["body.niacin.spark"].exists
+        saveShot("verify-dietary-niacin-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0

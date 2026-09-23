@@ -50,13 +50,15 @@ struct NutritionSummary: Codable, Hashable {
     let thiaminMg: Double?
     /// Dietary riboflavin (mg) from HealthKit `dietaryRiboflavin` — Honest #207.
     let riboflavinMg: Double?
+    /// Dietary niacin (mg) from HealthKit `dietaryNiacin` — Honest #208.
+    let niacinMg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -86,6 +88,7 @@ struct NutritionSummary: Codable, Hashable {
         vitaminB6Mg: Double? = nil,
         thiaminMg: Double? = nil,
         riboflavinMg: Double? = nil,
+        niacinMg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -114,6 +117,7 @@ struct NutritionSummary: Codable, Hashable {
         self.vitaminB6Mg = vitaminB6Mg
         self.thiaminMg = thiaminMg
         self.riboflavinMg = riboflavinMg
+        self.niacinMg = niacinMg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
