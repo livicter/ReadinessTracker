@@ -30,6 +30,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .restingHeartRate)!,
             HKObjectType.quantityType(forIdentifier: .heartRate)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
+            HKObjectType.quantityType(forIdentifier: .basalEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
             HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
             HKObjectType.quantityType(forIdentifier: .appleMoveTime)!,
@@ -149,6 +150,7 @@ class HealthKitManager: ObservableObject {
         async let hrvResult = fetchRMSSD(predicate: predicate)
         async let rhr = fetchRestingHR(predicate: predicate)
         async let calories = fetchActiveCalories(predicate: predicate)
+        async let basal = fetchBasalEnergy(predicate: predicate)
         async let steps = fetchSteps(predicate: predicate)
         async let sleep = fetchSleepData(startOfDay: startOfDay)
         async let workouts = fetchWorkouts(startOfDay: startOfDay)
@@ -256,6 +258,7 @@ class HealthKitManager: ObservableObject {
             bodyMassKg: await mass,
             leanBodyMassKg: await lean,
             waistCircumferenceCm: await waist,
+            basalEnergyKcal: await basal,
             environmentalAudioExposureDBA: await envAudio,
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
@@ -325,6 +328,7 @@ class HealthKitManager: ObservableObject {
             async let hrvResult = fetchRMSSD(predicate: predicate)
             async let rhr = fetchRestingHR(predicate: predicate)
             async let calories = fetchActiveCalories(predicate: predicate)
+            async let basal = fetchBasalEnergy(predicate: predicate)
             async let steps = fetchSteps(predicate: predicate)
             async let sleep = fetchSleepDataForDate(startOfDay: startOfDay, endOfDay: endOfDay)
             async let workouts = fetchWorkouts(startOfDay: startOfDay, endOfDay: endOfDay)
@@ -381,6 +385,7 @@ class HealthKitManager: ObservableObject {
             let hrvIsRMSSDValue = await hrvResult.isRMSSD
             let rhrValue = await rhr
             let calValue = await calories
+            let basalValue = await basal
             let stepsValue = await steps
             let sleepValue = await sleep
             let workoutsValue = await workouts
@@ -483,6 +488,7 @@ class HealthKitManager: ObservableObject {
                 bodyMassKg: massValue,
                 leanBodyMassKg: leanValue,
                 waistCircumferenceCm: waistValue,
+                basalEnergyKcal: basalValue,
                 environmentalAudioExposureDBA: envAudioValue,
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
@@ -1295,6 +1301,14 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .activeEnergyBurned) else { return 0 }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .kilocalorie()) ?? 0
     }
+
+
+    /// Day cumulative basal energy burned (kcal). Resting burn — fixture seeds UI.
+    private func fetchBasalEnergy(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .basalEnergyBurned) else { return nil }
+        return await fetchSumQuantity(type: type, predicate: predicate, unit: .kilocalorie())
+    }
+
     
     private func fetchSteps(predicate: NSPredicate) async -> Int {
         guard let type = HKQuantityType.quantityType(forIdentifier: .stepCount) else { return 0 }

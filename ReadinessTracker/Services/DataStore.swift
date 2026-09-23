@@ -260,6 +260,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 79.0 + Double((offset * 3) % 51) / 10.0 // 79.0…84.0
             }()
+            // Basal energy kcal (Honest #184). Resting burn — seed for UI.
+            let basalEnergyKcalValue: Double? = {
+                if offset == 0 { return 1680 }
+                if offset % 5 == 0 { return nil }
+                return 1500 + Double((offset * 17) % 351) // 1500…1850
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -503,6 +509,7 @@ enum UIFixture {
                 bodyMassKg: bodyMassKgValue,
                 leanBodyMassKg: leanBodyMassKgValue,
                 waistCircumferenceCm: waistCircumferenceCmValue,
+                basalEnergyKcal: basalEnergyKcalValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

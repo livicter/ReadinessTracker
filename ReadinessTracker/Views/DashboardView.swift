@@ -1831,6 +1831,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.activeCaloriesCard)
 
+
+                BasalEnergyTonightBaselineCard(
+                    kcal: data.basalEnergyKcal,
+                    history: history.compactMap { day in
+                        guard let v = day.basalEnergyKcal else { return nil }
+                        return (day.date, v)
+                    },
+                    baseline: BasalEnergyBaseline.average(
+                        from: history,
+                        fallback: data.basalEnergyKcal ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.basalEnergyCard)
+
                 HydrationTonightBaselineCard(
                     waterLiters: data.nutrition.waterLiters,
                     caffeineMg: data.nutrition.caffeineMg,
