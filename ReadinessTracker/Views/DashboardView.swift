@@ -1001,6 +1001,20 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.walkingHRCard)
 
+            HeartRateRecoveryTonightBaselineCard(
+                recoveryBpm: data.heartRateRecoveryOneMinuteBpm,
+                history: history.compactMap { day in
+                    guard let b = day.heartRateRecoveryOneMinuteBpm else { return nil }
+                    return (day.date, b)
+                },
+                baseline: HeartRateRecoveryBaseline.average(
+                    from: history,
+                    fallback: data.heartRateRecoveryOneMinuteBpm ?? 0
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.heartRateRecoveryCard)
+
+
             EnvironmentalAudioTonightBaselineCard(
                 exposureDBA: data.environmentalAudioExposureDBA,
                 history: history.compactMap { day in
