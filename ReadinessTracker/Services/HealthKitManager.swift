@@ -32,6 +32,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .flightsClimbed)!,
+            HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!,
             HKObjectType.categoryType(forIdentifier: .sleepAnalysis)!,
             HKObjectType.workoutType(),
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
@@ -96,6 +97,7 @@ class HealthKitManager: ObservableObject {
         async let daylight = fetchTimeInDaylight(predicate: predicate)
         async let uv = fetchUVExposure(predicate: predicate)
         async let flights = fetchFlightsClimbed(predicate: predicate)
+        async let distance = fetchDistanceWalkingRunning(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -146,6 +148,7 @@ class HealthKitManager: ObservableObject {
             timeInDaylightMinutes: await daylight,
             uvExposureIndex: await uv,
             flightsClimbed: await flights,
+            distanceWalkingRunningKm: await distance,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -197,6 +200,7 @@ class HealthKitManager: ObservableObject {
             async let daylight = fetchTimeInDaylight(predicate: predicate)
             async let uv = fetchUVExposure(predicate: predicate)
             async let flights = fetchFlightsClimbed(predicate: predicate)
+            async let distance = fetchDistanceWalkingRunning(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -218,6 +222,7 @@ class HealthKitManager: ObservableObject {
             let daylightValue = await daylight
             let uvValue = await uv
             let flightsValue = await flights
+            let distanceValue = await distance
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -265,6 +270,7 @@ class HealthKitManager: ObservableObject {
                 timeInDaylightMinutes: daylightValue,
                 uvExposureIndex: uvValue,
                 flightsClimbed: flightsValue,
+                distanceWalkingRunningKm: distanceValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -446,6 +452,15 @@ class HealthKitManager: ObservableObject {
     private func fetchFlightsClimbed(predicate: NSPredicate) async -> Double? {
         guard let type = HKQuantityType.quantityType(forIdentifier: .flightsClimbed) else { return nil }
         return await fetchSumQuantity(type: type, predicate: predicate, unit: .count())
+    }
+
+
+
+    /// Day cumulative walking+running distance in kilometers. Sparse on Simulator — fixture seeds UI.
+    private func fetchDistanceWalkingRunning(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
     }
 
 

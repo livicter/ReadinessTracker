@@ -1398,6 +1398,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-flights-climbed-tonight-baseline.png")
     }
 
+    func testDistanceTonightBaselineSurface() throws {
+        // Honest #142: Walking/running distance Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Walking Distance"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Walking Distance")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.distance.card"].exists
+        _ = app.descendants(matching: .any)["body.distance.baseline"].exists
+        _ = app.staticTexts["7-Day Walking Distance"].exists
+        _ = app.descendants(matching: .any)["body.distance.spark"].exists
+        saveShot("verify-distance-tonight-baseline.png")
+    }
+
+
 
 
 
