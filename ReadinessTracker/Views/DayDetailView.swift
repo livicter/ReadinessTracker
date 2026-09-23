@@ -320,12 +320,14 @@ struct DayDetailView: View {
             return cycles.reduce(0) { $0 + $1.durationMinutes } / Double(cycles.count)
         }()
         return HStack(spacing: 12) {
+            // Honest #87: Apple circular tint well on Day Detail Sleep Cycles header.
             Image(systemName: "arrow.triangle.2.circlepath")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(RTColor.sleep)
-                .frame(width: 36, height: 36)
-                .background(RTColor.sleep.opacity(0.12))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .frame(width: 26, height: 26)
+                .background(RTColor.sleep.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Sleep Cycles")
@@ -689,9 +691,14 @@ struct DayDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if let prevDay = previousDays.last {
                         HStack(spacing: 12) {
+                            // Honest #87: Apple circular tint well on vs Previous Day header.
                             Image(systemName: "arrow.left.arrow.right")
-                                .font(.title3)
+                                .font(.system(size: 12, weight: .semibold))
                                 .foregroundStyle(RTColor.secondaryText)
+                                .frame(width: 26, height: 26)
+                                .background(RTColor.secondaryText.opacity(0.14))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
                             
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("vs Previous Day")

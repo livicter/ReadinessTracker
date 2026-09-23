@@ -12,6 +12,7 @@
 | Journal Log-7-days cue well | `journal-cue-well.md` | chart.bar circular well |
 | Today Journal button well | `journal-button-well.md` | book.closed circular well |
 | Today QuickTrend wells | `quick-trend-wells.md` | Quick Trends circular wells |
+| Day Detail compare wells | `day-detail-compare-wells.md` | Sleep Cycles + vs Previous Day wells |
 | Day Detail wells | `day-detail-wells.md` | Stage/metric circular wells |
 | Metric About wells | `metric-about-wells.md` | Metric Detail About circular wells |
 | Metric Detail hero well | `metric-detail-hero-well.md` | Hero circular well |
