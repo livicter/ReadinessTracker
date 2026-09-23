@@ -1116,13 +1116,19 @@ struct CheckInStatusCard: View {
     let isDone: Bool
     let color: Color
 
+    private var iconTint: Color { isDone ? color : RTColor.tertiaryText }
+
     var body: some View {
         NativeCard {
             HStack(spacing: 8) {
+                // Honest #72: Apple circular tint well (Morning|Evening check-in).
                 Image(systemName: icon)
-                    .font(.system(size: 15))
-                    .foregroundStyle(isDone ? color : RTColor.tertiaryText)
-                    .frame(width: 18, alignment: .center)
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(iconTint)
+                    .frame(width: 26, height: 26)
+                    .background(iconTint.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
