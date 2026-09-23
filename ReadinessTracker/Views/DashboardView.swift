@@ -1886,6 +1886,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.dietaryEnergyCard)
 
+
+                DietaryCarbsTonightBaselineCard(
+                    carbohydrateGrams: data.nutrition.carbohydrateGrams,
+                    history: history.compactMap { day in
+                        guard let g = day.nutrition.carbohydrateGrams else { return nil }
+                        return (day.date, g)
+                    },
+                    baselineGrams: DietaryCarbsBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.carbohydrateGrams ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryCarbsCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,
