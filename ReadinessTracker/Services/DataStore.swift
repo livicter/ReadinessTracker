@@ -206,6 +206,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return Double((offset * 3) % 40) / 10.0 // 0.0…3.9
             }()
+            // Peripheral perfusion index % (Honest #169). Sparse SpO2-adjacent — seed for UI.
+            let peripheralPerfusionIndexPercentValue: Double? = {
+                if offset == 0 { return 3.2 }
+                if offset % 5 == 0 { return nil }
+                return 0.8 + Double((offset * 11) % 50) / 10.0 // 0.8…5.7
+            }()
             // Environmental audio dBA (Honest #136). Simulator rarely has samples — seed for UI.
             let environmentalAudioExposureDBAValue: Double? = {
                 if offset == 0 { return 62.0 }
@@ -440,6 +446,7 @@ enum UIFixture {
                 walkingHeartRateAverage: walkingHeartRateAverageValue,
                 heartRateRecoveryOneMinuteBpm: heartRateRecoveryOneMinuteBpmValue,
                 atrialFibrillationBurdenPercent: atrialFibrillationBurdenPercentValue,
+                peripheralPerfusionIndexPercent: peripheralPerfusionIndexPercentValue,
                 environmentalAudioExposureDBA: environmentalAudioExposureDBAValue,
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,

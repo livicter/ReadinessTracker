@@ -41,6 +41,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let walkingHeartRateAverage: Double?  // bpm — Honest #134
     let heartRateRecoveryOneMinuteBpm: Double?  // HRR 1-min bpm drop — Honest #167
     let atrialFibrillationBurdenPercent: Double?  // AF burden % — Honest #168
+    let peripheralPerfusionIndexPercent: Double?  // PPI % — Honest #169
     let environmentalAudioExposureDBA: Double?  // dB A-weighted — Honest #136
     let headphoneAudioExposureDBA: Double?  // dB A-weighted — Honest #137
     let environmentalSoundReductionDBA: Double?  // dB A-weighted — Honest #138
@@ -115,6 +116,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          walkingHeartRateAverage: Double? = nil,
          heartRateRecoveryOneMinuteBpm: Double? = nil,
          atrialFibrillationBurdenPercent: Double? = nil,
+         peripheralPerfusionIndexPercent: Double? = nil,
          environmentalAudioExposureDBA: Double? = nil,
          headphoneAudioExposureDBA: Double? = nil,
          environmentalSoundReductionDBA: Double? = nil,
@@ -178,6 +180,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = walkingHeartRateAverage
         self.heartRateRecoveryOneMinuteBpm = heartRateRecoveryOneMinuteBpm
         self.atrialFibrillationBurdenPercent = atrialFibrillationBurdenPercent
+        self.peripheralPerfusionIndexPercent = peripheralPerfusionIndexPercent
         self.environmentalAudioExposureDBA = environmentalAudioExposureDBA
         self.headphoneAudioExposureDBA = headphoneAudioExposureDBA
         self.environmentalSoundReductionDBA = environmentalSoundReductionDBA
@@ -248,6 +251,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = nil
         self.heartRateRecoveryOneMinuteBpm = nil
         self.atrialFibrillationBurdenPercent = nil
+        self.peripheralPerfusionIndexPercent = nil
         self.environmentalAudioExposureDBA = nil
         self.headphoneAudioExposureDBA = nil
         self.environmentalSoundReductionDBA = nil
@@ -293,7 +297,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -329,6 +333,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.walkingHeartRateAverage = try container.decodeIfPresent(Double.self, forKey: .walkingHeartRateAverage)
         self.heartRateRecoveryOneMinuteBpm = try container.decodeIfPresent(Double.self, forKey: .heartRateRecoveryOneMinuteBpm)
         self.atrialFibrillationBurdenPercent = try container.decodeIfPresent(Double.self, forKey: .atrialFibrillationBurdenPercent)
+        self.peripheralPerfusionIndexPercent = try container.decodeIfPresent(Double.self, forKey: .peripheralPerfusionIndexPercent)
         self.environmentalAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalAudioExposureDBA)
         self.headphoneAudioExposureDBA = try container.decodeIfPresent(Double.self, forKey: .headphoneAudioExposureDBA)
         self.environmentalSoundReductionDBA = try container.decodeIfPresent(Double.self, forKey: .environmentalSoundReductionDBA)
