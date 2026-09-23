@@ -3449,6 +3449,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-cross-country-skiing-speed-tonight-baseline.png")
     }
 
+    func testDownhillSnowSportsDistanceTonightBaselineSurface() throws {
+        // Honest #236: Downhill Snow Sports Distance Tonight | Baseline (HK distanceDownhillSnowSports).
+        var n = 0
+        while !app.descendants(matching: .any)["body.downhillSnowSportsDistance.card"].exists && n < 66 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.downhillSnowSportsDistance.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Downhill Snow Sports Distance card")
+        XCTAssertTrue(app.staticTexts["Downhill Snow Sports Distance"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.downhillSnowSportsDistance.baseline"].exists
+        _ = app.staticTexts["7-Day Downhill Distance"].exists
+        _ = app.descendants(matching: .any)["body.downhillSnowSportsDistance.spark"].exists
+        saveShot("verify-downhill-snow-sports-distance-tonight-baseline.png")
+    }
+
+
 
 
 

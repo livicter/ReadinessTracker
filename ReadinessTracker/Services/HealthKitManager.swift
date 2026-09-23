@@ -175,6 +175,12 @@ class HealthKitManager: ObservableObject {
             }
         }
 
+        if #available(iOS 11.2, *) {
+            if let downhillSnowType = HKObjectType.quantityType(forIdentifier: .distanceDownhillSnowSports) {
+                typesToRead.insert(downhillSnowType)
+            }
+        }
+
         if #available(iOS 16.0, *) {
             if let depthType = HKObjectType.quantityType(forIdentifier: .underwaterDepth) {
                 typesToRead.insert(depthType)
@@ -289,6 +295,7 @@ class HealthKitManager: ObservableObject {
         async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
         async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
         async let xcSkiSpeed = fetchCrossCountrySkiingSpeed(predicate: predicate)
+        async let downhillSnowDistance = fetchDistanceDownhillSnowSports(predicate: predicate)
         async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -397,6 +404,7 @@ class HealthKitManager: ObservableObject {
             distanceSkatingSportsKm: await skatingDistance,
             distanceCrossCountrySkiingKm: await xcSkiDistance,
             crossCountrySkiingSpeedMps: await xcSkiSpeed,
+            distanceDownhillSnowSportsKm: await downhillSnowDistance,
             cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             workoutEffortScore: await workoutEffort,
@@ -505,6 +513,7 @@ class HealthKitManager: ObservableObject {
             async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
             async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
             async let xcSkiSpeed = fetchCrossCountrySkiingSpeed(predicate: predicate)
+            async let downhillSnowDistance = fetchDistanceDownhillSnowSports(predicate: predicate)
             async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -583,6 +592,7 @@ class HealthKitManager: ObservableObject {
             let skatingDistanceValue = await skatingDistance
             let xcSkiDistanceValue = await xcSkiDistance
             let xcSkiSpeedValue = await xcSkiSpeed
+            let downhillSnowDistanceValue = await downhillSnowDistance
             let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let workoutEffortValue = await workoutEffort
@@ -688,6 +698,7 @@ class HealthKitManager: ObservableObject {
                 distanceSkatingSportsKm: skatingDistanceValue,
                 distanceCrossCountrySkiingKm: xcSkiDistanceValue,
                 crossCountrySkiingSpeedMps: xcSkiSpeedValue,
+                distanceDownhillSnowSportsKm: downhillSnowDistanceValue,
                 cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 workoutEffortScore: workoutEffortValue,
@@ -1418,6 +1429,15 @@ class HealthKitManager: ObservableObject {
             }
             self.healthStore.execute(query)
         }
+    }
+
+
+    /// Day cumulative downhill snow sports distance in kilometers. Sparse niche sport — fixture seeds UI. iOS 11.2+.
+    private func fetchDistanceDownhillSnowSports(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 11.2, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .distanceDownhillSnowSports) else { return nil }
+        guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
+        return meters / 1000.0
     }
 
     private func fetchSwimmingStrokeCount(predicate: NSPredicate) async -> Double? {
