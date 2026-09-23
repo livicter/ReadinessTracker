@@ -89,11 +89,19 @@ private struct SRMetricLabel: View {
     let unit: String
     let accessibilityId: String
 
+    private var icon: String {
+        title == "Strain" ? "flame.fill" : "heart.fill"
+    }
+
     var body: some View {
-        HStack(spacing: 8) {
-            Capsule()
-                .fill(color)
-                .frame(width: 4, height: 28)
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(color)
+                .frame(width: 28, height: 28)
+                .background(color.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)

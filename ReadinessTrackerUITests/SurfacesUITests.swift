@@ -523,6 +523,7 @@ final class SurfacesUITests: XCTestCase {
 
 
     func testStrainRecoveryWheelSurface() throws {
+        // Honest #69: Recovery/Strain legend uses circular tint icon wells.
         // Today WHOOP stack: elevated dual-arc Strain/Recovery wheel (concentric arcs + value labels).
         revealText("Recovery & Strain")
         let wheel = app.descendants(matching: .any)["strain.recovery.wheel"].firstMatch
