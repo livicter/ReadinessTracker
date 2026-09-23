@@ -107,6 +107,7 @@
 		B93A4B5C6D7E8F901D2E3F42 /* CoreSleepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A4B5C6D7E8F901D2E3F41 /* CoreSleepCard.swift */; };
 		D94A5B6C7D8E9F012E3F4153 /* WorkoutMinutesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94A5B6C7D8E9F012E3F4152 /* WorkoutMinutesCard.swift */; };
 		F95B6C7D8E9F012E3F415264 /* DailyTRIMPCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */; };
+		BF0C23EF5A31425364758698 /* WatchStrainTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C23EF5A31425364758697 /* WatchStrainTonightBaselineCard.swift */; };
 		B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */; };
 		D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */; };
 		BB6E89AB1C9D0E1F20314254 /* ActiveCaloriesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */; };
@@ -353,6 +354,7 @@
 		A93A4B5C6D7E8F901D2E3F41 /* CoreSleepCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoreSleepCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CoreSleepCard.swift; sourceTree = SOURCE_ROOT; };
 		C94A5B6C7D8E9F012E3F4152 /* WorkoutMinutesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutMinutesCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WorkoutMinutesCard.swift; sourceTree = SOURCE_ROOT; };
 		E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DailyTRIMPCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DailyTRIMPCard.swift; sourceTree = SOURCE_ROOT; };
+		AF0C23EF5A31425364758697 /* WatchStrainTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchStrainTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WatchStrainTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CycleTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/CycleTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StepsTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/StepsTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActiveCaloriesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/ActiveCaloriesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -643,6 +645,7 @@
 				A93A4B5C6D7E8F901D2E3F41 /* CoreSleepCard.swift */,
 				C94A5B6C7D8E9F012E3F4152 /* WorkoutMinutesCard.swift */,
 				E95B6C7D8E9F012E3F415263 /* DailyTRIMPCard.swift */,
+				AF0C23EF5A31425364758697 /* WatchStrainTonightBaselineCard.swift */,
 				A06C7D8E9F012E3F41526374 /* CycleTonightBaselineCard.swift */,
 				C17D8E9F012E3F4152637485 /* StepsTonightBaselineCard.swift */,
 				AB6E89AB1C9D0E1F20314253 /* ActiveCaloriesTonightBaselineCard.swift */,
@@ -1154,6 +1157,7 @@
 				B93A4B5C6D7E8F901D2E3F42 /* CoreSleepCard.swift in Sources */,
 				D94A5B6C7D8E9F012E3F4153 /* WorkoutMinutesCard.swift in Sources */,
 				F95B6C7D8E9F012E3F415264 /* DailyTRIMPCard.swift in Sources */,
+				BF0C23EF5A31425364758698 /* WatchStrainTonightBaselineCard.swift in Sources */,
 				B06C7D8E9F012E3F41526375 /* CycleTonightBaselineCard.swift in Sources */,
 				D17D8E9F012E3F4152637486 /* StepsTonightBaselineCard.swift in Sources */,
 				BB6E89AB1C9D0E1F20314254 /* ActiveCaloriesTonightBaselineCard.swift in Sources */,

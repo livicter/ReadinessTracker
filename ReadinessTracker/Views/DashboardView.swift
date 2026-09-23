@@ -896,6 +896,19 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.dailyTRIMPCard)
 
+            WatchStrainTonightBaselineCard(
+                tonightStrain: StrainCalculator.calculate(from: data, history: history),
+                history: history.map { day in
+                    (day.date, StrainCalculator.calculate(from: day, history: history))
+                },
+                baseline: WatchStrainBaseline.average(
+                    from: history,
+                    fallback: StrainCalculator.calculate(from: data, history: history)
+                )
+            )
+            .accessibilityIdentifier(SurfaceID.watchStrainCard)
+
+
 
             RestingHRCard(
 

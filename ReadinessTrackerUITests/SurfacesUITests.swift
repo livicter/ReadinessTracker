@@ -1260,6 +1260,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-walking-hr-tonight-baseline.png")
     }
 
+    func testWatchStrainTonightBaselineSurface() throws {
+        // Honest #135: Watch Strain Tonight | Baseline (snapshot field unused by complications).
+        var n = 0
+        let title = app.staticTexts["Watch Strain"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Watch Strain")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["watch.strain.card"].exists
+        _ = app.descendants(matching: .any)["watch.strain.baseline"].exists
+        _ = app.staticTexts["7-Day Watch Strain"].exists
+        _ = app.descendants(matching: .any)["watch.strain.spark"].exists
+        saveShot("verify-watch-strain-tonight-baseline.png")
+    }
+
+
 
 
 
