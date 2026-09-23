@@ -2582,6 +2582,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-sodium-tonight-baseline.png")
     }
 
+
+    func testDietaryPotassiumTonightBaselineSurface() throws {
+        // Honest #191: Dietary Potassium Tonight | Baseline (HK dietaryPotassium).
+        var n = 0
+        while !app.descendants(matching: .any)["body.potassium.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.potassium.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Potassium card")
+        XCTAssertTrue(app.staticTexts["Dietary Potassium"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.potassium.baseline"].exists
+        _ = app.staticTexts["7-Day Potassium"].exists
+        _ = app.descendants(matching: .any)["body.potassium.spark"].exists
+        saveShot("verify-dietary-potassium-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
