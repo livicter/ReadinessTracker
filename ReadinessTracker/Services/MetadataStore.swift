@@ -64,12 +64,13 @@ class MetadataStore: ObservableObject {
         return metadataFor(date: yesterday, timeOfDay: .evening)
     }
     
-    /// Fixture morning check-ins so Check-in Insights spark has shape under `-ui-fixture`.
+    /// Fixture morning + evening check-ins so Check-in Insights / Workout RPE
+    /// sparks have shape under `-ui-fixture`.
     func seedUIFixtureCheckIns() {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
-        // Clear prior fixture mornings for idempotent re-runs.
-        entries.removeAll { $0.timeOfDay == .morning }
+        // Clear prior fixture mornings/evenings for idempotent re-runs.
+        entries.removeAll { $0.timeOfDay == .morning || $0.timeOfDay == .evening }
         for offset in 0..<7 {
             guard let date = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
             let feel: Int
@@ -82,7 +83,7 @@ class MetadataStore: ObservableObject {
                 drinks = offset % 3 == 0 ? (1 + (offset % 2)) : 0
                 stressed = offset % 2 == 1
             }
-            let meta = UserMetadata(
+            let morning = UserMetadata(
                 date: date,
                 timeOfDay: .morning,
                 subjectiveFeel: feel,
@@ -90,7 +91,30 @@ class MetadataStore: ObservableObject {
                 alcoholDrinks: drinks > 0 ? drinks : nil,
                 isStressed: stressed
             )
-            entries.append(meta)
+            entries.append(morning)
+
+            // Evening: workout RPE 1–10 (Honest #127). Rest every 4th older day.
+            let didWorkout: Bool
+            let rpe: Int?
+            let type: String?
+            if offset == 0 {
+                didWorkout = true; rpe = 7; type = "Strength"
+            } else if offset % 4 == 0 {
+                didWorkout = false; rpe = nil; type = nil
+            } else {
+                didWorkout = true
+                rpe = 4 + ((offset * 2) % 6) // 4…9
+                type = offset % 2 == 0 ? "Run" : "Strength"
+            }
+            let evening = UserMetadata(
+                date: date,
+                timeOfDay: .evening,
+                workoutToday: didWorkout,
+                workoutType: type,
+                workoutRPE: rpe,
+                workoutDurationMinutes: didWorkout ? (30 + offset * 5) : nil
+            )
+            entries.append(evening)
         }
         entries.sort { $0.date > $1.date }
         persist()
