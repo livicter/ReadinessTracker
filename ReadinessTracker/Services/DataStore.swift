@@ -463,6 +463,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 8.0 + Double((offset * 13) % 28) // 8…35
             }()
+            // Water temperature °C (Honest #237). Sparse dive/pool — seed for UI.
+            let waterTemperatureCelsiusValue: Double? = {
+                if offset == 0 { return 24.5 }
+                if offset % 5 == 0 { return nil }
+                return 12.0 + Double((offset * 11) % 170) / 10.0 // 12.0…28.9
+            }()
             // Cycling power watts (Honest #156). Simulator often empty — seed for UI.
             let cyclingPowerWattsValue: Double? = {
                 if offset == 0 { return 195.0 }
@@ -674,6 +680,7 @@ enum UIFixture {
                 swimmingStrokeCount: swimmingStrokeCountValue,
                 cyclingCadenceRpm: cyclingCadenceRpmValue,
                 underwaterDepthMeters: underwaterDepthMetersValue,
+                waterTemperatureCelsius: waterTemperatureCelsiusValue,
                 cyclingPowerWatts: cyclingPowerWattsValue,
                 cyclingFTPWatts: cyclingFTPWattsValue,
                 distanceCyclingKm: distanceCyclingKmValue,
