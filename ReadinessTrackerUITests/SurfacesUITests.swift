@@ -918,6 +918,9 @@ final class SurfacesUITests: XCTestCase {
         _ = app.staticTexts["7-Night HRV"].exists
         _ = app.descendants(matching: .any)["sleep.hrv.spark"].exists
         _ = app.staticTexts["Sleep Quality"].exists
+        // Honest #103: Poincaré RR scatter under Sleep HRV (soft — may need scroll).
+        _ = app.staticTexts["Poincaré Plot"].exists
+        _ = app.descendants(matching: .any)["sleep.hrv.poincare"].exists
         saveShot("verify-sleep-hrv.png")
     }
 

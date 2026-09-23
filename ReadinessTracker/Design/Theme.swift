@@ -132,6 +132,7 @@ enum SurfaceID {
     static let sleepPerformance = "sleep.performance"
     static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
     static let sleepHRVSpark = "sleep.hrv.spark"
+    static let sleepHRVPoincare = "sleep.hrv.poincare"
     static let respiratoryCard = "respiratory.card"
     static let respiratoryBaselineCallout = "respiratory.baseline"
     static let respiratorySpark = "respiratory.spark"
