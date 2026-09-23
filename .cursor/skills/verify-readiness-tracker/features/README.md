@@ -17,3 +17,4 @@
 | Readiness Detail wells | `readiness-detail-wells.md` | Rec + component circular wells |
 | Journal Behavior Impact wells | `journal-behavior-wells.md` | Impact row circular wells |
 | Weekly Report trend well | `weekly-report-trend-well.md` | Readiness trend circular well |
+| Trend Detail summary wells | `trend-detail-wells.md` | Summary card circular wells |
