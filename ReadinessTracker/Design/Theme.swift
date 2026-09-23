@@ -614,6 +614,9 @@ enum SurfaceID {
     static let trendsHistogram = "trends.histogram"
     /// Honest #256: Trends Statistics coefficientOfVariation (Volatility CV%).
     static let trendsStatsCV = "trends.stats.cv"
+    /// Honest #257: Trends OutlierCallout list (classic #251 / Advanced Highlights parity).
+    static let trendsOutliers = "trends.outliers"
+    static let trendsOutlierList = "trends.outlierList"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"

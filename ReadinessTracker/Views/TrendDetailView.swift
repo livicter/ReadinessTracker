@@ -91,6 +91,10 @@ struct TrendDetailView: View {
                 depthTimelineSection
                     .slideIn(delay: 0.12)
 
+                // Honest #257: OutlierCallout list (classic #251 / Advanced Highlights parity).
+                trendsOutlierSection
+                    .slideIn(delay: 0.125)
+
                 // Honest #255: Distribution histogram (Metric Detail parity, ≥5 days).
                 if depthTimelinePoints.count >= 5 {
                     DistributionHistogramView(
@@ -477,6 +481,40 @@ struct TrendDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.trendsTrendStrength)
         .accessibilityLabel("Trend strength " + strength.rawValue)
+    }
+
+    /// Honest #257: elevate unused isOutlier via OutlierCallout list (up to 3).
+    @ViewBuilder
+    private var trendsOutlierSection: some View {
+        let outliers = scrubAnalyzedData.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let sign = point.zScore > 0 ? "+" : ""
+                        let deviationStr = "\(sign)\(String(format: "%.1f", point.zScore))σ"
+                        let unitSuffix = depthTimelineUnit.isEmpty ? "" : " \(depthTimelineUnit)"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(formattedSummary(point.rawValue))\(unitSuffix)",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.trendsOutlierList)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.trendsOutliers)
+            .accessibilityLabel("Outlier highlights")
+        }
     }
 
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
