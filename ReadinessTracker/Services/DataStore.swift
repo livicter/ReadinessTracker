@@ -176,7 +176,12 @@ enum UIFixture {
             let lightSleepPercentValue: Double = offset == 0 ? 0.55 : (0.42 + Double((offset * 4) % 16) * 0.01)
             let sleepOnsetMinutesValue: Double = offset == 0 ? 12 : (8 + Double((offset * 7) % 28))
             let hrvValue: Double = offset == 0 ? 58 : 48 + Double((offset * 7) % 21)
-            let maxHRValue: Double? = offset == 0 ? 185 : nil
+            // Peak HR (Honest #132): today 185; older days 155…184; rest-ish nil every 4th.
+            let maxHRValue: Double? = {
+                if offset == 0 { return 185 }
+                if offset % 4 == 0 { return nil }
+                return 155 + Double((offset * 7) % 30)
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
