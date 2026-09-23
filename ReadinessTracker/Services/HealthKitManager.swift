@@ -97,6 +97,9 @@ class HealthKitManager: ObservableObject {
             if let strideType = HKObjectType.quantityType(forIdentifier: .runningStrideLength) {
                 typesToRead.insert(strideType)
             }
+            if let voType = HKObjectType.quantityType(forIdentifier: .runningVerticalOscillation) {
+                typesToRead.insert(voType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -159,6 +162,7 @@ class HealthKitManager: ObservableObject {
         async let runSpeed = fetchRunningSpeed(predicate: predicate)
         async let runGCT = fetchRunningGroundContact(predicate: predicate)
         async let runStride = fetchRunningStrideLength(predicate: predicate)
+        async let runVO = fetchRunningVerticalOscillation(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -230,6 +234,7 @@ class HealthKitManager: ObservableObject {
             runningSpeedMps: await runSpeed,
             runningGroundContactMs: await runGCT,
             runningStrideLengthMeters: await runStride,
+            runningVerticalOscillationCm: await runVO,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -301,7 +306,8 @@ class HealthKitManager: ObservableObject {
             async let runPower = fetchRunningPower(predicate: predicate)
             async let runSpeed = fetchRunningSpeed(predicate: predicate)
             async let runGCT = fetchRunningGroundContact(predicate: predicate)
-        async let runStride = fetchRunningStrideLength(predicate: predicate)
+            async let runStride = fetchRunningStrideLength(predicate: predicate)
+            async let runVO = fetchRunningVerticalOscillation(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -344,6 +350,7 @@ class HealthKitManager: ObservableObject {
             let runSpeedValue = await runSpeed
             let runGCTValue = await runGCT
             let runStrideValue = await runStride
+            let runVOValue = await runVO
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -412,6 +419,7 @@ class HealthKitManager: ObservableObject {
                 runningSpeedMps: runSpeedValue,
                 runningGroundContactMs: runGCTValue,
                 runningStrideLengthMeters: runStrideValue,
+                runningVerticalOscillationCm: runVOValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -943,6 +951,29 @@ class HealthKitManager: ObservableObject {
                     return
                 }
                 continuation.resume(returning: meters)
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day average running vertical oscillation (cm). Sparse run-form — fixture seeds UI. iOS 16+.
+    private func fetchRunningVerticalOscillation(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .runningVerticalOscillation) else { return nil }
+        let unit = HKUnit.meter()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let meters = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                continuation.resume(returning: meters * 100.0)
             }
             self.healthStore.execute(query)
         }

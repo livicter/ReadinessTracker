@@ -1693,6 +1693,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.runningStrideCard)
 
+                RunningVOTonightBaselineCard(
+                    centimeters: data.runningVerticalOscillationCm,
+                    history: history.compactMap { day in
+                        guard let c = day.runningVerticalOscillationCm else { return nil }
+                        return (day.date, c)
+                    },
+                    baseline: RunningVOBaseline.average(
+                        from: history,
+                        fallback: data.runningVerticalOscillationCm ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.runningVOCard)
+
+
 
 
 
