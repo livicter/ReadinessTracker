@@ -84,7 +84,11 @@ final class SleepStageIntervalTests: XCTestCase {
                 SleepCycleDetector.awakePeriods(from: day.sleepStages).count,
                 "wakeEpisodes must match awake periods derived from stages"
             )
-            XCTAssertEqual(day.wakeEpisodes, 1)
+            // Honest #113: older nights vary wake counts for spark shape; today stays Calm (=1).
+            if Calendar.current.isDateInToday(day.date) {
+                XCTAssertEqual(day.wakeEpisodes, 1)
+            }
+            XCTAssertLessThanOrEqual(day.wakeEpisodes, 3)
         }
     }
 
