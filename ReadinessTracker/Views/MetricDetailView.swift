@@ -10,6 +10,9 @@ struct MetricDetailView: View {
     @State private var selectedPeriod: TrendPeriod = .week
     @State private var selectedDataPoint: DailyHealthData?
     @State private var lastHapticID: DailyHealthData.ID?
+    /// Honest #247: classic parity with Advanced MA14 / EMA overlays (subset; strips → #248).
+    @State private var showMA14 = true
+    @State private var showEMA = true
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -23,6 +26,11 @@ struct MetricDetailView: View {
 
     var values: [(date: Date, value: Double)] {
         filteredHistory.map { ($0.date, metricValue(for: $0)) }
+    }
+
+    /// Elevates unused `AnalyzedDataPoint` series on classic MetricDetailView.
+    var analyzedData: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: values, metric: metric)
     }
 
     var baseline: Double {
@@ -222,6 +230,22 @@ struct MetricDetailView: View {
                     }
                 }
 
+                // Honest #247: Advanced overlay subset on classic MetricDetailView.
+                classicOverlayToggles
+
+                if showEMA {
+                    Text("EMA responds faster than SMA to recent change")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .accessibilityIdentifier(SurfaceID.metricClassicEMA)
+                }
+                if showMA14 {
+                    Text("MA14 smooths longer trends than MA7")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .accessibilityIdentifier(SurfaceID.metricClassicMA14)
+                }
+
                 if values.count >= 2 {
                     Chart {
                         ForEach(filteredHistory) { point in
@@ -254,6 +278,13 @@ struct MetricDetailView: View {
                             .symbolSize(point.date.isToday ? 80 : 40)
                         }
 
+                        if showMA14 {
+                            classicMA14Marks
+                        }
+                        if showEMA {
+                            classicEMAMarks
+                        }
+
                         if let selected = selectedDataPoint {
                             RuleMark(x: .value("Selected", selected.date))
                                 .foregroundStyle(RTColor.primaryText.opacity(0.35))
@@ -283,6 +314,8 @@ struct MetricDetailView: View {
                     }
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.metricChartScrub)
+
+                    classicOverlayLegend
                 } else {
                     VStack(spacing: 12) {
                         Image(systemName: "chart.line.uptrend.xyaxis")
@@ -304,6 +337,75 @@ struct MetricDetailView: View {
         }
         .accessibilityIdentifier(SurfaceID.metricDetail)
     }
+
+    private var classicOverlayToggles: some View {
+        HStack(spacing: 8) {
+            ToggleChip(label: "MA14", isOn: $showMA14)
+                .accessibilityIdentifier(SurfaceID.metricClassicMA14Toggle)
+            ToggleChip(label: "EMA", isOn: $showEMA)
+                .accessibilityIdentifier(SurfaceID.metricClassicEMAToggle)
+            Spacer(minLength: 0)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricClassicOverlays)
+    }
+
+    @ChartContentBuilder
+    private var classicMA14Marks: some ChartContent {
+        ForEach(analyzedData) { point in
+            if let ma = point.movingAverage14 {
+                LineMark(
+                    x: .value("Date", point.date, unit: .day),
+                    y: .value("MA14", ma)
+                )
+                .foregroundStyle(RTColor.recovery.opacity(0.9))
+                .lineStyle(StrokeStyle(lineWidth: 1.75, dash: [8, 4]))
+                .interpolationMethod(.catmullRom)
+            }
+        }
+    }
+
+    @ChartContentBuilder
+    private var classicEMAMarks: some ChartContent {
+        ForEach(analyzedData) { point in
+            if let ema = point.ema7 {
+                LineMark(
+                    x: .value("Date", point.date, unit: .day),
+                    y: .value("EMA7", ema)
+                )
+                .foregroundStyle(RTColor.hrv.opacity(0.85))
+                .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                .interpolationMethod(.catmullRom)
+            }
+        }
+    }
+
+    private var classicOverlayLegend: some View {
+        HStack(spacing: 16) {
+            if showMA14 {
+                HStack(spacing: 6) {
+                    Capsule()
+                        .stroke(RTColor.recovery.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                        .frame(width: 18, height: 2)
+                    Text("MA14")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            if showEMA {
+                HStack(spacing: 6) {
+                    Capsule()
+                        .stroke(RTColor.hrv.opacity(0.85), style: StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                        .frame(width: 18, height: 2)
+                    Text("EMA")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
 
     private func classicAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
