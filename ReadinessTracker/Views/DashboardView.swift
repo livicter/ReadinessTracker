@@ -1798,6 +1798,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedCard)
 
+
+                DownhillSnowSportsDistanceTonightBaselineCard(
+                    kilometers: data.distanceDownhillSnowSportsKm,
+                    history: history.compactMap { day in
+                        guard let k = day.distanceDownhillSnowSportsKm else { return nil }
+                        return (day.date, k)
+                    },
+                    baseline: DownhillSnowSportsDistanceBaseline.average(
+                        from: history,
+                        fallback: data.distanceDownhillSnowSportsKm ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceCard)
+
                 CyclingCadenceTonightBaselineCard(
                     rpm: data.cyclingCadenceRpm,
                     history: history.compactMap { day in
