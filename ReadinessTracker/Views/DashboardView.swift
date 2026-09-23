@@ -184,8 +184,14 @@ struct DashboardView: View {
                         selectedSource = source
                     }) {
                         HStack(spacing: 6) {
+                            // Honest #91: Apple circular tint well on Today source picker icons.
                             Image(systemName: source == .appleWatch ? "heart.fill" : "figure.walk")
-                                .font(.system(size: 12))
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(selectedSource == source ? RTColor.primaryText : RTColor.secondaryText)
+                                .frame(width: 22, height: 22)
+                                .background((selectedSource == source ? RTColor.primaryText : RTColor.secondaryText).opacity(0.12))
+                                .clipShape(Circle())
+                                .accessibilityHidden(true)
                             Text(source.rawValue)
                                 .font(.subheadline.weight(.medium))
                         }
