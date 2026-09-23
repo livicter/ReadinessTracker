@@ -525,11 +525,20 @@ struct InfoRow: View {
     let icon: String
     let text: String
 
+    private var tint: Color {
+        icon.contains("xmark") ? RTColor.warning : RTColor.optimal
+    }
+
     var body: some View {
         HStack(spacing: 8) {
+            // Honest #100: Apple circular tint well on Metric About info bullets.
             Image(systemName: icon)
-                .font(.system(size: 12))
-                .foregroundColor(icon.contains("xmark") ? RTColor.warning : RTColor.optimal)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(tint)
+                .frame(width: 22, height: 22)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
 
             Text(text)
                 .font(RTFont.caption)

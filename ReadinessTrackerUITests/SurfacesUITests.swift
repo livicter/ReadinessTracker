@@ -197,7 +197,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testMetricAboutWellSurface() throws {
-        // Honest #86: Metric Detail / Advanced Metric About circular tint wells.
+        // Honest #86/#100: Metric Detail About cue + InfoRow circular tint wells.
         // Today → Metrics → Sleep card → MetricDetailView; soft-scroll About / older-data cue.
         revealText("Metrics")
         let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
