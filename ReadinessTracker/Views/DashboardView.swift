@@ -1791,6 +1791,20 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.physicalEffortCard)
 
+
+                WorkoutEffortTonightBaselineCard(
+                    score: data.workoutEffortScore,
+                    history: history.compactMap { day in
+                        guard let s = day.workoutEffortScore else { return nil }
+                        return (day.date, s)
+                    },
+                    baseline: WorkoutEffortBaseline.average(
+                        from: history,
+                        fallback: data.workoutEffortScore ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.workoutEffortCard)
+
                 RunningPowerTonightBaselineCard(
                     watts: data.runningPowerWatts,
                     history: history.compactMap { day in

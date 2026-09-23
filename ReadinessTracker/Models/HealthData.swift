@@ -89,6 +89,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let distanceCyclingKm: Double?  // cycling distance km — Honest #165
     let cyclingSpeedMps: Double?  // cycling speed m/s — Honest #222
     let physicalEffortKcalPerHrKg: Double?  // physical effort kcal/hr·kg — Honest #158
+    let workoutEffortScore: Double?  // workoutEffortScore 0–10 — Honest #227
     let runningPowerWatts: Double?  // running power W — Honest #159
     let runningSpeedMps: Double?  // running speed m/s — Honest #160
     let runningGroundContactMs: Double?  // running GCT ms — Honest #161
@@ -185,6 +186,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          distanceCyclingKm: Double? = nil,
          cyclingSpeedMps: Double? = nil,
          physicalEffortKcalPerHrKg: Double? = nil,
+         workoutEffortScore: Double? = nil,
          runningPowerWatts: Double? = nil,
          runningSpeedMps: Double? = nil,
          runningGroundContactMs: Double? = nil,
@@ -270,6 +272,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.distanceCyclingKm = distanceCyclingKm
         self.cyclingSpeedMps = cyclingSpeedMps
         self.physicalEffortKcalPerHrKg = physicalEffortKcalPerHrKg
+        self.workoutEffortScore = workoutEffortScore
         self.runningPowerWatts = runningPowerWatts
         self.runningSpeedMps = runningSpeedMps
         self.runningGroundContactMs = runningGroundContactMs
@@ -362,6 +365,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.distanceCyclingKm = nil
         self.cyclingSpeedMps = nil
         self.physicalEffortKcalPerHrKg = nil
+        self.workoutEffortScore = nil
         self.runningPowerWatts = nil
         self.runningSpeedMps = nil
         self.runningGroundContactMs = nil
@@ -381,7 +385,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, distanceWheelchairKm, inhalerUsage, peakExpiratoryFlowLpm, forcedVitalCapacityLiters, forcedExpiratoryVolume1Liters, insulinDeliveryIU, bloodGlucoseMgDl, bloodPressureSystolicMmHg, bloodPressureDiastolicMmHg, bodyMassKg, leanBodyMassKg, waistCircumferenceCm, bodyFatPercent, basalEnergyKcal, toothbrushingMinutes, handwashingMinutes, mindfulMinutes, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleStandTimeMinutes, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, cyclingSpeedMps, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, distanceWheelchairKm, inhalerUsage, peakExpiratoryFlowLpm, forcedVitalCapacityLiters, forcedExpiratoryVolume1Liters, insulinDeliveryIU, bloodGlucoseMgDl, bloodPressureSystolicMmHg, bloodPressureDiastolicMmHg, bodyMassKg, leanBodyMassKg, waistCircumferenceCm, bodyFatPercent, basalEnergyKcal, toothbrushingMinutes, handwashingMinutes, mindfulMinutes, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleStandTimeMinutes, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, cyclingSpeedMps, physicalEffortKcalPerHrKg, workoutEffortScore, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -465,6 +469,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.distanceCyclingKm = try container.decodeIfPresent(Double.self, forKey: .distanceCyclingKm)
         self.cyclingSpeedMps = try container.decodeIfPresent(Double.self, forKey: .cyclingSpeedMps)
         self.physicalEffortKcalPerHrKg = try container.decodeIfPresent(Double.self, forKey: .physicalEffortKcalPerHrKg)
+        self.workoutEffortScore = try container.decodeIfPresent(Double.self, forKey: .workoutEffortScore)
         self.runningPowerWatts = try container.decodeIfPresent(Double.self, forKey: .runningPowerWatts)
         self.runningSpeedMps = try container.decodeIfPresent(Double.self, forKey: .runningSpeedMps)
         self.runningGroundContactMs = try container.decodeIfPresent(Double.self, forKey: .runningGroundContactMs)
