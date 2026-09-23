@@ -236,6 +236,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return Double((offset * 5) % 7) // 0…6
             }()
+            // Peak expiratory flow L/min (Honest #224). Sparse lung function — seed for UI.
+            let peakExpiratoryFlowLpmValue: Double? = {
+                if offset == 0 { return 420 }
+                if offset % 5 == 0 { return nil }
+                return 280 + Double((offset * 23) % 221) // 280…500
+            }()
             // Insulin IU (Honest #179). Sparse medical — seed for UI.
             let insulinDeliveryIUValue: Double? = {
                 if offset == 0 { return 32 }
@@ -558,6 +564,7 @@ enum UIFixture {
                 pushCount: pushCountValue,
                 distanceWheelchairKm: distanceWheelchairKmValue,
                 inhalerUsage: inhalerUsageValue,
+                peakExpiratoryFlowLpm: peakExpiratoryFlowLpmValue,
                 insulinDeliveryIU: insulinDeliveryIUValue,
                 bloodGlucoseMgDl: bloodGlucoseMgDlValue,
                 bloodPressureSystolicMmHg: bloodPressureSystolicMmHgValue,
