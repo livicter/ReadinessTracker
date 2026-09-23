@@ -108,6 +108,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietarySelenium)!,
             HKObjectType.quantityType(forIdentifier: .dietaryManganese)!,
             HKObjectType.quantityType(forIdentifier: .dietaryIodine)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryPhosphorus)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1858,6 +1859,12 @@ class HealthKitManager: ObservableObject {
             unit: .gramUnit(with: .micro)
         ).map { $0 }
 
+        let phosphorus = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryPhosphorus)!,
+            predicate: predicate,
+            unit: .gramUnit(with: .milli)
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1898,6 +1905,7 @@ class HealthKitManager: ObservableObject {
             seleniumMcg: selenium,
             manganeseMg: manganese,
             iodineMcg: iodine,
+            phosphorusMg: phosphorus,
             alcoholicBeverages: alcohol
         )
     }
