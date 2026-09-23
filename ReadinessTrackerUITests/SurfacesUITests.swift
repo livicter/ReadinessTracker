@@ -919,6 +919,56 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ema.png")
     }
 
+    func testMetricRateOfChangeSurface() throws {
+        // Honest #243: rateOfChange Day Δ toggle + strip on Advanced Metric Detail.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable {
+                sleepRow.tap()
+            } else {
+                app.swipeUp()
+                sleepRow.tap()
+            }
+        } else {
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            var m = 0
+            while !sleepCard.exists && m < 10 {
+                app.swipeDown()
+                m += 1
+            }
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var z = 0
+        while !app.staticTexts["Day Δ"].exists && z < 8 {
+            app.swipeUp()
+            z += 1
+        }
+        XCTAssertTrue(app.staticTexts["Day Δ"].waitForExistence(timeout: 8), "Day Δ toggle")
+        _ = app.descendants(matching: .any)["metric.chart.roc.toggle"].exists
+        _ = app.descendants(matching: .any)["metric.chart.roc"].exists
+        _ = app.staticTexts["Day-over-Day Change"].exists
+            || app.staticTexts["Need ≥2 days for day-over-day change"].exists
+        _ = app.staticTexts["EMA"].exists
+        _ = app.staticTexts["Momentum"].exists
+        saveShot("verify-metric-rate-of-change.png")
+    }
+
     func testStrainRecoveryBalanceSurface() throws {
         // Honest #74: Strain/Recovery Balance header circular tint well.
         // Today WHOOP stack: elevated Balance card (Recovery | Strain + deltas) + 7-day spark.

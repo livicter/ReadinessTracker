@@ -15,6 +15,7 @@ struct AdvancedMetricDetailView: View {
     @State private var showVolatility = true  // Honest #240: rolling CV overlay
     @State private var showMomentum = true  // Honest #241: windowed momentum
     @State private var showEMA = true  // Honest #242: exponential MA overlay
+    @State private var showRateOfChange = true  // Honest #243: day-over-day ROC
     @Environment(\.dismiss) private var dismiss
     
     var filteredHistory: [(date: Date, value: Double)] {
@@ -94,7 +95,8 @@ struct AdvancedMetricDetailView: View {
                             showOutliers: showOutliers,
                             showVolatility: showVolatility,
                             showMomentum: showMomentum,
-                            showEMA: showEMA
+                            showEMA: showEMA,
+                            showRateOfChange: showRateOfChange
                         )
                     }
                 } else {
@@ -259,6 +261,8 @@ struct AdvancedMetricDetailView: View {
                     .accessibilityIdentifier(SurfaceID.metricChartMomentumToggle)
                 ToggleChip(label: "EMA", isOn: $showEMA)
                     .accessibilityIdentifier(SurfaceID.metricChartEMAToggle)
+                ToggleChip(label: "Day Δ", isOn: $showRateOfChange)
+                    .accessibilityIdentifier(SurfaceID.metricChartROCToggle)
             }
         }
     }
