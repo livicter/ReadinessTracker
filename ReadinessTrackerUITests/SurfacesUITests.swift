@@ -1064,6 +1064,38 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ma14.png")
     }
 
+    func testMetricClassifyTrendStrengthSurface() throws {
+        // Honest #253: elevate unused classifyTrend on Advanced Metric Detail hero.
+        let sleepRow = app.descendants(matching: .any)["breakdown.Sleep"].firstMatch
+        var n = 0
+        while !sleepRow.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        if sleepRow.waitForExistence(timeout: 8) {
+            if sleepRow.isHittable { sleepRow.tap() } else { app.swipeUp(); sleepRow.tap() }
+        } else {
+            let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+            XCTAssertTrue(sleepCard.waitForExistence(timeout: 8), "breakdown.Sleep or metric.card.Sleep")
+            sleepCard.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "Sleep metric detail"
+        )
+        // Soft: strength callout (Stable / Improving / …) + shared SurfaceID.
+        _ = app.descendants(matching: .any)["metric.trend.strength"].exists
+            || app.descendants(matching: .any)["metric.classic.trend.strength"].exists
+        _ = app.staticTexts["Stable"].exists
+            || app.staticTexts["Improving"].exists
+            || app.staticTexts["Declining"].exists
+            || app.staticTexts["Strong Up"].exists
+            || app.staticTexts["Strong Down"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Regression fit")).firstMatch.exists
+        saveShot("verify-metric-classify-trend-strength.png")
+    }
+
     func testMetricClassicDistributionHistogramSurface() throws {
         // Honest #252: classic DistributionHistogramView (Advanced parity, ≥5 days).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

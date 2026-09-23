@@ -215,6 +215,11 @@ struct AdvancedMetricDetailView: View {
             
             // Trend badge
             TrendBadge(direction: currentTrend, value: trendBadgeValue)
+
+            // Honest #253: elevate unused classifyTrend (trendClassification was computed, never shown).
+            if let strength = trendClassification {
+                classifyTrendCallout(strength)
+            }
             
             // Zone indicator
             if let zone = metric.zone(for: currentValue) {
@@ -238,6 +243,42 @@ struct AdvancedMetricDetailView: View {
         .padding(.horizontal, 4)
     }
     
+    private func classifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = latestAnalysis?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.metricTrendStrength)
+        .accessibilityLabel("Trend strength \(strength.rawValue)")
+    }
+
     private var dateRangeLabel: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
