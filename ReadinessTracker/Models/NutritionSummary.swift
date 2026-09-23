@@ -62,13 +62,15 @@ struct NutritionSummary: Codable, Hashable {
     let seleniumMcg: Double?
     /// Dietary manganese (mg) from HealthKit `dietaryManganese` — Honest #213.
     let manganeseMg: Double?
+    /// Dietary iodine (mcg) from HealthKit `dietaryIodine` — Honest #214.
+    let iodineMcg: Double?
     /// Alcoholic beverage count from HealthKit `numberOfAlcoholicBeverages` — Honest #177.
     let alcoholicBeverages: Double?
     
     var isEmpty: Bool {
         waterLiters == nil && caffeineMg == nil && proteinGrams == nil
             && energyKcal == nil && carbohydrateGrams == nil && fatGrams == nil
-            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && alcoholicBeverages == nil
+            && fiberGrams == nil && sugarGrams == nil && sodiumMg == nil && potassiumMg == nil && cholesterolMg == nil && saturatedFatGrams == nil && vitaminCMg == nil && vitaminDIU == nil && vitaminB12Mcg == nil && ironMg == nil && calciumMg == nil && magnesiumMg == nil && zincMg == nil && folateMcg == nil && vitaminAMcg == nil && vitaminEMg == nil && vitaminKMcg == nil && vitaminB6Mg == nil && thiaminMg == nil && riboflavinMg == nil && niacinMg == nil && pantothenicAcidMg == nil && biotinMcg == nil && copperMg == nil && seleniumMcg == nil && manganeseMg == nil && iodineMcg == nil && alcoholicBeverages == nil
     }
     
     init(
@@ -104,6 +106,7 @@ struct NutritionSummary: Codable, Hashable {
         copperMg: Double? = nil,
         seleniumMcg: Double? = nil,
         manganeseMg: Double? = nil,
+        iodineMcg: Double? = nil,
         alcoholicBeverages: Double? = nil
     ) {
         self.waterLiters = waterLiters
@@ -138,6 +141,7 @@ struct NutritionSummary: Codable, Hashable {
         self.copperMg = copperMg
         self.seleniumMcg = seleniumMcg
         self.manganeseMg = manganeseMg
+        self.iodineMcg = iodineMcg
         self.alcoholicBeverages = alcoholicBeverages
     }
 }
