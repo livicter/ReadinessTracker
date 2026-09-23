@@ -40,6 +40,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .walkingAsymmetryPercentage)!,
             HKObjectType.quantityType(forIdentifier: .walkingSpeed)!,
             HKObjectType.quantityType(forIdentifier: .walkingStepLength)!,
+            HKObjectType.quantityType(forIdentifier: .appleWalkingSteadiness)!,
             HKObjectType.quantityType(forIdentifier: .stairAscentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .stairDescentSpeed)!,
             HKObjectType.quantityType(forIdentifier: .sixMinuteWalkTestDistance)!,
@@ -151,6 +152,7 @@ class HealthKitManager: ObservableObject {
         async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
         async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
         async let stepLength = fetchWalkingStepLength(predicate: predicate)
+        async let steadiness = fetchWalkingSteadiness(predicate: predicate)
         async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
         async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
         async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
@@ -225,6 +227,7 @@ class HealthKitManager: ObservableObject {
             walkingAsymmetryPercent: await asymmetry,
             walkingSpeedMps: await walkSpeed,
             walkingStepLengthMeters: await stepLength,
+            walkingSteadinessPercent: await steadiness,
             stairAscentSpeedMps: await stairAscent,
             stairDescentSpeedMps: await stairDescent,
             sixMinuteWalkDistanceMeters: await sixMWT,
@@ -300,6 +303,7 @@ class HealthKitManager: ObservableObject {
             async let asymmetry = fetchWalkingAsymmetry(predicate: predicate)
             async let walkSpeed = fetchWalkingSpeed(predicate: predicate)
             async let stepLength = fetchWalkingStepLength(predicate: predicate)
+            async let steadiness = fetchWalkingSteadiness(predicate: predicate)
             async let stairAscent = fetchStairAscentSpeed(predicate: predicate)
             async let stairDescent = fetchStairDescentSpeed(predicate: predicate)
             async let sixMWT = fetchSixMinuteWalkDistance(predicate: predicate)
@@ -345,6 +349,7 @@ class HealthKitManager: ObservableObject {
             let asymmetryValue = await asymmetry
             let walkSpeedValue = await walkSpeed
             let stepLengthValue = await stepLength
+            let steadinessValue = await steadiness
             let stairAscentValue = await stairAscent
             let stairDescentValue = await stairDescent
             let sixMWTValue = await sixMWT
@@ -416,6 +421,7 @@ class HealthKitManager: ObservableObject {
                 walkingAsymmetryPercent: asymmetryValue,
                 walkingSpeedMps: walkSpeedValue,
                 walkingStepLengthMeters: stepLengthValue,
+                walkingSteadinessPercent: steadinessValue,
                 stairAscentSpeedMps: stairAscentValue,
                 stairDescentSpeedMps: stairDescentValue,
                 sixMinuteWalkDistanceMeters: sixMWTValue,
@@ -736,6 +742,28 @@ class HealthKitManager: ObservableObject {
                 options: .discreteAverage
             ) { _, stats, _ in
                 continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average Apple Walking Steadiness (0–100%). Sparse gait balance — fixture seeds UI.
+    private func fetchWalkingSteadiness(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .appleWalkingSteadiness) else { return nil }
+        let unit = HKUnit.percent()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                guard let raw = stats?.averageQuantity()?.doubleValue(for: unit) else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                let pct = raw <= 1.0 ? raw * 100.0 : raw
+                continuation.resume(returning: pct)
             }
             self.healthStore.execute(query)
         }

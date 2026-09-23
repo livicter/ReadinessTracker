@@ -114,6 +114,7 @@
 		J58K01M73I192031425H9 /* WalkingAsymmetryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */; };
 		J58K01M73I192031425HB /* WalkingSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */; };
 		J58K01M73I192031425HD /* WalkingStepLengthTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HC /* WalkingStepLengthTonightBaselineCard.swift */; };
+		J58K01M73I192031425P1 /* WalkingSteadinessTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425P0 /* WalkingSteadinessTonightBaselineCard.swift */; };
 		J58K01M73I192031425HF /* StairAscentSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HE /* StairAscentSpeedTonightBaselineCard.swift */; };
 		J58K01M73I192031425HH /* StairDescentSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HG /* StairDescentSpeedTonightBaselineCard.swift */; };
 		J58K01M73I192031425HJ /* SixMinuteWalkTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425HI /* SixMinuteWalkTonightBaselineCard.swift */; };
@@ -391,6 +392,7 @@
 		I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingAsymmetryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingAsymmetryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HC /* WalkingStepLengthTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingStepLengthTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingStepLengthTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425P0 /* WalkingSteadinessTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingSteadinessTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingSteadinessTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HE /* StairAscentSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StairAscentSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/StairAscentSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HG /* StairDescentSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StairDescentSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/StairDescentSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425HI /* SixMinuteWalkTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SixMinuteWalkTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SixMinuteWalkTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -712,6 +714,7 @@
 				I58K01M73I192031425H8 /* WalkingAsymmetryTonightBaselineCard.swift */,
 				I58K01M73I192031425HA /* WalkingSpeedTonightBaselineCard.swift */,
 				I58K01M73I192031425HC /* WalkingStepLengthTonightBaselineCard.swift */,
+				I58K01M73I192031425P0 /* WalkingSteadinessTonightBaselineCard.swift */,
 				I58K01M73I192031425HE /* StairAscentSpeedTonightBaselineCard.swift */,
 				I58K01M73I192031425HG /* StairDescentSpeedTonightBaselineCard.swift */,
 				I58K01M73I192031425HI /* SixMinuteWalkTonightBaselineCard.swift */,
@@ -1254,6 +1257,7 @@
 				J58K01M73I192031425H9 /* WalkingAsymmetryTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HB /* WalkingSpeedTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HD /* WalkingStepLengthTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425P1 /* WalkingSteadinessTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HF /* StairAscentSpeedTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HH /* StairDescentSpeedTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425HJ /* SixMinuteWalkTonightBaselineCard.swift in Sources */,
