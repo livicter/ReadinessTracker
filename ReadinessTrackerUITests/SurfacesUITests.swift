@@ -3413,6 +3413,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-skating-sports-distance-tonight-baseline.png")
     }
 
+    func testCrossCountrySkiingDistanceTonightBaselineSurface() throws {
+        // Honest #234: Cross Country Skiing Distance Tonight | Baseline (HK distanceCrossCountrySkiing).
+        var n = 0
+        while !app.descendants(matching: .any)["body.crossCountrySkiingDistance.card"].exists && n < 62 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.crossCountrySkiingDistance.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Cross Country Skiing Distance card")
+        XCTAssertTrue(app.staticTexts["Cross Country Skiing Distance"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.crossCountrySkiingDistance.baseline"].exists
+        _ = app.staticTexts["7-Day XC Ski Distance"].exists
+        _ = app.descendants(matching: .any)["body.crossCountrySkiingDistance.spark"].exists
+        saveShot("verify-cross-country-skiing-distance-tonight-baseline.png")
+    }
+
+
 
 
 
