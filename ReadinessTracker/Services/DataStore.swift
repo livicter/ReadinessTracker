@@ -517,6 +517,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 2.0 + Double((offset * 23) % 130) / 10.0 // 2.0…14.9
             }()
+            // Cross-country skiing speed m/s (Honest #235). Sibling after distance — seed for UI.
+            let crossCountrySkiingSpeedMpsValue: Double? = {
+                if offset == 0 { return 3.1 }
+                if offset % 5 == 0 { return nil }
+                return 1.5 + Double((offset * 17) % 32) / 10.0 // 1.5…4.6
+            }()
             // Cycling speed m/s (Honest #222). Completes cycling set — leftover after cadence/power/FTP/distance.
             let cyclingSpeedMpsValue: Double? = {
                 if offset == 0 { return 6.8 }
@@ -671,6 +677,7 @@ enum UIFixture {
                 paddleSportsSpeedMps: paddleSportsSpeedMpsValue,
                 distanceSkatingSportsKm: distanceSkatingSportsKmValue,
                 distanceCrossCountrySkiingKm: distanceCrossCountrySkiingKmValue,
+                crossCountrySkiingSpeedMps: crossCountrySkiingSpeedMpsValue,
                 cyclingSpeedMps: cyclingSpeedMpsValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 workoutEffortScore: workoutEffortScoreValue,

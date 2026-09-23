@@ -170,6 +170,9 @@ class HealthKitManager: ObservableObject {
             if let xcSkiDistanceType = HKObjectType.quantityType(forIdentifier: .distanceCrossCountrySkiing) {
                 typesToRead.insert(xcSkiDistanceType)
             }
+            if let xcSkiSpeedType = HKObjectType.quantityType(forIdentifier: .crossCountrySkiingSpeed) {
+                typesToRead.insert(xcSkiSpeedType)
+            }
         }
 
         if #available(iOS 16.0, *) {
@@ -285,6 +288,7 @@ class HealthKitManager: ObservableObject {
         async let paddleSpeed = fetchPaddleSportsSpeed(predicate: predicate)
         async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
         async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
+        async let xcSkiSpeed = fetchCrossCountrySkiingSpeed(predicate: predicate)
         async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
         async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -392,6 +396,7 @@ class HealthKitManager: ObservableObject {
             paddleSportsSpeedMps: await paddleSpeed,
             distanceSkatingSportsKm: await skatingDistance,
             distanceCrossCountrySkiingKm: await xcSkiDistance,
+            crossCountrySkiingSpeedMps: await xcSkiSpeed,
             cyclingSpeedMps: await cycleSpeed,
             physicalEffortKcalPerHrKg: await physicalEffort,
             workoutEffortScore: await workoutEffort,
@@ -499,6 +504,7 @@ class HealthKitManager: ObservableObject {
             async let paddleSpeed = fetchPaddleSportsSpeed(predicate: predicate)
             async let skatingDistance = fetchDistanceSkatingSports(predicate: predicate)
             async let xcSkiDistance = fetchDistanceCrossCountrySkiing(predicate: predicate)
+            async let xcSkiSpeed = fetchCrossCountrySkiingSpeed(predicate: predicate)
             async let cycleSpeed = fetchCyclingSpeed(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
             async let workoutEffort = fetchWorkoutEffortScore(predicate: predicate)
@@ -576,6 +582,7 @@ class HealthKitManager: ObservableObject {
             let paddleSpeedValue = await paddleSpeed
             let skatingDistanceValue = await skatingDistance
             let xcSkiDistanceValue = await xcSkiDistance
+            let xcSkiSpeedValue = await xcSkiSpeed
             let cycleSpeedValue = await cycleSpeed
             let physicalEffortValue = await physicalEffort
             let workoutEffortValue = await workoutEffort
@@ -680,6 +687,7 @@ class HealthKitManager: ObservableObject {
                 paddleSportsSpeedMps: paddleSpeedValue,
                 distanceSkatingSportsKm: skatingDistanceValue,
                 distanceCrossCountrySkiingKm: xcSkiDistanceValue,
+                crossCountrySkiingSpeedMps: xcSkiSpeedValue,
                 cyclingSpeedMps: cycleSpeedValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
                 workoutEffortScore: workoutEffortValue,
@@ -1392,6 +1400,24 @@ class HealthKitManager: ObservableObject {
         guard let type = HKQuantityType.quantityType(forIdentifier: .distanceCrossCountrySkiing) else { return nil }
         guard let meters = await fetchSumQuantity(type: type, predicate: predicate, unit: .meter()) else { return nil }
         return meters / 1000.0
+    }
+
+
+    /// Day average cross-country skiing speed (m/s). Sparse niche sport — fixture seeds UI. iOS 18+.
+    private func fetchCrossCountrySkiingSpeed(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 18.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .crossCountrySkiingSpeed) else { return nil }
+        let unit = HKUnit.meter().unitDivided(by: .second())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
     }
 
     private func fetchSwimmingStrokeCount(predicate: NSPredicate) async -> Double? {

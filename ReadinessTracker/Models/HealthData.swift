@@ -93,6 +93,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let paddleSportsSpeedMps: Double?  // paddle sports speed m/s — Honest #232
     let distanceSkatingSportsKm: Double?  // skating sports distance km — Honest #233
     let distanceCrossCountrySkiingKm: Double?  // XC skiing distance km — Honest #234
+    let crossCountrySkiingSpeedMps: Double?  // XC skiing speed m/s — Honest #235
     let cyclingSpeedMps: Double?  // cycling speed m/s — Honest #222
     let physicalEffortKcalPerHrKg: Double?  // physical effort kcal/hr·kg — Honest #158
     let workoutEffortScore: Double?  // workoutEffortScore 0–10 — Honest #227
@@ -197,6 +198,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          paddleSportsSpeedMps: Double? = nil,
          distanceSkatingSportsKm: Double? = nil,
          distanceCrossCountrySkiingKm: Double? = nil,
+         crossCountrySkiingSpeedMps: Double? = nil,
          cyclingSpeedMps: Double? = nil,
          physicalEffortKcalPerHrKg: Double? = nil,
          workoutEffortScore: Double? = nil,
@@ -290,6 +292,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.paddleSportsSpeedMps = paddleSportsSpeedMps
         self.distanceSkatingSportsKm = distanceSkatingSportsKm
         self.distanceCrossCountrySkiingKm = distanceCrossCountrySkiingKm
+        self.crossCountrySkiingSpeedMps = crossCountrySkiingSpeedMps
         self.cyclingSpeedMps = cyclingSpeedMps
         self.physicalEffortKcalPerHrKg = physicalEffortKcalPerHrKg
         self.workoutEffortScore = workoutEffortScore
@@ -390,6 +393,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.paddleSportsSpeedMps = nil
         self.distanceSkatingSportsKm = nil
         self.distanceCrossCountrySkiingKm = nil
+        self.crossCountrySkiingSpeedMps = nil
         self.cyclingSpeedMps = nil
         self.physicalEffortKcalPerHrKg = nil
         self.workoutEffortScore = nil
@@ -413,7 +417,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, distanceWheelchairKm, inhalerUsage, peakExpiratoryFlowLpm, forcedVitalCapacityLiters, forcedExpiratoryVolume1Liters, insulinDeliveryIU, bloodGlucoseMgDl, bloodPressureSystolicMmHg, bloodPressureDiastolicMmHg, bodyMassKg, leanBodyMassKg, waistCircumferenceCm, bodyFatPercent, basalEnergyKcal, toothbrushingMinutes, handwashingMinutes, mindfulMinutes, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleStandTimeMinutes, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, distanceRowingKm, rowingSpeedMps, distancePaddleSportsKm, paddleSportsSpeedMps, distanceSkatingSportsKm, distanceCrossCountrySkiingKm, cyclingSpeedMps, physicalEffortKcalPerHrKg, workoutEffortScore, estimatedWorkoutEffortScore, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, heartRateRecoveryOneMinuteBpm, atrialFibrillationBurdenPercent, peripheralPerfusionIndexPercent, numberOfTimesFallen, pushCount, distanceWheelchairKm, inhalerUsage, peakExpiratoryFlowLpm, forcedVitalCapacityLiters, forcedExpiratoryVolume1Liters, insulinDeliveryIU, bloodGlucoseMgDl, bloodPressureSystolicMmHg, bloodPressureDiastolicMmHg, bodyMassKg, leanBodyMassKg, waistCircumferenceCm, bodyFatPercent, basalEnergyKcal, toothbrushingMinutes, handwashingMinutes, mindfulMinutes, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, appleStandTimeMinutes, appleMoveTimeMinutes, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, walkingSteadinessPercent, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, distanceCyclingKm, distanceRowingKm, rowingSpeedMps, distancePaddleSportsKm, paddleSportsSpeedMps, distanceSkatingSportsKm, distanceCrossCountrySkiingKm, crossCountrySkiingSpeedMps, cyclingSpeedMps, physicalEffortKcalPerHrKg, workoutEffortScore, estimatedWorkoutEffortScore, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -501,6 +505,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.paddleSportsSpeedMps = try container.decodeIfPresent(Double.self, forKey: .paddleSportsSpeedMps)
         self.distanceSkatingSportsKm = try container.decodeIfPresent(Double.self, forKey: .distanceSkatingSportsKm)
         self.distanceCrossCountrySkiingKm = try container.decodeIfPresent(Double.self, forKey: .distanceCrossCountrySkiingKm)
+        self.crossCountrySkiingSpeedMps = try container.decodeIfPresent(Double.self, forKey: .crossCountrySkiingSpeedMps)
         self.cyclingSpeedMps = try container.decodeIfPresent(Double.self, forKey: .cyclingSpeedMps)
         self.physicalEffortKcalPerHrKg = try container.decodeIfPresent(Double.self, forKey: .physicalEffortKcalPerHrKg)
         self.workoutEffortScore = try container.decodeIfPresent(Double.self, forKey: .workoutEffortScore)
