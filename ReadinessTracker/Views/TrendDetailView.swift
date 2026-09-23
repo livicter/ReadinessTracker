@@ -72,6 +72,12 @@ struct TrendDetailView: View {
                 // Summary stats for primary metric (Avg / Min / Max / Change %)
                 summaryStatsRow
                     .slideIn(delay: 0.03)
+
+                // Honest #255: elevate unused classifyTrend on Trends primary series.
+                if let strength = trendClassification {
+                    trendsClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.04)
+                }
                 
                 // Metric toggles
                 metricToggles
@@ -84,6 +90,17 @@ struct TrendDetailView: View {
                 // Depth timeline for primary metric
                 depthTimelineSection
                     .slideIn(delay: 0.12)
+
+                // Honest #255: Distribution histogram (Metric Detail parity, ≥5 days).
+                if depthTimelinePoints.count >= 5 {
+                    DistributionHistogramView(
+                        history: depthTimelinePoints,
+                        metric: scrubAnalysisMetric
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsHistogram)
+                    .slideIn(delay: 0.13)
+                }
                 
                 // Individual metric cards
                 metricCards
@@ -401,6 +418,50 @@ struct TrendDetailView: View {
     /// Honest #250: elevate unused AnalyzedDataPoint fields on Trends scrub.
     private var scrubAnalyzedData: [AnalyzedDataPoint] {
         TrendAnalysisEngine.analyze(history: depthTimelinePoints, metric: scrubAnalysisMetric)
+    }
+
+    /// Honest #255: elevate unused classifyTrend on Trends primary depth series.
+    private var trendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = scrubAnalyzedData.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: scrubAnalysisMetric)
+    }
+
+    private func trendsClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = scrubAnalyzedData.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.trendsTrendStrength)
+        .accessibilityLabel("Trend strength " + strength.rawValue)
     }
 
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
