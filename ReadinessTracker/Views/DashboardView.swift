@@ -1256,6 +1256,21 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.stepsCard)
 
+                HydrationTonightBaselineCard(
+                    waterLiters: data.nutrition.waterLiters,
+                    caffeineMg: data.nutrition.caffeineMg,
+                    proteinGrams: data.nutrition.proteinGrams,
+                    history: history.compactMap { day in
+                        guard let w = day.nutrition.waterLiters else { return nil }
+                        return (day.date, w)
+                    },
+                    baselineLiters: HydrationBaseline.averageWater(
+                        from: history,
+                        fallback: data.nutrition.waterLiters ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.hydrationCard)
+
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(
                         hasFlowTonight: data.menstrualFlow,

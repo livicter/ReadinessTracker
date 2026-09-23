@@ -222,7 +222,11 @@ enum UIFixture {
                 skinTemperature: skinTemperatureValue,
                 respiratoryRate: respiratoryRateValue,
                 bloodOxygen: bloodOxygenValue,
-                nutrition: NutritionSummary(waterLiters: 2.1, caffeineMg: 90, proteinGrams: 95),
+                nutrition: NutritionSummary(
+                    waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
+                    caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),
+                    proteinGrams: offset == 0 ? 95 : (70 + Double((offset * 13) % 60))
+                ),
                 // Short flow streak so Cycle detail 14-day strip has shape (today + prior 2 days).
                 menstrualFlow: offset <= 2
             )
