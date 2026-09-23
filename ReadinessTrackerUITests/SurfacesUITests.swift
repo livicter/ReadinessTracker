@@ -341,6 +341,13 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-sleep-disturbances.png")
     }
 
+    func testQuickTrendsSurface() throws {
+        // Honest #78: QuickTrendCard header circular tint wells.
+        revealText("Quick Trends")
+        XCTAssertTrue(app.staticTexts["Quick Trends"].waitForExistence(timeout: 8), "Quick Trends")
+        saveShot("verify-quick-trends.png")
+    }
+
     func testJournalButtonSurface() throws {
         // Honest #77: Today Journal button circular tint well.
         revealText("Journal")
