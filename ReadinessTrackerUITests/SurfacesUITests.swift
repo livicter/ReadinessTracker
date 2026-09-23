@@ -1881,6 +1881,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-running-stride-tonight-baseline.png")
     }
 
+    func testRunningVOTonightBaselineSurface() throws {
+        // Honest #163: Vert Oscillation Tonight | Baseline (new HK + model).
+        var n = 0
+        let title = app.staticTexts["Vert Oscillation"]
+        while !title.exists && n < 56 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Vert Oscillation")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.runningVO.card"].exists
+        _ = app.descendants(matching: .any)["body.runningVO.baseline"].exists
+        _ = app.staticTexts["7-Day Vert Oscillation"].exists
+        _ = app.descendants(matching: .any)["body.runningVO.spark"].exists
+        saveShot("verify-running-vo-tonight-baseline.png")
+    }
+
 
 
 

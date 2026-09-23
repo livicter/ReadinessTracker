@@ -66,6 +66,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
     let runningSpeedMps: Double?  // running speed m/s — Honest #160
     let runningGroundContactMs: Double?  // running GCT ms — Honest #161
     let runningStrideLengthMeters: Double?  // running stride m — Honest #162
+    let runningVerticalOscillationCm: Double?  // running VO cm — Honest #163
     
     // Cardiovascular strain data
     let maxHeartRate: Double?
@@ -134,6 +135,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
          runningSpeedMps: Double? = nil,
          runningGroundContactMs: Double? = nil,
          runningStrideLengthMeters: Double? = nil,
+         runningVerticalOscillationCm: Double? = nil,
          nutrition: NutritionSummary = NutritionSummary(),
          menstrualFlow: Bool = false) {
         self.id = id
@@ -191,6 +193,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.runningSpeedMps = runningSpeedMps
         self.runningGroundContactMs = runningGroundContactMs
         self.runningStrideLengthMeters = runningStrideLengthMeters
+        self.runningVerticalOscillationCm = runningVerticalOscillationCm
         self.nutrition = nutrition
         self.menstrualFlow = menstrualFlow
     }
@@ -255,6 +258,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.runningSpeedMps = nil
         self.runningGroundContactMs = nil
         self.runningStrideLengthMeters = nil
+        self.runningVerticalOscillationCm = nil
         self.nutrition = NutritionSummary()
         self.menstrualFlow = false
     }
@@ -269,7 +273,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         case restingHeartRate, activeCalories, steps, workoutMinutes
         case maxHeartRate, hrSamples
         case strainSessions
-        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters
+        case skinTemperature, respiratoryRate, bloodOxygen, vo2Max, walkingHeartRateAverage, environmentalAudioExposureDBA, headphoneAudioExposureDBA, environmentalSoundReductionDBA, timeInDaylightMinutes, uvExposureIndex, flightsClimbed, distanceWalkingRunningKm, appleExerciseTimeMinutes, appleStandHours, walkingDoubleSupportPercent, walkingAsymmetryPercent, walkingSpeedMps, walkingStepLengthMeters, stairAscentSpeedMps, stairDescentSpeedMps, sixMinuteWalkDistanceMeters, distanceSwimmingMeters, swimmingStrokeCount, cyclingCadenceRpm, underwaterDepthMeters, cyclingPowerWatts, cyclingFTPWatts, physicalEffortKcalPerHrKg, runningPowerWatts, runningSpeedMps, runningGroundContactMs, runningStrideLengthMeters, runningVerticalOscillationCm
         case nutrition, menstrualFlow
     }
     
@@ -330,6 +334,7 @@ struct DailyHealthData: Identifiable, Codable, Hashable {
         self.runningSpeedMps = try container.decodeIfPresent(Double.self, forKey: .runningSpeedMps)
         self.runningGroundContactMs = try container.decodeIfPresent(Double.self, forKey: .runningGroundContactMs)
         self.runningStrideLengthMeters = try container.decodeIfPresent(Double.self, forKey: .runningStrideLengthMeters)
+        self.runningVerticalOscillationCm = try container.decodeIfPresent(Double.self, forKey: .runningVerticalOscillationCm)
         self.nutrition = try container.decodeIfPresent(NutritionSummary.self, forKey: .nutrition) ?? NutritionSummary()
         self.menstrualFlow = try container.decodeIfPresent(Bool.self, forKey: .menstrualFlow) ?? false
     }

@@ -127,6 +127,7 @@
 		J58K01M73I192031425I1 /* RunningSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */; };
 		J58K01M73I192031425I3 /* RunningGCTTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425I2 /* RunningGCTTonightBaselineCard.swift */; };
 		J58K01M73I192031425I5 /* RunningStrideTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425I4 /* RunningStrideTonightBaselineCard.swift */; };
+		J58K01M73I192031425I7 /* RunningVOTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425I6 /* RunningVOTonightBaselineCard.swift */; };
 		F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */; };
 		B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */; };
 		D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */; };
@@ -401,6 +402,7 @@
 		I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425I2 /* RunningGCTTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningGCTTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningGCTTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425I4 /* RunningStrideTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningStrideTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningStrideTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425I6 /* RunningVOTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RunningVOTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RunningVOTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeEpisodesCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WakeEpisodesCard.swift; sourceTree = SOURCE_ROOT; };
 		A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepMidpointCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepMidpointCard.swift; sourceTree = SOURCE_ROOT; };
 		C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeInBedCard.swift; path = ReadinessTracker/Views/WhoopFeatures/TimeInBedCard.swift; sourceTree = SOURCE_ROOT; };
@@ -719,6 +721,7 @@
 				I58K01M73I192031425I0 /* RunningSpeedTonightBaselineCard.swift */,
 				I58K01M73I192031425I2 /* RunningGCTTonightBaselineCard.swift */,
 				I58K01M73I192031425I4 /* RunningStrideTonightBaselineCard.swift */,
+				I58K01M73I192031425I6 /* RunningVOTonightBaselineCard.swift */,
 				E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */,
 				A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */,
 				C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */,
@@ -1258,6 +1261,7 @@
 				J58K01M73I192031425I1 /* RunningSpeedTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425I3 /* RunningGCTTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425I5 /* RunningStrideTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425I7 /* RunningVOTonightBaselineCard.swift in Sources */,
 				F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */,
 				B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */,
 				D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */,
