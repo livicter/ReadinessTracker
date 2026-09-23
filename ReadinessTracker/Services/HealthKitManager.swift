@@ -40,6 +40,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .environmentalAudioExposure)!,
             HKObjectType.quantityType(forIdentifier: .headphoneAudioExposure)!,
             HKObjectType.quantityType(forIdentifier: .environmentalSoundReduction)!,
+            HKObjectType.quantityType(forIdentifier: .uvExposure)!,
             HKObjectType.quantityType(forIdentifier: .bodyTemperature)!,
             HKSeriesType.heartbeat(),
             HKObjectType.quantityType(forIdentifier: .dietaryWater)!,
@@ -92,6 +93,7 @@ class HealthKitManager: ObservableObject {
         async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
         async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
         async let daylight = fetchTimeInDaylight(predicate: predicate)
+        async let uv = fetchUVExposure(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -140,6 +142,7 @@ class HealthKitManager: ObservableObject {
             headphoneAudioExposureDBA: await headphoneAudio,
             environmentalSoundReductionDBA: await soundReduction,
             timeInDaylightMinutes: await daylight,
+            uvExposureIndex: await uv,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -189,6 +192,7 @@ class HealthKitManager: ObservableObject {
             async let headphoneAudio = fetchHeadphoneAudioExposure(predicate: predicate)
             async let soundReduction = fetchEnvironmentalSoundReduction(predicate: predicate)
             async let daylight = fetchTimeInDaylight(predicate: predicate)
+            async let uv = fetchUVExposure(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -208,6 +212,7 @@ class HealthKitManager: ObservableObject {
             let headphoneAudioValue = await headphoneAudio
             let soundReductionValue = await soundReduction
             let daylightValue = await daylight
+            let uvValue = await uv
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -253,6 +258,7 @@ class HealthKitManager: ObservableObject {
                 headphoneAudioExposureDBA: headphoneAudioValue,
                 environmentalSoundReductionDBA: soundReductionValue,
                 timeInDaylightMinutes: daylightValue,
+                uvExposureIndex: uvValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -409,6 +415,24 @@ class HealthKitManager: ObservableObject {
     }
 
 
+
+
+
+    /// Day average UV exposure index. Sparse on Simulator — fixture seeds UI.
+    private func fetchUVExposure(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .uvExposure) else { return nil }
+        let unit = HKUnit.count()
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
 
 
     private func fetchHeartbeatSeriesRRIntervals(predicate: NSPredicate) async -> [Double] {

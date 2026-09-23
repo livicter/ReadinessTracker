@@ -218,6 +218,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 35.0 + Double((offset * 11) % 90) // 35…124
             }()
+            // UV exposure index (Honest #140). Simulator rarely has samples — seed for UI.
+            let uvExposureIndexValue: Double? = {
+                if offset == 0 { return 4.5 }
+                if offset % 5 == 0 { return nil }
+                return 1.0 + Double((offset * 7) % 80) / 10.0 // 1.0…8.9
+            }()
             let hrSamplesValue: [HRSample] = offset == 0 ? syntheticHRSamples(on: date) : []
             let activeCaloriesValue: Double = offset == 0 ? 420 : 280 + Double((offset * 53) % 280)
             let stepsValue: Int = offset == 0 ? 8200 : 5500 + ((offset * 917) % 4500)
@@ -270,6 +276,7 @@ enum UIFixture {
                 headphoneAudioExposureDBA: headphoneAudioExposureDBAValue,
                 environmentalSoundReductionDBA: environmentalSoundReductionDBAValue,
                 timeInDaylightMinutes: timeInDaylightMinutesValue,
+                uvExposureIndex: uvExposureIndexValue,
                 nutrition: NutritionSummary(
                     waterLiters: offset == 0 ? 2.1 : (1.4 + Double((offset * 7) % 12) * 0.1),
                     caffeineMg: offset == 0 ? 90 : (60 + Double((offset * 23) % 180)),
