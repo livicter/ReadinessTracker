@@ -341,8 +341,14 @@ struct AdvancedMetricDetailView: View {
         NativeCard {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 8) {
+                    // Honest #86: Apple circular tint well on Advanced Metric About cue.
                     Image(systemName: "info.circle.fill")
+                        .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(RTColor.caution)
+                        .frame(width: 26, height: 26)
+                        .background(RTColor.caution.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     
                     Text("About This Data")
                         .font(.headline.weight(.semibold))
