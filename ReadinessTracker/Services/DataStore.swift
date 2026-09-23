@@ -260,6 +260,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 79.0 + Double((offset * 3) % 51) / 10.0 // 79.0…84.0
             }()
+            // Body fat % (Honest #187). Sparse composition — seed for UI.
+            let bodyFatPercentValue: Double? = {
+                if offset == 0 { return 18.4 }
+                if offset % 5 == 0 { return nil }
+                return 16.0 + Double((offset * 7) % 61) / 10.0 // 16.0…22.0
+            }()
             // Basal energy kcal (Honest #184). Resting burn — seed for UI.
             let basalEnergyKcalValue: Double? = {
                 if offset == 0 { return 1680 }
@@ -521,6 +527,7 @@ enum UIFixture {
                 bodyMassKg: bodyMassKgValue,
                 leanBodyMassKg: leanBodyMassKgValue,
                 waistCircumferenceCm: waistCircumferenceCmValue,
+                bodyFatPercent: bodyFatPercentValue,
                 basalEnergyKcal: basalEnergyKcalValue,
                 toothbrushingMinutes: toothbrushingMinutesValue,
                 handwashingMinutes: handwashingMinutesValue,
