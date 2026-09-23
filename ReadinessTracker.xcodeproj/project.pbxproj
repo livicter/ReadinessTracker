@@ -150,6 +150,7 @@
 		J58K01M73I192031425BM1 /* WorkoutEffortTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BM0 /* WorkoutEffortTonightBaselineCard.swift */; };
 		J58K01M73I192031425BN1 /* EstimatedWorkoutEffortTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BN0 /* EstimatedWorkoutEffortTonightBaselineCard.swift */; };
 		J58K01M73I192031425BO1 /* RowingDistanceTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BO0 /* RowingDistanceTonightBaselineCard.swift */; };
+		J58K01M73I192031425BP1 /* RowingSpeedTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425BP0 /* RowingSpeedTonightBaselineCard.swift */; };
 		J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */; };
 		J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */; };
 		J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */; };
@@ -491,6 +492,7 @@
 		I58K01M73I192031425BM0 /* WorkoutEffortTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkoutEffortTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WorkoutEffortTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425BN0 /* EstimatedWorkoutEffortTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EstimatedWorkoutEffortTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/EstimatedWorkoutEffortTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425BO0 /* RowingDistanceTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowingDistanceTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RowingDistanceTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425BP0 /* RowingSpeedTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowingSpeedTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RowingSpeedTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AlcoholicBeveragesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AlcoholicBeveragesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InhalerUsageTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InhalerUsageTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InsulinDeliveryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InsulinDeliveryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -876,6 +878,7 @@
 				I58K01M73I192031425BM0 /* WorkoutEffortTonightBaselineCard.swift */,
 				I58K01M73I192031425BN0 /* EstimatedWorkoutEffortTonightBaselineCard.swift */,
 				I58K01M73I192031425BO0 /* RowingDistanceTonightBaselineCard.swift */,
+				I58K01M73I192031425BP0 /* RowingSpeedTonightBaselineCard.swift */,
 				I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */,
 				I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */,
 				I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */,
@@ -1482,6 +1485,7 @@
 				J58K01M73I192031425BM1 /* WorkoutEffortTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425BN1 /* EstimatedWorkoutEffortTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425BO1 /* RowingDistanceTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425BP1 /* RowingSpeedTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */,

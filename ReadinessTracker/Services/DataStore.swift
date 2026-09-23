@@ -487,6 +487,12 @@ enum UIFixture {
                 if offset % 5 == 0 { return nil }
                 return 1.5 + Double((offset * 13) % 95) / 10.0 // 1.5…10.9
             }()
+            // Rowing speed m/s (Honest #230). Sibling after distance — seed for UI.
+            let rowingSpeedMpsValue: Double? = {
+                if offset == 0 { return 2.9 }
+                if offset % 5 == 0 { return nil }
+                return 1.4 + Double((offset * 11) % 28) / 10.0 // 1.4…4.1
+            }()
             // Cycling speed m/s (Honest #222). Completes cycling set — leftover after cadence/power/FTP/distance.
             let cyclingSpeedMpsValue: Double? = {
                 if offset == 0 { return 6.8 }
@@ -636,6 +642,7 @@ enum UIFixture {
                 cyclingFTPWatts: cyclingFTPWattsValue,
                 distanceCyclingKm: distanceCyclingKmValue,
                 distanceRowingKm: distanceRowingKmValue,
+                rowingSpeedMps: rowingSpeedMpsValue,
                 cyclingSpeedMps: cyclingSpeedMpsValue,
                 physicalEffortKcalPerHrKg: physicalEffortKcalPerHrKgValue,
                 workoutEffortScore: workoutEffortScoreValue,
