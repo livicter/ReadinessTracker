@@ -14,6 +14,8 @@ struct TrendDetailView: View {
     @State private var lastHapticID: DailyHealthData.ID?
     /// Honest #258: Trends Baseline Bands ±2σ (classic #251 dual completion).
     @State private var showBaselineBands = true
+    /// Honest #259: Trends rollingVolatility strip (classic #248 / Advanced #240 parity).
+    @State private var showVolatility = true
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -519,6 +521,108 @@ struct TrendDetailView: View {
         }
     }
 
+    // MARK: - Trends Volatility strip (Honest #259)
+
+    private var trendsVolatilityPoints: [(date: Date, cv: Double)] {
+        scrubAnalyzedData.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var trendsLatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = trendsVolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var trendsVolatilityYDomain: ClosedRange<Double> {
+        let vals = trendsVolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var trendsVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = trendsVolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, trendsLatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(trendsLatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !trendsVolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", trendsVolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(trendsVolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: trendsVolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.trendsVolatility)
+        .accessibilityLabel("Seven day rolling volatility")
+    }
+
     private func scrubAnnotationOverlay(proxy: ChartProxy) -> some View {
         GeometryReader { geometry in
             if let selected = selectedScrubDay {
@@ -658,10 +762,12 @@ struct TrendDetailView: View {
     private var depthTimelineSection: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 12) {
-                // Honest #258: Baseline Bands toggle (classic #251 / Advanced parity).
+                // Honest #258/#259: Baseline Bands + Volatility strip toggles.
                 HStack(spacing: 8) {
                     ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
                         .accessibilityIdentifier(SurfaceID.trendsBaselineBandsToggle)
+                    ToggleChip(label: "Volatility", isOn: $showVolatility)
+                        .accessibilityIdentifier(SurfaceID.trendsVolatilityToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -689,6 +795,11 @@ struct TrendDetailView: View {
                         Spacer(minLength: 0)
                     }
                     .accessibilityLabel("Baseline bands plus or minus two sigma")
+                }
+
+                // Honest #259: elevate unused AnalyzedDataPoint.volatility / rollingVolatility.
+                if showVolatility {
+                    trendsVolatilityStrip
                 }
             }
         }

@@ -620,6 +620,9 @@ enum SurfaceID {
     /// Honest #258: Trends Baseline Bands ±2σ (classic #251 dual completion).
     static let trendsBaselineBands = "trends.baselineBands"
     static let trendsBaselineBandsToggle = "trends.baselineBands.toggle"
+    /// Honest #259: Trends rollingVolatility strip (classic #248 / Advanced #240 parity).
+    static let trendsVolatility = "trends.volatility"
+    static let trendsVolatilityToggle = "trends.volatility.toggle"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"

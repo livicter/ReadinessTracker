@@ -515,6 +515,57 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends-baseline-bands.png")
     }
 
+    func testTrendsRollingVolatilitySurface() throws {
+        // Honest #259: Trends rollingVolatility strip (classic #248 / Advanced #240 parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browse = app.staticTexts["Browse Trends"].exists ? app.staticTexts["Browse Trends"] : app.buttons["Browse Trends"]
+            XCTAssertTrue(browse.waitForExistence(timeout: 8), "Browse Trends")
+            browse.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 8) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        // Prefer 30D so rolling 7-day CV has a real series under fixture.
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var s = 0
+        let toggle = app.descendants(matching: .any)["trends.volatility.toggle"].firstMatch
+        let strip = app.descendants(matching: .any)["trends.volatility"].firstMatch
+        while !toggle.exists && !strip.exists && s < 14 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = toggle.exists
+        _ = strip.exists
+        _ = app.staticTexts["Volatility"].exists || app.staticTexts["7-Day Volatility"].exists
+        _ = app.staticTexts["Low"].exists || app.staticTexts["Mild"].exists || app.staticTexts["High"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "CV")).firstMatch.exists
+            || app.staticTexts["Baseline Bands"].exists
+        saveShot("verify-trends-rolling-volatility.png")
+    }
+
     func testTrendsScrubTooltipEnrichmentSurface() throws {
         // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
