@@ -135,10 +135,17 @@ struct AdvancedMetricDetailView: View {
                     )
                 }
                 
-                // Recovery trajectory
+                // Recovery trajectory — post high-strain days (Honest #238)
                 if filteredHistory.count >= 7 {
+                    let days = selectedPeriod.rawValue
+                    let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
+                    let strainSeries = history
+                        .filter { $0.date >= cutoff }
+                        .sorted { $0.date < $1.date }
+                        .map { ($0.date, $0.activeCalories) }
                     RecoveryTrajectoryView(
                         history: filteredHistory,
+                        strainHistory: strainSeries,
                         metric: metric
                     )
                 }

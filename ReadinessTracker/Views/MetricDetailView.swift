@@ -74,10 +74,11 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.2)
                 }
 
-                // Recovery Trajectory
+                // Recovery Trajectory — post high-strain days (Honest #238)
                 if filteredHistory.count >= 5 {
                     RecoveryTrajectoryView(
                         history: values,
+                        strainHistory: filteredHistory.map { ($0.date, $0.activeCalories) },
                         metric: metric
                     )
                     .slideIn(delay: 0.25)

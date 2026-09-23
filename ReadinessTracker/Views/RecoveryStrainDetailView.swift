@@ -56,6 +56,10 @@ struct RecoveryStrainDetailView: View {
 
                 balanceChartSection
                     .slideIn(delay: 0.05)
+
+                // Honest #238: WHOOP post-strain recovery trajectory
+                postStrainRecoverySection
+                    .slideIn(delay: 0.07)
                 
                 // Strain detail
                 strainDetail
@@ -161,6 +165,21 @@ struct RecoveryStrainDetailView: View {
         }
     }
     
+    // MARK: - Post-Strain Recovery (Honest #238)
+    private var postStrainRecoverySection: some View {
+        let metricSeries = historicalStrainData.map { ($0.date, Double($0.recovery)) }
+        let strainSeries = historicalStrainData.map { ($0.date, $0.strain) }
+        return RecoveryTrajectoryView(
+            metricHistory: metricSeries,
+            strainHistory: strainSeries,
+            metricLabel: "Recovery",
+            unit: "",
+            higherIsBetter: true,
+            color: RTColor.optimal,
+            recoveryWindow: 5
+        )
+    }
+
     // MARK: - Strain Detail
     private var strainDetail: some View {
         NativeCard {

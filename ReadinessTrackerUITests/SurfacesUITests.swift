@@ -907,6 +907,32 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-hr-zones.png")
     }
 
+    func testPostStrainRecoveryTrajectorySurface() throws {
+        // Honest #238: WHOOP post-strain recovery trajectory on Today WHOOP stack.
+        var n = 0
+        let title = app.staticTexts["Post-Strain Recovery"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Post-Strain Recovery")
+        // Soft: bring into frame without flaky isOnScreen loops.
+        for _ in 0..<3 {
+            if title.exists { app.swipeUp(); break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(app.staticTexts["Post-Strain Recovery"].exists, "Post-Strain Recovery visible")
+        _ = app.descendants(matching: .any)["recovery.postStrain.card"].exists
+        _ = app.descendants(matching: .any)["recovery.postStrain.chart"].exists
+        _ = app.descendants(matching: .any)["recovery.postStrain.events"].exists
+        _ = app.staticTexts["Baseline"].exists
+        _ = app.staticTexts["Avg Recovery after high-strain days"].exists
+            || app.staticTexts["Day+1"].exists
+            || app.staticTexts["Back by"].exists
+            || app.staticTexts["Need more high-strain days for trajectory"].exists
+        saveShot("verify-post-strain-recovery-trajectory.png")
+    }
+
     func testNutritionSummarySurface() throws {
         // Honest #106: WHOOP/GHealth nutrition card on Recovery & Strain.
         revealText("Sleep Consistency")

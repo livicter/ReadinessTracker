@@ -949,6 +949,22 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.dailyTRIMPCard)
 
+            // Honest #238: WHOOP post-strain recovery trajectory (elevates unused engine API).
+            RecoveryTrajectoryView(
+                metricHistory: history.map { day in
+                    (day.date, RecoveryCalculator.dashboardWheelScore(from: day, history: history))
+                },
+                strainHistory: history.map { day in
+                    (day.date, StrainCalculator.calculate(from: day, history: history))
+                },
+                metricLabel: "Recovery",
+                unit: "",
+                higherIsBetter: true,
+                color: RTColor.optimal,
+                recoveryWindow: 5
+            )
+            .accessibilityIdentifier(SurfaceID.postStrainRecoveryCard)
+
             WatchStrainTonightBaselineCard(
                 tonightStrain: StrainCalculator.calculate(from: data, history: history),
                 history: history.map { day in
