@@ -133,6 +133,7 @@
 		J58K01M73I192031425AV1 /* DietaryBiotinTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425AV0 /* DietaryBiotinTonightBaselineCard.swift */; };
 		J58K01M73I192031425AW1 /* DietaryCopperTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425AW0 /* DietaryCopperTonightBaselineCard.swift */; };
 		J58K01M73I192031425AX1 /* DietarySeleniumTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425AX0 /* DietarySeleniumTonightBaselineCard.swift */; };
+		J58K01M73I192031425AY1 /* DietaryManganeseTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425AY0 /* DietaryManganeseTonightBaselineCard.swift */; };
 		J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */; };
 		J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */; };
 		J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */; };
@@ -457,6 +458,7 @@
 		I58K01M73I192031425AV0 /* DietaryBiotinTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryBiotinTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryBiotinTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425AW0 /* DietaryCopperTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryCopperTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryCopperTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425AX0 /* DietarySeleniumTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietarySeleniumTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietarySeleniumTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
+		I58K01M73I192031425AY0 /* DietaryManganeseTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DietaryManganeseTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/DietaryManganeseTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AlcoholicBeveragesTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/AlcoholicBeveragesTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InhalerUsageTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InhalerUsageTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InsulinDeliveryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InsulinDeliveryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -825,6 +827,7 @@
 				I58K01M73I192031425AV0 /* DietaryBiotinTonightBaselineCard.swift */,
 				I58K01M73I192031425AW0 /* DietaryCopperTonightBaselineCard.swift */,
 				I58K01M73I192031425AX0 /* DietarySeleniumTonightBaselineCard.swift */,
+				I58K01M73I192031425AY0 /* DietaryManganeseTonightBaselineCard.swift */,
 				I58K01M73I192031425B0 /* AlcoholicBeveragesTonightBaselineCard.swift */,
 				I58K01M73I192031425U0 /* InhalerUsageTonightBaselineCard.swift */,
 				I58K01M73I192031425D0 /* InsulinDeliveryTonightBaselineCard.swift */,
@@ -1414,6 +1417,7 @@
 				J58K01M73I192031425AV1 /* DietaryBiotinTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425AW1 /* DietaryCopperTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425AX1 /* DietarySeleniumTonightBaselineCard.swift in Sources */,
+				J58K01M73I192031425AY1 /* DietaryManganeseTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425B1 /* AlcoholicBeveragesTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425U1 /* InhalerUsageTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425D1 /* InsulinDeliveryTonightBaselineCard.swift in Sources */,
