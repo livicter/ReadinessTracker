@@ -86,6 +86,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .dietarySodium)!,
             HKObjectType.quantityType(forIdentifier: .dietaryPotassium)!,
             HKObjectType.quantityType(forIdentifier: .dietaryCholesterol)!,
+            HKObjectType.quantityType(forIdentifier: .dietaryFatSaturated)!,
             HKObjectType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             HKObjectType.categoryType(forIdentifier: .menstrualFlow)!
         ]
@@ -1704,6 +1705,12 @@ class HealthKitManager: ObservableObject {
             unit: .gramUnit(with: .milli)
         ).map { $0 }
 
+        let satFat = await fetchSumQuantity(
+            type: HKQuantityType.quantityType(forIdentifier: .dietaryFatSaturated)!,
+            predicate: predicate,
+            unit: .gram()
+        ).map { $0 }
+
         let alcohol = await fetchSumQuantity(
             type: HKQuantityType.quantityType(forIdentifier: .numberOfAlcoholicBeverages)!,
             predicate: predicate,
@@ -1722,6 +1729,7 @@ class HealthKitManager: ObservableObject {
             sodiumMg: sodium,
             potassiumMg: potassium,
             cholesterolMg: cholesterol,
+            saturatedFatGrams: satFat,
             alcoholicBeverages: alcohol
         )
     }

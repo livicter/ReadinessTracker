@@ -2620,6 +2620,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-cholesterol-tonight-baseline.png")
     }
 
+
+    func testDietarySatFatTonightBaselineSurface() throws {
+        // Honest #193: Saturated Fat Tonight | Baseline (HK dietaryFatSaturated).
+        var n = 0
+        while !app.descendants(matching: .any)["body.satfat.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.satfat.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Saturated Fat card")
+        XCTAssertTrue(app.staticTexts["Saturated Fat"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.satfat.baseline"].exists
+        _ = app.staticTexts["7-Day Sat Fat"].exists
+        _ = app.descendants(matching: .any)["body.satfat.spark"].exists
+        saveShot("verify-dietary-sat-fat-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0

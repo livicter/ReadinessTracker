@@ -2041,6 +2041,20 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietaryCholesterolCard)
 
 
+                DietarySatFatTonightBaselineCard(
+                    saturatedFatGrams: data.nutrition.saturatedFatGrams,
+                    history: history.compactMap { day in
+                        guard let g = day.nutrition.saturatedFatGrams else { return nil }
+                        return (day.date, g)
+                    },
+                    baselineGrams: DietarySatFatBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.saturatedFatGrams ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietarySatFatCard)
+
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
