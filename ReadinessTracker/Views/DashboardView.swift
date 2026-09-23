@@ -2400,6 +2400,19 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.dietaryChlorideCard)
 
+                DietaryMufaTonightBaselineCard(
+                    monounsaturatedFatGrams: data.nutrition.monounsaturatedFatGrams,
+                    history: history.compactMap { day in
+                        guard let v = day.nutrition.monounsaturatedFatGrams else { return nil }
+                        return (day.date, v)
+                    },
+                    baselineGrams: DietaryMufaBaseline.average(
+                        from: history,
+                        fallback: data.nutrition.monounsaturatedFatGrams ?? 0
+                    )
+                )
+                .accessibilityIdentifier(SurfaceID.dietaryMufaCard)
+
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,
                     history: history.compactMap { day in
