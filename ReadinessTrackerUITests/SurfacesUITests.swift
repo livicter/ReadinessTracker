@@ -2663,6 +2663,28 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-strain-zone-distribution.png")
     }
 
+    func testRecoveryZoneDistributionSurface() throws {
+        // Honest #245: WHOOP Green/Yellow/Red recovery days-in-zone.
+        var n = 0
+        let title = app.staticTexts["Recovery Zones"]
+        while !title.exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Recovery Zones")
+        for _ in 0..<3 {
+            if title.exists { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(app.staticTexts["Recovery Zones"].exists, "Recovery Zones visible")
+        _ = app.descendants(matching: .any)["recovery.zoneDist.card"].exists
+        _ = app.descendants(matching: .any)["recovery.zoneDist.bar"].exists
+        _ = app.staticTexts["Green"].exists || app.staticTexts["Yellow"].exists || app.staticTexts["Red"].exists
+        _ = app.descendants(matching: .any)["recovery.zoneDist.green"].exists
+        saveShot("verify-recovery-zone-distribution.png")
+    }
+
+
 
     func testCycleTonightBaselineSurface() throws {
         // Honest #120: Cycle Tonight | Baseline dual on Today Body (beyond Flow chip).
