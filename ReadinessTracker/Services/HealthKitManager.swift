@@ -36,6 +36,7 @@ class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .respiratoryRate)!,
             HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
             HKObjectType.quantityType(forIdentifier: .vo2Max)!,
+            HKObjectType.quantityType(forIdentifier: .walkingHeartRateAverage)!,
             HKObjectType.quantityType(forIdentifier: .bodyTemperature)!,
             HKSeriesType.heartbeat(),
             HKObjectType.quantityType(forIdentifier: .dietaryWater)!,
@@ -77,6 +78,7 @@ class HealthKitManager: ObservableObject {
         async let hrSamples = fetchHeartRateSamples(predicate: predicate)
         async let maxHR = fetchMaxHeartRate(predicate: predicate)
         async let vo2 = fetchVO2Max()
+        async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -120,6 +122,7 @@ class HealthKitManager: ObservableObject {
             respiratoryRate: await respRate,
             bloodOxygen: await spO2,
             vo2Max: await vo2,
+            walkingHeartRateAverage: await walkingHR,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -164,6 +167,7 @@ class HealthKitManager: ObservableObject {
             async let hrSamples = fetchHeartRateSamples(predicate: predicate)
             async let maxHR = fetchMaxHeartRate(predicate: predicate)
             async let vo2 = fetchVO2Max()
+            async let walkingHR = fetchWalkingHeartRateAverage(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -178,6 +182,7 @@ class HealthKitManager: ObservableObject {
             let hrSamplesValue = await hrSamples
             let maxHRValue = await maxHR
             let vo2Value = await vo2
+            let walkingHRValue = await walkingHR
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -218,6 +223,7 @@ class HealthKitManager: ObservableObject {
                 hrSamples: hrSamplesValue,
                 strainSessions: enrichedSessions,
                 vo2Max: vo2Value,
+                walkingHeartRateAverage: walkingHRValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -287,6 +293,24 @@ class HealthKitManager: ObservableObject {
                     return
                 }
                 continuation.resume(returning: sample.quantity.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+
+    /// Day walking heart-rate average (bpm). Apple Watch quantity; sparse on Simulator.
+    private func fetchWalkingHeartRateAverage(predicate: NSPredicate) async -> Double? {
+        guard let type = HKQuantityType.quantityType(forIdentifier: .walkingHeartRateAverage) else { return nil }
+        let unit = HKUnit.count().unitDivided(by: .minute())
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
             }
             self.healthStore.execute(query)
         }
