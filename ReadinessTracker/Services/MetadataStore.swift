@@ -64,7 +64,7 @@ class MetadataStore: ObservableObject {
         return metadataFor(date: yesterday, timeOfDay: .evening)
     }
     
-    /// Fixture morning + evening check-ins so Check-in Insights / Workout RPE
+    /// Fixture morning + evening check-ins so Insights / Cognitive Load / RPE
     /// sparks have shape under `-ui-fixture`.
     func seedUIFixtureCheckIns() {
         let cal = Calendar.current
@@ -83,10 +83,20 @@ class MetadataStore: ObservableObject {
                 drinks = offset % 3 == 0 ? (1 + (offset % 2)) : 0
                 stressed = offset % 2 == 1
             }
+            let fatigue: Int
+            let stress: Int
+            if offset == 0 {
+                fatigue = 2; stress = 3
+            } else {
+                fatigue = 1 + ((offset * 2) % 5) // 1…5
+                stress = 1 + ((offset * 3) % 5)  // 1…5
+            }
             let morning = UserMetadata(
                 date: date,
                 timeOfDay: .morning,
                 subjectiveFeel: feel,
+                workloadStress: stress,
+                mentalFatigue: fatigue,
                 alcoholConsumed: drinks > 0,
                 alcoholDrinks: drinks > 0 ? drinks : nil,
                 isStressed: stressed
