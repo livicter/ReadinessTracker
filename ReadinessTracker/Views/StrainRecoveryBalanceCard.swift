@@ -21,10 +21,15 @@ struct StrainRecoveryBalanceCard: View {
         NativeCard {
             VStack(spacing: 12) {
                 HStack {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
+                        // Honest #74: Apple circular tint well on Balance header.
                         Image(systemName: "scale.3d")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(zone.color)
+                            .frame(width: 26, height: 26)
+                            .background(zone.color.opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
 
                         Text("Balance")
                             .font(.subheadline.weight(.medium))
