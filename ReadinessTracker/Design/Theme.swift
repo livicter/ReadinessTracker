@@ -154,6 +154,8 @@ enum SurfaceID {
     static let metricClassicOutliers = "metric.classic.outliers"
     static let metricClassicOutliersToggle = "metric.classic.outliers.toggle"
     static let metricClassicOutlierList = "metric.classic.outlierList"
+    /// Honest #252: classic DistributionHistogramView parity with Advanced.
+    static let metricClassicHistogram = "metric.classic.histogram"
     static let metricDetail = "metric.detail"
     static let strainRecoveryBalance = "strain.recovery.balance"
     static let strainRecoveryWheel = "strain.recovery.wheel"

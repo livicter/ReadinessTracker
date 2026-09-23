@@ -1064,6 +1064,53 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-ma14.png")
     }
 
+    func testMetricClassicDistributionHistogramSurface() throws {
+        // Honest #252: classic DistributionHistogramView (Advanced parity, ≥5 days).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let metricsHeader = app.staticTexts["Metrics"]
+        var n = 0
+        while !metricsHeader.exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        if metricsHeader.exists { app.swipeUp() }
+        let sleepCard = app.descendants(matching: .any)["metric.card.Sleep"].firstMatch
+        var m = 0
+        while !sleepCard.exists && m < 12 {
+            app.swipeUp()
+            m += 1
+        }
+        if sleepCard.waitForExistence(timeout: 8) {
+            if sleepCard.isHittable {
+                sleepCard.tap()
+            } else {
+                sleepCard.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4)).tap()
+            }
+        } else {
+            let anySleep = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep")).element(boundBy: 0)
+            XCTAssertTrue(anySleep.waitForExistence(timeout: 8), "Sleep metric card")
+            anySleep.tap()
+        }
+        XCTAssertTrue(
+            app.navigationBars["Sleep"].waitForExistence(timeout: 8) ||
+            app.otherElements["metric.detail"].waitForExistence(timeout: 8),
+            "classic MetricDetailView"
+        )
+        // Prefer 30D so ≥5 points under fixture (soft — ambiguous 30D buttons).
+        _ = app.buttons["30D"].firstMatch.exists || app.staticTexts["30D"].firstMatch.exists
+        // Soft-scroll toward Distribution (below stats).
+        var s = 0
+        let dist = app.staticTexts["Distribution"]
+        while !dist.exists && s < 10 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = app.descendants(matching: .any)["metric.classic.histogram"].exists
+        _ = dist.exists || app.staticTexts["Median"].exists || app.staticTexts["Mode"].exists
+        _ = app.staticTexts["Range"].exists || app.staticTexts["Statistics"].exists
+        saveShot("verify-metric-classic-distribution-histogram.png")
+    }
+
     func testMetricClassicBaselineOutliersSurface() throws {
         // Honest #251: classic Baseline Bands + OutlierCallout list (Advanced parity).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

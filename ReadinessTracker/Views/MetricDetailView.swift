@@ -86,6 +86,17 @@ struct MetricDetailView: View {
                 statsSection
                     .slideIn(delay: 0.15)
 
+                // Honest #252: Distribution histogram (Advanced parity, ≥5 days)
+                if values.count >= 5 {
+                    DistributionHistogramView(
+                        history: values,
+                        metric: metric
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricClassicHistogram)
+                    .slideIn(delay: 0.17)
+                }
+
                 // Smart Insights
                 if values.count >= 3 {
                     SmartInsightsView(
