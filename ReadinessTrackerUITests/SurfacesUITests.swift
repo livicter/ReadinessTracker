@@ -2732,6 +2732,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-dietary-calcium-tonight-baseline.png")
     }
 
+    func testDietaryMagnesiumTonightBaselineSurface() throws {
+        // Honest #199: Dietary Magnesium Tonight | Baseline (HK dietaryMagnesium).
+        var n = 0
+        while !app.descendants(matching: .any)["body.magnesium.card"].exists && n < 32 {
+            app.swipeUp()
+            n += 1
+        }
+        let card = app.descendants(matching: .any)["body.magnesium.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Magnesium card")
+        XCTAssertTrue(app.staticTexts["Dietary Magnesium"].exists)
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["body.magnesium.baseline"].exists
+        _ = app.staticTexts["7-Day Dietary Magnesium"].exists
+        _ = app.descendants(matching: .any)["body.magnesium.spark"].exists
+        saveShot("verify-dietary-magnesium-tonight-baseline.png")
+    }
+
     func testAlcoholicBeveragesTonightBaselineSurface() throws {
         // Honest #177: Alcoholic Beverages Tonight | Baseline (HK numberOfAlcoholicBeverages).
         var n = 0
