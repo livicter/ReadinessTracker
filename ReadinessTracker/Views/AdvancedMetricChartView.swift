@@ -9,6 +9,7 @@ struct AdvancedMetricChartView: View {
     let showBaselineBands: Bool
     let showMovingAverage: Bool
     let showOutliers: Bool
+    var showVolatility: Bool = true  // Honest #240: rolling CV strip
     
     @State private var selectedPoint: AnalyzedDataPoint?
     @State private var lastHapticID: AnalyzedDataPoint.ID?
@@ -36,6 +37,9 @@ struct AdvancedMetricChartView: View {
         VStack(alignment: .leading, spacing: 12) {
             chartView
             legendView
+            if showVolatility {
+                volatilityStrip
+            }
         }
         .background(AppBackground())
         .accessibilityElement(children: .contain)
@@ -296,6 +300,9 @@ struct AdvancedMetricChartView: View {
                         .foregroundStyle(RTColor.secondaryText)
                 }
             }
+            if showVolatility {
+                legendItem(color: RTColor.caution, label: "Volatility", dashed: false)
+            }
         }
         .padding(.top, 4)
     }
@@ -315,6 +322,112 @@ struct AdvancedMetricChartView: View {
         }
     }
     
+    // MARK: - Volatility Strip (Honest #240)
+
+    /// Rolling 7-day coefficient of variation — elevated from unused
+    /// `TrendAnalysisEngine.rollingVolatility` already stashed on AnalyzedDataPoint.
+    private var volatilityPoints: [(date: Date, cv: Double)] {
+        analyzedData.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var latestVolatilityBand: (label: String, color: Color) {
+        guard let cv = volatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        // Soft glance bands on CV (std/mean).
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var volatilityYDomain: ClosedRange<Double> {
+        let vals = volatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var volatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = volatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, latestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(latestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !volatilityPoints.isEmpty {
+                Chart {
+                    // Soft band backgrounds (Low / Mild / High).
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", volatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(volatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: volatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.metricChartVolatility)
+        .accessibilityLabel("Seven day rolling volatility")
+    }
+
     // MARK: - Helpers
     
     private func pointColor(point: AnalyzedDataPoint) -> Color {

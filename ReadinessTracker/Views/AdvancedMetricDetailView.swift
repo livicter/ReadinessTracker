@@ -12,6 +12,7 @@ struct AdvancedMetricDetailView: View {
     @State private var showBaselineBands = true
     @State private var showMovingAverage = true
     @State private var showOutliers = true
+    @State private var showVolatility = true  // Honest #240: rolling CV overlay
     @Environment(\.dismiss) private var dismiss
     
     var filteredHistory: [(date: Date, value: Double)] {
@@ -88,7 +89,8 @@ struct AdvancedMetricDetailView: View {
                             analyzedData: analyzedData,
                             showBaselineBands: showBaselineBands,
                             showMovingAverage: showMovingAverage,
-                            showOutliers: showOutliers
+                            showOutliers: showOutliers,
+                            showVolatility: showVolatility
                         )
                     }
                 } else {
@@ -239,10 +241,15 @@ struct AdvancedMetricDetailView: View {
     // MARK: - Toggle Controls
     
     private var toggleControls: some View {
-        HStack(spacing: 12) {
-            ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
-            ToggleChip(label: "Moving Avg", isOn: $showMovingAverage)
-            ToggleChip(label: "Outliers", isOn: $showOutliers)
+        // Honest #240: Volatility chip elevates unused rollingVolatility series.
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 12) {
+                ToggleChip(label: "Baseline Bands", isOn: $showBaselineBands)
+                ToggleChip(label: "Moving Avg", isOn: $showMovingAverage)
+                ToggleChip(label: "Outliers", isOn: $showOutliers)
+            }
+            ToggleChip(label: "Volatility", isOn: $showVolatility)
+                .accessibilityIdentifier(SurfaceID.metricChartVolatilityToggle)
         }
     }
     
