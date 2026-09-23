@@ -85,6 +85,9 @@ class HealthKitManager: ObservableObject {
             if let depthType = HKObjectType.quantityType(forIdentifier: .underwaterDepth) {
                 typesToRead.insert(depthType)
             }
+            if let runPowerType = HKObjectType.quantityType(forIdentifier: .runningPower) {
+                typesToRead.insert(runPowerType)
+            }
         }
 
             try await healthStore.requestAuthorization(toShare: [], read: typesToRead)
@@ -143,6 +146,7 @@ class HealthKitManager: ObservableObject {
         async let cyclePower = fetchCyclingPower(predicate: predicate)
         async let cycleFTP = fetchCyclingFTP(predicate: predicate)
         async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
+        async let runPower = fetchRunningPower(predicate: predicate)
         async let nutrition = fetchNutrition(predicate: predicate)
         async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
         
@@ -210,6 +214,7 @@ class HealthKitManager: ObservableObject {
             cyclingPowerWatts: await cyclePower,
             cyclingFTPWatts: await cycleFTP,
             physicalEffortKcalPerHrKg: await physicalEffort,
+            runningPowerWatts: await runPower,
             nutrition: await nutrition,
             menstrualFlow: await menstrualFlow
         )
@@ -278,6 +283,7 @@ class HealthKitManager: ObservableObject {
             async let cyclePower = fetchCyclingPower(predicate: predicate)
             async let cycleFTP = fetchCyclingFTP(predicate: predicate)
             async let physicalEffort = fetchPhysicalEffort(predicate: predicate)
+            async let runPower = fetchRunningPower(predicate: predicate)
             async let nutrition = fetchNutrition(predicate: predicate)
             async let menstrualFlow = fetchMenstrualFlow(predicate: predicate)
             
@@ -316,6 +322,7 @@ class HealthKitManager: ObservableObject {
             let cyclePowerValue = await cyclePower
             let cycleFTPValue = await cycleFTP
             let physicalEffortValue = await physicalEffort
+            let runPowerValue = await runPower
             let nutritionValue = await nutrition
             let menstrualFlowValue = await menstrualFlow
             
@@ -380,6 +387,7 @@ class HealthKitManager: ObservableObject {
                 cyclingPowerWatts: cyclePowerValue,
                 cyclingFTPWatts: cycleFTPValue,
                 physicalEffortKcalPerHrKg: physicalEffortValue,
+                runningPowerWatts: runPowerValue,
                 nutrition: nutritionValue,
                 menstrualFlow: menstrualFlowValue
             )
@@ -824,6 +832,24 @@ class HealthKitManager: ObservableObject {
         guard #available(iOS 17.0, *) else { return nil }
         guard let type = HKQuantityType.quantityType(forIdentifier: .physicalEffort) else { return nil }
         let unit = HKUnit.kilocalorie().unitDivided(by: HKUnit.hour().unitMultiplied(by: .gramUnit(with: .kilo)))
+        return await withCheckedContinuation { continuation in
+            let query = HKStatisticsQuery(
+                quantityType: type,
+                quantitySamplePredicate: predicate,
+                options: .discreteAverage
+            ) { _, stats, _ in
+                continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: unit))
+            }
+            self.healthStore.execute(query)
+        }
+    }
+
+
+    /// Day average running power (watts). Sparse run intensity — fixture seeds UI. iOS 16+.
+    private func fetchRunningPower(predicate: NSPredicate) async -> Double? {
+        guard #available(iOS 16.0, *) else { return nil }
+        guard let type = HKQuantityType.quantityType(forIdentifier: .runningPower) else { return nil }
+        let unit = HKUnit.watt()
         return await withCheckedContinuation { continuation in
             let query = HKStatisticsQuery(
                 quantityType: type,
