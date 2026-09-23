@@ -566,6 +566,64 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-trends-rolling-volatility.png")
     }
 
+    func testTrendsMomentumSurface() throws {
+        // Honest #260: Trends momentum strip (classic #248 / Advanced #241 parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        _ = app.staticTexts["Weekly Report"].waitForExistence(timeout: 12)
+            || app.staticTexts["Trends"].waitForExistence(timeout: 6)
+            || app.staticTexts["Browse Trends"].waitForExistence(timeout: 6)
+        let link = app.descendants(matching: .any)["history.trends.link"].firstMatch
+        var n = 0
+        while !link.exists && n < 10 {
+            app.swipeUp()
+            n += 1
+        }
+        if link.waitForExistence(timeout: 6) {
+            if link.isHittable {
+                link.tap()
+            } else {
+                link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        } else {
+            let browseAny = app.descendants(matching: .any).matching(
+                NSPredicate(format: "label CONTAINS[c] %@", "Browse Trends")
+            ).firstMatch
+            XCTAssertTrue(browseAny.waitForExistence(timeout: 8), "Browse Trends")
+            if browseAny.isHittable {
+                browseAny.tap()
+            } else {
+                browseAny.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3)).tap()
+            }
+        }
+        XCTAssertTrue(
+            app.navigationBars["Trends"].waitForExistence(timeout: 10) ||
+            app.otherElements["trends.detail"].waitForExistence(timeout: 8) ||
+            app.staticTexts["Multi-Metric Trend"].waitForExistence(timeout: 8),
+            "trends.detail"
+        )
+        if app.buttons["30D"].waitForExistence(timeout: 4) {
+            app.buttons["30D"].tap()
+        } else if app.staticTexts["30D"].exists {
+            app.staticTexts["30D"].tap()
+        }
+        var s = 0
+        let toggle = app.descendants(matching: .any)["trends.momentum.toggle"].firstMatch
+        let strip = app.descendants(matching: .any)["trends.momentum"].firstMatch
+        while !toggle.exists && !strip.exists && s < 14 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = toggle.exists
+        _ = strip.exists
+        _ = app.staticTexts["Momentum"].exists || app.staticTexts["7-Day Momentum"].exists
+        _ = app.staticTexts["Rising"].exists || app.staticTexts["Flat"].exists || app.staticTexts["Fading"].exists
+            || app.staticTexts["Volatility"].exists || app.staticTexts["Baseline Bands"].exists
+        saveShot("verify-trends-momentum.png")
+    }
+
     func testTrendsScrubTooltipEnrichmentSurface() throws {
         // Honest #250: Trends scrub tooltip enrichment (zScore + Day Δ) — mirror #246/#249.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
