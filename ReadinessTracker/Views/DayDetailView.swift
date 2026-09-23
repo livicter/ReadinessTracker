@@ -633,12 +633,14 @@ struct DayDetailView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
+                // Honest #79: Apple circular tint well on Day Detail stage rows.
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(color)
                     .frame(width: 40, height: 40)
-                    .background(color.opacity(0.12))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(color.opacity(0.14))
+                    .clipShape(Circle())
+                    .accessibilityHidden(true)
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(label)
@@ -752,10 +754,15 @@ struct DetailMetricItem: View {
     var body: some View {
         NativeCard {
             VStack(spacing: 10) {
-                HStack(spacing: 6) {
+                HStack(spacing: 8) {
+                    // Honest #79: circular tint well on Day Detail metric chips.
                     Image(systemName: icon)
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(color)
+                        .frame(width: 26, height: 26)
+                        .background(color.opacity(0.14))
+                        .clipShape(Circle())
+                        .accessibilityHidden(true)
                     Text(label)
                         .font(.caption.weight(.medium))
                         .foregroundStyle(RTColor.secondaryText)

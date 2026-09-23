@@ -239,6 +239,7 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testDayDetailSurface() throws {
+        // Honest #79: Day Detail stage-row + metric-chip circular tint wells.
         // History → day row → DayDetailView (WHOOP night-detail: header metrics, stage % chips, hypnogram, cycles).
         // Alternate path Today → Sleep Stages also lands on elevated Sleep Analysis chrome.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
