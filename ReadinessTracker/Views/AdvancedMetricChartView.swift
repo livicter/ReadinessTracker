@@ -11,6 +11,7 @@ struct AdvancedMetricChartView: View {
     let showOutliers: Bool
     var showVolatility: Bool = true  // Honest #240: rolling CV strip
     var showMomentum: Bool = true  // Honest #241: momentum strip
+    var showEMA: Bool = true  // Honest #242: EMA line on main chart
     
     @State private var selectedPoint: AnalyzedDataPoint?
     @State private var lastHapticID: AnalyzedDataPoint.ID?
@@ -38,6 +39,12 @@ struct AdvancedMetricChartView: View {
         VStack(alignment: .leading, spacing: 12) {
             chartView
             legendView
+            if showEMA {
+                Text("EMA responds faster than SMA to recent change")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                    .accessibilityIdentifier(SurfaceID.metricChartEMA)
+            }
             if showVolatility {
                 volatilityStrip
             }
@@ -59,6 +66,9 @@ struct AdvancedMetricChartView: View {
             }
             if showMovingAverage {
                 movingAverageMarks
+            }
+            if showEMA {
+                emaMarks
             }
             mainDataMarks
             if showOutliers {
@@ -125,6 +135,22 @@ struct AdvancedMetricChartView: View {
                 )
                 .foregroundStyle(metric.color.opacity(0.5))
                 .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                .interpolationMethod(.catmullRom)
+            }
+        }
+    }
+
+    /// Honest #242: elevates unused `AnalyzedDataPoint.ema7` (exponentialMovingAverage).
+    @ChartContentBuilder
+    private var emaMarks: some ChartContent {
+        ForEach(analyzedData) { point in
+            if let ema = point.ema7 {
+                LineMark(
+                    x: .value("Date", point.date, unit: .day),
+                    y: .value("EMA7", ema)
+                )
+                .foregroundStyle(RTColor.hrv.opacity(0.85))
+                .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
                 .interpolationMethod(.catmullRom)
             }
         }
@@ -290,6 +316,9 @@ struct AdvancedMetricChartView: View {
             legendItem(color: metric.color, label: "Actual", dashed: false)
             if showMovingAverage {
                 legendItem(color: metric.color.opacity(0.5), label: "7-day MA", dashed: true)
+            }
+            if showEMA {
+                legendItem(color: RTColor.hrv.opacity(0.85), label: "7-day EMA", dashed: true)
             }
             if showBaselineBands {
                 legendItem(color: RTColor.tertiaryText, label: "Baseline", dashed: true)
