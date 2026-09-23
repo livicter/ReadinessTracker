@@ -571,10 +571,15 @@ struct DashboardView: View {
                         StageLabel(label: "Efficiency", percent: data.sleepEfficiency, optimal: ">85%", isOptimal: data.sleepEfficiency >= 0.85)
                     }
 
-                    HStack(spacing: 6) {
+                    HStack(spacing: 8) {
+                        // Honest #73: Apple circular tint well on Sleep Stages disturbance cue.
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.caption)
+                            .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(data.wakeEpisodes <= 2 ? RTColor.optimal : RTColor.caution)
+                            .frame(width: 26, height: 26)
+                            .background((data.wakeEpisodes <= 2 ? RTColor.optimal : RTColor.caution).opacity(0.14))
+                            .clipShape(Circle())
+                            .accessibilityHidden(true)
                         Text(data.wakeEpisodes == 1 ? "1 disturbance" : "\(data.wakeEpisodes) disturbances")
                             .font(.caption.weight(.medium))
                             .foregroundStyle(RTColor.secondaryText)
