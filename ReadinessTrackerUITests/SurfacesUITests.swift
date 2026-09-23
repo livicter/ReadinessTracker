@@ -1191,6 +1191,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-resting-hr.png")
     }
 
+    func testPeakHeartRateTonightBaselineSurface() throws {
+        // Honest #132: Peak / maxHeartRate Tonight | Baseline (HK peak, strain path).
+        var n = 0
+        let title = app.staticTexts["Peak Heart Rate"]
+        while !title.exists && n < 22 {
+            app.swipeUp()
+            n += 1
+        }
+        if title.exists {
+            for _ in 0..<4 where !isOnScreen(title) {
+                app.swipeUp()
+            }
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Peak Heart Rate")
+        XCTAssertTrue(app.staticTexts["Tonight"].exists)
+        XCTAssertTrue(app.staticTexts["Baseline"].exists)
+        _ = app.descendants(matching: .any)["vitals.peakhr.card"].exists
+        _ = app.descendants(matching: .any)["vitals.peakhr.baseline"].exists
+        _ = app.staticTexts["7-Day Peak HR"].exists
+        _ = app.descendants(matching: .any)["vitals.peakhr.spark"].exists
+        saveShot("verify-peak-hr-tonight-baseline.png")
+    }
+
+
     func testWakeEpisodesSurface() throws {
         // Honest #113: WHOOP Wake Episodes Tonight | Baseline on Today sleep stack.
         var n = 0

@@ -97,6 +97,7 @@
 		F0A3B4C5D6E7F8192A3B4C5D /* SleepEfficiencyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F2B3C4D5E6F708192A3B4C /* SleepEfficiencyCard.swift */; };
 		B2C3D4E5F60718293A4B5C6D /* RestorativeSleepCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B5C /* RestorativeSleepCard.swift */; };
 		D4E5F60718293A4B5C6D7E8F /* RestingHRCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D4E5F60718293A4B5C6D7E /* RestingHRCard.swift */; };
+		BC7F90BC2D0E1F2031425365 /* PeakHeartRateTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC7F90BC2D0E1F2031425364 /* PeakHeartRateTonightBaselineCard.swift */; };
 		F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */; };
 		B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */; };
 		D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */; };
@@ -340,6 +341,7 @@
 		E9F2B3C4D5E6F708192A3B4C /* SleepEfficiencyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepEfficiencyCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepEfficiencyCard.swift; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F60718293A4B5C /* RestorativeSleepCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RestorativeSleepCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RestorativeSleepCard.swift; sourceTree = SOURCE_ROOT; };
 		C3D4E5F60718293A4B5C6D7E /* RestingHRCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RestingHRCard.swift; path = ReadinessTracker/Views/WhoopFeatures/RestingHRCard.swift; sourceTree = SOURCE_ROOT; };
+		AC7F90BC2D0E1F2031425364 /* PeakHeartRateTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeakHeartRateTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/PeakHeartRateTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WakeEpisodesCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WakeEpisodesCard.swift; sourceTree = SOURCE_ROOT; };
 		A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SleepMidpointCard.swift; path = ReadinessTracker/Views/WhoopFeatures/SleepMidpointCard.swift; sourceTree = SOURCE_ROOT; };
 		C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimeInBedCard.swift; path = ReadinessTracker/Views/WhoopFeatures/TimeInBedCard.swift; sourceTree = SOURCE_ROOT; };
@@ -627,6 +629,7 @@
 				E9F2B3C4D5E6F708192A3B4C /* SleepEfficiencyCard.swift */,
 				A1B2C3D4E5F60718293A4B5C /* RestorativeSleepCard.swift */,
 				C3D4E5F60718293A4B5C6D7E /* RestingHRCard.swift */,
+				AC7F90BC2D0E1F2031425364 /* PeakHeartRateTonightBaselineCard.swift */,
 				E5F60718293A4B5C6D7E8F90 /* WakeEpisodesCard.swift */,
 				A60718293A4B5C6D7E8F901B /* SleepMidpointCard.swift */,
 				C718293A4B5C6D7E8F901D2E /* TimeInBedCard.swift */,
@@ -1135,6 +1138,7 @@
 				F0A3B4C5D6E7F8192A3B4C5D /* SleepEfficiencyCard.swift in Sources */,
 				B2C3D4E5F60718293A4B5C6D /* RestorativeSleepCard.swift in Sources */,
 				D4E5F60718293A4B5C6D7E8F /* RestingHRCard.swift in Sources */,
+				BC7F90BC2D0E1F2031425365 /* PeakHeartRateTonightBaselineCard.swift in Sources */,
 				F60718293A4B5C6D7E8F901A /* WakeEpisodesCard.swift in Sources */,
 				B60718293A4B5C6D7E8F901C /* SleepMidpointCard.swift in Sources */,
 				D718293A4B5C6D7E8F901D2F /* TimeInBedCard.swift in Sources */,
