@@ -77,6 +77,17 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.coefficientOfVariation(values: vals)
     }
 
+
+    /// Honest #279: MA14 / EMA7 for Sleep Trend overlays (Trends #262 parity; always-on).
+    private var sleepOverlaySeries: [(date: Date, ma14: Double?, ema: Double?)] {
+        sevenDayWindow.compactMap { day in
+            guard let point = sleepAnalyzedThroughDay.first(where: {
+                Calendar.current.isDate($0.date, inSameDayAs: day.date)
+            }) else { return nil }
+            return (day.date, point.movingAverage14, point.ema7)
+        }
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -1076,6 +1087,28 @@ struct DayDetailView: View {
                                 .cornerRadius(4, style: .continuous)
                             }
 
+                            // Honest #279: MA14 + EMA overlays (classic #247 / Trends #262; always-on).
+                            ForEach(Array(sleepOverlaySeries.enumerated()), id: \.offset) { _, point in
+                                if let ma14 = point.ma14 {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("MA14", ma14)
+                                    )
+                                    .foregroundStyle(RTColor.recovery.opacity(0.9))
+                                    .lineStyle(StrokeStyle(lineWidth: 1.75, dash: [8, 4]))
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                if let ema = point.ema {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("EMA7", ema)
+                                    )
+                                    .foregroundStyle(RTColor.hrv.opacity(0.85))
+                                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                                    .interpolationMethod(.catmullRom)
+                                }
+                            }
+
                             RuleMark(y: .value("Goal", 7.5))
                                 .foregroundStyle(RTColor.primaryText.opacity(0.2))
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
@@ -1112,6 +1145,37 @@ struct DayDetailView: View {
                             .accessibilityElement(children: .contain)
                             .accessibilityIdentifier(SurfaceID.dayDetailBaselineBands)
                             .accessibilityLabel("Baseline bands plus or minus two sigma")
+                        }
+
+                        // Honest #279: MA14 + EMA legend (Trends #262 parity; always-on, no toggles).
+                        if sleepOverlaySeries.contains(where: { $0.ma14 != nil || $0.ema != nil }) {
+                            HStack(spacing: 16) {
+                                if sleepOverlaySeries.contains(where: { $0.ma14 != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .stroke(RTColor.recovery.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                                            .frame(width: 18, height: 2)
+                                        Text("MA14")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailMA14)
+                                    }
+                                }
+                                if sleepOverlaySeries.contains(where: { $0.ema != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .stroke(RTColor.hrv.opacity(0.85), style: StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                                            .frame(width: 18, height: 2)
+                                        Text("EMA")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailEMA)
+                                    }
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityLabel("MA14 and EMA overlays")
                         }
                     }
                 }
