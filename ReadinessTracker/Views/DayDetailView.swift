@@ -80,6 +80,21 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .restingHR)
     }
 
+
+    /// Honest #299: % vs baseline for selected day's RHR (Sleep #280 / HRV #284 dual).
+    private var rhrDayAnalyzed: AnalyzedDataPoint? {
+        rhrAnalyzedThroughDay.first {
+            Calendar.current.isDate($0.date, inSameDayAs: data.date)
+        }
+    }
+
+    private var rhrPercentDeviationLabel: String? {
+        guard let a = rhrDayAnalyzed else { return nil }
+        let pct = a.percentDeviation * 100
+        let sign = pct >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", pct))% vs baseline"
+    }
+
     /// Honest #283: analyze + classifyTrend on HRV through day (Sleep #274 dual).
     private var hrvAnalyzedThroughDay: [AnalyzedDataPoint] {
         TrendAnalysisEngine.analyze(history: hrvSeriesThroughDay, metric: .hrv)
@@ -240,6 +255,13 @@ struct DayDetailView: View {
                 if let strength = rhrTrendClassification {
                     dayDetailRHRClassifyTrendCallout(strength)
                         .slideIn(delay: 0.2125)
+                }
+
+
+                // Honest #299: RHR % vs baseline (percentDeviation; Sleep #280 / HRV #284 dual).
+                if let label = rhrPercentDeviationLabel {
+                    dayDetailRHRPercentDeviationCallout(label)
+                        .slideIn(delay: 0.2127)
                 }
 
                 // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
@@ -1312,6 +1334,45 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailRHRTrendStrength)
         .accessibilityLabel("RHR trend strength " + strength.rawValue)
+    }
+
+
+    // MARK: - RHR % vs Baseline (Honest #299)
+    private func dayDetailRHRPercentDeviationCallout(_ label: String) -> some View {
+        let improving: Bool = {
+            guard let a = rhrDayAnalyzed else { return true }
+            // RHR: lowerIsBetter — below baseline is improving.
+            return a.percentDeviation <= 0
+        }()
+        let tint = abs(rhrDayAnalyzed?.percentDeviation ?? 0) < 0.05
+            ? RTColor.secondaryText
+            : (improving ? RTColor.optimal : RTColor.warning)
+        return HStack(spacing: 8) {
+            Image(systemName: "percent")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("RHR · " + label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text("RHR vs series baseline")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(tint.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailRHRPercentDeviation)
+        .accessibilityLabel("RHR " + label)
     }
 
 
