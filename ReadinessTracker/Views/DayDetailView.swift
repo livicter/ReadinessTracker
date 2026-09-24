@@ -176,6 +176,14 @@ struct DayDetailView: View {
     }
 
 
+    /// Honest #300: RHR CV% through day (Sleep #275 / HRV #285 dual).
+    private var rhrCoefficientOfVariation: Double? {
+        let vals = rhrSeriesThroughDay.map(\.value)
+        guard vals.count >= 2 else { return nil }
+        return TrendAnalysisEngine.coefficientOfVariation(values: vals)
+    }
+
+
     /// Honest #279/#281: MA7 / MA14 / EMA7 for Sleep Trend overlays (always-on).
     private var sleepOverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
         sevenDayWindow.compactMap { day in
@@ -262,6 +270,13 @@ struct DayDetailView: View {
                 if let label = rhrPercentDeviationLabel {
                     dayDetailRHRPercentDeviationCallout(label)
                         .slideIn(delay: 0.2127)
+                }
+
+
+                // Honest #300: Statistics CV% on RHR (Sleep #275 / HRV #285 dual).
+                if let cv = rhrCoefficientOfVariation {
+                    dayDetailRHRStatsCVSection(cv: cv)
+                        .slideIn(delay: 0.2128)
                 }
 
                 // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
@@ -1144,6 +1159,27 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailHRVStatsCV)
         .accessibilityLabel("HRV volatility coefficient of variation")
+    }
+
+
+
+    // MARK: - RHR Statistics CV% (Honest #300)
+    private func dayDetailRHRStatsCVSection(cv: Double) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("RHR Statistics")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    StatItem(label: "Volatility", value: "\(Int(cv * 100))%", unit: "CV")
+                        .accessibilityIdentifier(SurfaceID.dayDetailRHRStatsCV)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailRHRStatsCV)
+        .accessibilityLabel("RHR volatility coefficient of variation")
     }
 
 
