@@ -41,7 +41,11 @@ struct DayDetailView: View {
             .sorted { $0.date < $1.date }
     }
 
-    
+    /// Honest #272: TrendAnalysisEngine.analyze on Sleep through day (classic/Trends outlier parity).
+    private var sleepAnalyzedThroughDay: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: sleepSeriesThroughDay, metric: .sleep)
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -126,6 +130,10 @@ struct DayDetailView: View {
                     .accessibilityIdentifier(SurfaceID.dayDetailHistogram)
                     .slideIn(delay: 0.247)
                 }
+
+                // Honest #272: OutlierCallout Highlights on Sleep (classic #251 / Trends #257 parity).
+                dayDetailOutlierSection
+                    .slideIn(delay: 0.248)
                 
                 // Sleep stage analysis
                 sleepStageAnalysis
@@ -145,6 +153,41 @@ struct DayDetailView: View {
         .toolbarColorScheme(.light, for: .navigationBar)
     }
     
+
+    // MARK: - Outlier Highlights (Honest #272)
+    /// Elevate unused isOutlier via OutlierCallout list (up to 3) — classic / Trends parity.
+    @ViewBuilder
+    private var dayDetailOutlierSection: some View {
+        let outliers = sleepAnalyzedThroughDay.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let sign = point.zScore > 0 ? "+" : ""
+                        let deviationStr = "\(sign)\(String(format: "%.1f", point.zScore))σ"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(String(format: "%.1f", point.rawValue)) h",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.dayDetailOutlierList)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.dayDetailOutlierList)
+            .accessibilityLabel("Outlier highlights")
+        }
+    }
+
     // MARK: - Date Header
     private var dateHeader: some View {
         HStack {
