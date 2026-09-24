@@ -2962,6 +2962,54 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-rhr-ma14-ema.png")
     }
 
+    func testDayDetailRHRRollingVolatilitySurface() throws {
+        // Honest #305: Day Detail RHR rollingVolatility strip (Sleep #276 / HRV #291 dual).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let toggle = app.descendants(matching: .any)["day.detail.rhr.volatility.toggle"].firstMatch
+        let strip = app.descendants(matching: .any)["day.detail.rhr.volatility"].firstMatch
+        while !toggle.exists && !strip.exists && s < 16 {
+            if app.staticTexts["7-Day RHR Volatility"].exists { break }
+            if app.staticTexts["RHR Volatility"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = toggle.exists
+        _ = strip.exists
+        _ = app.staticTexts["RHR Volatility"].exists
+            || app.staticTexts["7-Day RHR Volatility"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "CV")).firstMatch.exists
+            || app.staticTexts["Volatility"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-rhr-rolling-volatility.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).

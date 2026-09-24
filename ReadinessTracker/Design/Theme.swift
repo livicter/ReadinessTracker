@@ -733,6 +733,9 @@ enum SurfaceID {
     /// Honest #304: Day Detail RHR MA14 + EMA overlays (Sleep #279 / HRV #289 dual; always-on).
     static let dayDetailRHRMA14 = "day.detail.rhr.ma14"
     static let dayDetailRHREMA = "day.detail.rhr.ema"
+    /// Honest #305: Day Detail RHR rollingVolatility strip (Sleep #276 / HRV #291 dual; strip triad start).
+    static let dayDetailRHRVolatility = "day.detail.rhr.volatility"
+    static let dayDetailRHRVolatilityToggle = "day.detail.rhr.volatility.toggle"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"

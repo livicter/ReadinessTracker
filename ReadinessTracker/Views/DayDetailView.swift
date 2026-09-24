@@ -24,6 +24,9 @@ struct DayDetailView: View {
 
     /// Honest #293: HRV Day Δ strip toggle (Sleep #278 dual; default on).
     @State private var showHRVRateOfChange = true
+
+    /// Honest #305: RHR rollingVolatility strip toggle (Sleep #276 / HRV #291 dual; default on).
+    @State private var showRHRVolatility = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -325,6 +328,10 @@ struct DayDetailView: View {
                 // Honest #291: rollingVolatility strip on HRV (Sleep #276 dual).
                 dayDetailHRVVolatilitySection
                     .slideIn(delay: 0.218)
+
+                // Honest #305: rollingVolatility strip on RHR (Sleep #276 / HRV #291 dual; strip triad start).
+                dayDetailRHRVolatilitySection
+                    .slideIn(delay: 0.219)
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
@@ -752,6 +759,124 @@ struct DayDetailView: View {
         .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatility)
         .accessibilityLabel("Seven day HRV rolling volatility")
     }
+
+    // MARK: - RHR Rolling Volatility (Honest #305)
+    private var dayDetailRHRVolatilityPoints: [(date: Date, cv: Double)] {
+        rhrAnalyzedThroughDay.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var dayDetailRHRLatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = dayDetailRHRVolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var dayDetailRHRVolatilityYDomain: ClosedRange<Double> {
+        let vals = dayDetailRHRVolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var dayDetailRHRVolatilitySection: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    ToggleChip(label: "RHR Volatility", isOn: $showRHRVolatility)
+                        .accessibilityIdentifier(SurfaceID.dayDetailRHRVolatilityToggle)
+                    Spacer(minLength: 0)
+                }
+
+                if showRHRVolatility {
+                    dayDetailRHRVolatilityStrip
+                }
+            }
+        }
+    }
+
+    private var dayDetailRHRVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day RHR Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = dayDetailRHRVolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, dayDetailRHRLatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailRHRLatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailRHRVolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", dayDetailRHRVolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(dayDetailRHRVolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.strain.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.strain)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailRHRVolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for RHR volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailRHRVolatility)
+        .accessibilityLabel("Seven day RHR rolling volatility")
+    }
+
 
 
     // MARK: - HRV Momentum (Honest #292)
