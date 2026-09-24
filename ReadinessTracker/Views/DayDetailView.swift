@@ -123,6 +123,18 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .activeCalories)
     }
 
+    /// Honest #329: analyze + classifyTrend on SpO2 through day (Sleep #274 / Strain #314 dual).
+    private var spo2AnalyzedThroughDay: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: spo2SeriesThroughDay, metric: .bloodOxygen)
+    }
+
+    private var spo2TrendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = spo2AnalyzedThroughDay.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .bloodOxygen)
+    }
+
 
     /// Honest #315: % vs baseline for selected day's Strain (Sleep #280 / HRV #284 / RHR #299 dual).
     private var strainDayAnalyzed: AnalyzedDataPoint? {
@@ -378,6 +390,12 @@ struct DayDetailView: View {
                 if let strength = strainTrendClassification {
                     dayDetailStrainClassifyTrendCallout(strength)
                         .slideIn(delay: 0.2126)
+                }
+
+                // Honest #329: classifyTrend strength callout on SpO2 (Sleep #274 / Strain #314 dual).
+                if let strength = spo2TrendClassification {
+                    dayDetailSpO2ClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.21262)
                 }
 
 
@@ -2356,6 +2374,43 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailStrainTrendStrength)
         .accessibilityLabel("Strain trend strength " + strength.rawValue)
+    }
+
+    // MARK: - SpO2 Classify Trend (Honest #329)
+    private func dayDetailSpO2ClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = spo2AnalyzedThroughDay.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("SpO2 · " + strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2TrendStrength)
+        .accessibilityLabel("SpO2 trend strength " + strength.rawValue)
     }
 
 
