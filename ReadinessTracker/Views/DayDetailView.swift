@@ -96,6 +96,16 @@ struct DayDetailView: View {
         return (TrendAnalysisEngine.mean(values: vals), stdDev)
     }
 
+
+    /// Honest #287: baseline ±2σ from HRV through day (Sleep #273 dual).
+    private var hrvBaselineStats: (baseline: Double, stdDev: Double)? {
+        let vals = hrvSeriesThroughDay.map(\.value)
+        guard vals.count >= 5 else { return nil }
+        let stdDev = TrendAnalysisEngine.standardDeviation(values: vals)
+        guard stdDev > 0 else { return nil }
+        return (TrendAnalysisEngine.mean(values: vals), stdDev)
+    }
+
     /// Honest #274: classifyTrend on Sleep through day (classic #253 / Trends #255 parity).
     private var sleepTrendClassification: TrendAnalysisEngine.TrendStrength? {
         guard let analysis = sleepAnalyzedThroughDay.last,
@@ -1473,34 +1483,61 @@ struct DayDetailView: View {
                             .font(.headline.weight(.semibold))
                             .foregroundStyle(RTColor.primaryText)
                         
-                        Chart(sevenDayWindow) { day in
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("HRV", day.hrv)
-                            )
-                            .foregroundStyle(RTColor.hrv)
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 2.5))
-                            
-                            AreaMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("HRV", day.hrv)
-                            )
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [RTColor.hrv.opacity(0.2), RTColor.hrv.opacity(0.0)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
+                        Chart {
+                            // Honest #287: ±2σ baseline bands on HRV (Sleep #273 dual).
+                            if let stats = hrvBaselineStats {
+                                let cal = Calendar.current
+                                let low = stats.baseline - 2 * stats.stdDev
+                                let high = stats.baseline + 2 * stats.stdDev
+                                ForEach(sevenDayWindow) { day in
+                                    let endDate = cal.date(byAdding: .day, value: 1, to: day.date) ?? day.date
+                                    let z = TrendAnalysisEngine.zScore(
+                                        value: day.hrv,
+                                        baseline: stats.baseline,
+                                        stdDev: stats.stdDev
+                                    )
+                                    RectangleMark(
+                                        xStart: .value("Date", day.date),
+                                        xEnd: .value("Date", endDate),
+                                        yStart: .value("Low", low),
+                                        yEnd: .value("High", high)
+                                    )
+                                    .foregroundStyle(dayDetailBandColor(zScore: z).opacity(0.08))
+                                }
+                                RuleMark(y: .value("Baseline", stats.baseline))
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                            }
+
+                            ForEach(sevenDayWindow) { day in
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("HRV", day.hrv)
                                 )
-                            )
-                            .interpolationMethod(.catmullRom)
-                            
-                            PointMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("HRV", day.hrv)
-                            )
-                            .foregroundStyle(day.id == data.id ? RTColor.hrv : RTColor.hrv.opacity(0.4))
-                            .symbolSize(day.id == data.id ? 80 : 40)
+                                .foregroundStyle(RTColor.hrv)
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                                
+                                AreaMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("HRV", day.hrv)
+                                )
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [RTColor.hrv.opacity(0.2), RTColor.hrv.opacity(0.0)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .interpolationMethod(.catmullRom)
+                                
+                                PointMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("HRV", day.hrv)
+                                )
+                                .foregroundStyle(day.id == data.id ? RTColor.hrv : RTColor.hrv.opacity(0.4))
+                                .symbolSize(day.id == data.id ? 80 : 40)
+                            }
                         }
                         .frame(height: 140)
                         .chartYAxis {
@@ -1514,6 +1551,26 @@ struct DayDetailView: View {
                                 AxisValueLabel(format: .dateTime.weekday(.narrow))
                                     .foregroundStyle(RTColor.secondaryText)
                             }
+                        }
+
+                        // Honest #287: Baseline ±2σ legend on HRV Trend (Sleep #273 dual).
+                        if hrvBaselineStats != nil {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                                    .frame(width: 18, height: 2)
+                                Text("Baseline")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.dayDetailHRVBaselineBands)
+                                Text("±2σ")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.tertiaryText)
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(SurfaceID.dayDetailHRVBaselineBands)
+                            .accessibilityLabel("HRV baseline bands plus or minus two sigma")
                         }
                     }
                 }
