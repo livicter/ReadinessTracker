@@ -803,6 +803,9 @@ enum SurfaceID {
     /// Honest #335: Day Detail SpO2 MA14 + EMA overlays (Sleep #279 / Strain #320 dual; always-on).
     static let dayDetailSpO2MA14 = "day.detail.spo2.ma14"
     static let dayDetailSpO2EMA = "day.detail.spo2.ema"
+    /// Honest #336: Day Detail SpO2 rollingVolatility strip (Sleep #276 / Strain #321 dual; strip triad start).
+    static let dayDetailSpO2Volatility = "day.detail.spo2.volatility"
+    static let dayDetailSpO2VolatilityToggle = "day.detail.spo2.volatility.toggle"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
