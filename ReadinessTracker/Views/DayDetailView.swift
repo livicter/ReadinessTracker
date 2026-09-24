@@ -152,6 +152,16 @@ struct DayDetailView: View {
         return (TrendAnalysisEngine.mean(values: vals), stdDev)
     }
 
+
+    /// Honest #302: baseline ±2σ from RHR through day (Sleep #273 / HRV #287 dual).
+    private var rhrBaselineStats: (baseline: Double, stdDev: Double)? {
+        let vals = rhrSeriesThroughDay.map(\.value)
+        guard vals.count >= 5 else { return nil }
+        let stdDev = TrendAnalysisEngine.standardDeviation(values: vals)
+        guard stdDev > 0 else { return nil }
+        return (TrendAnalysisEngine.mean(values: vals), stdDev)
+    }
+
     /// Honest #274: classifyTrend on Sleep through day (classic #253 / Trends #255 parity).
     private var sleepTrendClassification: TrendAnalysisEngine.TrendStrength? {
         guard let analysis = sleepAnalyzedThroughDay.last,
@@ -2273,21 +2283,48 @@ struct DayDetailView: View {
                             .font(.headline.weight(.semibold))
                             .foregroundStyle(RTColor.primaryText)
                         
-                        Chart(sevenDayWindow) { day in
-                            LineMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("RHR", day.restingHeartRate)
-                            )
-                            .foregroundStyle(RTColor.strain)
-                            .interpolationMethod(.catmullRom)
-                            .lineStyle(StrokeStyle(lineWidth: 2.5))
-                            
-                            PointMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("RHR", day.restingHeartRate)
-                            )
-                            .foregroundStyle(day.id == data.id ? RTColor.strain : RTColor.strain.opacity(0.4))
-                            .symbolSize(day.id == data.id ? 80 : 40)
+                        Chart {
+                            // Honest #302: ±2σ baseline bands on RHR (Sleep #273 / HRV #287 dual).
+                            if let stats = rhrBaselineStats {
+                                let cal = Calendar.current
+                                let low = stats.baseline - 2 * stats.stdDev
+                                let high = stats.baseline + 2 * stats.stdDev
+                                ForEach(sevenDayWindow) { day in
+                                    let endDate = cal.date(byAdding: .day, value: 1, to: day.date) ?? day.date
+                                    let z = TrendAnalysisEngine.zScore(
+                                        value: day.restingHeartRate,
+                                        baseline: stats.baseline,
+                                        stdDev: stats.stdDev
+                                    )
+                                    RectangleMark(
+                                        xStart: .value("Date", day.date),
+                                        xEnd: .value("Date", endDate),
+                                        yStart: .value("Low", low),
+                                        yEnd: .value("High", high)
+                                    )
+                                    .foregroundStyle(dayDetailBandColor(zScore: z).opacity(0.08))
+                                }
+                                RuleMark(y: .value("Baseline", stats.baseline))
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                            }
+
+                            ForEach(sevenDayWindow) { day in
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("RHR", day.restingHeartRate)
+                                )
+                                .foregroundStyle(RTColor.strain)
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2.5))
+                                
+                                PointMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("RHR", day.restingHeartRate)
+                                )
+                                .foregroundStyle(day.id == data.id ? RTColor.strain : RTColor.strain.opacity(0.4))
+                                .symbolSize(day.id == data.id ? 80 : 40)
+                            }
                         }
                         .frame(height: 140)
                         .chartYAxis {
@@ -2301,6 +2338,26 @@ struct DayDetailView: View {
                                 AxisValueLabel(format: .dateTime.weekday(.narrow))
                                     .foregroundStyle(RTColor.secondaryText)
                             }
+                        }
+
+                        // Honest #302: Baseline ±2σ legend on Resting HR Trend (Sleep #273 / HRV #287 dual).
+                        if rhrBaselineStats != nil {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                                    .frame(width: 18, height: 2)
+                                Text("Baseline")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.dayDetailRHRBaselineBands)
+                                Text("±2σ")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.tertiaryText)
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(SurfaceID.dayDetailRHRBaselineBands)
+                            .accessibilityLabel("RHR baseline bands plus or minus two sigma")
                         }
                     }
                 }
