@@ -798,6 +798,8 @@ enum SurfaceID {
     static let dayDetailSpO2OutlierList = "day.detail.spo2.outlierList"
     /// Honest #333: Day Detail SpO2 Baseline Bands ±2σ (Sleep #273 / Strain #318 dual; Blood Oxygen Trend host).
     static let dayDetailSpO2BaselineBands = "day.detail.spo2.baselineBands"
+    /// Honest #334: Day Detail SpO2 MA7 overlay (movingAverage7; Sleep #281 / Strain #319 dual; always-on).
+    static let dayDetailSpO2MA7 = "day.detail.spo2.ma7"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"

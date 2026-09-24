@@ -363,6 +363,16 @@ struct DayDetailView: View {
         }
     }
 
+    /// Honest #334/#335: MA7 / MA14 / EMA7 for SpO2 Trend overlays (always-on; Sleep #279/#281 / Strain #319/#320 dual).
+    private var spo2OverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
+        sevenDayWindow.compactMap { day in
+            guard let point = spo2AnalyzedThroughDay.first(where: {
+                Calendar.current.isDate($0.date, inSameDayAs: day.date)
+            }) else { return nil }
+            return (day.date, point.movingAverage7, point.movingAverage14, point.ema7)
+        }
+    }
+
     /// Honest #280: % vs baseline for selected day's Sleep (scrub-enrichment parity).
     private var sleepDayAnalyzed: AnalyzedDataPoint? {
         sleepAnalyzedThroughDay.first {
@@ -3888,6 +3898,19 @@ struct DayDetailView: View {
                                     .foregroundStyle(point.isSelected ? RTColor.optimal : RTColor.optimal.opacity(0.4))
                                     .symbolSize(point.isSelected ? 80 : 40)
                                 }
+
+                                // Honest #334: MA7 overlay on Blood Oxygen Trend (always-on; Sleep #281 / Strain #319 dual).
+                                ForEach(Array(spo2OverlaySeries.enumerated()), id: \.offset) { _, point in
+                                    if let ma7 = point.ma7 {
+                                        LineMark(
+                                            x: .value("Date", point.date, unit: .day),
+                                            y: .value("MA7", ma7)
+                                        )
+                                        .foregroundStyle(RTColor.primaryText.opacity(0.75))
+                                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                                        .interpolationMethod(.catmullRom)
+                                    }
+                                }
                             }
                             .frame(height: 140)
                             .chartYAxis {
@@ -3921,6 +3944,24 @@ struct DayDetailView: View {
                                 .accessibilityElement(children: .contain)
                                 .accessibilityIdentifier(SurfaceID.dayDetailSpO2BaselineBands)
                                 .accessibilityLabel("SpO2 baseline bands plus or minus two sigma")
+                            }
+
+                            // Honest #334: MA7 legend on Blood Oxygen Trend (always-on).
+                            if spo2OverlaySeries.contains(where: { $0.ma7 != nil }) {
+                                HStack(spacing: 16) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .fill(RTColor.primaryText.opacity(0.75))
+                                            .frame(width: 18, height: 2)
+                                        Text("MA7")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailSpO2MA7)
+                                    }
+                                    Spacer(minLength: 0)
+                                }
+                                .accessibilityElement(children: .contain)
+                                .accessibilityLabel("SpO2 MA7 overlay")
                             }
                         }
                     }
