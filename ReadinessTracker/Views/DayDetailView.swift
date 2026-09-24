@@ -88,6 +88,20 @@ struct DayDetailView: View {
         }
     }
 
+    /// Honest #280: % vs baseline for selected day's Sleep (scrub-enrichment parity).
+    private var sleepDayAnalyzed: AnalyzedDataPoint? {
+        sleepAnalyzedThroughDay.first {
+            Calendar.current.isDate($0.date, inSameDayAs: data.date)
+        }
+    }
+
+    private var sleepPercentDeviationLabel: String? {
+        guard let a = sleepDayAnalyzed else { return nil }
+        let d = a.percentDeviation * 100
+        let sign = d >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", d))% vs baseline"
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -561,6 +575,45 @@ struct DayDetailView: View {
         .accessibilityLabel("Volatility coefficient of variation")
     }
 
+
+    // MARK: - % vs Baseline (Honest #280)
+    private func dayDetailPercentDeviationCallout(_ label: String) -> some View {
+        let improving: Bool = {
+            guard let a = sleepDayAnalyzed else { return true }
+            // Sleep: higherIsBetter — above baseline is improving.
+            return a.percentDeviation >= 0
+        }()
+        let tint = abs(sleepDayAnalyzed?.percentDeviation ?? 0) < 0.05
+            ? RTColor.secondaryText
+            : (improving ? RTColor.optimal : RTColor.warning)
+        return HStack(spacing: 8) {
+            Image(systemName: "percent")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text("Sleep vs series baseline")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(tint.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailPercentDeviation)
+        .accessibilityLabel(label)
+    }
+
     // MARK: - Classify Trend (Honest #274)
     private func dayDetailClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
         let r2 = sleepAnalyzedThroughDay.last?.trendRSquared
@@ -713,6 +766,11 @@ struct DayDetailView: View {
                     VStack(spacing: 16) {
                         nightHeaderMetrics
                             .accessibilityIdentifier(SurfaceID.dayDetailHeader)
+
+                        // Honest #280: % vs baseline callout (percentDeviation / scrub parity).
+                        if let label = sleepPercentDeviationLabel {
+                            dayDetailPercentDeviationCallout(label)
+                        }
 
                         stagePercentChips
                             .accessibilityIdentifier(SurfaceID.dayDetailStageChips)
