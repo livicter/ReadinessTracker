@@ -45,6 +45,18 @@ struct DayDetailView: View {
                 // 7-day context charts
                 sevenDayContext
                     .slideIn(delay: 0.2)
+
+                // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
+                if sevenDayWindow.count >= 3 {
+                    SmartInsightsView(
+                        metric: .sleep,
+                        history: sevenDayWindow.map { ($0.date, $0.sleepHours) },
+                        currentValue: data.sleepHours
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailSmartInsights)
+                    .slideIn(delay: 0.22)
+                }
                 
                 // Sleep stage analysis
                 sleepStageAnalysis

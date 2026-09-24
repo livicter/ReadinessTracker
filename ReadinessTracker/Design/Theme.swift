@@ -648,6 +648,8 @@ enum SurfaceID {
     static let dayDetailStageChips = "day.detail.stageChips"
     static let dayDetailHypnogram = "day.detail.hypnogram"
     static let dayDetailCycles = "day.detail.cycles"
+    /// Honest #267: Day Detail SmartInsightsView (Metric Detail / Trends parity).
+    static let dayDetailSmartInsights = "day.detail.smartInsights"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
