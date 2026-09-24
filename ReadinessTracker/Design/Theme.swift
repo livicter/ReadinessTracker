@@ -680,6 +680,8 @@ enum SurfaceID {
     static let dayDetailEMA = "day.detail.ema"
     /// Honest #280: Day Detail % vs baseline (percentDeviation) for selected Sleep day.
     static let dayDetailPercentDeviation = "day.detail.percentDeviation"
+    /// Honest #281: Day Detail MA7 overlay on Sleep Trend (movingAverage7; always-on).
+    static let dayDetailMA7 = "day.detail.ma7"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
