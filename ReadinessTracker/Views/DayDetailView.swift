@@ -18,6 +18,9 @@ struct DayDetailView: View {
 
     /// Honest #291: HRV rollingVolatility strip toggle (Sleep #276 dual; default on).
     @State private var showHRVVolatility = true
+
+    /// Honest #292: HRV momentum strip toggle (Sleep #277 dual; default on).
+    @State private var showHRVMomentum = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -505,11 +508,17 @@ struct DayDetailView: View {
                 HStack(spacing: 8) {
                     ToggleChip(label: "HRV Volatility", isOn: $showHRVVolatility)
                         .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatilityToggle)
+                    ToggleChip(label: "HRV Momentum", isOn: $showHRVMomentum)
+                        .accessibilityIdentifier(SurfaceID.dayDetailHRVMomentumToggle)
                     Spacer(minLength: 0)
                 }
 
                 if showHRVVolatility {
                     dayDetailHRVVolatilityStrip
+                }
+                // Honest #292: elevate unused AnalyzedDataPoint.momentum on HRV (Sleep #277 dual).
+                if showHRVMomentum {
+                    dayDetailHRVMomentumStrip
                 }
             }
         }
@@ -591,6 +600,112 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatility)
         .accessibilityLabel("Seven day HRV rolling volatility")
+    }
+
+
+    // MARK: - HRV Momentum (Honest #292)
+    private var dayDetailHRVMomentumPoints: [(date: Date, mom: Double)] {
+        hrvAnalyzedThroughDay.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var dayDetailHRVLatestMomentumBand: (label: String, color: Color) {
+        guard let mom = dayDetailHRVMomentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        // HRV: higherIsBetter — rising momentum is improving.
+        let improving = mom > 0
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var dayDetailHRVMomentumYDomain: ClosedRange<Double> {
+        let vals = dayDetailHRVMomentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailHRVMomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day HRV Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = dayDetailHRVMomentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, dayDetailHRVLatestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailHRVLatestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailHRVMomentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailHRVMomentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            point.mom >= 0
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailHRVMomentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailHRVMomentumYDomain.lowerBound, 0, dayDetailHRVMomentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for HRV momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailHRVMomentum)
+        .accessibilityLabel("Seven day HRV momentum")
     }
 
 
