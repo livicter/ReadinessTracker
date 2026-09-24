@@ -299,6 +299,19 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.24)
                 }
 
+
+                // Honest #295: RecoveryTrajectoryView on HRV (Sleep #269 dual; ≥5 + strain).
+                if hrvSeriesThroughDay.count >= 5 {
+                    RecoveryTrajectoryView(
+                        history: hrvSeriesThroughDay,
+                        strainHistory: strainSeriesThroughDay,
+                        metric: .hrv
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailHRVRecoveryTrajectory)
+                    .slideIn(delay: 0.242)
+                }
+
                 // Honest #270: MetricCorrelationView Sleep↔HRV (classic / Trends #266 parity).
                 if historyThroughDay.count >= 3 {
                     MetricCorrelationView(

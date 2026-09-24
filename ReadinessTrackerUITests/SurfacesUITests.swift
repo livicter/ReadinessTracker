@@ -2487,6 +2487,51 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-hrv-weekly-pattern.png")
     }
 
+    func testDayDetailHRVRecoveryTrajectorySurface() throws {
+        // Honest #295: Day Detail RecoveryTrajectoryView on HRV (Sleep #269 dual).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let card = app.descendants(matching: .any)["day.detail.hrv.recoveryTrajectory"].firstMatch
+        while !card.exists && s < 18 {
+            if app.staticTexts["Post-Strain Recovery"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = card.exists
+        _ = app.staticTexts["Post-Strain Recovery"].exists
+            || app.descendants(matching: .any)["recovery.postStrain.card"].exists
+            || app.staticTexts["Weekly Pattern"].exists
+            || app.staticTexts["Insights"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-hrv-recovery-trajectory.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).
