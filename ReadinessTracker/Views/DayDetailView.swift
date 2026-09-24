@@ -238,6 +238,19 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.22)
                 }
 
+
+                // Honest #290: SmartInsightsView on HRV series (Sleep #267 dual; ≥3 points).
+                if hrvSeriesThroughDay.count >= 3 {
+                    SmartInsightsView(
+                        metric: .hrv,
+                        history: hrvSeriesThroughDay,
+                        currentValue: data.hrv
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailHRVSmartInsights)
+                    .slideIn(delay: 0.222)
+                }
+
                 // Honest #268: WeeklyPatternView on Sleep series (≥7 days through day).
                 if sleepSeriesThroughDay.count >= 7 {
                     WeeklyPatternView(
