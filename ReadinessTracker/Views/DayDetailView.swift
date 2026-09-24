@@ -84,6 +84,18 @@ struct DayDetailView: View {
                     .accessibilityIdentifier(SurfaceID.dayDetailWeeklyPattern)
                     .slideIn(delay: 0.23)
                 }
+
+                // Honest #269: RecoveryTrajectoryView (≥5 days + activeCalories strain).
+                if sleepSeriesThroughDay.count >= 5 {
+                    RecoveryTrajectoryView(
+                        history: sleepSeriesThroughDay,
+                        strainHistory: strainSeriesThroughDay,
+                        metric: .sleep
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailRecoveryTrajectory)
+                    .slideIn(delay: 0.24)
+                }
                 
                 // Sleep stage analysis
                 sleepStageAnalysis

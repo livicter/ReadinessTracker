@@ -652,6 +652,8 @@ enum SurfaceID {
     static let dayDetailSmartInsights = "day.detail.smartInsights"
     /// Honest #268: Day Detail WeeklyPatternView (Metric Detail / Trends #264 parity).
     static let dayDetailWeeklyPattern = "day.detail.weeklyPattern"
+    /// Honest #269: Day Detail RecoveryTrajectoryView (Metric Detail / Trends #265 parity).
+    static let dayDetailRecoveryTrajectory = "day.detail.recoveryTrajectory"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
