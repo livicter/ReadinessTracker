@@ -8,6 +8,9 @@ struct DayDetailView: View {
     let history: [DailyHealthData]
     
     @Environment(\.dismiss) private var dismiss
+
+    /// Honest #276: Trends #259 / classic #248 Volatility strip toggle (default on).
+    @State private var showVolatility = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -109,6 +112,10 @@ struct DayDetailView: View {
                         .slideIn(delay: 0.215)
                 }
 
+                // Honest #276: rollingVolatility strip on Sleep (classic #248 / Trends #259 parity).
+                dayDetailVolatilitySection
+                    .slideIn(delay: 0.217)
+
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
                     SmartInsightsView(
@@ -192,6 +199,124 @@ struct DayDetailView: View {
 
 
 
+
+
+    // MARK: - Rolling Volatility (Honest #276)
+    private var dayDetailVolatilityPoints: [(date: Date, cv: Double)] {
+        sleepAnalyzedThroughDay.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var dayDetailLatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = dayDetailVolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var dayDetailVolatilityYDomain: ClosedRange<Double> {
+        let vals = dayDetailVolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var dayDetailVolatilitySection: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    ToggleChip(label: "Volatility", isOn: $showVolatility)
+                        .accessibilityIdentifier(SurfaceID.dayDetailVolatilityToggle)
+                    Spacer(minLength: 0)
+                }
+
+                if showVolatility {
+                    dayDetailVolatilityStrip
+                }
+            }
+        }
+    }
+
+    private var dayDetailVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = dayDetailVolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, dayDetailLatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailLatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailVolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", dayDetailVolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(dayDetailVolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailVolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailVolatility)
+        .accessibilityLabel("Seven day rolling volatility")
+    }
 
     // MARK: - Statistics CV% (Honest #275)
     private func dayDetailStatsCVSection(cv: Double) -> some View {
