@@ -748,6 +748,8 @@ enum SurfaceID {
     static let dayDetailRHRRecoveryTrajectory = "day.detail.rhr.recoveryTrajectory"
     /// Honest #310: Day Detail MetricCorrelationView HRV↔RHR (extends #270 Sleep↔HRV).
     static let dayDetailMetricCorrelationHRVRHR = "day.detail.metricCorrelation.hrvRhr"
+    /// Honest #311: Day Detail SmartInsightsView on Strain/activeCalories (Sleep #267 / HRV #290 / RHR #296 dual; Strain track entry).
+    static let dayDetailStrainSmartInsights = "day.detail.strain.smartInsights"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
