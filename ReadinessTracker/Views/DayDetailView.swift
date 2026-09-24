@@ -460,6 +460,18 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.245)
                 }
 
+                // Honest #310: MetricCorrelationView HRV↔RHR (extends #270; MetricDetail restingHR↔hrv parity).
+                if historyThroughDay.count >= 3 {
+                    MetricCorrelationView(
+                        history: historyThroughDay,
+                        xMetric: .hrv,
+                        yMetric: .restingHR
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailMetricCorrelationHRVRHR)
+                    .slideIn(delay: 0.246)
+                }
+
                 // Honest #271: DistributionHistogramView on Sleep (classic / Trends #255 parity).
                 if sleepSeriesThroughDay.count >= 5 {
                     DistributionHistogramView(
