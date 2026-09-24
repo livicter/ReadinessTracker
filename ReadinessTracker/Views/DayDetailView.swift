@@ -41,6 +41,14 @@ struct DayDetailView: View {
             .map { ($0.date, $0.activeCalories) }
     }
 
+    /// Honest #282: HRV through day — DistributionHistogramView dual of Sleep #271.
+    private var hrvSeriesThroughDay: [(date: Date, value: Double)] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+            .map { ($0.date, $0.hrv) }
+    }
+
     /// DailyHealthData through this day — MetricCorrelationView needs full rows.
     private var historyThroughDay: [DailyHealthData] {
         history
@@ -201,6 +209,17 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailHistogram)
                     .slideIn(delay: 0.247)
+                }
+
+                // Honest #282: DistributionHistogramView on HRV (Sleep #271 dual).
+                if hrvSeriesThroughDay.count >= 5 {
+                    DistributionHistogramView(
+                        history: hrvSeriesThroughDay,
+                        metric: .hrv
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailHRVHistogram)
+                    .slideIn(delay: 0.2475)
                 }
 
                 // Honest #272: OutlierCallout Highlights on Sleep (classic #251 / Trends #257 parity).
