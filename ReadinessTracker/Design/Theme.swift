@@ -764,6 +764,8 @@ enum SurfaceID {
     static let dayDetailStrainOutlierList = "day.detail.strain.outlierList"
     /// Honest #318: Day Detail Strain Baseline Bands ±2σ (Sleep #273 / HRV #287 / RHR #302 dual).
     static let dayDetailStrainBaselineBands = "day.detail.strain.baselineBands"
+    /// Honest #319: Day Detail Strain MA7 overlay (movingAverage7; Sleep #281 / HRV #288 / RHR #303 dual; always-on).
+    static let dayDetailStrainMA7 = "day.detail.strain.ma7"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
