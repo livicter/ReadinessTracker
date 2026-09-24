@@ -816,6 +816,8 @@ enum SurfaceID {
     /// Honest #338: Day Detail SpO2 Day Δ / rateOfChange strip (Sleep #278 / Strain #323 dual; triad complete).
     static let dayDetailSpO2DayDelta = "day.detail.spo2.dayDelta"
     static let dayDetailSpO2DayDeltaToggle = "day.detail.spo2.dayDelta.toggle"
+    /// Honest #341: Day Detail RecoveryTrajectoryView on SpO2 (Sleep #269 / RHR #309 dual; SpO2 track complete).
+    static let dayDetailSpO2RecoveryTrajectory = "day.detail.spo2.recoveryTrajectory"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
