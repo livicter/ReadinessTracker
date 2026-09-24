@@ -115,6 +115,17 @@ struct DayDetailView: View {
                     .accessibilityIdentifier(SurfaceID.dayDetailMetricCorrelation)
                     .slideIn(delay: 0.245)
                 }
+
+                // Honest #271: DistributionHistogramView on Sleep (classic / Trends #255 parity).
+                if sleepSeriesThroughDay.count >= 5 {
+                    DistributionHistogramView(
+                        history: sleepSeriesThroughDay,
+                        metric: .sleep
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailHistogram)
+                    .slideIn(delay: 0.247)
+                }
                 
                 // Sleep stage analysis
                 sleepStageAnalysis
