@@ -605,6 +605,10 @@ struct DayDetailView: View {
                 dayDetailRHROutlierSection
                     .slideIn(delay: 0.2479)
 
+                // Honest #317: OutlierCallout Highlights on Strain (Sleep #272 / HRV #286 / RHR #301 dual).
+                dayDetailStrainOutlierSection
+                    .slideIn(delay: 0.24795)
+
                 // Honest #272: OutlierCallout Highlights on Sleep (classic #251 / Trends #257 parity).
                 dayDetailOutlierSection
                     .slideIn(delay: 0.248)
@@ -2112,6 +2116,40 @@ struct DayDetailView: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier(SurfaceID.dayDetailRHROutlierList)
             .accessibilityLabel("RHR outlier highlights")
+        }
+    }
+
+    // MARK: - Strain Outlier Highlights (Honest #317)
+    /// Elevate unused isOutlier on Strain via OutlierCallout list (up to 3) — Sleep #272 / HRV #286 / RHR #301 dual.
+    @ViewBuilder
+    private var dayDetailStrainOutlierSection: some View {
+        let outliers = strainAnalyzedThroughDay.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Strain Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let sign = point.zScore > 0 ? "+" : ""
+                        let deviationStr = "\(sign)\(String(format: "%.1f", point.zScore))σ"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(Int(point.rawValue.rounded())) cal",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.dayDetailStrainOutlierList)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.dayDetailStrainOutlierList)
+            .accessibilityLabel("Strain outlier highlights")
         }
     }
 

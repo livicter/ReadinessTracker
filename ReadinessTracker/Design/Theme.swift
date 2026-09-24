@@ -760,6 +760,8 @@ enum SurfaceID {
     static let dayDetailStrainPercentDeviation = "day.detail.strain.percentDeviation"
     /// Honest #316: Day Detail Strain Statistics CV% (Sleep #275 / HRV #285 / RHR #300 dual).
     static let dayDetailStrainStatsCV = "day.detail.strain.stats.cv"
+    /// Honest #317: Day Detail Strain OutlierCallout Highlights (Sleep #272 / HRV #286 / RHR #301 dual).
+    static let dayDetailStrainOutlierList = "day.detail.strain.outlierList"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
