@@ -423,6 +423,17 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.234)
                 }
 
+                // Honest #312: WeeklyPatternView on Strain/activeCalories (Sleep #268 / HRV #294 / RHR #308 dual; ≥7).
+                if strainSeriesThroughDay.count >= 7 {
+                    WeeklyPatternView(
+                        history: strainSeriesThroughDay,
+                        metric: .activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailStrainWeeklyPattern)
+                    .slideIn(delay: 0.236)
+                }
+
                 // Honest #269: RecoveryTrajectoryView (≥5 days + activeCalories strain).
                 if sleepSeriesThroughDay.count >= 5 {
                     RecoveryTrajectoryView(
