@@ -377,6 +377,18 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.223)
                 }
 
+                // Honest #311: SmartInsightsView on Strain/activeCalories (Sleep #267 / HRV #290 / RHR #296 dual; ≥3).
+                if strainSeriesThroughDay.count >= 3 {
+                    SmartInsightsView(
+                        metric: .activeCalories,
+                        history: strainSeriesThroughDay,
+                        currentValue: data.activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailStrainSmartInsights)
+                    .slideIn(delay: 0.224)
+                }
+
                 // Honest #268: WeeklyPatternView on Sleep series (≥7 days through day).
                 if sleepSeriesThroughDay.count >= 7 {
                     WeeklyPatternView(
