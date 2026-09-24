@@ -720,6 +720,8 @@ enum SurfaceID {
     static let dayDetailRHRHistogram = "day.detail.rhr.histogram"
     /// Honest #298: Day Detail classifyTrend strength on RHR (Sleep #274 / HRV #283 dual).
     static let dayDetailRHRTrendStrength = "day.detail.rhr.trend.strength"
+    /// Honest #299: Day Detail RHR % vs baseline (percentDeviation; Sleep #280 / HRV #284 dual).
+    static let dayDetailRHRPercentDeviation = "day.detail.rhr.percentDeviation"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
