@@ -46,6 +46,15 @@ struct DayDetailView: View {
         TrendAnalysisEngine.analyze(history: sleepSeriesThroughDay, metric: .sleep)
     }
 
+    /// Honest #273: baseline ±2σ from Sleep through day (classic / Trends #258 parity).
+    private var sleepBaselineStats: (baseline: Double, stdDev: Double)? {
+        let vals = sleepSeriesThroughDay.map(\.value)
+        guard vals.count >= 5 else { return nil }
+        let stdDev = TrendAnalysisEngine.standardDeviation(values: vals)
+        guard stdDev > 0 else { return nil }
+        return (TrendAnalysisEngine.mean(values: vals), stdDev)
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -153,6 +162,14 @@ struct DayDetailView: View {
         .toolbarColorScheme(.light, for: .navigationBar)
     }
     
+
+
+    private func dayDetailBandColor(zScore: Double) -> Color {
+        let absZ = abs(zScore)
+        if absZ > 2 { return .red }
+        if absZ > 1 { return .orange }
+        return RTColor.sleep
+    }
 
     // MARK: - Outlier Highlights (Honest #272)
     /// Elevate unused isOutlier via OutlierCallout list (up to 3) — classic / Trends parity.
@@ -601,14 +618,41 @@ struct DayDetailView: View {
                             .font(.headline.weight(.semibold))
                             .foregroundStyle(RTColor.primaryText)
                         
-                        Chart(sevenDayWindow) { day in
-                            BarMark(
-                                x: .value("Date", day.date, unit: .day),
-                                y: .value("Hours", day.sleepHours)
-                            )
-                            .foregroundStyle(day.id == data.id ? RTColor.sleep : RTColor.sleep.opacity(0.4))
-                            .cornerRadius(4, style: .continuous)
-                            
+                        Chart {
+                            // Honest #273: ±2σ baseline bands on Sleep (classic #251 / Trends #258).
+                            if let stats = sleepBaselineStats {
+                                let cal = Calendar.current
+                                let low = stats.baseline - 2 * stats.stdDev
+                                let high = stats.baseline + 2 * stats.stdDev
+                                ForEach(sevenDayWindow) { day in
+                                    let endDate = cal.date(byAdding: .day, value: 1, to: day.date) ?? day.date
+                                    let z = TrendAnalysisEngine.zScore(
+                                        value: day.sleepHours,
+                                        baseline: stats.baseline,
+                                        stdDev: stats.stdDev
+                                    )
+                                    RectangleMark(
+                                        xStart: .value("Date", day.date),
+                                        xEnd: .value("Date", endDate),
+                                        yStart: .value("Low", low),
+                                        yEnd: .value("High", high)
+                                    )
+                                    .foregroundStyle(dayDetailBandColor(zScore: z).opacity(0.08))
+                                }
+                                RuleMark(y: .value("Baseline", stats.baseline))
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                            }
+
+                            ForEach(sevenDayWindow) { day in
+                                BarMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Hours", day.sleepHours)
+                                )
+                                .foregroundStyle(day.id == data.id ? RTColor.sleep : RTColor.sleep.opacity(0.4))
+                                .cornerRadius(4, style: .continuous)
+                            }
+
                             RuleMark(y: .value("Goal", 7.5))
                                 .foregroundStyle(RTColor.primaryText.opacity(0.2))
                                 .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
@@ -625,6 +669,26 @@ struct DayDetailView: View {
                                 AxisValueLabel(format: .dateTime.weekday(.narrow))
                                     .foregroundStyle(RTColor.secondaryText)
                             }
+                        }
+
+                        // Honest #273: Baseline ±2σ legend (Trends #258 presentation parity).
+                        if sleepBaselineStats != nil {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                                    .frame(width: 18, height: 2)
+                                Text("Baseline")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.dayDetailBaselineBands)
+                                Text("±2σ")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.tertiaryText)
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(SurfaceID.dayDetailBaselineBands)
+                            .accessibilityLabel("Baseline bands plus or minus two sigma")
                         }
                     }
                 }
