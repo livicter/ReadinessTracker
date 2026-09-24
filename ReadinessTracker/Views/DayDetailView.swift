@@ -18,6 +18,22 @@ struct DayDetailView: View {
         guard let weekAgo = calendar.date(byAdding: .day, value: -6, to: data.date) else { return [] }
         return history.filter { $0.date >= weekAgo && $0.date <= data.date }.sorted { $0.date < $1.date }
     }
+
+    /// History through this day — WeeklyPattern / RecoveryTrajectory need ≥7 / ≥5 points.
+    private var sleepSeriesThroughDay: [(date: Date, value: Double)] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+            .map { ($0.date, $0.sleepHours) }
+    }
+
+    private var strainSeriesThroughDay: [(date: Date, value: Double)] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+            .map { ($0.date, $0.activeCalories) }
+    }
+
     
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
@@ -56,6 +72,17 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailSmartInsights)
                     .slideIn(delay: 0.22)
+                }
+
+                // Honest #268: WeeklyPatternView on Sleep series (≥7 days through day).
+                if sleepSeriesThroughDay.count >= 7 {
+                    WeeklyPatternView(
+                        history: sleepSeriesThroughDay,
+                        metric: .sleep
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailWeeklyPattern)
+                    .slideIn(delay: 0.23)
                 }
                 
                 // Sleep stage analysis
