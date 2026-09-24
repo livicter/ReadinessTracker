@@ -55,6 +55,14 @@ struct DayDetailView: View {
         return (TrendAnalysisEngine.mean(values: vals), stdDev)
     }
 
+    /// Honest #274: classifyTrend on Sleep through day (classic #253 / Trends #255 parity).
+    private var sleepTrendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = sleepAnalyzedThroughDay.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .sleep)
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -81,6 +89,12 @@ struct DayDetailView: View {
                 // 7-day context charts
                 sevenDayContext
                     .slideIn(delay: 0.2)
+
+                // Honest #274: classifyTrend strength callout on Sleep (classic #253 / Trends #255).
+                if let strength = sleepTrendClassification {
+                    dayDetailClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.21)
+                }
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
@@ -163,6 +177,44 @@ struct DayDetailView: View {
     }
     
 
+
+
+    // MARK: - Classify Trend (Honest #274)
+    private func dayDetailClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = sleepAnalyzedThroughDay.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailTrendStrength)
+        .accessibilityLabel("Trend strength " + strength.rawValue)
+    }
 
     private func dayDetailBandColor(zScore: Double) -> Color {
         let absZ = abs(zScore)
