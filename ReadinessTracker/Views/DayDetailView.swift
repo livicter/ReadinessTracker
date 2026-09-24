@@ -199,6 +199,16 @@ struct DayDetailView: View {
         return (TrendAnalysisEngine.mean(values: vals), stdDev)
     }
 
+
+    /// Honest #318: baseline ±2σ from Strain through day (Sleep #273 / HRV #287 / RHR #302 dual).
+    private var strainBaselineStats: (baseline: Double, stdDev: Double)? {
+        let vals = strainSeriesThroughDay.map(\.value)
+        guard vals.count >= 5 else { return nil }
+        let stdDev = TrendAnalysisEngine.standardDeviation(values: vals)
+        guard stdDev > 0 else { return nil }
+        return (TrendAnalysisEngine.mean(values: vals), stdDev)
+    }
+
     /// Honest #274: classifyTrend on Sleep through day (classic #253 / Trends #255 parity).
     private var sleepTrendClassification: TrendAnalysisEngine.TrendStrength? {
         guard let analysis = sleepAnalyzedThroughDay.last,
@@ -3046,6 +3056,92 @@ struct DayDetailView: View {
                             }
                             .accessibilityElement(children: .contain)
                             .accessibilityLabel("RHR MA7 MA14 and EMA overlays")
+                        }
+                    }
+                }
+
+                // Strain / Active Calories trend (Honest #318 host for baseline bands; MA overlays → #319+)
+                NativeCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Active Calories Trend")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(RTColor.primaryText)
+
+                        Chart {
+                            // Honest #318: ±2σ baseline bands on Strain (Sleep #273 / HRV #287 / RHR #302 dual).
+                            if let stats = strainBaselineStats {
+                                let cal = Calendar.current
+                                let low = stats.baseline - 2 * stats.stdDev
+                                let high = stats.baseline + 2 * stats.stdDev
+                                ForEach(sevenDayWindow) { day in
+                                    let endDate = cal.date(byAdding: .day, value: 1, to: day.date) ?? day.date
+                                    let z = TrendAnalysisEngine.zScore(
+                                        value: day.activeCalories,
+                                        baseline: stats.baseline,
+                                        stdDev: stats.stdDev
+                                    )
+                                    RectangleMark(
+                                        xStart: .value("Date", day.date),
+                                        xEnd: .value("Date", endDate),
+                                        yStart: .value("Low", low),
+                                        yEnd: .value("High", high)
+                                    )
+                                    .foregroundStyle(dayDetailBandColor(zScore: z).opacity(0.08))
+                                }
+                                RuleMark(y: .value("Baseline", stats.baseline))
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                            }
+
+                            ForEach(sevenDayWindow) { day in
+                                LineMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Cals", day.activeCalories)
+                                )
+                                .foregroundStyle(RTColor.caution)
+                                .interpolationMethod(.catmullRom)
+                                .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+                                PointMark(
+                                    x: .value("Date", day.date, unit: .day),
+                                    y: .value("Cals", day.activeCalories)
+                                )
+                                .foregroundStyle(day.id == data.id ? RTColor.caution : RTColor.caution.opacity(0.4))
+                                .symbolSize(day.id == data.id ? 80 : 40)
+                            }
+                        }
+                        .frame(height: 140)
+                        .chartYAxis {
+                            AxisMarks { _ in
+                                AxisGridLine().foregroundStyle(RTColor.divider)
+                                AxisValueLabel().foregroundStyle(RTColor.secondaryText)
+                            }
+                        }
+                        .chartXAxis {
+                            AxisMarks(values: .stride(by: .day)) { _ in
+                                AxisValueLabel(format: .dateTime.weekday(.narrow))
+                                    .foregroundStyle(RTColor.secondaryText)
+                            }
+                        }
+
+                        // Honest #318: Baseline ±2σ legend on Active Calories Trend.
+                        if strainBaselineStats != nil {
+                            HStack(spacing: 6) {
+                                Capsule()
+                                    .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                                    .frame(width: 18, height: 2)
+                                Text("Baseline")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.secondaryText)
+                                    .accessibilityIdentifier(SurfaceID.dayDetailStrainBaselineBands)
+                                Text("±2σ")
+                                    .font(.caption2)
+                                    .foregroundStyle(RTColor.tertiaryText)
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityIdentifier(SurfaceID.dayDetailStrainBaselineBands)
+                            .accessibilityLabel("Strain baseline bands plus or minus two sigma")
                         }
                     }
                 }
