@@ -256,6 +256,23 @@ struct DayDetailView: View {
         return (TrendAnalysisEngine.mean(values: vals), stdDev)
     }
 
+    /// Honest #333: baseline ±2σ from SpO2 through day (Sleep #273 / Strain #318 dual).
+    private var spo2BaselineStats: (baseline: Double, stdDev: Double)? {
+        let vals = spo2SeriesThroughDay.map(\.value)
+        guard vals.count >= 5 else { return nil }
+        let stdDev = TrendAnalysisEngine.standardDeviation(values: vals)
+        guard stdDev > 0 else { return nil }
+        return (TrendAnalysisEngine.mean(values: vals), stdDev)
+    }
+
+    /// Honest #333: SpO2 points in seven-day window for Blood Oxygen Trend host.
+    private var spo2SevenDayPoints: [(date: Date, value: Double, isSelected: Bool)] {
+        sevenDayWindow.compactMap { day in
+            guard let v = day.bloodOxygen, v > 0 else { return nil }
+            return (day.date, v, day.id == data.id)
+        }
+    }
+
     /// Honest #274: classifyTrend on Sleep through day (classic #253 / Trends #255 parity).
     private var sleepTrendClassification: TrendAnalysisEngine.TrendStrength? {
         guard let analysis = sleepAnalyzedThroughDay.last,
@@ -3817,6 +3834,94 @@ struct DayDetailView: View {
                             }
                             .accessibilityElement(children: .contain)
                             .accessibilityLabel("Strain MA7 MA14 and EMA overlays")
+                        }
+                    }
+                }
+
+                // Blood Oxygen trend (Honest #333 host for baseline bands; MA overlays → later)
+                if !spo2SevenDayPoints.isEmpty {
+                    NativeCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Blood Oxygen Trend")
+                                .font(.headline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+
+                            Chart {
+                                // Honest #333: ±2σ baseline bands on SpO2 (Sleep #273 / Strain #318 dual).
+                                if let stats = spo2BaselineStats {
+                                    let cal = Calendar.current
+                                    let low = stats.baseline - 2 * stats.stdDev
+                                    let high = stats.baseline + 2 * stats.stdDev
+                                    ForEach(Array(spo2SevenDayPoints.enumerated()), id: \.offset) { _, point in
+                                        let endDate = cal.date(byAdding: .day, value: 1, to: point.date) ?? point.date
+                                        let z = TrendAnalysisEngine.zScore(
+                                            value: point.value,
+                                            baseline: stats.baseline,
+                                            stdDev: stats.stdDev
+                                        )
+                                        RectangleMark(
+                                            xStart: .value("Date", point.date),
+                                            xEnd: .value("Date", endDate),
+                                            yStart: .value("Low", low),
+                                            yEnd: .value("High", high)
+                                        )
+                                        .foregroundStyle(dayDetailBandColor(zScore: z).opacity(0.08))
+                                    }
+                                    RuleMark(y: .value("Baseline", stats.baseline))
+                                        .foregroundStyle(RTColor.primaryText.opacity(0.25))
+                                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                                }
+
+                                ForEach(Array(spo2SevenDayPoints.enumerated()), id: \.offset) { _, point in
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("SpO2", point.value)
+                                    )
+                                    .foregroundStyle(RTColor.optimal)
+                                    .interpolationMethod(.catmullRom)
+                                    .lineStyle(StrokeStyle(lineWidth: 2.5))
+
+                                    PointMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("SpO2", point.value)
+                                    )
+                                    .foregroundStyle(point.isSelected ? RTColor.optimal : RTColor.optimal.opacity(0.4))
+                                    .symbolSize(point.isSelected ? 80 : 40)
+                                }
+                            }
+                            .frame(height: 140)
+                            .chartYAxis {
+                                AxisMarks { _ in
+                                    AxisGridLine().foregroundStyle(RTColor.divider)
+                                    AxisValueLabel().foregroundStyle(RTColor.secondaryText)
+                                }
+                            }
+                            .chartXAxis {
+                                AxisMarks(values: .stride(by: .day)) { _ in
+                                    AxisValueLabel(format: .dateTime.weekday(.narrow))
+                                        .foregroundStyle(RTColor.secondaryText)
+                                }
+                            }
+
+                            // Honest #333: Baseline ±2σ legend on Blood Oxygen Trend.
+                            if spo2BaselineStats != nil {
+                                HStack(spacing: 6) {
+                                    Capsule()
+                                        .stroke(RTColor.tertiaryText, style: StrokeStyle(lineWidth: 2, dash: [6, 4]))
+                                        .frame(width: 18, height: 2)
+                                    Text("Baseline")
+                                        .font(.caption2)
+                                        .foregroundStyle(RTColor.secondaryText)
+                                        .accessibilityIdentifier(SurfaceID.dayDetailSpO2BaselineBands)
+                                    Text("±2σ")
+                                        .font(.caption2)
+                                        .foregroundStyle(RTColor.tertiaryText)
+                                    Spacer(minLength: 0)
+                                }
+                                .accessibilityElement(children: .contain)
+                                .accessibilityIdentifier(SurfaceID.dayDetailSpO2BaselineBands)
+                                .accessibilityLabel("SpO2 baseline bands plus or minus two sigma")
+                            }
                         }
                     }
                 }
