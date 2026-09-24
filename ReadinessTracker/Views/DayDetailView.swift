@@ -21,6 +21,9 @@ struct DayDetailView: View {
 
     /// Honest #292: HRV momentum strip toggle (Sleep #277 dual; default on).
     @State private var showHRVMomentum = true
+
+    /// Honest #293: HRV Day Δ strip toggle (Sleep #278 dual; default on).
+    @State private var showHRVRateOfChange = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -510,6 +513,8 @@ struct DayDetailView: View {
                         .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatilityToggle)
                     ToggleChip(label: "HRV Momentum", isOn: $showHRVMomentum)
                         .accessibilityIdentifier(SurfaceID.dayDetailHRVMomentumToggle)
+                    ToggleChip(label: "HRV Day Δ", isOn: $showHRVRateOfChange)
+                        .accessibilityIdentifier(SurfaceID.dayDetailHRVDayDeltaToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -519,6 +524,10 @@ struct DayDetailView: View {
                 // Honest #292: elevate unused AnalyzedDataPoint.momentum on HRV (Sleep #277 dual).
                 if showHRVMomentum {
                     dayDetailHRVMomentumStrip
+                }
+                // Honest #293: elevate unused AnalyzedDataPoint.rateOfChange on HRV (Sleep #278 dual).
+                if showHRVRateOfChange {
+                    dayDetailHRVDayDeltaStrip
                 }
             }
         }
@@ -706,6 +715,97 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailHRVMomentum)
         .accessibilityLabel("Seven day HRV momentum")
+    }
+
+
+    // MARK: - HRV Day Δ / rateOfChange (Honest #293)
+    private var dayDetailHRVROCPoints: [(date: Date, roc: Double)] {
+        hrvAnalyzedThroughDay.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var dayDetailHRVLatestROCBand: (label: String, color: Color) {
+        guard let roc = dayDetailHRVROCPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        // HRV: higherIsBetter — Up when ROC > 0.
+        let improving = roc > 0
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var dayDetailHRVROCYDomain: ClosedRange<Double> {
+        let vals = dayDetailHRVROCPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailHRVDayDeltaStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("HRV Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = dayDetailHRVROCPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, dayDetailHRVLatestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailHRVLatestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailHRVROCPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailHRVROCPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            point.roc >= 0
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailHRVROCYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailHRVROCYDomain.lowerBound, 0, dayDetailHRVROCYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for HRV day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailHRVDayDelta)
+        .accessibilityLabel("HRV day over day rate of change")
     }
 
 
