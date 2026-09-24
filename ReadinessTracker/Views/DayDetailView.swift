@@ -58,6 +58,15 @@ struct DayDetailView: View {
             .map { ($0.date, $0.hrv) }
     }
 
+
+    /// Honest #296: RHR through day — SmartInsights / Histogram dual track entry.
+    private var rhrSeriesThroughDay: [(date: Date, value: Double)] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+            .map { ($0.date, $0.restingHeartRate) }
+    }
+
     /// Honest #283: analyze + classifyTrend on HRV through day (Sleep #274 dual).
     private var hrvAnalyzedThroughDay: [AnalyzedDataPoint] {
         TrendAnalysisEngine.analyze(history: hrvSeriesThroughDay, metric: .hrv)
@@ -262,6 +271,19 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailHRVSmartInsights)
                     .slideIn(delay: 0.222)
+                }
+
+
+                // Honest #296: SmartInsightsView on RHR series (thinnest RHR track; ≥3).
+                if rhrSeriesThroughDay.count >= 3 {
+                    SmartInsightsView(
+                        metric: .restingHR,
+                        history: rhrSeriesThroughDay,
+                        currentValue: data.restingHeartRate
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailRHRSmartInsights)
+                    .slideIn(delay: 0.223)
                 }
 
                 // Honest #268: WeeklyPatternView on Sleep series (≥7 days through day).
