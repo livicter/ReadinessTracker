@@ -684,6 +684,8 @@ enum SurfaceID {
     static let dayDetailMA7 = "day.detail.ma7"
     /// Honest #282: Day Detail DistributionHistogramView on HRV (≥5; Sleep #271 dual).
     static let dayDetailHRVHistogram = "day.detail.hrv.histogram"
+    /// Honest #283: Day Detail classifyTrend strength callout on HRV (Sleep #274 dual).
+    static let dayDetailHRVTrendStrength = "day.detail.hrv.trend.strength"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
