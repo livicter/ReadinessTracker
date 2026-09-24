@@ -765,6 +765,10 @@ struct DayDetailView: View {
                 dayDetailStrainOutlierSection
                     .slideIn(delay: 0.24795)
 
+                // Honest #332: OutlierCallout Highlights on SpO2 (Sleep #272 / Strain #317 dual).
+                dayDetailSpO2OutlierSection
+                    .slideIn(delay: 0.24796)
+
                 // Honest #272: OutlierCallout Highlights on Sleep (classic #251 / Trends #257 parity).
                 dayDetailOutlierSection
                     .slideIn(delay: 0.248)
@@ -2724,6 +2728,40 @@ struct DayDetailView: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier(SurfaceID.dayDetailStrainOutlierList)
             .accessibilityLabel("Strain outlier highlights")
+        }
+    }
+
+    // MARK: - SpO2 Outlier Highlights (Honest #332)
+    /// Elevate unused isOutlier on SpO2 via OutlierCallout list (up to 3) — Sleep #272 / Strain #317 dual.
+    @ViewBuilder
+    private var dayDetailSpO2OutlierSection: some View {
+        let outliers = spo2AnalyzedThroughDay.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("SpO2 Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let sign = point.zScore > 0 ? "+" : ""
+                        let deviationStr = "\(sign)\(String(format: "%.1f", point.zScore))σ"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(Int(point.rawValue.rounded()))%",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.dayDetailSpO2OutlierList)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.dayDetailSpO2OutlierList)
+            .accessibilityLabel("SpO2 outlier highlights")
         }
     }
 
