@@ -752,6 +752,8 @@ enum SurfaceID {
     static let dayDetailStrainSmartInsights = "day.detail.strain.smartInsights"
     /// Honest #312: Day Detail WeeklyPatternView on Strain (Sleep #268 / HRV #294 / RHR #308 dual; ≥7).
     static let dayDetailStrainWeeklyPattern = "day.detail.strain.weeklyPattern"
+    /// Honest #313: Day Detail DistributionHistogramView on Strain (≥5; Sleep #271 / HRV #282 / RHR #297 dual).
+    static let dayDetailStrainHistogram = "day.detail.strain.histogram"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
