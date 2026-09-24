@@ -701,6 +701,9 @@ enum SurfaceID {
     static let dayDetailHRVEMA = "day.detail.hrv.ema"
     /// Honest #290: Day Detail SmartInsightsView on HRV (Sleep #267 dual).
     static let dayDetailHRVSmartInsights = "day.detail.hrv.smartInsights"
+    /// Honest #291: Day Detail HRV rollingVolatility strip (Sleep #276 dual).
+    static let dayDetailHRVVolatility = "day.detail.hrv.volatility"
+    static let dayDetailHRVVolatilityToggle = "day.detail.hrv.volatility.toggle"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
