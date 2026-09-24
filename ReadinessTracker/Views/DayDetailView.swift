@@ -690,6 +690,17 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.2477)
                 }
 
+                // Honest #328: DistributionHistogramView on SpO2 (Sleep #271 / Strain #313 dual; ≥5 optional points).
+                if spo2SeriesThroughDay.count >= 5 {
+                    DistributionHistogramView(
+                        history: spo2SeriesThroughDay,
+                        metric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailSpO2Histogram)
+                    .slideIn(delay: 0.24775)
+                }
+
                 // Honest #286: OutlierCallout Highlights on HRV (Sleep #272 dual).
                 dayDetailHRVOutlierSection
                     .slideIn(delay: 0.2478)
