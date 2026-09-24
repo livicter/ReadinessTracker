@@ -42,6 +42,9 @@ struct DayDetailView: View {
 
     /// Honest #323: Strain Day Δ strip toggle (Sleep #278 / HRV #293 / RHR #307 dual; default on).
     @State private var showStrainRateOfChange = true
+
+    /// Honest #336: SpO2 rollingVolatility strip toggle (Sleep #276 / Strain #321 dual; default on).
+    @State private var showSpO2Volatility = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -518,6 +521,10 @@ struct DayDetailView: View {
                 // Honest #321: rollingVolatility strip on Strain (Sleep #276 / HRV #291 / RHR #305 dual; strip triad start).
                 dayDetailStrainVolatilitySection
                     .slideIn(delay: 0.2195)
+
+                // Honest #336: rollingVolatility strip on SpO2 (Sleep #276 / Strain #321 dual; strip triad start).
+                dayDetailSpO2VolatilitySection
+                    .slideIn(delay: 0.2196)
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
@@ -1338,6 +1345,123 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailStrainVolatility)
         .accessibilityLabel("Seven day Strain rolling volatility")
+    }
+
+    // MARK: - SpO2 Rolling Volatility (Honest #336)
+    private var dayDetailSpO2VolatilityPoints: [(date: Date, cv: Double)] {
+        spo2AnalyzedThroughDay.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var dayDetailSpO2LatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = dayDetailSpO2VolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var dayDetailSpO2VolatilityYDomain: ClosedRange<Double> {
+        let vals = dayDetailSpO2VolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var dayDetailSpO2VolatilitySection: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    ToggleChip(label: "SpO2 Volatility", isOn: $showSpO2Volatility)
+                        .accessibilityIdentifier(SurfaceID.dayDetailSpO2VolatilityToggle)
+                    Spacer(minLength: 0)
+                }
+
+                if showSpO2Volatility {
+                    dayDetailSpO2VolatilityStrip
+                }
+            }
+        }
+    }
+
+    private var dayDetailSpO2VolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day SpO2 Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = dayDetailSpO2VolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, dayDetailSpO2LatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailSpO2LatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailSpO2VolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", dayDetailSpO2VolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(dayDetailSpO2VolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.optimal.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.optimal)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailSpO2VolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for SpO2 volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2Volatility)
+        .accessibilityLabel("Seven day SpO2 rolling volatility")
     }
 
     // MARK: - Strain Momentum (Honest #322)
