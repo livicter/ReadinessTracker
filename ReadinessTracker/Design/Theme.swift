@@ -742,6 +742,8 @@ enum SurfaceID {
     /// Honest #307: Day Detail RHR Day Δ / rateOfChange strip (Sleep #278 / HRV #293 dual; triad complete).
     static let dayDetailRHRDayDelta = "day.detail.rhr.dayDelta"
     static let dayDetailRHRDayDeltaToggle = "day.detail.rhr.dayDelta.toggle"
+    /// Honest #308: Day Detail WeeklyPatternView on RHR (Sleep #268 / HRV #294 dual; ≥7).
+    static let dayDetailRHRWeeklyPattern = "day.detail.rhr.weeklyPattern"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
