@@ -744,6 +744,8 @@ enum SurfaceID {
     static let dayDetailRHRDayDeltaToggle = "day.detail.rhr.dayDelta.toggle"
     /// Honest #308: Day Detail WeeklyPatternView on RHR (Sleep #268 / HRV #294 dual; ≥7).
     static let dayDetailRHRWeeklyPattern = "day.detail.rhr.weeklyPattern"
+    /// Honest #309: Day Detail RecoveryTrajectoryView on RHR (Sleep #269 / HRV #295 dual; RHR track complete).
+    static let dayDetailRHRRecoveryTrajectory = "day.detail.rhr.recoveryTrajectory"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
