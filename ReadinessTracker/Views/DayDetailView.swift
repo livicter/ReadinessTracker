@@ -274,6 +274,10 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.2475)
                 }
 
+                // Honest #286: OutlierCallout Highlights on HRV (Sleep #272 dual).
+                dayDetailHRVOutlierSection
+                    .slideIn(delay: 0.2478)
+
                 // Honest #272: OutlierCallout Highlights on Sleep (classic #251 / Trends #257 parity).
                 dayDetailOutlierSection
                     .slideIn(delay: 0.248)
@@ -858,6 +862,41 @@ struct DayDetailView: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier(SurfaceID.dayDetailOutlierList)
             .accessibilityLabel("Outlier highlights")
+        }
+    }
+
+
+    // MARK: - HRV Outlier Highlights (Honest #286)
+    /// Elevate unused isOutlier on HRV via OutlierCallout list (up to 3) — Sleep #272 dual.
+    @ViewBuilder
+    private var dayDetailHRVOutlierSection: some View {
+        let outliers = hrvAnalyzedThroughDay.filter(\.isOutlier)
+        if !outliers.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("HRV Highlights")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+                    .padding(.horizontal, 4)
+
+                VStack(spacing: 8) {
+                    ForEach(outliers.prefix(3)) { point in
+                        let type: OutlierCallout.OutlierType = point.zScore > 0 ? .high : .low
+                        let dateStr = point.date.formatted(.dateTime.month(.abbreviated).day())
+                        let sign = point.zScore > 0 ? "+" : ""
+                        let deviationStr = "\(sign)\(String(format: "%.1f", point.zScore))σ"
+                        OutlierCallout(
+                            type: type,
+                            value: "\(Int(point.rawValue.rounded())) ms",
+                            date: dateStr,
+                            deviation: deviationStr
+                        )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.dayDetailHRVOutlierList)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier(SurfaceID.dayDetailHRVOutlierList)
+            .accessibilityLabel("HRV outlier highlights")
         }
     }
 
