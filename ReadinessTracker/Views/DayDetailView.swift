@@ -48,6 +48,9 @@ struct DayDetailView: View {
 
     /// Honest #337: SpO2 momentum strip toggle (Sleep #277 / Strain #322 dual; default on).
     @State private var showSpO2Momentum = true
+
+    /// Honest #338: SpO2 Day Δ strip toggle (Sleep #278 / Strain #323 dual; default on).
+    @State private var showSpO2RateOfChange = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -1381,6 +1384,8 @@ struct DayDetailView: View {
                         .accessibilityIdentifier(SurfaceID.dayDetailSpO2VolatilityToggle)
                     ToggleChip(label: "SpO2 Momentum", isOn: $showSpO2Momentum)
                         .accessibilityIdentifier(SurfaceID.dayDetailSpO2MomentumToggle)
+                    ToggleChip(label: "SpO2 Day Δ", isOn: $showSpO2RateOfChange)
+                        .accessibilityIdentifier(SurfaceID.dayDetailSpO2DayDeltaToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -1390,6 +1395,10 @@ struct DayDetailView: View {
                 // Honest #337: elevate unused AnalyzedDataPoint.momentum on SpO2 (Sleep #277 / Strain #322 dual).
                 if showSpO2Momentum {
                     dayDetailSpO2MomentumStrip
+                }
+                // Honest #338: elevate unused AnalyzedDataPoint.rateOfChange on SpO2 (Sleep #278 / Strain #323 dual).
+                if showSpO2RateOfChange {
+                    dayDetailSpO2DayDeltaStrip
                 }
             }
         }
@@ -1576,6 +1585,96 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailSpO2Momentum)
         .accessibilityLabel("Seven day SpO2 momentum")
+    }
+
+    // MARK: - SpO2 Day Δ / rateOfChange (Honest #338)
+    private var dayDetailSpO2ROCPoints: [(date: Date, roc: Double)] {
+        spo2AnalyzedThroughDay.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var dayDetailSpO2LatestROCBand: (label: String, color: Color) {
+        guard let roc = dayDetailSpO2ROCPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        // SpO2/bloodOxygen: higherIsBetter — Up when ROC > 0.
+        let improving = roc > 0
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var dayDetailSpO2ROCYDomain: ClosedRange<Double> {
+        let vals = dayDetailSpO2ROCPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailSpO2DayDeltaStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("SpO2 Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = dayDetailSpO2ROCPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, dayDetailSpO2LatestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailSpO2LatestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailSpO2ROCPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailSpO2ROCPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            point.roc >= 0
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailSpO2ROCYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailSpO2ROCYDomain.lowerBound, 0, dayDetailSpO2ROCYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for SpO2 day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2DayDelta)
+        .accessibilityLabel("SpO2 day over day rate of change")
     }
 
     // MARK: - Strain Momentum (Honest #322)
