@@ -140,6 +140,17 @@ struct DayDetailView: View {
         }
     }
 
+
+    /// Honest #288/#289: MA7 / MA14 / EMA7 for HRV Trend overlays (always-on; Sleep #279/#281 dual).
+    private var hrvOverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
+        sevenDayWindow.compactMap { day in
+            guard let point = hrvAnalyzedThroughDay.first(where: {
+                Calendar.current.isDate($0.date, inSameDayAs: day.date)
+            }) else { return nil }
+            return (day.date, point.movingAverage7, point.movingAverage14, point.ema7)
+        }
+    }
+
     /// Honest #280: % vs baseline for selected day's Sleep (scrub-enrichment parity).
     private var sleepDayAnalyzed: AnalyzedDataPoint? {
         sleepAnalyzedThroughDay.first {
@@ -1538,6 +1549,19 @@ struct DayDetailView: View {
                                 .foregroundStyle(day.id == data.id ? RTColor.hrv : RTColor.hrv.opacity(0.4))
                                 .symbolSize(day.id == data.id ? 80 : 40)
                             }
+
+                            // Honest #288: MA7 overlay on HRV Trend (Sleep #281 dual; always-on).
+                            ForEach(Array(hrvOverlaySeries.enumerated()), id: \.offset) { _, point in
+                                if let ma7 = point.ma7 {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("MA7", ma7)
+                                    )
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.75))
+                                    .lineStyle(StrokeStyle(lineWidth: 1.5))
+                                    .interpolationMethod(.catmullRom)
+                                }
+                            }
                         }
                         .frame(height: 140)
                         .chartYAxis {
@@ -1571,6 +1595,24 @@ struct DayDetailView: View {
                             .accessibilityElement(children: .contain)
                             .accessibilityIdentifier(SurfaceID.dayDetailHRVBaselineBands)
                             .accessibilityLabel("HRV baseline bands plus or minus two sigma")
+                        }
+
+                        // Honest #288: MA7 legend on HRV Trend (Sleep #281 dual; always-on).
+                        if hrvOverlaySeries.contains(where: { $0.ma7 != nil }) {
+                            HStack(spacing: 16) {
+                                HStack(spacing: 6) {
+                                    Capsule()
+                                        .fill(RTColor.primaryText.opacity(0.75))
+                                        .frame(width: 18, height: 2)
+                                    Text("MA7")
+                                        .font(.caption2)
+                                        .foregroundStyle(RTColor.secondaryText)
+                                        .accessibilityIdentifier(SurfaceID.dayDetailHRVMA7)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .accessibilityElement(children: .contain)
+                            .accessibilityLabel("HRV MA7 overlay")
                         }
                     }
                 }
