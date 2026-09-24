@@ -67,6 +67,19 @@ struct DayDetailView: View {
             .map { ($0.date, $0.restingHeartRate) }
     }
 
+
+    /// Honest #298: analyze + classifyTrend on RHR through day (Sleep #274 / HRV #283 dual).
+    private var rhrAnalyzedThroughDay: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: rhrSeriesThroughDay, metric: .restingHR)
+    }
+
+    private var rhrTrendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = rhrAnalyzedThroughDay.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .restingHR)
+    }
+
     /// Honest #283: analyze + classifyTrend on HRV through day (Sleep #274 dual).
     private var hrvAnalyzedThroughDay: [AnalyzedDataPoint] {
         TrendAnalysisEngine.analyze(history: hrvSeriesThroughDay, metric: .hrv)
@@ -220,6 +233,13 @@ struct DayDetailView: View {
                 if let strength = hrvTrendClassification {
                     dayDetailHRVClassifyTrendCallout(strength)
                         .slideIn(delay: 0.212)
+                }
+
+
+                // Honest #298: classifyTrend strength callout on RHR (Sleep #274 / HRV #283 dual).
+                if let strength = rhrTrendClassification {
+                    dayDetailRHRClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.2125)
                 }
 
                 // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
@@ -1254,6 +1274,44 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailHRVTrendStrength)
         .accessibilityLabel("HRV trend strength " + strength.rawValue)
+    }
+
+
+    // MARK: - RHR Classify Trend (Honest #298)
+    private func dayDetailRHRClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = rhrAnalyzedThroughDay.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("RHR · " + strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailRHRTrendStrength)
+        .accessibilityLabel("RHR trend strength " + strength.rawValue)
     }
 
 
