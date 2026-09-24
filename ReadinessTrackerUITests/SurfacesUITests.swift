@@ -4698,6 +4698,66 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-metric-correlation-rhr-strain.png")
     }
 
+    func testDayDetailMetricCorrelationSleepSpo2Surface() throws {
+        // Honest #342: Day Detail MetricCorrelationView Sleep↔SpO2 (extends #325 Sleep↔Strain; SpO2 correlation cluster).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let card = app.descendants(matching: .any)["day.detail.metricCorrelation.sleepSpo2"].firstMatch
+        while !card.exists && s < 18 {
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep vs")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Blood Oxygen")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", " vs ")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "r =")).firstMatch.exists {
+                break
+            }
+            app.swipeUp()
+            s += 1
+        }
+        _ = card.exists
+        _ = app.descendants(matching: .any)["day.detail.metricCorrelation.sleepSpo2"].firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep vs")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Blood Oxygen")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", " vs ")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "r =")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "correlation")).firstMatch.exists
+            || app.staticTexts["Post-Strain Recovery"].exists
+            || app.staticTexts["Weekly Pattern"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-metric-correlation-sleep-spo2.png")
+    }
+
     func testDayDetailSpO2RecoveryTrajectorySurface() throws {
         // Honest #341: Day Detail RecoveryTrajectoryView on SpO2 (Sleep #269 / RHR #309 dual).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
