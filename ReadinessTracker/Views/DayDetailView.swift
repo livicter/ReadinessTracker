@@ -295,6 +295,13 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.coefficientOfVariation(values: vals)
     }
 
+    /// Honest #331: SpO2 CV% through day (Sleep #275 / Strain #316 dual).
+    private var spo2CoefficientOfVariation: Double? {
+        let vals = spo2SeriesThroughDay.map(\.value)
+        guard vals.count >= 2 else { return nil }
+        return TrendAnalysisEngine.coefficientOfVariation(values: vals)
+    }
+
 
     /// Honest #279/#281: MA7 / MA14 / EMA7 for Sleep Trend overlays (always-on).
     private var sleepOverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
@@ -443,6 +450,12 @@ struct DayDetailView: View {
                 if let cv = strainCoefficientOfVariation {
                     dayDetailStrainStatsCVSection(cv: cv)
                         .slideIn(delay: 0.2129)
+                }
+
+                // Honest #331: Statistics CV% on SpO2 (Sleep #275 / Strain #316 dual).
+                if let cv = spo2CoefficientOfVariation {
+                    dayDetailSpO2StatsCVSection(cv: cv)
+                        .slideIn(delay: 0.21295)
                 }
 
                 // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
@@ -2166,6 +2179,25 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailStrainStatsCV)
         .accessibilityLabel("Strain volatility coefficient of variation")
+    }
+
+    // MARK: - SpO2 Statistics CV% (Honest #331)
+    private func dayDetailSpO2StatsCVSection(cv: Double) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("SpO2 Statistics")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    StatItem(label: "Volatility", value: "\(Int(cv * 100))%", unit: "CV")
+                        .accessibilityIdentifier(SurfaceID.dayDetailSpO2StatsCV)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2StatsCV)
+        .accessibilityLabel("SpO2 volatility coefficient of variation")
     }
 
 
