@@ -696,6 +696,9 @@ enum SurfaceID {
     static let dayDetailHRVBaselineBands = "day.detail.hrv.baselineBands"
     /// Honest #288: Day Detail HRV MA7 overlay (movingAverage7; Sleep #281 dual; always-on).
     static let dayDetailHRVMA7 = "day.detail.hrv.ma7"
+    /// Honest #289: Day Detail HRV MA14 + EMA overlays (Sleep #279 dual; always-on).
+    static let dayDetailHRVMA14 = "day.detail.hrv.ma14"
+    static let dayDetailHRVEMA = "day.detail.hrv.ema"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
