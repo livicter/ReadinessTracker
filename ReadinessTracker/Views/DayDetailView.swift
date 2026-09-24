@@ -68,6 +68,18 @@ struct DayDetailView: View {
             .map { ($0.date, $0.activeCalories) }
     }
 
+
+    /// Honest #326: SpO2 through day — optional bloodOxygen compactMap (GHealth leftover; SmartInsights entry).
+    private var spo2SeriesThroughDay: [(date: Date, value: Double)] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+            .compactMap { day -> (date: Date, value: Double)? in
+                guard let v = day.bloodOxygen, v > 0 else { return nil }
+                return (day.date, v)
+            }
+    }
+
     /// Honest #282: HRV through day — DistributionHistogramView dual of Sleep #271.
     private var hrvSeriesThroughDay: [(date: Date, value: Double)] {
         history
@@ -477,6 +489,18 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailStrainSmartInsights)
                     .slideIn(delay: 0.224)
+                }
+
+                // Honest #326: SmartInsightsView on SpO2 (Sleep #267 / Strain #311 dual; ≥3 optional points).
+                if spo2SeriesThroughDay.count >= 3, let spo2 = data.bloodOxygen ?? spo2SeriesThroughDay.last?.value {
+                    SmartInsightsView(
+                        metric: .bloodOxygen,
+                        history: spo2SeriesThroughDay,
+                        currentValue: spo2
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailSpO2SmartInsights)
+                    .slideIn(delay: 0.225)
                 }
 
                 // Honest #268: WeeklyPatternView on Sleep series (≥7 days through day).
