@@ -27,6 +27,9 @@ struct DayDetailView: View {
 
     /// Honest #305: RHR rollingVolatility strip toggle (Sleep #276 / HRV #291 dual; default on).
     @State private var showRHRVolatility = true
+
+    /// Honest #306: RHR momentum strip toggle (Sleep #277 / HRV #292 dual; default on).
+    @State private var showRHRMomentum = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -789,11 +792,17 @@ struct DayDetailView: View {
                 HStack(spacing: 8) {
                     ToggleChip(label: "RHR Volatility", isOn: $showRHRVolatility)
                         .accessibilityIdentifier(SurfaceID.dayDetailRHRVolatilityToggle)
+                    ToggleChip(label: "RHR Momentum", isOn: $showRHRMomentum)
+                        .accessibilityIdentifier(SurfaceID.dayDetailRHRMomentumToggle)
                     Spacer(minLength: 0)
                 }
 
                 if showRHRVolatility {
                     dayDetailRHRVolatilityStrip
+                }
+                // Honest #306: elevate unused AnalyzedDataPoint.momentum on RHR (Sleep #277 / HRV #292 dual).
+                if showRHRMomentum {
+                    dayDetailRHRMomentumStrip
                 }
             }
         }
@@ -876,6 +885,114 @@ struct DayDetailView: View {
         .accessibilityIdentifier(SurfaceID.dayDetailRHRVolatility)
         .accessibilityLabel("Seven day RHR rolling volatility")
     }
+
+
+    // MARK: - RHR Momentum (Honest #306)
+    private var dayDetailRHRMomentumPoints: [(date: Date, mom: Double)] {
+        rhrAnalyzedThroughDay.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var dayDetailRHRLatestMomentumBand: (label: String, color: Color) {
+        guard let mom = dayDetailRHRMomentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        // RHR: lowerIsBetter — falling momentum is improving.
+        let improving = mom < 0
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Falling", RTColor.optimal) }
+        return ("Rising", RTColor.warning)
+    }
+
+    private var dayDetailRHRMomentumYDomain: ClosedRange<Double> {
+        let vals = dayDetailRHRMomentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailRHRMomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day RHR Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = dayDetailRHRMomentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, dayDetailRHRLatestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailRHRLatestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailRHRMomentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailRHRMomentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            // RHR lowerIsBetter: falling (mom < 0) is optimal.
+                            point.mom < 0
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.strain)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.strain)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailRHRMomentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailRHRMomentumYDomain.lowerBound, 0, dayDetailRHRMomentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for RHR momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailRHRMomentum)
+        .accessibilityLabel("Seven day RHR momentum")
+    }
+
 
 
 
