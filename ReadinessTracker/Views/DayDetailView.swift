@@ -231,6 +231,14 @@ struct DayDetailView: View {
     }
 
 
+    /// Honest #316: Strain CV% through day (Sleep #275 / HRV #285 / RHR #300 dual).
+    private var strainCoefficientOfVariation: Double? {
+        let vals = strainSeriesThroughDay.map(\.value)
+        guard vals.count >= 2 else { return nil }
+        return TrendAnalysisEngine.coefficientOfVariation(values: vals)
+    }
+
+
     /// Honest #279/#281: MA7 / MA14 / EMA7 for Sleep Trend overlays (always-on).
     private var sleepOverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
         sevenDayWindow.compactMap { day in
@@ -349,6 +357,12 @@ struct DayDetailView: View {
                 if let cv = rhrCoefficientOfVariation {
                     dayDetailRHRStatsCVSection(cv: cv)
                         .slideIn(delay: 0.2128)
+                }
+
+                // Honest #316: Statistics CV% on Strain (Sleep #275 / HRV #285 / RHR #300 dual).
+                if let cv = strainCoefficientOfVariation {
+                    dayDetailStrainStatsCVSection(cv: cv)
+                        .slideIn(delay: 0.2129)
                 }
 
                 // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
@@ -1661,6 +1675,26 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailRHRStatsCV)
         .accessibilityLabel("RHR volatility coefficient of variation")
+    }
+
+
+    // MARK: - Strain Statistics CV% (Honest #316)
+    private func dayDetailStrainStatsCVSection(cv: Double) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Strain Statistics")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    StatItem(label: "Volatility", value: "\(Int(cv * 100))%", unit: "CV")
+                        .accessibilityIdentifier(SurfaceID.dayDetailStrainStatsCV)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailStrainStatsCV)
+        .accessibilityLabel("Strain volatility coefficient of variation")
     }
 
 
