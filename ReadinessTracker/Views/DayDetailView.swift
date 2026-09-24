@@ -45,6 +45,9 @@ struct DayDetailView: View {
 
     /// Honest #336: SpO2 rollingVolatility strip toggle (Sleep #276 / Strain #321 dual; default on).
     @State private var showSpO2Volatility = true
+
+    /// Honest #337: SpO2 momentum strip toggle (Sleep #277 / Strain #322 dual; default on).
+    @State private var showSpO2Momentum = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -1376,11 +1379,17 @@ struct DayDetailView: View {
                 HStack(spacing: 8) {
                     ToggleChip(label: "SpO2 Volatility", isOn: $showSpO2Volatility)
                         .accessibilityIdentifier(SurfaceID.dayDetailSpO2VolatilityToggle)
+                    ToggleChip(label: "SpO2 Momentum", isOn: $showSpO2Momentum)
+                        .accessibilityIdentifier(SurfaceID.dayDetailSpO2MomentumToggle)
                     Spacer(minLength: 0)
                 }
 
                 if showSpO2Volatility {
                     dayDetailSpO2VolatilityStrip
+                }
+                // Honest #337: elevate unused AnalyzedDataPoint.momentum on SpO2 (Sleep #277 / Strain #322 dual).
+                if showSpO2Momentum {
+                    dayDetailSpO2MomentumStrip
                 }
             }
         }
@@ -1462,6 +1471,111 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailSpO2Volatility)
         .accessibilityLabel("Seven day SpO2 rolling volatility")
+    }
+
+    // MARK: - SpO2 Momentum (Honest #337)
+    private var dayDetailSpO2MomentumPoints: [(date: Date, mom: Double)] {
+        spo2AnalyzedThroughDay.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var dayDetailSpO2LatestMomentumBand: (label: String, color: Color) {
+        guard let mom = dayDetailSpO2MomentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        // SpO2/bloodOxygen: higherIsBetter — rising momentum is improving.
+        let improving = mom > 0
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var dayDetailSpO2MomentumYDomain: ClosedRange<Double> {
+        let vals = dayDetailSpO2MomentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailSpO2MomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day SpO2 Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = dayDetailSpO2MomentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, dayDetailSpO2LatestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailSpO2LatestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailSpO2MomentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailSpO2MomentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            point.mom >= 0
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.optimal)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.optimal)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailSpO2MomentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailSpO2MomentumYDomain.lowerBound, 0, dayDetailSpO2MomentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for SpO2 momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2Momentum)
+        .accessibilityLabel("Seven day SpO2 momentum")
     }
 
     // MARK: - Strain Momentum (Honest #322)

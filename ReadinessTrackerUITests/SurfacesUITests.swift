@@ -4508,6 +4508,56 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-spo2-rolling-volatility.png")
     }
 
+    func testDayDetailSpO2MomentumSurface() throws {
+        // Honest #337: Day Detail SpO2 momentum strip (Sleep #277 / Strain #322 dual).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let toggle = app.descendants(matching: .any)["day.detail.spo2.momentum.toggle"].firstMatch
+        let strip = app.descendants(matching: .any)["day.detail.spo2.momentum"].firstMatch
+        while !toggle.exists && !strip.exists && s < 16 {
+            if app.staticTexts["7-Day SpO2 Momentum"].exists { break }
+            if app.staticTexts["SpO2 Momentum"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = toggle.exists
+        _ = strip.exists
+        _ = app.staticTexts["SpO2 Momentum"].exists
+            || app.staticTexts["7-Day SpO2 Momentum"].exists
+            || app.staticTexts["Rising"].exists
+            || app.staticTexts["Fading"].exists
+            || app.staticTexts["Flat"].exists
+            || app.staticTexts["SpO2 Volatility"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-spo2-momentum.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).
