@@ -63,6 +63,13 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .sleep)
     }
 
+    /// Honest #275: Sleep CV% through day (classic #254 / Trends #256 parity).
+    private var sleepCoefficientOfVariation: Double? {
+        let vals = sleepSeriesThroughDay.map(\.value)
+        guard vals.count >= 2 else { return nil }
+        return TrendAnalysisEngine.coefficientOfVariation(values: vals)
+    }
+
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
     }
@@ -94,6 +101,12 @@ struct DayDetailView: View {
                 if let strength = sleepTrendClassification {
                     dayDetailClassifyTrendCallout(strength)
                         .slideIn(delay: 0.21)
+                }
+
+                // Honest #275: Statistics CV% on Sleep (classic #254 / Trends #256 parity).
+                if let cv = sleepCoefficientOfVariation {
+                    dayDetailStatsCVSection(cv: cv)
+                        .slideIn(delay: 0.215)
                 }
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
@@ -178,6 +191,26 @@ struct DayDetailView: View {
     
 
 
+
+
+    // MARK: - Statistics CV% (Honest #275)
+    private func dayDetailStatsCVSection(cv: Double) -> some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Statistics")
+                    .font(RTFont.headline)
+                    .foregroundColor(RTColor.primaryText)
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                    StatItem(label: "Volatility", value: "\(Int(cv * 100))%", unit: "CV")
+                        .accessibilityIdentifier(SurfaceID.dayDetailStatsCV)
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailStatsCV)
+        .accessibilityLabel("Volatility coefficient of variation")
+    }
 
     // MARK: - Classify Trend (Honest #274)
     private func dayDetailClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {

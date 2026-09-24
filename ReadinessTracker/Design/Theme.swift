@@ -664,6 +664,8 @@ enum SurfaceID {
     static let dayDetailBaselineBands = "day.detail.baselineBands"
     /// Honest #274: Day Detail classifyTrend strength callout on Sleep (classic #253 / Trends #255 parity).
     static let dayDetailTrendStrength = "day.detail.trend.strength"
+    /// Honest #275: Day Detail Statistics CV% / coefficientOfVariation (classic #254 / Trends #256 parity).
+    static let dayDetailStatsCV = "day.detail.stats.cv"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
