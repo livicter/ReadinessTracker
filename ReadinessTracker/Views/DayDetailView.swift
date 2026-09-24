@@ -33,6 +33,9 @@ struct DayDetailView: View {
 
     /// Honest #307: RHR Day Δ strip toggle (Sleep #278 / HRV #293 dual; default on).
     @State private var showRHRRateOfChange = true
+
+    /// Honest #321: Strain rollingVolatility strip toggle (Sleep #276 / HRV #291 / RHR #305 dual; default on).
+    @State private var showStrainVolatility = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -415,6 +418,10 @@ struct DayDetailView: View {
                 // Honest #305: rollingVolatility strip on RHR (Sleep #276 / HRV #291 dual; strip triad start).
                 dayDetailRHRVolatilitySection
                     .slideIn(delay: 0.219)
+
+                // Honest #321: rollingVolatility strip on Strain (Sleep #276 / HRV #291 / RHR #305 dual; strip triad start).
+                dayDetailStrainVolatilitySection
+                    .slideIn(delay: 0.2195)
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
@@ -1043,6 +1050,123 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailRHRVolatility)
         .accessibilityLabel("Seven day RHR rolling volatility")
+    }
+
+    // MARK: - Strain Rolling Volatility (Honest #321)
+    private var dayDetailStrainVolatilityPoints: [(date: Date, cv: Double)] {
+        strainAnalyzedThroughDay.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var dayDetailStrainLatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = dayDetailStrainVolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var dayDetailStrainVolatilityYDomain: ClosedRange<Double> {
+        let vals = dayDetailStrainVolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var dayDetailStrainVolatilitySection: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    ToggleChip(label: "Strain Volatility", isOn: $showStrainVolatility)
+                        .accessibilityIdentifier(SurfaceID.dayDetailStrainVolatilityToggle)
+                    Spacer(minLength: 0)
+                }
+
+                if showStrainVolatility {
+                    dayDetailStrainVolatilityStrip
+                }
+            }
+        }
+    }
+
+    private var dayDetailStrainVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Strain Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = dayDetailStrainVolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, dayDetailStrainLatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailStrainLatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailStrainVolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", dayDetailStrainVolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(dayDetailStrainVolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailStrainVolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for Strain volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailStrainVolatility)
+        .accessibilityLabel("Seven day Strain rolling volatility")
     }
 
 
