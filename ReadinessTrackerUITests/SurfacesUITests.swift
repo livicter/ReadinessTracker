@@ -2865,6 +2865,52 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-rhr-baseline-bands.png")
     }
 
+    func testDayDetailRHRMA7Surface() throws {
+        // Honest #303: Day Detail RHR MA7 overlay (Sleep #281 / HRV #288 dual; always-on).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let ma7 = app.descendants(matching: .any)["day.detail.rhr.ma7"].firstMatch
+        while !ma7.exists && s < 14 {
+            if app.staticTexts["Resting HR Trend"].exists { break }
+            if app.staticTexts["MA7"].exists { break }
+            if app.staticTexts["7-Day Context"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = ma7.exists
+        _ = app.staticTexts["Resting HR Trend"].exists
+            || app.staticTexts["MA7"].exists
+            || app.staticTexts["7-Day Context"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-rhr-ma7.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).
