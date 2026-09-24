@@ -15,6 +15,9 @@ struct DayDetailView: View {
     @State private var showMomentum = true
     /// Honest #278: Trends #261 / classic #248 Day Δ strip toggle (default on).
     @State private var showRateOfChange = true
+
+    /// Honest #291: HRV rollingVolatility strip toggle (Sleep #276 dual; default on).
+    @State private var showHRVVolatility = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -225,6 +228,10 @@ struct DayDetailView: View {
                 // Honest #276: rollingVolatility strip on Sleep (classic #248 / Trends #259 parity).
                 dayDetailVolatilitySection
                     .slideIn(delay: 0.217)
+
+                // Honest #291: rollingVolatility strip on HRV (Sleep #276 dual).
+                dayDetailHRVVolatilitySection
+                    .slideIn(delay: 0.218)
 
                 // Honest #267: SmartInsightsView on Sleep series (≥3 days in window).
                 if sevenDayWindow.count >= 3 {
@@ -466,6 +473,124 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailVolatility)
         .accessibilityLabel("Seven day rolling volatility")
+    }
+
+
+    // MARK: - HRV Rolling Volatility (Honest #291)
+    private var dayDetailHRVVolatilityPoints: [(date: Date, cv: Double)] {
+        hrvAnalyzedThroughDay.compactMap { point in
+            guard let cv = point.volatility else { return nil }
+            return (point.date, cv)
+        }
+    }
+
+    private var dayDetailHRVLatestVolatilityBand: (label: String, color: Color) {
+        guard let cv = dayDetailHRVVolatilityPoints.last?.cv else {
+            return ("—", RTColor.secondaryText)
+        }
+        if cv >= 0.15 { return ("High", RTColor.warning) }
+        if cv >= 0.08 { return ("Mild", RTColor.caution) }
+        return ("Low", RTColor.optimal)
+    }
+
+    private var dayDetailHRVVolatilityYDomain: ClosedRange<Double> {
+        let vals = dayDetailHRVVolatilityPoints.map(\.cv)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        return 0...(hi * 1.15)
+    }
+
+    private var dayDetailHRVVolatilitySection: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 8) {
+                    ToggleChip(label: "HRV Volatility", isOn: $showHRVVolatility)
+                        .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatilityToggle)
+                    Spacer(minLength: 0)
+                }
+
+                if showHRVVolatility {
+                    dayDetailHRVVolatilityStrip
+                }
+            }
+        }
+    }
+
+    private var dayDetailHRVVolatilityStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day HRV Volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let cv = dayDetailHRVVolatilityPoints.last?.cv {
+                    Text(String(format: "CV %.0f%% · %@", cv * 100, dayDetailHRVLatestVolatilityBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailHRVLatestVolatilityBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailHRVVolatilityPoints.isEmpty {
+                Chart {
+                    RectangleMark(
+                        yStart: .value("Low", 0),
+                        yEnd: .value("LowTop", 0.08)
+                    )
+                    .foregroundStyle(RTColor.optimal.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("Mild", 0.08),
+                        yEnd: .value("MildTop", 0.15)
+                    )
+                    .foregroundStyle(RTColor.caution.opacity(0.08))
+                    RectangleMark(
+                        yStart: .value("High", 0.15),
+                        yEnd: .value("HighTop", dayDetailHRVVolatilityYDomain.upperBound)
+                    )
+                    .foregroundStyle(RTColor.warning.opacity(0.08))
+
+                    ForEach(Array(dayDetailHRVVolatilityPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.hrv.opacity(0.18))
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("CV", point.cv)
+                        )
+                        .foregroundStyle(RTColor.hrv)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailHRVVolatilityYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [0, 0.08, 0.15]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥7 days for HRV volatility")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailHRVVolatility)
+        .accessibilityLabel("Seven day HRV rolling volatility")
     }
 
 
