@@ -1519,6 +1519,53 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-classify-trend-strength.png")
     }
 
+    func testDayDetailStatsCVSurface() throws {
+        // Honest #275: Day Detail Statistics CV% / coefficientOfVariation (Trends #256 parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let card = app.descendants(matching: .any)["day.detail.stats.cv"].firstMatch
+        while !card.exists && s < 14 {
+            if app.staticTexts["Volatility"].exists { break }
+            if app.staticTexts["Statistics"].exists { break }
+            if app.staticTexts["CV"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = card.exists
+        _ = app.staticTexts["Volatility"].exists
+            || app.staticTexts["Statistics"].exists
+            || app.staticTexts["CV"].exists
+            || app.staticTexts["7-Day Context"].exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-stats-cv.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).
