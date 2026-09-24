@@ -135,6 +135,20 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .bloodOxygen)
     }
 
+    /// Honest #330: % vs baseline for selected day's SpO2 (Sleep #280 / Strain #315 dual).
+    private var spo2DayAnalyzed: AnalyzedDataPoint? {
+        spo2AnalyzedThroughDay.first {
+            Calendar.current.isDate($0.date, inSameDayAs: data.date)
+        }
+    }
+
+    private var spo2PercentDeviationLabel: String? {
+        guard let a = spo2DayAnalyzed else { return nil }
+        let pct = a.percentDeviation * 100
+        let sign = pct >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", pct))% vs baseline"
+    }
+
 
     /// Honest #315: % vs baseline for selected day's Strain (Sleep #280 / HRV #284 / RHR #299 dual).
     private var strainDayAnalyzed: AnalyzedDataPoint? {
@@ -396,6 +410,12 @@ struct DayDetailView: View {
                 if let strength = spo2TrendClassification {
                     dayDetailSpO2ClassifyTrendCallout(strength)
                         .slideIn(delay: 0.21262)
+                }
+
+                // Honest #330: SpO2 % vs baseline (percentDeviation; Sleep #280 / Strain #315 dual).
+                if let label = spo2PercentDeviationLabel {
+                    dayDetailSpO2PercentDeviationCallout(label)
+                        .slideIn(delay: 0.21263)
                 }
 
 
@@ -2411,6 +2431,44 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailSpO2TrendStrength)
         .accessibilityLabel("SpO2 trend strength " + strength.rawValue)
+    }
+
+    // MARK: - SpO2 % vs Baseline (Honest #330)
+    private func dayDetailSpO2PercentDeviationCallout(_ label: String) -> some View {
+        let improving: Bool = {
+            guard let a = spo2DayAnalyzed else { return true }
+            // SpO2/bloodOxygen: higherIsBetter — above baseline is improving.
+            return a.percentDeviation >= 0
+        }()
+        let tint = abs(spo2DayAnalyzed?.percentDeviation ?? 0) < 0.05
+            ? RTColor.secondaryText
+            : (improving ? RTColor.optimal : RTColor.warning)
+        return HStack(spacing: 8) {
+            Image(systemName: "percent")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("SpO2 · " + label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text("SpO2 vs series baseline")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(tint.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailSpO2PercentDeviation)
+        .accessibilityLabel("SpO2 " + label)
     }
 
 
