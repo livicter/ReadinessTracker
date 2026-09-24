@@ -13,6 +13,8 @@ struct DayDetailView: View {
     @State private var showVolatility = true
     /// Honest #277: Trends #260 / classic #248 Momentum strip toggle (default on).
     @State private var showMomentum = true
+    /// Honest #278: Trends #261 / classic #248 Day Δ strip toggle (default on).
+    @State private var showRateOfChange = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -234,6 +236,8 @@ struct DayDetailView: View {
                         .accessibilityIdentifier(SurfaceID.dayDetailVolatilityToggle)
                     ToggleChip(label: "Momentum", isOn: $showMomentum)
                         .accessibilityIdentifier(SurfaceID.dayDetailMomentumToggle)
+                    ToggleChip(label: "Day Δ", isOn: $showRateOfChange)
+                        .accessibilityIdentifier(SurfaceID.dayDetailDayDeltaToggle)
                     Spacer(minLength: 0)
                 }
 
@@ -243,6 +247,10 @@ struct DayDetailView: View {
                 // Honest #277: elevate unused AnalyzedDataPoint.momentum (Trends #260 parity).
                 if showMomentum {
                     dayDetailMomentumStrip
+                }
+                // Honest #278: elevate unused AnalyzedDataPoint.rateOfChange (Day Δ / Trends #261).
+                if showRateOfChange {
+                    dayDetailDayDeltaStrip
                 }
             }
         }
@@ -430,6 +438,97 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailMomentum)
         .accessibilityLabel("Seven day momentum")
+    }
+
+
+    // MARK: - Day Δ / rateOfChange (Honest #278)
+    private var dayDetailROCPoints: [(date: Date, roc: Double)] {
+        sleepAnalyzedThroughDay.compactMap { point in
+            guard let roc = point.rateOfChange else { return nil }
+            return (point.date, roc)
+        }
+    }
+
+    private var dayDetailLatestROCBand: (label: String, color: Color) {
+        guard let roc = dayDetailROCPoints.last?.roc else {
+            return ("—", RTColor.secondaryText)
+        }
+        // Sleep: higherIsBetter — Up when ROC > 0.
+        let improving = roc > 0
+        if abs(roc) < 0.03 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Up", RTColor.optimal) }
+        return ("Down", RTColor.warning)
+    }
+
+    private var dayDetailROCYDomain: ClosedRange<Double> {
+        let vals = dayDetailROCPoints.map(\.roc)
+        let lo = min(vals.min() ?? -0.25, -0.25)
+        let hi = max(vals.max() ?? 0.25, 0.25)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailDayDeltaStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Day-over-Day Change")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let roc = dayDetailROCPoints.last?.roc {
+                    let sign = roc >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, roc * 100, dayDetailLatestROCBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailLatestROCBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailROCPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailROCPoints.enumerated()), id: \.offset) { _, point in
+                        BarMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("ROC", point.roc)
+                        )
+                        .foregroundStyle(
+                            point.roc >= 0
+                                ? RTColor.optimal.opacity(0.75)
+                                : RTColor.warning.opacity(0.75)
+                        )
+                        .cornerRadius(2)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailROCYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailROCYDomain.lowerBound, 0, dayDetailROCYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥2 days for day-over-day change")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailDayDelta)
+        .accessibilityLabel("Day over day rate of change")
     }
 
     // MARK: - Statistics CV% (Honest #275)

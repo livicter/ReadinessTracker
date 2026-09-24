@@ -672,6 +672,9 @@ enum SurfaceID {
     /// Honest #277: Day Detail momentum strip (classic #248 / Trends #260 parity).
     static let dayDetailMomentum = "day.detail.momentum"
     static let dayDetailMomentumToggle = "day.detail.momentum.toggle"
+    /// Honest #278: Day Detail Day Δ / rateOfChange strip (classic #248 triad / Trends #261 parity).
+    static let dayDetailDayDelta = "day.detail.dayDelta"
+    static let dayDetailDayDeltaToggle = "day.detail.dayDelta.toggle"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
