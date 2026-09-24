@@ -3121,7 +3121,7 @@ struct DayDetailView: View {
                                 .symbolSize(day.id == data.id ? 80 : 40)
                             }
 
-                            // Honest #319: MA7 overlay on Active Calories Trend (always-on; Sleep #281 / HRV #288 / RHR #303 dual).
+                            // Honest #319/#320: MA7 + MA14 + EMA overlays on Active Calories Trend (always-on).
                             ForEach(Array(strainOverlaySeries.enumerated()), id: \.offset) { _, point in
                                 if let ma7 = point.ma7 {
                                     LineMark(
@@ -3130,6 +3130,24 @@ struct DayDetailView: View {
                                     )
                                     .foregroundStyle(RTColor.primaryText.opacity(0.75))
                                     .lineStyle(StrokeStyle(lineWidth: 1.5))
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                if let ma14 = point.ma14 {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("MA14", ma14)
+                                    )
+                                    .foregroundStyle(RTColor.recovery.opacity(0.9))
+                                    .lineStyle(StrokeStyle(lineWidth: 1.75, dash: [8, 4]))
+                                    .interpolationMethod(.catmullRom)
+                                }
+                                if let ema = point.ema {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("EMA7", ema)
+                                    )
+                                    .foregroundStyle(RTColor.sleep.opacity(0.85))
+                                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [6, 3]))
                                     .interpolationMethod(.catmullRom)
                                 }
                             }
@@ -3168,22 +3186,46 @@ struct DayDetailView: View {
                             .accessibilityLabel("Strain baseline bands plus or minus two sigma")
                         }
 
-                        // Honest #319: MA7 legend on Active Calories Trend (always-on).
-                        if strainOverlaySeries.contains(where: { $0.ma7 != nil }) {
+                        // Honest #319/#320: MA7 + MA14 + EMA legend on Active Calories Trend (always-on).
+                        if strainOverlaySeries.contains(where: { $0.ma7 != nil || $0.ma14 != nil || $0.ema != nil }) {
                             HStack(spacing: 16) {
-                                HStack(spacing: 6) {
-                                    Capsule()
-                                        .fill(RTColor.primaryText.opacity(0.75))
-                                        .frame(width: 18, height: 2)
-                                    Text("MA7")
-                                        .font(.caption2)
-                                        .foregroundStyle(RTColor.secondaryText)
-                                        .accessibilityIdentifier(SurfaceID.dayDetailStrainMA7)
+                                if strainOverlaySeries.contains(where: { $0.ma7 != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .fill(RTColor.primaryText.opacity(0.75))
+                                            .frame(width: 18, height: 2)
+                                        Text("MA7")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailStrainMA7)
+                                    }
+                                }
+                                if strainOverlaySeries.contains(where: { $0.ma14 != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .stroke(RTColor.recovery.opacity(0.9), style: StrokeStyle(lineWidth: 2, dash: [8, 4]))
+                                            .frame(width: 18, height: 2)
+                                        Text("MA14")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailStrainMA14)
+                                    }
+                                }
+                                if strainOverlaySeries.contains(where: { $0.ema != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .stroke(RTColor.sleep.opacity(0.85), style: StrokeStyle(lineWidth: 2, dash: [6, 3]))
+                                            .frame(width: 18, height: 2)
+                                        Text("EMA")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailStrainEMA)
+                                    }
                                 }
                                 Spacer(minLength: 0)
                             }
                             .accessibilityElement(children: .contain)
-                            .accessibilityLabel("Strain MA7 overlay")
+                            .accessibilityLabel("Strain MA7 MA14 and EMA overlays")
                         }
                     }
                 }
