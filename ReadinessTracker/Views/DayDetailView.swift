@@ -748,6 +748,18 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.2468)
                 }
 
+                // Honest #340: MetricCorrelationView RHR↔Strain (extends #339; completes Strain correlation pair).
+                if historyThroughDay.count >= 3 {
+                    MetricCorrelationView(
+                        history: historyThroughDay,
+                        xMetric: .restingHR,
+                        yMetric: .activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailMetricCorrelationRHRStrain)
+                    .slideIn(delay: 0.2469)
+                }
+
                 // Honest #271: DistributionHistogramView on Sleep (classic / Trends #255 parity).
                 if sleepSeriesThroughDay.count >= 5 {
                     DistributionHistogramView(
