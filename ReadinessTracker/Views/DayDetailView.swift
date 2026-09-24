@@ -36,6 +36,9 @@ struct DayDetailView: View {
 
     /// Honest #321: Strain rollingVolatility strip toggle (Sleep #276 / HRV #291 / RHR #305 dual; default on).
     @State private var showStrainVolatility = true
+
+    /// Honest #322: Strain momentum strip toggle (Sleep #277 / HRV #292 / RHR #306 dual; default on).
+    @State private var showStrainMomentum = true
     
     private var previousDays: [DailyHealthData] {
         history.filter { $0.date < data.date }.sorted { $0.date < $1.date }
@@ -1081,11 +1084,17 @@ struct DayDetailView: View {
                 HStack(spacing: 8) {
                     ToggleChip(label: "Strain Volatility", isOn: $showStrainVolatility)
                         .accessibilityIdentifier(SurfaceID.dayDetailStrainVolatilityToggle)
+                    ToggleChip(label: "Strain Momentum", isOn: $showStrainMomentum)
+                        .accessibilityIdentifier(SurfaceID.dayDetailStrainMomentumToggle)
                     Spacer(minLength: 0)
                 }
 
                 if showStrainVolatility {
                     dayDetailStrainVolatilityStrip
+                }
+                // Honest #322: elevate unused AnalyzedDataPoint.momentum on Strain (Sleep #277 / HRV #292 / RHR #306 dual).
+                if showStrainMomentum {
+                    dayDetailStrainMomentumStrip
                 }
             }
         }
@@ -1167,6 +1176,111 @@ struct DayDetailView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dayDetailStrainVolatility)
         .accessibilityLabel("Seven day Strain rolling volatility")
+    }
+
+    // MARK: - Strain Momentum (Honest #322)
+    private var dayDetailStrainMomentumPoints: [(date: Date, mom: Double)] {
+        strainAnalyzedThroughDay.compactMap { point in
+            guard let mom = point.momentum else { return nil }
+            return (point.date, mom)
+        }
+    }
+
+    private var dayDetailStrainLatestMomentumBand: (label: String, color: Color) {
+        guard let mom = dayDetailStrainMomentumPoints.last?.mom else {
+            return ("—", RTColor.secondaryText)
+        }
+        // Strain/activeCalories: higherIsBetter — rising momentum is improving.
+        let improving = mom > 0
+        if abs(mom) < 0.05 { return ("Flat", RTColor.secondaryText) }
+        if improving { return ("Rising", RTColor.optimal) }
+        return ("Fading", RTColor.warning)
+    }
+
+    private var dayDetailStrainMomentumYDomain: ClosedRange<Double> {
+        let vals = dayDetailStrainMomentumPoints.map(\.mom)
+        let lo = min(vals.min() ?? -0.2, -0.2)
+        let hi = max(vals.max() ?? 0.2, 0.2)
+        let pad = max((hi - lo) * 0.1, 0.05)
+        return (lo - pad)...(hi + pad)
+    }
+
+    private var dayDetailStrainMomentumStrip: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("7-Day Strain Momentum")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let mom = dayDetailStrainMomentumPoints.last?.mom {
+                    let sign = mom >= 0 ? "+" : ""
+                    Text(String(format: "%@%.0f%% · %@", sign, mom * 100, dayDetailStrainLatestMomentumBand.label))
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(dayDetailStrainLatestMomentumBand.color)
+                        .monospacedDigit()
+                }
+            }
+
+            if !dayDetailStrainMomentumPoints.isEmpty {
+                Chart {
+                    RuleMark(y: .value("Zero", 0))
+                        .foregroundStyle(RTColor.tertiaryText.opacity(0.6))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+
+                    ForEach(Array(dayDetailStrainMomentumPoints.enumerated()), id: \.offset) { _, point in
+                        AreaMark(
+                            x: .value("Date", point.date, unit: .day),
+                            yStart: .value("Zero", 0),
+                            yEnd: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(
+                            point.mom >= 0
+                                ? RTColor.optimal.opacity(0.18)
+                                : RTColor.warning.opacity(0.18)
+                        )
+
+                        LineMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5))
+                        .interpolationMethod(.catmullRom)
+
+                        PointMark(
+                            x: .value("Date", point.date, unit: .day),
+                            y: .value("Mom", point.mom)
+                        )
+                        .foregroundStyle(RTColor.caution)
+                        .symbolSize(20)
+                    }
+                }
+                .frame(height: 72)
+                .chartYScale(domain: dayDetailStrainMomentumYDomain)
+                .chartXAxis(.hidden)
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: [dayDetailStrainMomentumYDomain.lowerBound, 0, dayDetailStrainMomentumYDomain.upperBound]) { value in
+                        AxisGridLine().foregroundStyle(RTColor.divider)
+                        AxisValueLabel {
+                            if let v = value.as(Double.self) {
+                                Text("\(Int(v * 100))%")
+                                    .font(.system(size: 9))
+                                    .foregroundStyle(RTColor.tertiaryText)
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need ≥8 days for Strain momentum")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .frame(height: 72)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.dayDetailStrainMomentum)
+        .accessibilityLabel("Seven day Strain momentum")
     }
 
 
