@@ -546,6 +546,18 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailStrainWeeklyPattern)
                     .slideIn(delay: 0.236)
+
+
+                // Honest #327: WeeklyPatternView on SpO2 (Sleep #268 / Strain #312 dual; ≥7 optional points).
+                if spo2SeriesThroughDay.count >= 7 {
+                    WeeklyPatternView(
+                        history: spo2SeriesThroughDay,
+                        metric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailSpO2WeeklyPattern)
+                    .slideIn(delay: 0.234)
+                }
                 }
 
                 // Honest #269: RecoveryTrajectoryView (≥5 days + activeCalories strain).
