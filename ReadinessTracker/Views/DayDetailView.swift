@@ -78,13 +78,13 @@ struct DayDetailView: View {
     }
 
 
-    /// Honest #279: MA14 / EMA7 for Sleep Trend overlays (Trends #262 parity; always-on).
-    private var sleepOverlaySeries: [(date: Date, ma14: Double?, ema: Double?)] {
+    /// Honest #279/#281: MA7 / MA14 / EMA7 for Sleep Trend overlays (always-on).
+    private var sleepOverlaySeries: [(date: Date, ma7: Double?, ma14: Double?, ema: Double?)] {
         sevenDayWindow.compactMap { day in
             guard let point = sleepAnalyzedThroughDay.first(where: {
                 Calendar.current.isDate($0.date, inSameDayAs: day.date)
             }) else { return nil }
-            return (day.date, point.movingAverage14, point.ema7)
+            return (day.date, point.movingAverage7, point.movingAverage14, point.ema7)
         }
     }
 
@@ -1145,8 +1145,17 @@ struct DayDetailView: View {
                                 .cornerRadius(4, style: .continuous)
                             }
 
-                            // Honest #279: MA14 + EMA overlays (classic #247 / Trends #262; always-on).
+                            // Honest #279/#281: MA7 + MA14 + EMA overlays (always-on; no chrome toggles).
                             ForEach(Array(sleepOverlaySeries.enumerated()), id: \.offset) { _, point in
+                                if let ma7 = point.ma7 {
+                                    LineMark(
+                                        x: .value("Date", point.date, unit: .day),
+                                        y: .value("MA7", ma7)
+                                    )
+                                    .foregroundStyle(RTColor.primaryText.opacity(0.75))
+                                    .lineStyle(StrokeStyle(lineWidth: 1.5))
+                                    .interpolationMethod(.catmullRom)
+                                }
                                 if let ma14 = point.ma14 {
                                     LineMark(
                                         x: .value("Date", point.date, unit: .day),
@@ -1205,9 +1214,20 @@ struct DayDetailView: View {
                             .accessibilityLabel("Baseline bands plus or minus two sigma")
                         }
 
-                        // Honest #279: MA14 + EMA legend (Trends #262 parity; always-on, no toggles).
-                        if sleepOverlaySeries.contains(where: { $0.ma14 != nil || $0.ema != nil }) {
+                        // Honest #279/#281: MA7 + MA14 + EMA legend (always-on; no chrome toggles).
+                        if sleepOverlaySeries.contains(where: { $0.ma7 != nil || $0.ma14 != nil || $0.ema != nil }) {
                             HStack(spacing: 16) {
+                                if sleepOverlaySeries.contains(where: { $0.ma7 != nil }) {
+                                    HStack(spacing: 6) {
+                                        Capsule()
+                                            .fill(RTColor.primaryText.opacity(0.75))
+                                            .frame(width: 18, height: 2)
+                                        Text("MA7")
+                                            .font(.caption2)
+                                            .foregroundStyle(RTColor.secondaryText)
+                                            .accessibilityIdentifier(SurfaceID.dayDetailMA7)
+                                    }
+                                }
                                 if sleepOverlaySeries.contains(where: { $0.ma14 != nil }) {
                                     HStack(spacing: 6) {
                                         Capsule()
@@ -1233,7 +1253,7 @@ struct DayDetailView: View {
                                 Spacer(minLength: 0)
                             }
                             .accessibilityElement(children: .contain)
-                            .accessibilityLabel("MA14 and EMA overlays")
+                            .accessibilityLabel("MA7 MA14 and EMA overlays")
                         }
                     }
                 }
