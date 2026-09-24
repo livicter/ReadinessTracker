@@ -34,6 +34,13 @@ struct DayDetailView: View {
             .map { ($0.date, $0.activeCalories) }
     }
 
+    /// DailyHealthData through this day — MetricCorrelationView needs full rows.
+    private var historyThroughDay: [DailyHealthData] {
+        history
+            .filter { $0.date <= data.date }
+            .sorted { $0.date < $1.date }
+    }
+
     
     private var readinessScore: Int {
         ReadinessCalculator.calculateBreakdown(from: data, history: history).totalScore
@@ -95,6 +102,18 @@ struct DayDetailView: View {
                     .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(SurfaceID.dayDetailRecoveryTrajectory)
                     .slideIn(delay: 0.24)
+                }
+
+                // Honest #270: MetricCorrelationView Sleep↔HRV (classic / Trends #266 parity).
+                if historyThroughDay.count >= 3 {
+                    MetricCorrelationView(
+                        history: historyThroughDay,
+                        xMetric: .sleep,
+                        yMetric: .hrv
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailMetricCorrelation)
+                    .slideIn(delay: 0.245)
                 }
                 
                 // Sleep stage analysis
