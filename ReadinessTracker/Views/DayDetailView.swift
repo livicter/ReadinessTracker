@@ -529,6 +529,17 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.2476)
                 }
 
+                // Honest #313: DistributionHistogramView on Strain (Sleep #271 / HRV #282 / RHR #297 dual).
+                if strainSeriesThroughDay.count >= 5 {
+                    DistributionHistogramView(
+                        history: strainSeriesThroughDay,
+                        metric: .activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailStrainHistogram)
+                    .slideIn(delay: 0.2477)
+                }
+
                 // Honest #286: OutlierCallout Highlights on HRV (Sleep #272 dual).
                 dayDetailHRVOutlierSection
                     .slideIn(delay: 0.2478)

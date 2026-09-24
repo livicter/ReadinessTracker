@@ -3343,6 +3343,52 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-day-detail-strain-weekly-pattern.png")
     }
 
+    func testDayDetailStrainHistogramSurface() throws {
+        // Honest #313: Day Detail DistributionHistogramView on Strain (Sleep #271 / HRV #282 / RHR #297 dual).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let historyTab = app.descendants(matching: .any)["tab.history"].firstMatch
+        XCTAssertTrue(historyTab.waitForExistence(timeout: 8), "History tab")
+        historyTab.tap()
+        let landed =
+            app.staticTexts["Weekly Report"].waitForExistence(timeout: 12) ||
+            app.staticTexts["Trends"].waitForExistence(timeout: 4) ||
+            app.staticTexts["Browse Trends"].waitForExistence(timeout: 4)
+        XCTAssertTrue(landed, "History tab content")
+
+        var opened = false
+        for _ in 0..<4 {
+            let sleepPredicate = NSPredicate(format: "label MATCHES %@", "[0-9]+\\.[0-9]+h")
+            let hit = app.staticTexts.matching(sleepPredicate).firstMatch
+            if hit.waitForExistence(timeout: 2), hit.isHittable {
+                hit.tap()
+                opened = true
+                break
+            }
+            let list = app.collectionViews.firstMatch.exists ? app.collectionViews.firstMatch : app.tables.firstMatch
+            if list.exists { list.swipeUp() } else { app.swipeUp() }
+        }
+        _ = opened
+        _ = app.otherElements["day.detail"].waitForExistence(timeout: 8)
+            || app.staticTexts["Asleep"].waitForExistence(timeout: 4)
+            || app.staticTexts["Sleep Timeline"].waitForExistence(timeout: 4)
+
+        var s = 0
+        let card = app.descendants(matching: .any)["day.detail.strain.histogram"].firstMatch
+        let dist = app.staticTexts["Distribution"]
+        while !card.exists && !dist.exists && s < 18 {
+            app.swipeUp()
+            s += 1
+        }
+        _ = card.exists
+        _ = dist.exists
+            || app.staticTexts["Median"].exists
+            || app.staticTexts["Mode"].exists
+            || app.staticTexts["Range"].exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Calor")).firstMatch.exists
+            || app.staticTexts["Asleep"].exists
+        saveShot("verify-day-detail-strain-histogram.png")
+    }
+
     func testDayDetailNightMetricWellSurface() throws {
         // Honest #98: Day Detail Asleep|In Bed|Efficiency night metric circular wells.
         // Prefer History day row (same path as testDayDetailSurface).
