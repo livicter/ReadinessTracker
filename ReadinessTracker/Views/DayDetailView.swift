@@ -103,6 +103,21 @@ struct DayDetailView: View {
     }
 
 
+    /// Honest #315: % vs baseline for selected day's Strain (Sleep #280 / HRV #284 / RHR #299 dual).
+    private var strainDayAnalyzed: AnalyzedDataPoint? {
+        strainAnalyzedThroughDay.first {
+            Calendar.current.isDate($0.date, inSameDayAs: data.date)
+        }
+    }
+
+    private var strainPercentDeviationLabel: String? {
+        guard let a = strainDayAnalyzed else { return nil }
+        let pct = a.percentDeviation * 100
+        let sign = pct >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", pct))% vs baseline"
+    }
+
+
     /// Honest #299: % vs baseline for selected day's RHR (Sleep #280 / HRV #284 dual).
     private var rhrDayAnalyzed: AnalyzedDataPoint? {
         rhrAnalyzedThroughDay.first {
@@ -313,6 +328,13 @@ struct DayDetailView: View {
                 if let strength = strainTrendClassification {
                     dayDetailStrainClassifyTrendCallout(strength)
                         .slideIn(delay: 0.2126)
+                }
+
+
+                // Honest #315: Strain % vs baseline (percentDeviation; Sleep #280 / HRV #284 / RHR #299 dual).
+                if let label = strainPercentDeviationLabel {
+                    dayDetailStrainPercentDeviationCallout(label)
+                        .slideIn(delay: 0.21265)
                 }
 
 
@@ -1867,6 +1889,45 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailStrainTrendStrength)
         .accessibilityLabel("Strain trend strength " + strength.rawValue)
+    }
+
+
+    // MARK: - Strain % vs Baseline (Honest #315)
+    private func dayDetailStrainPercentDeviationCallout(_ label: String) -> some View {
+        let improving: Bool = {
+            guard let a = strainDayAnalyzed else { return true }
+            // Strain/activeCalories: higherIsBetter — above baseline is improving.
+            return a.percentDeviation >= 0
+        }()
+        let tint = abs(strainDayAnalyzed?.percentDeviation ?? 0) < 0.05
+            ? RTColor.secondaryText
+            : (improving ? RTColor.optimal : RTColor.warning)
+        return HStack(spacing: 8) {
+            Image(systemName: "percent")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Strain · " + label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text("Strain vs series baseline")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(tint.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailStrainPercentDeviation)
+        .accessibilityLabel("Strain " + label)
     }
 
 
