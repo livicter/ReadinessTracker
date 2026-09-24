@@ -49,6 +49,18 @@ struct DayDetailView: View {
             .map { ($0.date, $0.hrv) }
     }
 
+    /// Honest #283: analyze + classifyTrend on HRV through day (Sleep #274 dual).
+    private var hrvAnalyzedThroughDay: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: hrvSeriesThroughDay, metric: .hrv)
+    }
+
+    private var hrvTrendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = hrvAnalyzedThroughDay.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .hrv)
+    }
+
     /// DailyHealthData through this day — MetricCorrelationView needs full rows.
     private var historyThroughDay: [DailyHealthData] {
         history
@@ -141,6 +153,12 @@ struct DayDetailView: View {
                 if let strength = sleepTrendClassification {
                     dayDetailClassifyTrendCallout(strength)
                         .slideIn(delay: 0.21)
+                }
+
+                // Honest #283: classifyTrend strength callout on HRV (Sleep #274 dual).
+                if let strength = hrvTrendClassification {
+                    dayDetailHRVClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.212)
                 }
 
                 // Honest #275: Statistics CV% on Sleep (classic #254 / Trends #256 parity).
@@ -669,6 +687,44 @@ struct DayDetailView: View {
         .accessibilityIdentifier(SurfaceID.dayDetailTrendStrength)
         .accessibilityLabel("Trend strength " + strength.rawValue)
     }
+
+    // MARK: - HRV Classify Trend (Honest #283)
+    private func dayDetailHRVClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = hrvAnalyzedThroughDay.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("HRV · " + strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailHRVTrendStrength)
+        .accessibilityLabel("HRV trend strength " + strength.rawValue)
+    }
+
 
     private func dayDetailBandColor(zScore: Double) -> Color {
         let absZ = abs(zScore)
