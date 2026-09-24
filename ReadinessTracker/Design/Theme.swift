@@ -794,6 +794,8 @@ enum SurfaceID {
     static let dayDetailSpO2PercentDeviation = "day.detail.spo2.percentDeviation"
     /// Honest #331: Day Detail SpO2 Statistics CV% (Sleep #275 / Strain #316 dual).
     static let dayDetailSpO2StatsCV = "day.detail.spo2.stats.cv"
+    /// Honest #332: Day Detail SpO2 OutlierCallout Highlights (Sleep #272 / Strain #317 dual).
+    static let dayDetailSpO2OutlierList = "day.detail.spo2.outlierList"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
