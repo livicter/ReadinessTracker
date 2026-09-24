@@ -775,6 +775,9 @@ enum SurfaceID {
     /// Honest #322: Day Detail Strain momentum strip (Sleep #277 / HRV #292 / RHR #306 dual).
     static let dayDetailStrainMomentum = "day.detail.strain.momentum"
     static let dayDetailStrainMomentumToggle = "day.detail.strain.momentum.toggle"
+    /// Honest #323: Day Detail Strain Day Δ / rateOfChange strip (Sleep #278 / HRV #293 / RHR #307 dual; triad complete).
+    static let dayDetailStrainDayDelta = "day.detail.strain.dayDelta"
+    static let dayDetailStrainDayDeltaToggle = "day.detail.strain.dayDelta.toggle"
     static let bodyDetail = "body.detail"
     static let bodyTileSteps = "body.tile.steps"
     static let breathingSession = "breathing.session"
