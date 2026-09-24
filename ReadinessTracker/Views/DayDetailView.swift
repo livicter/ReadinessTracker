@@ -796,6 +796,18 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.24705)
                 }
 
+                // Honest #344: MetricCorrelationView RHR↔SpO2 (extends #343 HRV↔SpO2; SpO2 correlation cluster).
+                if historyThroughDay.count >= 3 {
+                    MetricCorrelationView(
+                        history: historyThroughDay,
+                        xMetric: .restingHR,
+                        yMetric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailMetricCorrelationRHRSpo2)
+                    .slideIn(delay: 0.24706)
+                }
+
                 // Honest #271: DistributionHistogramView on Sleep (classic / Trends #255 parity).
                 if sleepSeriesThroughDay.count >= 5 {
                     DistributionHistogramView(
