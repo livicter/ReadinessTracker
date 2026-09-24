@@ -61,6 +61,20 @@ struct DayDetailView: View {
         return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .hrv)
     }
 
+    /// Honest #284: % vs baseline for selected day's HRV (Sleep #280 dual).
+    private var hrvDayAnalyzed: AnalyzedDataPoint? {
+        hrvAnalyzedThroughDay.first {
+            Calendar.current.isDate($0.date, inSameDayAs: data.date)
+        }
+    }
+
+    private var hrvPercentDeviationLabel: String? {
+        guard let a = hrvDayAnalyzed else { return nil }
+        let pct = a.percentDeviation * 100
+        let sign = pct >= 0 ? "+" : ""
+        return "\(sign)\(String(format: "%.1f", pct))% vs baseline"
+    }
+
     /// DailyHealthData through this day — MetricCorrelationView needs full rows.
     private var historyThroughDay: [DailyHealthData] {
         history
@@ -159,6 +173,12 @@ struct DayDetailView: View {
                 if let strength = hrvTrendClassification {
                     dayDetailHRVClassifyTrendCallout(strength)
                         .slideIn(delay: 0.212)
+                }
+
+                // Honest #284: HRV % vs baseline (percentDeviation; Sleep #280 dual).
+                if let label = hrvPercentDeviationLabel {
+                    dayDetailHRVPercentDeviationCallout(label)
+                        .slideIn(delay: 0.213)
                 }
 
                 // Honest #275: Statistics CV% on Sleep (classic #254 / Trends #256 parity).
@@ -686,6 +706,45 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailTrendStrength)
         .accessibilityLabel("Trend strength " + strength.rawValue)
+    }
+
+
+    // MARK: - HRV % vs Baseline (Honest #284)
+    private func dayDetailHRVPercentDeviationCallout(_ label: String) -> some View {
+        let improving: Bool = {
+            guard let a = hrvDayAnalyzed else { return true }
+            // HRV: higherIsBetter — above baseline is improving.
+            return a.percentDeviation >= 0
+        }()
+        let tint = abs(hrvDayAnalyzed?.percentDeviation ?? 0) < 0.05
+            ? RTColor.secondaryText
+            : (improving ? RTColor.optimal : RTColor.warning)
+        return HStack(spacing: 8) {
+            Image(systemName: "percent")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 26, height: 26)
+                .background(tint.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("HRV · " + label)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(tint)
+                Text("HRV vs series baseline")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(tint.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailHRVPercentDeviation)
+        .accessibilityLabel("HRV " + label)
     }
 
     // MARK: - HRV Classify Trend (Honest #283)
