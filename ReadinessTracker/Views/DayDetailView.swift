@@ -368,6 +368,18 @@ struct DayDetailView: View {
                     .slideIn(delay: 0.2475)
                 }
 
+
+                // Honest #297: DistributionHistogramView on RHR (Sleep #271 / HRV #282 dual).
+                if rhrSeriesThroughDay.count >= 5 {
+                    DistributionHistogramView(
+                        history: rhrSeriesThroughDay,
+                        metric: .restingHR
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.dayDetailRHRHistogram)
+                    .slideIn(delay: 0.2476)
+                }
+
                 // Honest #286: OutlierCallout Highlights on HRV (Sleep #272 dual).
                 dayDetailHRVOutlierSection
                     .slideIn(delay: 0.2478)
