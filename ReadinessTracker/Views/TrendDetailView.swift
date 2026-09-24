@@ -156,10 +156,17 @@ struct TrendDetailView: View {
                 metricCards
                     .slideIn(delay: 0.15)
                 
-                // Correlation matrix
-                if filteredHistory.count >= 5 {
-                    correlationSection
-                        .slideIn(delay: 0.2)
+                // Honest #266: shared MetricCorrelationView (pearsonCorrelation parity).
+                if filteredHistory.count >= 3 {
+                    let pair = trendsCorrelationMetrics()
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: pair.x,
+                        yMetric: pair.y
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.trendsMetricCorrelation)
+                    .slideIn(delay: 0.2)
                 }
             }
             .padding(.horizontal, AppleTheme.horizontalMargin)
@@ -1185,37 +1192,19 @@ struct TrendDetailView: View {
         }
     }
     
-    // MARK: - Correlation Section
-    private var correlationSection: some View {
-        NativeCard {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Sleep vs Recovery")
-                    .font(.headline.weight(.semibold))
-                    .foregroundStyle(RTColor.primaryText)
-                
-                Chart(filteredHistory) { day in
-                    PointMark(
-                        x: .value("Sleep", day.sleepHours),
-                        y: .value("Readiness", readinessScores[day.id] ?? 0)
-                    )
-                    .foregroundStyle(RTColor.optimal.opacity(0.7))
-                    .symbolSize(60)
-                    
-                    // Trend line approximation
-                    let avgReadiness = filteredHistory.map { readinessScores[$0.id] ?? 0 }.reduce(0, +) / filteredHistory.count
-                    RuleMark(y: .value("Avg", avgReadiness))
-                        .foregroundStyle(RTColor.primaryText.opacity(0.12))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
-                }
-                .frame(height: 200)
-                
-                HStack {
-                    Text("Sleep (hours)")
-                        .font(.caption2)
-                        .foregroundStyle(RTColor.secondaryText)
-                    Spacer()
-                }
-            }
+    // MARK: - Correlation (Honest #266)
+
+    /// Pair primary depth metric with a peer for Pearson scatter (classic Metric Detail parity).
+    private func trendsCorrelationMetrics() -> (x: MetricType, y: MetricType) {
+        switch primaryDepthMetric {
+        case .readiness, .sleep:
+            return (.sleep, .hrv)
+        case .hrv:
+            return (.hrv, .sleep)
+        case .rhr:
+            return (.restingHR, .hrv)
+        case .calories:
+            return (.activeCalories, .sleep)
         }
     }
 }

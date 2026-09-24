@@ -640,6 +640,8 @@ enum SurfaceID {
     static let trendsWeeklyPattern = "trends.weeklyPattern"
     /// Honest #265: Trends RecoveryTrajectoryView (classic Metric Detail parity).
     static let trendsRecoveryTrajectory = "trends.recoveryTrajectory"
+    /// Honest #266: Trends MetricCorrelationView (pearsonCorrelation parity).
+    static let trendsMetricCorrelation = "trends.metricCorrelation"
     static let historyTrendsLink = "history.trends.link"
     static let dayDetail = "day.detail"
     static let dayDetailHeader = "day.detail.header"
