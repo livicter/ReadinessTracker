@@ -90,6 +90,19 @@ struct DayDetailView: View {
     }
 
 
+    /// Honest #314: analyze + classifyTrend on Strain through day (Sleep #274 / HRV #283 / RHR #298 dual).
+    private var strainAnalyzedThroughDay: [AnalyzedDataPoint] {
+        TrendAnalysisEngine.analyze(history: strainSeriesThroughDay, metric: .activeCalories)
+    }
+
+    private var strainTrendClassification: TrendAnalysisEngine.TrendStrength? {
+        guard let analysis = strainAnalyzedThroughDay.last,
+              let slope = analysis.trendSlope,
+              let r2 = analysis.trendRSquared else { return nil }
+        return TrendAnalysisEngine.classifyTrend(slope: slope, rSquared: r2, metric: .activeCalories)
+    }
+
+
     /// Honest #299: % vs baseline for selected day's RHR (Sleep #280 / HRV #284 dual).
     private var rhrDayAnalyzed: AnalyzedDataPoint? {
         rhrAnalyzedThroughDay.first {
@@ -293,6 +306,13 @@ struct DayDetailView: View {
                 if let strength = rhrTrendClassification {
                     dayDetailRHRClassifyTrendCallout(strength)
                         .slideIn(delay: 0.2125)
+                }
+
+
+                // Honest #314: classifyTrend strength callout on Strain (Sleep #274 / HRV #283 / RHR #298 dual).
+                if let strength = strainTrendClassification {
+                    dayDetailStrainClassifyTrendCallout(strength)
+                        .slideIn(delay: 0.2126)
                 }
 
 
@@ -1809,6 +1829,44 @@ struct DayDetailView: View {
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(SurfaceID.dayDetailRHRTrendStrength)
         .accessibilityLabel("RHR trend strength " + strength.rawValue)
+    }
+
+
+    // MARK: - Strain Classify Trend (Honest #314)
+    private func dayDetailStrainClassifyTrendCallout(_ strength: TrendAnalysisEngine.TrendStrength) -> some View {
+        let r2 = strainAnalyzedThroughDay.last?.trendRSquared
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(strength.trendColor)
+                .frame(width: 26, height: 26)
+                .background(strength.trendColor.opacity(0.14))
+                .clipShape(Circle())
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Strain · " + strength.rawValue)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(strength.trendColor)
+                if let r2 {
+                    Text(String(format: "Regression fit R² %.2f", r2))
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                } else {
+                    Text("Linear trend vs period baseline")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(strength.trendColor.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(SurfaceID.dayDetailStrainTrendStrength)
+        .accessibilityLabel("Strain trend strength " + strength.rawValue)
     }
 
 
