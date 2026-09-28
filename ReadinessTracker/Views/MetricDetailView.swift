@@ -195,6 +195,19 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.358)
                 }
 
+                // Honest #350: MetricCorrelationView HRV↔RHR (Day Detail #310 parity; post-SpO2 cluster).
+                // Mount on HRV (primary there is HRV↔Sleep). Resting HR primary already is RHR↔HRV (generic tag).
+                if filteredHistory.count >= 3 && metric == .hrv {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .hrv,
+                        yMetric: .restingHR
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationHRVRHR)
+                    .slideIn(delay: 0.359)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
