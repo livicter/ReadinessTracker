@@ -208,6 +208,18 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.359)
                 }
 
+                // Honest #351: MetricCorrelationView Sleep↔RHR (Day Detail #324 parity; extends #350).
+                if filteredHistory.count >= 3 && (metric == .sleep || metric == .restingHR) {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .sleep,
+                        yMetric: .restingHR
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationSleepRHR)
+                    .slideIn(delay: 0.360)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
