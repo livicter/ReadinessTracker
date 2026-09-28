@@ -245,6 +245,18 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.362)
                 }
 
+                // Honest #354: MetricCorrelationView RHR↔Strain (Day Detail #340 parity; completes correl SurfaceID parity).
+                if filteredHistory.count >= 3 && (metric == .restingHR || metric == .activeCalories) {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .restingHR,
+                        yMetric: .activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationRHRStrain)
+                    .slideIn(delay: 0.363)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection

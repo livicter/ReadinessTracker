@@ -463,14 +463,23 @@ struct AdvancedMetricDetailView: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationHRVStrain)
             }
+            if history.count >= 3 && (metric == .restingHR || metric == .activeCalories) {
+                MetricCorrelationView(
+                    history: history,
+                    xMetric: .restingHR,
+                    yMetric: .activeCalories
+                )
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationRHRStrain)
+            }
 
             let skipPairs: Set<MetricType> = {
                 var s = Set<MetricType>()
                 if metric == .sleep || metric == .bloodOxygen { s.insert(.bloodOxygen); s.insert(.sleep) }
                 if metric == .sleep { s.insert(.restingHR); s.insert(.activeCalories) }
                 if metric == .hrv { s.insert(.bloodOxygen); s.insert(.restingHR); s.insert(.activeCalories) }
-                if metric == .restingHR { s.insert(.bloodOxygen); s.insert(.sleep) }
-                if metric == .activeCalories { s.insert(.bloodOxygen) }
+                if metric == .restingHR { s.insert(.bloodOxygen); s.insert(.sleep); s.insert(.activeCalories) }
+                if metric == .activeCalories { s.insert(.bloodOxygen); s.insert(.restingHR) }
                 return s
             }()
             let otherMetrics = MetricType.allCases.filter { $0 != metric && !skipPairs.contains($0) }
