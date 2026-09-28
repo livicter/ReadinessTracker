@@ -220,6 +220,19 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.360)
                 }
 
+                // Honest #352: MetricCorrelationView Sleep↔Strain (Day Detail #325 parity; extends #351).
+                // Mount on Sleep (primary there is Sleep↔HRV). Active Calories primary already is Strain↔Sleep.
+                if filteredHistory.count >= 3 && metric == .sleep {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .sleep,
+                        yMetric: .activeCalories
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationSleepStrain)
+                    .slideIn(delay: 0.361)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
