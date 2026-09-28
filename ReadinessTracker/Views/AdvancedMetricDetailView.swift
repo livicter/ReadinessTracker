@@ -168,8 +168,8 @@ struct AdvancedMetricDetailView: View {
                     )
                 }
                 
-                // Correlations
-                if history.count >= 7 {
+                // Correlations (Honest #346/#347: SpO2 duals need ≥3; threshold ForEach still filters |r|>0.2)
+                if history.count >= 3 {
                     correlationSection
                 }
                 
@@ -389,8 +389,34 @@ struct AdvancedMetricDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             NativeSectionHeader(title: "Correlations", action: nil)
                 .padding(.horizontal, 4)
-            
-            let otherMetrics = MetricType.allCases.filter { $0 != metric }
+
+            // Honest #346/#347: explicit SpO2 duals with SurfaceIDs (Day Detail parity).
+            if history.count >= 3 && (metric == .sleep || metric == .bloodOxygen) {
+                MetricCorrelationView(
+                    history: history,
+                    xMetric: .sleep,
+                    yMetric: .bloodOxygen
+                )
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationSleepSpo2)
+            }
+            if history.count >= 3 && metric == .hrv {
+                MetricCorrelationView(
+                    history: history,
+                    xMetric: .hrv,
+                    yMetric: .bloodOxygen
+                )
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationHRVSpo2)
+            }
+
+            let skipPairs: Set<MetricType> = {
+                var s = Set<MetricType>()
+                if metric == .sleep || metric == .bloodOxygen { s.insert(.bloodOxygen); s.insert(.sleep) }
+                if metric == .hrv { s.insert(.bloodOxygen) }
+                return s
+            }()
+            let otherMetrics = MetricType.allCases.filter { $0 != metric && !skipPairs.contains($0) }
             
             ForEach(otherMetrics, id: \.self) { otherMetric in
                 let xValues = history.map { metricValue(for: $0) }
