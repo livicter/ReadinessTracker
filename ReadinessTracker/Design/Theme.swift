@@ -768,6 +768,8 @@ enum SurfaceID {
     static let metricDetailMetricCorrelationSleepSpo2 = "metric.detail.metricCorrelation.sleepSpo2"
     /// Honest #346: primary Metric Detail MetricCorrelationView (existing pair, now tagged).
     static let metricDetailMetricCorrelation = "metric.detail.metricCorrelation"
+    /// Honest #347: Metric Detail MetricCorrelationView HRV↔SpO2 (Day Detail #343 parity; extends #346 Sleep↔SpO2).
+    static let metricDetailMetricCorrelationHRVSpo2 = "metric.detail.metricCorrelation.hrvSpo2"
     /// Honest #311: Day Detail SmartInsightsView on Strain/activeCalories (Sleep #267 / HRV #290 / RHR #296 dual; Strain track entry).
     static let dayDetailStrainSmartInsights = "day.detail.strain.smartInsights"
     /// Honest #312: Day Detail WeeklyPatternView on Strain (Sleep #268 / HRV #294 / RHR #308 dual; ≥7).

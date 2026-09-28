@@ -159,6 +159,18 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.355)
                 }
 
+                // Honest #347: MetricCorrelationView HRV↔SpO2 (Day Detail #343 parity; extends #346 Sleep↔SpO2).
+                if filteredHistory.count >= 3 && metric == .hrv {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .hrv,
+                        yMetric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationHRVSpo2)
+                    .slideIn(delay: 0.356)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
