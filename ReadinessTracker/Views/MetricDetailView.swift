@@ -142,7 +142,21 @@ struct MetricDetailView: View {
                         xMetric: correlationPair.x,
                         yMetric: correlationPair.y
                     )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelation)
                     .slideIn(delay: 0.35)
+                }
+
+                // Honest #346: MetricCorrelationView Sleep↔SpO2 (Day Detail #342 parity; expands beyond SpO2↔HRV).
+                if filteredHistory.count >= 3 && (metric == .sleep || metric == .bloodOxygen) {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .sleep,
+                        yMetric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationSleepSpo2)
+                    .slideIn(delay: 0.355)
                 }
 
                 // Why no old data explanation
