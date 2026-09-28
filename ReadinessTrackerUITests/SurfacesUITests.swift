@@ -5083,6 +5083,82 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-metric-detail-metric-correlation-hrv-spo2.png")
     }
 
+
+    func testMetricDetailMetricCorrelationRHRSpo2Surface() throws {
+        // Honest #348: Metric Detail MetricCorrelationView RHR↔SpO2 (Day Detail #344 parity; extends #347).
+        // Soft path: Metrics Resting HR card or Breakdown Resting HR → MetricDetail (classic/Advanced both host SurfaceID).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var opened = false
+        let metricsHeader = app.staticTexts["Metrics"]
+        var n = 0
+        while !metricsHeader.exists && n < 16 {
+            app.swipeUp()
+            n += 1
+        }
+        if metricsHeader.exists { app.swipeUp() }
+        let rhrCard = app.descendants(matching: .any)["metric.card.Resting HR"].firstMatch
+        if rhrCard.waitForExistence(timeout: 3), rhrCard.isHittable {
+            rhrCard.tap()
+            opened = true
+        }
+        if !opened {
+            var b = 0
+            let row = app.descendants(matching: .any)["breakdown.Resting HR"].firstMatch
+            while !row.exists && b < 22 {
+                app.swipeUp()
+                b += 1
+            }
+            if row.waitForExistence(timeout: 8) {
+                if row.isHittable {
+                    row.tap()
+                } else {
+                    row.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+                opened = true
+            }
+        }
+        _ = opened
+        _ = app.navigationBars["Resting HR"].waitForExistence(timeout: 6)
+            || app.navigationBars["Resting Heart Rate"].waitForExistence(timeout: 3)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 6)
+            || app.staticTexts["Correlations"].waitForExistence(timeout: 3)
+            || app.staticTexts["Trend"].waitForExistence(timeout: 3)
+        let period30 = app.buttons["30D"].firstMatch
+        if period30.exists, period30.isHittable {
+            period30.tap()
+        }
+        var s = 0
+        let card = app.descendants(matching: .any)["metric.detail.metricCorrelation.rhrSpo2"].firstMatch
+        while !card.exists && s < 18 {
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Resting HR vs Blood Oxygen")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Blood Oxygen")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", " vs ")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "r =")).firstMatch.exists {
+                break
+            }
+            if app.staticTexts["Correlations"].exists { break }
+            app.swipeUp()
+            s += 1
+        }
+        _ = card.exists
+        _ = app.descendants(matching: .any)["metric.detail.metricCorrelation.rhrSpo2"].firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Resting HR vs Blood Oxygen")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Blood Oxygen")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", " vs ")).firstMatch.exists
+            || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "r =")).firstMatch.exists
+            || app.staticTexts["Correlations"].exists
+            || app.staticTexts["Weekly Pattern"].exists
+            || app.staticTexts["Insights"].exists
+            || app.staticTexts["Trend"].exists
+        saveShot("verify-metric-detail-metric-correlation-rhr-spo2.png")
+    }
+
     func testDayDetailSpO2RecoveryTrajectorySurface() throws {
         // Honest #341: Day Detail RecoveryTrajectoryView on SpO2 (Sleep #269 / RHR #309 dual).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

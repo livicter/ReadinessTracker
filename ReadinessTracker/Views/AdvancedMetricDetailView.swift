@@ -168,7 +168,7 @@ struct AdvancedMetricDetailView: View {
                     )
                 }
                 
-                // Correlations (Honest #346/#347: SpO2 duals need ≥3; threshold ForEach still filters |r|>0.2)
+                // Correlations (Honest #346/#347/#348: SpO2 duals need ≥3; threshold ForEach still filters |r|>0.2)
                 if history.count >= 3 {
                     correlationSection
                 }
@@ -390,7 +390,7 @@ struct AdvancedMetricDetailView: View {
             NativeSectionHeader(title: "Correlations", action: nil)
                 .padding(.horizontal, 4)
 
-            // Honest #346/#347: explicit SpO2 duals with SurfaceIDs (Day Detail parity).
+            // Honest #346/#347/#348: explicit SpO2 duals with SurfaceIDs (Day Detail parity).
             if history.count >= 3 && (metric == .sleep || metric == .bloodOxygen) {
                 MetricCorrelationView(
                     history: history,
@@ -409,11 +409,21 @@ struct AdvancedMetricDetailView: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationHRVSpo2)
             }
+            if history.count >= 3 && metric == .restingHR {
+                MetricCorrelationView(
+                    history: history,
+                    xMetric: .restingHR,
+                    yMetric: .bloodOxygen
+                )
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationRHRSpo2)
+            }
 
             let skipPairs: Set<MetricType> = {
                 var s = Set<MetricType>()
                 if metric == .sleep || metric == .bloodOxygen { s.insert(.bloodOxygen); s.insert(.sleep) }
                 if metric == .hrv { s.insert(.bloodOxygen) }
+                if metric == .restingHR { s.insert(.bloodOxygen) }
                 return s
             }()
             let otherMetrics = MetricType.allCases.filter { $0 != metric && !skipPairs.contains($0) }
