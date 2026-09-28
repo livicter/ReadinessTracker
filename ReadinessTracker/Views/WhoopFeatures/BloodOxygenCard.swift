@@ -7,6 +7,9 @@ struct BloodOxygenCard: View {
     let currentSpO2: Double      // percent (e.g. 97)
     let history: [(date: Date, value: Double)]
     let baseline: Double
+    /// Honest #358: classic MetricDetailView destination (WHOOP card was display-only).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     /// Normalize 0–1 fractions into percent for display.
     private var tonight: Double { currentSpO2 > 1.5 ? currentSpO2 : currentSpO2 * 100 }
@@ -51,6 +54,10 @@ struct BloodOxygenCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -116,6 +123,7 @@ struct BloodOxygenCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.optimal)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.bloodOxygenSpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -194,6 +202,7 @@ struct BloodOxygenCard: View {
                         }
                     }
                     .accessibilityLabel("Blood oxygen trend with baseline band")
+                    .allowsHitTesting(false)
                 }
 
                 if tonight < 95 || deviationPP < -1.5 {
@@ -224,6 +233,20 @@ struct BloodOxygenCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.bloodOxygenCard)
         .accessibilityLabel("Blood Oxygen")
+        .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .bloodOxygen,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
     }
 
     private var yDomain: ClosedRange<Double> {
