@@ -171,8 +171,8 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.356)
                 }
 
-                // Honest #348: MetricCorrelationView RHR↔SpO2 (Day Detail #344 parity; extends #347 HRV↔SpO2).
-                if filteredHistory.count >= 3 && metric == .restingHR {
+                // Honest #348/#355: MetricCorrelationView RHR↔SpO2 (Day Detail #344 parity; SpO2-host too).
+                if filteredHistory.count >= 3 && (metric == .restingHR || metric == .bloodOxygen) {
                     MetricCorrelationView(
                         history: filteredHistory,
                         xMetric: .restingHR,
