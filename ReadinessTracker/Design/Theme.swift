@@ -772,7 +772,7 @@ enum SurfaceID {
     static let metricDetailMetricCorrelationHRVSpo2 = "metric.detail.metricCorrelation.hrvSpo2"
     /// Honest #348/#355: Metric Detail MetricCorrelationView RHR↔SpO2 (Day Detail #344; SpO2-host mount).
     static let metricDetailMetricCorrelationRHRSpo2 = "metric.detail.metricCorrelation.rhrSpo2"
-    /// Honest #349: Metric Detail MetricCorrelationView Strain↔SpO2 (Day Detail #345 parity; completes SpO2 cluster).
+    /// Honest #349/#356: Metric Detail MetricCorrelationView Strain↔SpO2 (Day Detail #345; SpO2-host mount).
     static let metricDetailMetricCorrelationStrainSpo2 = "metric.detail.metricCorrelation.strainSpo2"
     /// Honest #350: Metric Detail MetricCorrelationView HRV↔RHR (Day Detail #310 parity; post-SpO2 cluster).
     static let metricDetailMetricCorrelationHRVRHR = "metric.detail.metricCorrelation.hrvRhr"
