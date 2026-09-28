@@ -183,8 +183,8 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.357)
                 }
 
-                // Honest #349: MetricCorrelationView Strain↔SpO2 (Day Detail #345 parity; completes SpO2 cluster).
-                if filteredHistory.count >= 3 && metric == .activeCalories {
+                // Honest #349/#356: MetricCorrelationView Strain↔SpO2 (Day Detail #345; SpO2-host too).
+                if filteredHistory.count >= 3 && (metric == .activeCalories || metric == .bloodOxygen) {
                     MetricCorrelationView(
                         history: filteredHistory,
                         xMetric: .activeCalories,
