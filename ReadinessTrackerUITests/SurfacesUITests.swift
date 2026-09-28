@@ -5622,7 +5622,7 @@ final class SurfacesUITests: XCTestCase {
             n += 1
         }
         if metricsHeader.exists { app.swipeUp() }
-        // Breakdown SpO2/Blood Oxygen → AdvancedMetricDetail (WHOOP blood.oxygen.card is display-only).
+        // Breakdown SpO2/Blood Oxygen → AdvancedMetricDetail (WHOOP blood.oxygen.card → classic MetricDetail via #358).
         var b = 0
         let row = app.descendants(matching: .any)["breakdown.Blood Oxygen"].firstMatch
         while !row.exists && b < 22 {
@@ -7151,6 +7151,34 @@ final class SurfacesUITests: XCTestCase {
         _ = app.staticTexts["7-Night SpO₂"].exists || app.staticTexts["7-Night SpO2"].exists
         _ = app.descendants(matching: .any)["blood.oxygen.spark"].exists
         saveShot("verify-blood-oxygen.png")
+    }
+
+    func testBloodOxygenCardMetricDetailNavSurface() throws {
+        // Honest #358: WHOOP blood.oxygen.card → classic MetricDetailView
+        // (Breakdown SpO2 already → AdvancedMetricDetail; unused presentation parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        // Scroll WHOOP stack until Blood Oxygen title is present.
+        var n = 0
+        while !app.staticTexts["Blood Oxygen"].exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        // NavigationLink surfaces as a Button labeled "Blood Oxygen".
+        let link = app.buttons["Blood Oxygen"].firstMatch
+        let card = app.descendants(matching: .any)["blood.oxygen.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Blood Oxygen"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Blood Oxygen"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-blood-oxygen-metric-detail.png")
+        XCTAssertTrue(landed, "blood.oxygen.card → metric.detail")
     }
 
 
