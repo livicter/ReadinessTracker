@@ -238,8 +238,8 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.361)
                 }
 
-                // Honest #353: MetricCorrelationView HRV↔Strain (Day Detail #339 parity; extends #352).
-                if filteredHistory.count >= 3 && metric == .hrv {
+                // Honest #353/#359: MetricCorrelationView HRV↔Strain (Day Detail #339; Strain-host too).
+                if filteredHistory.count >= 3 && (metric == .hrv || metric == .activeCalories) {
                     MetricCorrelationView(
                         history: filteredHistory,
                         xMetric: .hrv,
