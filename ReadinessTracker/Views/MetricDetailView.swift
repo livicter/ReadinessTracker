@@ -183,6 +183,18 @@ struct MetricDetailView: View {
                     .slideIn(delay: 0.357)
                 }
 
+                // Honest #349: MetricCorrelationView Strain↔SpO2 (Day Detail #345 parity; completes SpO2 cluster).
+                if filteredHistory.count >= 3 && metric == .activeCalories {
+                    MetricCorrelationView(
+                        history: filteredHistory,
+                        xMetric: .activeCalories,
+                        yMetric: .bloodOxygen
+                    )
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationStrainSpo2)
+                    .slideIn(delay: 0.358)
+                }
+
                 // Why no old data explanation
                 if source == .appleWatch {
                     healthKitInfoSection
