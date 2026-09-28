@@ -143,7 +143,12 @@ struct MetricDetailView: View {
                         yMetric: correlationPair.y
                     )
                     .accessibilityElement(children: .contain)
-                    .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelation)
+                    // Honest #357: SpO2-host primary is SpO2↔HRV — tag as hrvSpo2 (Day Detail #343 parity).
+                    .accessibilityIdentifier(
+                        metric == .bloodOxygen
+                            ? SurfaceID.metricDetailMetricCorrelationHRVSpo2
+                            : SurfaceID.metricDetailMetricCorrelation
+                    )
                     .slideIn(delay: 0.35)
                 }
 

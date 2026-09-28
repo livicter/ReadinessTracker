@@ -400,7 +400,7 @@ struct AdvancedMetricDetailView: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityIdentifier(SurfaceID.metricDetailMetricCorrelationSleepSpo2)
             }
-            if history.count >= 3 && metric == .hrv {
+            if history.count >= 3 && (metric == .hrv || metric == .bloodOxygen) {
                 MetricCorrelationView(
                     history: history,
                     xMetric: .hrv,
@@ -476,7 +476,7 @@ struct AdvancedMetricDetailView: View {
             let skipPairs: Set<MetricType> = {
                 var s = Set<MetricType>()
                 if metric == .sleep || metric == .bloodOxygen { s.insert(.bloodOxygen); s.insert(.sleep) }
-                if metric == .bloodOxygen { s.insert(.restingHR); s.insert(.activeCalories) }
+                if metric == .bloodOxygen { s.insert(.restingHR); s.insert(.activeCalories); s.insert(.hrv) }
                 if metric == .sleep { s.insert(.restingHR); s.insert(.activeCalories) }
                 if metric == .hrv { s.insert(.bloodOxygen); s.insert(.restingHR); s.insert(.activeCalories) }
                 if metric == .restingHR { s.insert(.bloodOxygen); s.insert(.sleep); s.insert(.activeCalories) }

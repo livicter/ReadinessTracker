@@ -768,7 +768,7 @@ enum SurfaceID {
     static let metricDetailMetricCorrelationSleepSpo2 = "metric.detail.metricCorrelation.sleepSpo2"
     /// Honest #346: primary Metric Detail MetricCorrelationView (existing pair, now tagged).
     static let metricDetailMetricCorrelation = "metric.detail.metricCorrelation"
-    /// Honest #347: Metric Detail MetricCorrelationView HRV↔SpO2 (Day Detail #343 parity; extends #346 Sleep↔SpO2).
+    /// Honest #347/#357: Metric Detail MetricCorrelationView HRV↔SpO2 (Day Detail #343; SpO2-host primary tag).
     static let metricDetailMetricCorrelationHRVSpo2 = "metric.detail.metricCorrelation.hrvSpo2"
     /// Honest #348/#355: Metric Detail MetricCorrelationView RHR↔SpO2 (Day Detail #344; SpO2-host mount).
     static let metricDetailMetricCorrelationRHRSpo2 = "metric.detail.metricCorrelation.rhrSpo2"
