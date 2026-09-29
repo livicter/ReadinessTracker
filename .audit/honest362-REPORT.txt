@@ -1,0 +1,32 @@
+Honest #362 — Google Health daily RHR sync (self-verify)
+Date: 2026-09-30 HKT
+Branch: honest-362-google-health-rhr
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+
+API / dataType / scope
+- dataType: daily-resting-heart-rate
+- Endpoint: GET https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints
+- Filter: dailyRestingHeartRate.date >= "YYYY-MM-DD" AND dailyRestingHeartRate.date < "YYYY-MM-DD+1"
+- JSON field: dataPoints[].dailyRestingHeartRate.beatsPerMinute (int64-as-string)
+- Scope ADDED: https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly
+- Existing sleep scope retained: .../googlehealth.sleep.readonly
+- Product label: DataSource.fitbit (unchanged)
+
+Victor Console action REQUIRED
+- Add vitals scope on OAuth consent Data Access
+- Disconnect + re-Connect Fitbit so consent grants new Restricted scope
+- Sleep-only tokens → RHR fetch soft-fails with 403 guidance (sleep still works)
+
+Build / tests (iPhone 17 sim id 3CC80890-…)
+- GoogleHealthRHRMapperTests: 6/6 pass
+- GoogleHealthSleepMapperTests + GoogleOAuthRedirectTests: pass
+- Full ReadinessTrackerTests: 152 executed, 19 skipped, 0 failures
+- UITests: testRestingHRSurface, testSettingsSourcesConnectRows, testSourcePickerWellSurface: pass
+
+Screenshots
+- .audit/honest362-03-resting-hr-surface.png (RHR Tonight|Baseline UI; fixture / HK path — no live Google token)
+- .audit/honest362-04-settings-sources.png
+- .audit/honest362-05-source-picker.png
+- Also copied to /workspace/
+
+Out of scope (not done): HRV, SpO2, activity, Trends, Secrets commit, Victor 2FA

@@ -1,8 +1,8 @@
-# Fitbit / Google Health API Setup (Honest #360 / #361)
+# Fitbit / Google Health API Setup (Honest #360 / #361 / #362)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep** first.
+and syncs **sleep** plus **daily resting heart rate (RHR)**.
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -11,6 +11,7 @@ Docs:
 - https://developers.google.com/health/about
 - https://developers.google.com/health/setup
 - https://developers.google.com/health/data-types/sleep
+- https://developers.google.com/health/data-types/vitals
 - https://developers.google.com/health/migration/api-specifications
 - https://developers.google.com/identity/protocols/oauth2/native-app
 
@@ -21,11 +22,14 @@ Docs:
 3. Bundle ID must match exactly: `com.readiness.ReadinessTracker`.
 4. Note the **iOS Client ID** and the **iOS URL scheme** (reversed client ID) shown in Cloud Console
    (also as `REVERSED_CLIENT_ID` in a downloaded GoogleService-Info-style plist).
-5. On **Data Access**, add scope:
+5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
+   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362** — required for `daily-resting-heart-rate`)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
-7. Copy the **iOS Client ID**. Do **not** put a client secret in the iOS binary (PKCE public client).
+7. **After adding the vitals scope:** disconnect Fitbit in Settings and **Connect** again so the
+   consent screen grants the new Restricted scope (existing sleep-only tokens will get HTTP 403 on RHR).
+8. Copy the **iOS Client ID**. Do **not** put a client secret in the iOS binary (PKCE public client).
 
 ### Redirect URI (Honest #361)
 
@@ -78,7 +82,8 @@ OAuth will not start.
 - Identity bridge: `GET .../users/me/identity` (`legacyUserId` + `healthUserId`); **HTTP 412** ->
   clear "open Google Health / Fitbit app" message
 - **Sleep** from `GET .../dataTypes/sleep/dataPoints` -> `DailyHealthData` / `DataStore` (`source: .fitbit`)
-- Heart / activity / HRV / RHR / SpO2 Google Health sync **deferred** to later Honest PRs (RHR → #362)
+- **Resting HR** from `GET .../dataTypes/daily-resting-heart-rate/dataPoints` -> `DailyHealthData.restingHeartRate` (`source: .fitbit`) — needs vitals scope above
+- Activity / HRV / SpO2 Google Health sync **deferred** to later Honest PRs
 
 ## 4. Important notes
 

@@ -5,7 +5,7 @@ import UIKit
 import CryptoKit
 import Security
 
-/// Fitbit data source manager — backed by Google Health API (sleep-first).
+/// Fitbit data source manager — backed by Google Health API (sleep + daily RHR).
 /// User-facing product language stays "Fitbit" / `DataSource.fitbit`.
 @MainActor
 class FitbitManager: NSObject, ObservableObject {
@@ -21,11 +21,15 @@ class FitbitManager: NSObject, ObservableObject {
     private let redirectUri: String
     private let callbackURLScheme: String
     private let sleepScope = "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
+    /// Required for `daily-resting-heart-rate` (and later HRV / SpO2). Restricted scope —
+    /// Victor must add it on the OAuth consent screen and users must re-Connect.
+    private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
     private let revokeEndpoint = "https://oauth2.googleapis.com/revoke"
     private let identityURL = "https://health.googleapis.com/v4/users/me/identity"
     private let sleepListURL = "https://health.googleapis.com/v4/users/me/dataTypes/sleep/dataPoints"
+    private let rhrListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -117,7 +121,7 @@ class FitbitManager: NSObject, ObservableObject {
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "client_id", value: clientId),
             URLQueryItem(name: "redirect_uri", value: redirectUri),
-            URLQueryItem(name: "scope", value: sleepScope),
+            URLQueryItem(name: "scope", value: "\(sleepScope) \(vitalsScope)"),
             URLQueryItem(name: "access_type", value: "offline"),
             URLQueryItem(name: "code_challenge", value: PKCE.codeChallengeS256(for: verifier)),
             URLQueryItem(name: "code_challenge_method", value: "S256")
@@ -352,36 +356,36 @@ class FitbitManager: NSObject, ObservableObject {
             return
         }
 
-        let sleepResult = await fetchSleep(token: token)
-        // Heart / activity deferred to later Honest PRs — keep compiling with clear stub.
-        let heartUnavailable = "Heart rate via Google Health not enabled in this build yet."
-        let activityUnavailable = "Activity via Google Health not enabled in this build yet."
-        _ = heartUnavailable
-        _ = activityUnavailable
+        async let sleepTask = fetchSleep(token: token)
+        async let rhrTask = fetchRestingHeartRate(token: token)
+        let sleepResult = await sleepTask
+        let rhrBPM = await rhrTask
 
-        guard let sleep = sleepResult else {
+        // Activity / HRV / SpO2 deferred to later Honest PRs.
+        guard sleepResult != nil || (rhrBPM ?? 0) > 0 else {
             if errorMessage == nil {
-                errorMessage = "No sleep session found for today."
+                errorMessage = "No sleep or resting heart rate found for today."
             }
             return
         }
 
+        let sleep = sleepResult
         let data = DailyHealthData(
             date: Date(),
             source: .fitbit,
-            sleepHours: sleep.hours,
-            sleepEfficiency: sleep.efficiency,
-            deepSleepPercent: sleep.deepPercent,
-            remSleepPercent: sleep.remPercent,
-            lightSleepPercent: sleep.lightPercent,
-            awakePercent: sleep.awakePercent,
-            sleepOnsetMinutes: sleep.onsetMinutes,
-            sleepStartTime: sleep.start,
-            sleepEndTime: sleep.end,
-            wakeEpisodes: sleep.wakeEpisodes,
-            sleepStages: sleep.stages,
+            sleepHours: sleep?.hours ?? 0,
+            sleepEfficiency: sleep?.efficiency ?? 0,
+            deepSleepPercent: sleep?.deepPercent ?? 0,
+            remSleepPercent: sleep?.remPercent ?? 0,
+            lightSleepPercent: sleep?.lightPercent ?? 0,
+            awakePercent: sleep?.awakePercent ?? 0,
+            sleepOnsetMinutes: sleep?.onsetMinutes ?? 0,
+            sleepStartTime: sleep?.start,
+            sleepEndTime: sleep?.end,
+            wakeEpisodes: sleep?.wakeEpisodes ?? 0,
+            sleepStages: sleep?.stages ?? [],
             hrv: 0,
-            restingHeartRate: 0,
+            restingHeartRate: rhrBPM ?? 0,
             activeCalories: 0,
             steps: 0,
             workoutMinutes: 0
@@ -428,6 +432,64 @@ class FitbitManager: NSObject, ObservableObject {
             return try GoogleHealthSleepMapper.mapListResponse(data)
         } catch {
             errorMessage = "Sleep sync failed: \(error.localizedDescription)"
+            return nil
+        }
+    }
+
+    /// Daily RHR from Google Health `daily-resting-heart-rate` (vitals scope).
+    private func fetchRestingHeartRate(token: String) async -> Double? {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: Date())
+        let startOfTomorrow = cal.date(byAdding: .day, value: 1, to: startOfToday) ?? startOfToday.addingTimeInterval(86400)
+        let dayFmt = DateFormatter()
+        dayFmt.calendar = cal
+        dayFmt.locale = Locale(identifier: "en_US_POSIX")
+        dayFmt.timeZone = cal.timeZone
+        dayFmt.dateFormat = "yyyy-MM-dd"
+        let today = dayFmt.string(from: startOfToday)
+        let tomorrow = dayFmt.string(from: startOfTomorrow)
+        // Daily summary filter uses civil date (ISO YYYY-MM-DD).
+        let filter = "dailyRestingHeartRate.date >= \"\(today)\" AND dailyRestingHeartRate.date < \"\(tomorrow)\""
+
+        var components = URLComponents(string: rhrListURL)!
+        components.queryItems = [
+            URLQueryItem(name: "filter", value: filter),
+            URLQueryItem(name: "pageSize", value: "10")
+        ]
+        guard let url = components.url else { return nil }
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode == 412 {
+                    errorMessage = "No Google Health profile yet. Open the Google Health / Fitbit app, finish setup, then reconnect."
+                    return nil
+                }
+                if http.statusCode == 403 {
+                    // Scope missing on token — sleep may still succeed; soft-fail RHR.
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "Resting HR needs Google Health vitals scope. Re-Connect Fitbit after Console scope add. (\(body.prefix(120)))"
+                    }
+                    return nil
+                }
+                if !(200...299).contains(http.statusCode) {
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "RHR sync failed (\(http.statusCode)): \(body.prefix(180))"
+                    }
+                    return nil
+                }
+            }
+            return try GoogleHealthRHRMapper.mapListResponse(data)
+        } catch {
+            if errorMessage == nil {
+                errorMessage = "RHR sync failed: \(error.localizedDescription)"
+            }
             return nil
         }
     }
@@ -833,5 +895,56 @@ enum GoogleHealthSleepMapper {
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime]
         return iso.date(from: raw)
+    }
+}
+
+// MARK: - Google Health daily RHR JSON → bpm
+
+enum GoogleHealthRHRMapper {
+    struct ListResponse: Codable {
+        let dataPoints: [DataPoint]?
+        let nextPageToken: String?
+    }
+
+    struct DataPoint: Codable {
+        let name: String?
+        let dailyRestingHeartRate: DailyRHRPayload?
+    }
+
+    struct DailyRHRPayload: Codable {
+        let date: CivilDate?
+        let beatsPerMinute: GoogleHealthSleepMapper.FlexibleInt64?
+        let dailyRestingHeartRateMetadata: Metadata?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    struct Metadata: Codable {
+        let calculationMethod: String?
+    }
+
+    /// Returns today's (or first) resting HR in bpm, or nil when empty / unparseable.
+    static func mapListResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(ListResponse.self, from: data)
+        guard let points = decoded.dataPoints, !points.isEmpty else { return nil }
+        // Prefer the latest civil date if multiple rows appear.
+        let payloads = points.compactMap { $0.dailyRestingHeartRate }
+        guard let best = payloads.max(by: { a, b in civilRank(a.date) < civilRank(b.date) }) else {
+            return nil
+        }
+        guard let bpm = best.beatsPerMinute?.value, bpm > 0 else { return nil }
+        return Double(bpm)
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        let y = date.year ?? 0
+        let m = date.month ?? 0
+        let d = date.day ?? 0
+        return y * 10_000 + m * 100 + d
     }
 }
