@@ -1471,8 +1471,8 @@ struct DashboardView: View {
                     if selectedSource == .appleWatch {
                         await healthKit.requestAuthorization()
                         await performRefresh()
-                    } else if let url = fitbit.authURL {
-                        openURL(url)
+                    } else {
+                        fitbit.startAuthentication()
                     }
                 }
             }) {

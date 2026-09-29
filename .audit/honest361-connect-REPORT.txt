@@ -1,0 +1,26 @@
+Honest #361 Google OAuth Connect verify (2026-09-29 ~23:11 HKT Asia/Hong_Kong)
+
+Branch: honest-361-google-oauth-redirect
+Base tip before: e49bdc6 (#379 Secrets wiring)
+
+Redirect URI: com.googleusercontent.apps.450771319977-e5s9dgl55qoprkmildmebpoh30if1pv1:/oauth2redirect
+callbackURLScheme: com.googleusercontent.apps.450771319977-e5s9dgl55qoprkmildmebpoh30if1pv1
+Scope: https://www.googleapis.com/auth/googlehealth.sleep.readonly
+PKCE: S256; no client_secret; no include_granted_scopes
+
+Connect path: Settings → Fitbit Connect → ASWebAuthenticationSession
+  → system alert 「Readiness」想使用「accounts.google.com」登入 → 繼續
+  → Google sign-in form (電郵地址或電話號碼) for ReadinessTracker
+
+Outcome: OK_google_signin_visible
+STOPPED at Google sign-in / before password / 2FA (no credentials typed).
+Prior 400 invalid_request for readinesstracker://oauth is resolved.
+
+Build: SUCCEEDED (iPhone 17 sim id 3CC80890-…)
+Unit tests: GoogleOAuthRedirectTests (7) + GoogleHealthSleepMapperTests (5) + AppDeepLinkTests (11) = 23 passed
+
+Screenshots:
+- .audit/honest361-02-settings.png
+- .audit/honest361-03-asweb-permission.png
+- .audit/honest361-04-after-continue.png
+- .audit/honest361-05-google-page.png

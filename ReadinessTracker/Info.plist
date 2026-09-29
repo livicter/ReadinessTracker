@@ -12,6 +12,14 @@
                 <string>readinesstracker</string>
             </array>
         </dict>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.readiness.ReadinessTracker.google-oauth</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$(GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID)</string>
+            </array>
+        </dict>
     </array>
     <key>CFBundleDisplayName</key>
     <string>Readiness</string>
@@ -29,6 +37,8 @@
     </array>
     <key>GOOGLE_HEALTH_IOS_CLIENT_ID</key>
     <string>$(GOOGLE_HEALTH_IOS_CLIENT_ID)</string>
+    <key>GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID</key>
+    <string>$(GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID)</string>
     <key>GOOGLE_HEALTH_CLIENT_ID</key>
     <string>$(GOOGLE_HEALTH_CLIENT_ID)</string>
     <key>FITBIT_CLIENT_ID</key>

@@ -1,0 +1,4 @@
+redirect_uri=com.googleusercontent.apps.450771319977-e5s9dgl55qoprkmildmebpoh30if1pv1:/oauth2redirect
+callbackURLScheme=com.googleusercontent.apps.450771319977-e5s9dgl55qoprkmildmebpoh30if1pv1
+client_id=450771319977-e5s9dgl55qoprkmildmebpoh30if1pv1.apps.googleusercontent.com
+scope=https://www.googleapis.com/auth/googlehealth.sleep.readonly

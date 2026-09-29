@@ -1,7 +1,8 @@
 import Foundation
 
-/// App URL destinations under the existing `readinesstracker://` scheme
-/// (Fitbit OAuth already uses `readinesstracker://oauth`).
+/// App URL destinations under the existing `readinesstracker://` scheme.
+/// Google OAuth primary redirect is the reverse-client-ID scheme (Honest #361);
+/// `readinesstracker://oauth` remains as a legacy deep-link host only.
 enum AppDeepLink: Equatable {
     case checkIn(CheckInTime)
     case trends
