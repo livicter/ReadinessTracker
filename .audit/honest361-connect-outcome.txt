@@ -1,0 +1,4 @@
+outcome=OK_google_signin_visible
+continued=true
+hasInvalid=false
+hasSignIn=true

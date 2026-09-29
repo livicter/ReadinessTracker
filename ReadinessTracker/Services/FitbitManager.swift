@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import AuthenticationServices
+import UIKit
 import CryptoKit
 import Security
 
@@ -15,7 +16,10 @@ class FitbitManager: NSObject, ObservableObject {
     @Published var errorMessage: String?
 
     private let clientId: String
-    private let redirectUri = "readinesstracker://oauth"
+    /// Google iOS reverse-client-ID redirect (scheme must contain a period).
+    /// Legacy `readinesstracker://oauth` is invalid for Google OAuth custom schemes.
+    private let redirectUri: String
+    private let callbackURLScheme: String
     private let sleepScope = "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
@@ -40,6 +44,15 @@ class FitbitManager: NSObject, ObservableObject {
             aliases: ["GOOGLE_HEALTH_CLIENT_ID", "FITBIT_CLIENT_ID"]
         )
         self.clientId = id
+        if let derived = GoogleOAuthRedirect.redirectURI(from: id),
+           let scheme = GoogleOAuthRedirect.reversedClientID(from: id) {
+            self.redirectUri = derived
+            self.callbackURLScheme = scheme
+        } else {
+            // Fallback only when client id is missing/placeholder — OAuth will not start.
+            self.redirectUri = GoogleOAuthRedirect.legacyFallbackRedirectURI
+            self.callbackURLScheme = GoogleOAuthRedirect.legacyFallbackScheme
+        }
         super.init()
 
         if !Self.areCredentialsConfigured(clientId: id) {
@@ -113,12 +126,17 @@ class FitbitManager: NSObject, ObservableObject {
         return components.url
     }
 
+    /// Starts Google OAuth via ASWebAuthenticationSession using the key window as anchor.
+    func startAuthentication() {
+        startAuthentication(anchorProvider: OAuthWebAuthPresentationContext.shared)
+    }
+
     /// Prefer ASWebAuthenticationSession when a presentation context is available.
     func startAuthentication(anchorProvider: ASWebAuthenticationPresentationContextProviding) {
         guard let url = authURL else { return }
         let session = ASWebAuthenticationSession(
             url: url,
-            callbackURLScheme: "readinesstracker"
+            callbackURLScheme: callbackURLScheme
         ) { [weak self] callbackURL, error in
             Task { @MainActor in
                 guard let self else { return }
@@ -423,6 +441,62 @@ class FitbitManager: NSObject, ObservableObject {
                 return "\(k)=\(v)"
             }
             .joined(separator: "&")
+    }
+}
+
+// MARK: - Google OAuth redirect (reverse client ID)
+
+/// Derives Google's iOS reverse-client-ID custom URI scheme / redirect.
+/// Docs: https://developers.google.com/identity/protocols/oauth2/native-app
+/// Custom schemes must contain a period; `readinesstracker://oauth` is rejected (400 invalid_request).
+enum GoogleOAuthRedirect {
+    /// Path component for installed-app redirect (leading single slash after scheme).
+    static let redirectPath = "/oauth2redirect"
+    static let clientIDSuffix = ".apps.googleusercontent.com"
+    static let legacyFallbackScheme = "readinesstracker"
+    static let legacyFallbackRedirectURI = "readinesstracker://oauth"
+
+    /// `123-abc.apps.googleusercontent.com` → `com.googleusercontent.apps.123-abc`
+    static func reversedClientID(from clientId: String) -> String? {
+        let trimmed = clientId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.hasSuffix(clientIDSuffix) else { return nil }
+        let prefix = String(trimmed.dropLast(clientIDSuffix.count))
+        guard !prefix.isEmpty, !prefix.contains(" ") else { return nil }
+        return "com.googleusercontent.apps.\(prefix)"
+    }
+
+    /// e.g. `com.googleusercontent.apps.123-abc:/oauth2redirect`
+    static func redirectURI(from clientId: String) -> String? {
+        guard let reversed = reversedClientID(from: clientId) else { return nil }
+        return "\(reversed):\(redirectPath)"
+    }
+
+    /// True when URL is a Google reverse-client-ID OAuth callback (ASWeb or deep link).
+    static func isCallbackURL(_ url: URL) -> Bool {
+        guard let scheme = url.scheme?.lowercased() else { return false }
+        if scheme.hasPrefix("com.googleusercontent.apps.") { return true }
+        if scheme == legacyFallbackScheme {
+            let host = (url.host ?? "").lowercased()
+            return host == "oauth" || url.path.lowercased().contains("oauth")
+        }
+        return false
+    }
+}
+
+// MARK: - ASWebAuthenticationSession presentation anchor
+
+final class OAuthWebAuthPresentationContext: NSObject, ASWebAuthenticationPresentationContextProviding {
+    static let shared = OAuthWebAuthPresentationContext()
+
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+        if let key = scenes.flatMap(\.windows).first(where: \.isKeyWindow) {
+            return key
+        }
+        if let any = scenes.flatMap(\.windows).first {
+            return any
+        }
+        return ASPresentationAnchor()
     }
 }
 

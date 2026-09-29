@@ -1,4 +1,4 @@
-# Fitbit / Google Health API Setup (Honest #360)
+# Fitbit / Google Health API Setup (Honest #360 / #361)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
@@ -19,13 +19,36 @@ Docs:
 1. Open [Google Health API setup](https://developers.google.com/health/setup) and enable the API.
 2. Create an OAuth 2.0 Client ID of type **iOS**.
 3. Bundle ID must match exactly: `com.readiness.ReadinessTracker`.
-4. Authorized redirect / custom URL scheme used by the app: `readinesstracker://oauth`
-   (also register Google's reversed-client-id scheme if you use ASWebAuthenticationSession defaults).
+4. Note the **iOS Client ID** and the **iOS URL scheme** (reversed client ID) shown in Cloud Console
+   (also as `REVERSED_CLIENT_ID` in a downloaded GoogleService-Info-style plist).
 5. On **Data Access**, add scope:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
 7. Copy the **iOS Client ID**. Do **not** put a client secret in the iOS binary (PKCE public client).
+
+### Redirect URI (Honest #361)
+
+Google rejects custom schemes that do **not** contain a period (`readinesstracker://oauth` →
+`400 invalid_request`). Use the reverse-client-ID form from the [native-app docs](https://developers.google.com/identity/protocols/oauth2/native-app):
+
+```
+com.googleusercontent.apps.<CLIENT_ID_PREFIX>:/oauth2redirect
+```
+
+where `<CLIENT_ID_PREFIX>` is the iOS client id **without** `.apps.googleusercontent.com`.
+
+Example: client `123-abc.apps.googleusercontent.com`
+
+- Scheme: `com.googleusercontent.apps.123-abc`
+- Redirect: `com.googleusercontent.apps.123-abc:/oauth2redirect`
+
+`FitbitManager` derives this at runtime from `GOOGLE_HEALTH_IOS_CLIENT_ID` for authorize + token
+exchange. Info.plist must also register the same scheme via
+`GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID` so `ASWebAuthenticationSession` can receive the callback.
+
+Legacy `readinesstracker://oauth` stays registered for check-in / trends deep links and old tests,
+but is **not** sent as OAuth `redirect_uri`.
 
 ## 2. Configure credentials locally (do not edit Swift with secrets)
 
@@ -33,12 +56,14 @@ Docs:
    ```bash
    cp Secrets.xcconfig.example Secrets.xcconfig
    ```
-2. Fill in:
+2. Fill in both keys:
    ```
    GOOGLE_HEALTH_IOS_CLIENT_ID = your_ios_client_id.apps.googleusercontent.com
+   GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID = com.googleusercontent.apps.your_ios_client_id_prefix
    ```
 3. Point the target's base configuration at `Secrets.xcconfig` (Debug & Release), or set the
-   user-defined build setting. Info.plist maps `$(GOOGLE_HEALTH_IOS_CLIENT_ID)`.
+   user-defined build settings. Info.plist maps `$(GOOGLE_HEALTH_IOS_CLIENT_ID)` and registers
+   `$(GOOGLE_HEALTH_IOS_REVERSED_CLIENT_ID)` under `CFBundleURLTypes`.
 4. Clean + rebuild.
 
 `FitbitManager` reads `GOOGLE_HEALTH_IOS_CLIENT_ID` (then `GOOGLE_HEALTH_CLIENT_ID`, then
@@ -48,11 +73,12 @@ OAuth will not start.
 ## 3. What this build syncs
 
 - Google OAuth 2.0 Authorization Code + **PKCE** (no client secret)
+- Settings / Dashboard **Connect** uses `ASWebAuthenticationSession` (not bare `openURL`)
 - Tokens in **Keychain** (`AfterFirstUnlockThisDeviceOnly`); never dual-link with legacy Fitbit tokens
 - Identity bridge: `GET .../users/me/identity` (`legacyUserId` + `healthUserId`); **HTTP 412** ->
   clear "open Google Health / Fitbit app" message
 - **Sleep** from `GET .../dataTypes/sleep/dataPoints` -> `DailyHealthData` / `DataStore` (`source: .fitbit`)
-- Heart / activity / HRV / RHR / SpO2 Google Health sync **deferred** to later Honest PRs
+- Heart / activity / HRV / RHR / SpO2 Google Health sync **deferred** to later Honest PRs (RHR → #362)
 
 ## 4. Important notes
 

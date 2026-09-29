@@ -80,8 +80,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         case .fitbitOAuth:
             FitbitManager.shared.handleCallback(url: url)
         case .none:
-            if url.scheme == "readinesstracker" {
-                // Backward-compatible Fitbit callback if host/path is unexpected.
+            // Reverse-client-ID OAuth callback (primary) or legacy readinesstracker://oauth.
+            if GoogleOAuthRedirect.isCallbackURL(url) || url.scheme == "readinesstracker" {
                 FitbitManager.shared.handleCallback(url: url)
             }
         }

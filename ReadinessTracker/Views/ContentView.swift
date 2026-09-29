@@ -357,8 +357,8 @@ struct SettingsView: View {
                                 Task {
                                     if fitbit.isAuthenticated {
                                         await fitbit.fetchTodayData()
-                                    } else if let url = fitbit.authURL {
-                                        openURL(url)
+                                    } else {
+                                        fitbit.startAuthentication()
                                     }
                                 }
                             }
