@@ -1,52 +1,63 @@
-# Fitbit App Registration Step-by-Step
+# Fitbit / Google Health API Setup (Honest #360)
 
-## 1. Register a Fitbit App
-1. Go to https://dev.fitbit.com/login
-2. Sign in with your Fitbit account (or create one)
-3. Click "Register a New App"
-4. Fill in the form:
-   - **Application Name**: ReadinessTracker
-   - **Description**: Personal fitness readiness tracker
-   - **Application Website**: https://localhost (placeholder)
-   - **Organization**: Your name
-   - **Organization Website**: https://localhost
-   - **Terms of Service URL**: https://localhost
-   - **Privacy Policy URL**: https://localhost
-   - **OAuth 2.0 Application Type**: Personal
-   - **Callback URL**: readinesstracker://oauth
-   - **Default Access Type**: Read-Only
+Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
+and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
+and syncs **sleep** first.
 
-5. Click "Register"
-6. You will get:
-   - **Client ID**: Copy this
-   - **Client Secret**: Copy this (click to reveal)
+**Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
+minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
+
+Docs:
+- https://developers.google.com/health/about
+- https://developers.google.com/health/setup
+- https://developers.google.com/health/data-types/sleep
+- https://developers.google.com/health/migration/api-specifications
+- https://developers.google.com/identity/protocols/oauth2/native-app
+
+## 1. Create a Google Cloud **iOS** OAuth client
+
+1. Open [Google Health API setup](https://developers.google.com/health/setup) and enable the API.
+2. Create an OAuth 2.0 Client ID of type **iOS**.
+3. Bundle ID must match exactly: `com.readiness.ReadinessTracker`.
+4. Authorized redirect / custom URL scheme used by the app: `readinesstracker://oauth`
+   (also register Google's reversed-client-id scheme if you use ASWebAuthenticationSession defaults).
+5. On **Data Access**, add scope:
+   - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
+6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
+   scopes need later verification / CASA -- fine for personal use).
+7. Copy the **iOS Client ID**. Do **not** put a client secret in the iOS binary (PKCE public client).
 
 ## 2. Configure credentials locally (do not edit Swift with secrets)
 
-Secrets must **not** live in git or in `FitbitManager.swift`.
-
-1. Copy `Secrets.xcconfig.example` to `Secrets.xcconfig` (already gitignored):
+1. Copy `Secrets.xcconfig.example` to `Secrets.xcconfig` (gitignored):
    ```bash
    cp Secrets.xcconfig.example Secrets.xcconfig
    ```
 2. Fill in:
    ```
-   FITBIT_CLIENT_ID = your_client_id_here
-   FITBIT_CLIENT_SECRET = your_client_secret_here
+   GOOGLE_HEALTH_IOS_CLIENT_ID = your_ios_client_id.apps.googleusercontent.com
    ```
-3. Ensure Xcode passes them into Info.plist:
-   - `ReadinessTracker/Info.plist` maps:
-     - `FITBIT_CLIENT_ID` → `$(FITBIT_CLIENT_ID)`
-     - `FITBIT_CLIENT_SECRET` → `$(FITBIT_CLIENT_SECRET)`
-   - Set those build settings on the ReadinessTracker target (user-defined), **or** point the target’s base configuration at `Secrets.xcconfig` for Debug and Release.
+3. Point the target's base configuration at `Secrets.xcconfig` (Debug & Release), or set the
+   user-defined build setting. Info.plist maps `$(GOOGLE_HEALTH_IOS_CLIENT_ID)`.
 4. Clean + rebuild.
 
-`FitbitManager` reads `FITBIT_CLIENT_ID` / `FITBIT_CLIENT_SECRET` from `Bundle.main`. If they are missing or still placeholders (`YOUR_FITBIT_*`), it sets a clear `errorMessage` and will **not** start OAuth.
+`FitbitManager` reads `GOOGLE_HEALTH_IOS_CLIENT_ID` (then `GOOGLE_HEALTH_CLIENT_ID`, then
+`FITBIT_CLIENT_ID`) from `Bundle.main`. Missing / placeholder -> clear setup `errorMessage`;
+OAuth will not start.
 
-Also see `docs/DEVICE_SETUP.md` for App Group + credential wiring.
+## 3. What this build syncs
 
-## 3. Important Notes
-- Fitbit "Personal" apps are limited to 150 users max (fine for personal use)
-- Read-Only access means we can only READ your data, not modify it
-- The app will request these scopes: activity, heartrate, sleep
-- Data refreshes when you open the app or pull-to-refresh
+- Google OAuth 2.0 Authorization Code + **PKCE** (no client secret)
+- Tokens in **Keychain** (`AfterFirstUnlockThisDeviceOnly`); never dual-link with legacy Fitbit tokens
+- Identity bridge: `GET .../users/me/identity` (`legacyUserId` + `healthUserId`); **HTTP 412** ->
+  clear "open Google Health / Fitbit app" message
+- **Sleep** from `GET .../dataTypes/sleep/dataPoints` -> `DailyHealthData` / `DataStore` (`source: .fitbit`)
+- Heart / activity / HRV / RHR / SpO2 Google Health sync **deferred** to later Honest PRs
+
+## 4. Important notes
+
+- Testing-mode refresh tokens expire after **~7 days** until the OAuth app is published
+- Unverified apps: **100-user** limit
+- Do **not** pass `include_granted_scopes` (legacy `fitness.*` must not mix with `googlehealth.*`)
+- Prefer `ASWebAuthenticationSession` / system browser (no embedded WebViews)
+- Completing Google connect clears any residual Fitbit Web API token state (no dual-link)
