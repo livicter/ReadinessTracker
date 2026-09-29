@@ -27,9 +27,11 @@
     <array>
         <string>com.readinesstracker.refresh</string>
     </array>
+    <key>GOOGLE_HEALTH_IOS_CLIENT_ID</key>
+    <string>$(GOOGLE_HEALTH_IOS_CLIENT_ID)</string>
+    <key>GOOGLE_HEALTH_CLIENT_ID</key>
+    <string>$(GOOGLE_HEALTH_CLIENT_ID)</string>
     <key>FITBIT_CLIENT_ID</key>
     <string>$(FITBIT_CLIENT_ID)</string>
-    <key>FITBIT_CLIENT_SECRET</key>
-    <string>$(FITBIT_CLIENT_SECRET)</string>
 </dict>
 </plist>
