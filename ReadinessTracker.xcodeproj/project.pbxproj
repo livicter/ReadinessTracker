@@ -362,6 +362,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6233D18E2F9F28C9CEF1D6F8 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingPillTabBar.swift; sourceTree = "<group>"; };
 		0518368B65DA466798DA533A /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UserSettings.swift; path = ReadinessTracker/Models/UserSettings.swift; sourceTree = SOURCE_ROOT; };
 		0DC90D2ADB45EC5D1985C2A7 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -774,6 +775,7 @@
 		6F770D65D670E58E0351D8AE = {
 			isa = PBXGroup;
 			children = (
+				6233D18E2F9F28C9CEF1D6F8 /* Secrets.xcconfig */,
 				EB3FC12896B9622317749428 /* ReadinessTracker */,
 				57A5F0CB2FCA0C260061C07C /* ReadinessTrackerWatch */,
 				57A5F0DA2FCA0C280061C07C /* ReadinessTrackerWatch Watch App */,
@@ -1755,6 +1757,7 @@
 		};
 		55D0F8F66DCD1E54C201C787 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6233D18E2F9F28C9CEF1D6F8 /* Secrets.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2139,6 +2142,7 @@
 		};
 		D85D8EEC7F26E23219072F79 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6233D18E2F9F28C9CEF1D6F8 /* Secrets.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
