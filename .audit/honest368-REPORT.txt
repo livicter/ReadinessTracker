@@ -1,0 +1,31 @@
+Honest #368 — Google Health distance dailyRollUp (self-verify)
+Date: 2026-10-01 HKT (~02:41)
+Branch: honest-368-google-health-distance
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: df8fee6 (#367)
+
+Chose: Google Health `distance` dailyRollUp → DailyHealthData.distanceWalkingRunningKm.
+Why: UI MetricDetail poteto (#367) just shipped; Strain-host Sleep↔Strain already mounted;
+distance modeled (#142 DistanceTonightBaselineCard); reuses activity Restricted scope (#365);
+soft-fail 403 fine until Console grant. Widget App Group still portal/device.
+
+API / dataType / scope
+- dataType: distance
+- Endpoint: POST .../dataTypes/distance/dataPoints:dailyRollUp
+- Map: millimetersSum → km (/ 1e6) → distanceWalkingRunningKm
+- Scope REUSED: googlehealth.activity_and_fitness.readonly — no new Console scope
+- Soft-fail 403; source .fitbit; OAuth unchanged
+
+Build / tests (iPhone 17 / 26.5)
+- GoogleHealthDistanceMapperTests: 6/6
+- Full ReadinessTrackerTests: 174 passed, 19 skipped, 0 failures
+- UITests: DistanceTonightBaseline + Settings sources + source picker PASS
+
+Screenshots
+- .audit/honest368-01-distance-tonight-baseline.png
+- .audit/honest368-02-settings-sources.png
+- .audit/honest368-03-source-picker.png
+
+Blockers unchanged
+- Console activity (+ vitals) Restricted scopes still need morning grant + reconnect
+- No Secrets.xcconfig commit
