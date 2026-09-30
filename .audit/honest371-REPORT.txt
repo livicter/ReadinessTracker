@@ -1,0 +1,15 @@
+Honest #371 — SleepHRVCard → classic MetricDetailView (self-verify)
+Date: 2026-10-01 HKT (~03:09)
+Branch: honest-371-sleep-hrv-card-metric-detail
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: b6f8761 (#370)
+
+Chose: UI MetricDetail poteto — Sleep HRV → MetricDetailView(.hrv).
+Why: Continues #358/#367/#369 hosting parity; card was display-only despite MetricType.hrv.
+
+Build / tests (iPhone 17 / 26.5)
+- ReadinessTrackerTests: 179 passed, 19 skipped, 0 failures
+- UITest testSleepHRVCardMetricDetailNavSurface: PASS
+
+Screenshots
+- .audit/honest371-01-sleep-hrv-metric-detail.png

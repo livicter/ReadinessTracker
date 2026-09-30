@@ -823,13 +823,15 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.coreSleepCard)
 
             if data.hrv > 0 {
+                // Honest #371: WHOOP sleepHRVCard → classic MetricDetailView (#358/#367/#369 parity)
                 SleepHRVCard(
                     currentHRV: data.hrv,
                     hrvHistory: history.filter { $0.hrv > 0 }.map { ($0.date, $0.hrv) },
                     baselineHRV: BaselineManager.hrvBaseline(from: history, matchesRMSSD: data.hrvIsRMSSD),
-                    sleepQuality: data.sleepEfficiency
+                    sleepQuality: data.sleepEfficiency,
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.sleepHRVCard)
             } else {
                 MissingMetricRow(title: "Sleep HRV", icon: "waveform.path.ecg", tint: RTColor.optimal)
                     .accessibilityIdentifier(SurfaceID.sleepHRVCard)
