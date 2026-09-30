@@ -8,6 +8,9 @@ struct BasalEnergyTonightBaselineCard: View {
     let kcal: Double?
     let history: [(date: Date, kcal: Double)]
     let baseline: Double
+    /// Honest #394: classic MetricDetailView(.basalEnergy).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 1600.0
 
@@ -51,15 +54,23 @@ struct BasalEnergyTonightBaselineCard: View {
     private let basalColor = Color(hex: "FF9500")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.basalEnergyCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .basalEnergy,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -129,6 +140,7 @@ struct BasalEnergyTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: basalColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.basalEnergySpark)
                     }
                 }
@@ -176,12 +188,16 @@ struct BasalEnergyTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Basal energy trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.basalEnergyCard)
+        .accessibilityLabel("Basal Energy")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

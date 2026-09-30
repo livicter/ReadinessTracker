@@ -15,6 +15,7 @@ enum MetricType: String, CaseIterable {
     case standHours = "Stand Hours"
     case standTime = "Stand Time"
     case moveTime = "Move Time"
+    case basalEnergy = "Basal Energy"
 
     var title: String { rawValue }
 
@@ -34,6 +35,7 @@ enum MetricType: String, CaseIterable {
         case .standHours: return "figure.stand"
         case .standTime: return "timer"
         case .moveTime: return "figure.walk"
+        case .basalEnergy: return "flame"
         }
     }
 
@@ -53,6 +55,7 @@ enum MetricType: String, CaseIterable {
         case .standHours: return "h"
         case .standTime: return "min"
         case .moveTime: return "min"
+        case .basalEnergy: return "cal"
         }
     }
 
@@ -72,12 +75,13 @@ enum MetricType: String, CaseIterable {
         case .standHours: return Color(hex: "64D2FF")
         case .standTime: return Color(hex: "64D2FF")
         case .moveTime: return Color(hex: "FF9F0A")
+        case .basalEnergy: return Color(hex: "FF9500")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -152,6 +156,11 @@ enum MetricType: String, CaseIterable {
             if value < 30 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some move time") }
             if value < 45 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid move minutes") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Great move time day")
+        case .basalEnergy:
+            if value < 1200 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below typical resting burn") }
+            if value < 1400 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some basal energy") }
+            if value < 1600 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid resting burn") }
+            return MetricZone(label: "Solid", color: RTColor.optimal, description: "Healthy basal energy")
         }
     }
 }
