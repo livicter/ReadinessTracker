@@ -1,0 +1,38 @@
+Honest #363 — Google Health daily HRV sync (self-verify)
+Date: 2026-10-01 HKT (~01:24)
+Branch: honest-363-google-health-hrv
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: 0a885cc (#362)
+
+API / dataType / scope
+- dataType: daily-heart-rate-variability
+- Endpoint: GET https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-variability/dataPoints
+- Filter: dailyHeartRateVariability.date >= "YYYY-MM-DD" AND dailyHeartRateVariability.date < "YYYY-MM-DD+1"
+- JSON: dataPoints[].dailyHeartRateVariability.averageHeartRateVariabilityMilliseconds (RMSSD ms; FlexibleDouble)
+- Fallback: deepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds when average missing
+- Map: → DailyHealthData.hrv + hrvIsRMSSD=true when >0; source: .fitbit
+- Scope REUSED (no new Console scope): https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly
+  (same Restricted vitals scope as #362 RHR — covers daily-heart-rate-variability per Google Health data-types docs)
+- Soft-fail HTTP 403 like RHR (sleep/RHR may still succeed)
+- Product label: DataSource.fitbit (unchanged); no dual-link; OAuth redirect unchanged (#361)
+
+Victor Console action
+- NEW scope: NOT required for HRV (covered by existing vitals scope from #362)
+- If Victor has not yet added vitals scope / re-Connected after #362: same 403 soft-fail guidance applies to both RHR and HRV until re-Connect
+
+Build / tests (iPhone 17 sim id 3CC80890-…)
+- GoogleHealthHRVMapperTests: 7/7 pass
+- GoogleHealthRHRMapperTests + SleepMapper + OAuthRedirect: pass
+- Full ReadinessTrackerTests: 159 executed, 19 skipped, 0 failures
+- UITests: testRestingHRSurface, testSettingsSourcesConnectRows, testSourcePickerWellSurface: PASS
+- UITests: testSleepHRVSurface: FAIL (fixture scroll — "Sleep HRV" not on-screen after revealText; pre-existing flake, out of scope poteto UI)
+
+Screenshots
+- .audit/honest363-01-dashboard.png
+- .audit/honest363-03-resting-hr-surface.png
+- .audit/honest363-04-settings-sources.png
+- .audit/honest363-05-source-picker.png
+- .audit/honest363-06-sleep-hrv-prior.png (prior audit reference; live Sleep HRV UITest failed)
+- Copied to box /workspace/ via agent transfer
+
+Out of scope (not done): SpO2/activity, Connect/2FA for Victor, Trends SpO2, BAC, poteto UI MetricDetail, Secrets commit
