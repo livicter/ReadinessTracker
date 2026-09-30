@@ -1,0 +1,3 @@
+Honest #381 — SleepDebtCalculator → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT ~04:17
+Tests: unit green; testSleepDebtCardMetricDetailNavSurface PASS
