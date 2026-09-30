@@ -856,10 +856,13 @@ struct DashboardView: View {
                     dailyHistory: history,
                     source: selectedSource
                 )
+                // Honest #382: WHOOP sleepQualityTrend → classic MetricDetailView(.sleep)
                 SleepQualityTrend(
-                    history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) }
+                    history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) },
+                    sleepHours: data.sleepHours,
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
                 // Honest #380: WHOOP sleepConsistency → classic MetricDetailView(.sleep)
                 SleepConsistencyTracker(
                     history: history.map { ($0.date, $0.sleepStartTime, $0.sleepEndTime, $0.sleepHours) },
