@@ -10,6 +10,7 @@ enum MetricType: String, CaseIterable {
     case respiratoryRate = "Respiratory Rate"
     case skinTemperature = "Skin Temperature"
     case flightsClimbed = "Flights Climbed"
+    case walkingDistance = "Walking Distance"
 
     var title: String { rawValue }
 
@@ -24,6 +25,7 @@ enum MetricType: String, CaseIterable {
         case .respiratoryRate: return "lungs.fill"
         case .skinTemperature: return "thermometer.medium"
         case .flightsClimbed: return "figure.stairs"
+        case .walkingDistance: return "figure.walk.motion"
         }
     }
 
@@ -38,6 +40,7 @@ enum MetricType: String, CaseIterable {
         case .respiratoryRate: return "br/min"
         case .skinTemperature: return "°C"
         case .flightsClimbed: return "fl"
+        case .walkingDistance: return "km"
         }
     }
 
@@ -52,12 +55,13 @@ enum MetricType: String, CaseIterable {
         case .respiratoryRate: return RTColor.respiratory
         case .skinTemperature: return RTColor.skinTemp
         case .flightsClimbed: return Color(hex: "BF5AF2")
+        case .walkingDistance: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -107,6 +111,11 @@ enum MetricType: String, CaseIterable {
             if value < 10 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some elevation work") }
             if value < 15 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid floor volume") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Great elevation day")
+        case .walkingDistance:
+            if value < 3 { return MetricZone(label: "Low", color: RTColor.warning, description: "Short walking distance") }
+            if value < 5 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some walk volume") }
+            if value < 8 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid walk/run distance") }
+            return MetricZone(label: "Strong", color: RTColor.optimal, description: "Great distance day")
         }
     }
 }

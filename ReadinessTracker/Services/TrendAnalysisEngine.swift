@@ -159,6 +159,7 @@ struct TrendAnalysisEngine {
         case .respiratoryRate: normalizedSlope = slope / 16.0 * 100
         case .skinTemperature: normalizedSlope = slope / 1.0 * 100
         case .flightsClimbed: normalizedSlope = slope / 10.0 * 100
+        case .walkingDistance: normalizedSlope = slope / 5.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

@@ -180,6 +180,7 @@ struct MetricCorrelationView: View {
         case .respiratoryRate: return data.respiratoryRate
         case .skinTemperature: return data.skinTemperature
         case .flightsClimbed: return data.flightsClimbed
+        case .walkingDistance: return data.distanceWalkingRunningKm
         }
     }
 }

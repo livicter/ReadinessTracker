@@ -9,6 +9,9 @@ struct DistanceTonightBaselineCard: View {
     let kilometers: Double?
     let history: [(date: Date, km: Double)]
     let baseline: Double
+    /// Honest #389: classic MetricDetailView(.walkingDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kilometers.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct DistanceTonightBaselineCard: View {
     private let distanceColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.distanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .walkingDistance,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -128,6 +139,7 @@ struct DistanceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: distanceColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.distanceSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct DistanceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Headphone audio trend last seven days")
+                            .allowsHitTesting(false)
+                    .accessibilityLabel("Walking distance trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.distanceCard)
+        .accessibilityLabel("Walking Distance")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
