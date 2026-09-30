@@ -721,12 +721,15 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.sleepPerformance)
 
+            // Honest #374: WHOOP sleep.latency.card → classic MetricDetailView(.sleep)
             SleepLatencyCard(
                 currentMinutes: data.sleepOnsetMinutes,
                 history: history.map { ($0.date, $0.sleepOnsetMinutes) },
-                baseline: sleepLatencyBaseline(from: history, fallback: data.sleepOnsetMinutes)
+                baseline: sleepLatencyBaseline(from: history, fallback: data.sleepOnsetMinutes),
+                sleepHours: data.sleepHours,
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.sleepLatencyCard)
 
             // Honest #373: WHOOP sleep.efficiency.card → classic MetricDetailView(.sleep)
             SleepEfficiencyCard(

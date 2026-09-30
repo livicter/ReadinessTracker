@@ -1,0 +1,4 @@
+Honest #374 — SleepLatencyCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:30)
+Tip base: 4723928 (#373)
+Tests: unit 179/19/0; testSleepLatencyCardMetricDetailNavSurface PASS

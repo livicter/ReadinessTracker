@@ -7,6 +7,10 @@ struct SleepLatencyCard: View {
     let currentMinutes: Double
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #374: classic MetricDetailView(.sleep) — total asleep hours.
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double { max(0, currentMinutes) }
     private var base: Double {
@@ -39,6 +43,23 @@ struct SleepLatencyCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,6 +127,7 @@ struct SleepLatencyCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.sleepLatencySpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -153,11 +175,15 @@ struct SleepLatencyCard: View {
                     }
                     .frame(height: 88)
                     .accessibilityLabel("Sleep latency trend last nights")
+                    .allowsHitTesting(false)
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepLatencyCard)
+        .accessibilityLabel("Sleep Latency")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
