@@ -5,7 +5,7 @@ import UIKit
 import CryptoKit
 import Security
 
-/// Fitbit data source manager — backed by Google Health API (sleep + daily RHR).
+/// Fitbit data source manager — backed by Google Health API (sleep + daily RHR + HRV).
 /// User-facing product language stays "Fitbit" / `DataSource.fitbit`.
 @MainActor
 class FitbitManager: NSObject, ObservableObject {
@@ -21,8 +21,8 @@ class FitbitManager: NSObject, ObservableObject {
     private let redirectUri: String
     private let callbackURLScheme: String
     private let sleepScope = "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
-    /// Required for `daily-resting-heart-rate` (and later HRV / SpO2). Restricted scope —
-    /// Victor must add it on the OAuth consent screen and users must re-Connect.
+    /// Required for `daily-resting-heart-rate`, `daily-heart-rate-variability` (and later SpO2).
+    /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
@@ -30,6 +30,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let identityURL = "https://health.googleapis.com/v4/users/me/identity"
     private let sleepListURL = "https://health.googleapis.com/v4/users/me/dataTypes/sleep/dataPoints"
     private let rhrListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints"
+    private let hrvListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-variability/dataPoints"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -358,13 +359,15 @@ class FitbitManager: NSObject, ObservableObject {
 
         async let sleepTask = fetchSleep(token: token)
         async let rhrTask = fetchRestingHeartRate(token: token)
+        async let hrvTask = fetchHeartRateVariability(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
+        let hrvMs = await hrvTask
 
-        // Activity / HRV / SpO2 deferred to later Honest PRs.
-        guard sleepResult != nil || (rhrBPM ?? 0) > 0 else {
+        // Activity / SpO2 deferred to later Honest PRs.
+        guard sleepResult != nil || (rhrBPM ?? 0) > 0 || (hrvMs ?? 0) > 0 else {
             if errorMessage == nil {
-                errorMessage = "No sleep or resting heart rate found for today."
+                errorMessage = "No sleep, resting heart rate, or HRV found for today."
             }
             return
         }
@@ -384,7 +387,9 @@ class FitbitManager: NSObject, ObservableObject {
             sleepEndTime: sleep?.end,
             wakeEpisodes: sleep?.wakeEpisodes ?? 0,
             sleepStages: sleep?.stages ?? [],
-            hrv: 0,
+            // Google Health daily HRV is RMSSD (ms).
+            hrv: hrvMs ?? 0,
+            hrvIsRMSSD: (hrvMs ?? 0) > 0,
             restingHeartRate: rhrBPM ?? 0,
             activeCalories: 0,
             steps: 0,
@@ -489,6 +494,64 @@ class FitbitManager: NSObject, ObservableObject {
         } catch {
             if errorMessage == nil {
                 errorMessage = "RHR sync failed: \(error.localizedDescription)"
+            }
+            return nil
+        }
+    }
+
+    /// Daily HRV (RMSSD ms) from Google Health `daily-heart-rate-variability` (same vitals scope as RHR).
+    private func fetchHeartRateVariability(token: String) async -> Double? {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: Date())
+        let startOfTomorrow = cal.date(byAdding: .day, value: 1, to: startOfToday) ?? startOfToday.addingTimeInterval(86400)
+        let dayFmt = DateFormatter()
+        dayFmt.calendar = cal
+        dayFmt.locale = Locale(identifier: "en_US_POSIX")
+        dayFmt.timeZone = cal.timeZone
+        dayFmt.dateFormat = "yyyy-MM-dd"
+        let today = dayFmt.string(from: startOfToday)
+        let tomorrow = dayFmt.string(from: startOfTomorrow)
+        // Daily summary filter uses civil date (ISO YYYY-MM-DD); camelCase matches RHR filter style.
+        let filter = "dailyHeartRateVariability.date >= \"\(today)\" AND dailyHeartRateVariability.date < \"\(tomorrow)\""
+
+        var components = URLComponents(string: hrvListURL)!
+        components.queryItems = [
+            URLQueryItem(name: "filter", value: filter),
+            URLQueryItem(name: "pageSize", value: "10")
+        ]
+        guard let url = components.url else { return nil }
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode == 412 {
+                    errorMessage = "No Google Health profile yet. Open the Google Health / Fitbit app, finish setup, then reconnect."
+                    return nil
+                }
+                if http.statusCode == 403 {
+                    // Scope missing on token — sleep may still succeed; soft-fail HRV (same as RHR).
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "HRV needs Google Health vitals scope. Re-Connect Fitbit after Console scope add. (\(body.prefix(120)))"
+                    }
+                    return nil
+                }
+                if !(200...299).contains(http.statusCode) {
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "HRV sync failed (\(http.statusCode)): \(body.prefix(180))"
+                    }
+                    return nil
+                }
+            }
+            return try GoogleHealthHRVMapper.mapListResponse(data)
+        } catch {
+            if errorMessage == nil {
+                errorMessage = "HRV sync failed: \(error.localizedDescription)"
             }
             return nil
         }
@@ -938,6 +1001,81 @@ enum GoogleHealthRHRMapper {
         }
         guard let bpm = best.beatsPerMinute?.value, bpm > 0 else { return nil }
         return Double(bpm)
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        let y = date.year ?? 0
+        let m = date.month ?? 0
+        let d = date.day ?? 0
+        return y * 10_000 + m * 100 + d
+    }
+}
+
+// MARK: - Google Health daily HRV JSON → RMSSD ms
+
+enum GoogleHealthHRVMapper {
+    struct ListResponse: Codable {
+        let dataPoints: [DataPoint]?
+        let nextPageToken: String?
+    }
+
+    struct DataPoint: Codable {
+        let name: String?
+        let dailyHeartRateVariability: DailyHRVPayload?
+    }
+
+    struct DailyHRVPayload: Codable {
+        let date: CivilDate?
+        let averageHeartRateVariabilityMilliseconds: FlexibleDouble?
+        let deepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds: FlexibleDouble?
+        let entropy: FlexibleDouble?
+        let nonRemHeartRateBeatsPerMinute: GoogleHealthSleepMapper.FlexibleInt64?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    /// Google Health may encode numbers as JSON numbers or strings.
+    struct FlexibleDouble: Codable {
+        let value: Double
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let d = try? container.decode(Double.self) {
+                value = d
+            } else if let i = try? container.decode(Int64.self) {
+                value = Double(i)
+            } else if let s = try? container.decode(String.self), let d = Double(s) {
+                value = d
+            } else {
+                value = 0
+            }
+        }
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(value)
+        }
+    }
+
+    /// Returns latest daily HRV RMSSD in ms, or nil when empty / unparseable.
+    /// Prefers `averageHeartRateVariabilityMilliseconds`; falls back to deep-sleep RMSSD.
+    static func mapListResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(ListResponse.self, from: data)
+        guard let points = decoded.dataPoints, !points.isEmpty else { return nil }
+        let payloads = points.compactMap { $0.dailyHeartRateVariability }
+        guard let best = payloads.max(by: { a, b in civilRank(a.date) < civilRank(b.date) }) else {
+            return nil
+        }
+        if let avg = best.averageHeartRateVariabilityMilliseconds?.value, avg > 0 {
+            return avg
+        }
+        if let deep = best.deepSleepRootMeanSquareOfSuccessiveDifferencesMilliseconds?.value, deep > 0 {
+            return deep
+        }
+        return nil
     }
 
     static func civilRank(_ date: CivilDate?) -> Int {
