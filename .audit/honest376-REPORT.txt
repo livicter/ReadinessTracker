@@ -1,0 +1,4 @@
+Honest #376 — TimeInBedCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:42)
+Tip base: 9ebe04a (#375)
+Tests: unit 179/19/0; testTimeInBedCardMetricDetailNavSurface PASS
