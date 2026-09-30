@@ -1,0 +1,3 @@
+Honest #380 — SleepConsistencyTracker → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT ~04:14
+Tests: unit green; testSleepConsistencyCardMetricDetailNavSurface PASS

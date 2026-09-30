@@ -5,6 +5,10 @@ import Charts
 /// 7-night bedtime deviation dots/bars, and a compact consistency sparkline.
 struct SleepConsistencyTracker: View {
     let history: [(date: Date, sleepStart: Date?, sleepEnd: Date?, sleepHours: Double)]
+    /// Honest #380: classic MetricDetailView(.sleep).
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var bedtimeConsistency: Double {
         guard history.count >= 3 else { return 0 }
@@ -106,6 +110,23 @@ struct SleepConsistencyTracker: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header + clearer score ring
@@ -181,6 +202,7 @@ struct SleepConsistencyTracker: View {
 
                         bedtimeDotsBars
                             .frame(height: 56)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.sleepConsistencyBedtime)
                             .accessibilityLabel("Bedtime consistency last seven nights")
                     }
@@ -201,6 +223,7 @@ struct SleepConsistencyTracker: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.consistency)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.sleepConsistencySpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -220,6 +243,7 @@ struct SleepConsistencyTracker: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepConsistency)
         .accessibilityLabel("Sleep Consistency")
+        .contentShape(Rectangle())
     }
 
     private var meanBedtimeCaption: String {
