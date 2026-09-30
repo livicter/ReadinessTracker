@@ -9,6 +9,9 @@ struct AppleStandHoursTonightBaselineCard: View {
     let hours: Double?
     let history: [(date: Date, hours: Double)]
     let baseline: Double
+    /// Honest #391: classic MetricDetailView(.standHours).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { hours.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct AppleStandHoursTonightBaselineCard: View {
     private let standColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.appleStandHoursCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .standHours,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -128,6 +139,7 @@ struct AppleStandHoursTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: standColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.appleStandHoursSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct AppleStandHoursTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Stand hours trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.appleStandHoursCard)
+        .accessibilityLabel("Stand Hours")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

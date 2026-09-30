@@ -12,6 +12,7 @@ enum MetricType: String, CaseIterable {
     case flightsClimbed = "Flights Climbed"
     case walkingDistance = "Walking Distance"
     case exerciseTime = "Exercise Time"
+    case standHours = "Stand Hours"
 
     var title: String { rawValue }
 
@@ -28,6 +29,7 @@ enum MetricType: String, CaseIterable {
         case .flightsClimbed: return "figure.stairs"
         case .walkingDistance: return "figure.walk.motion"
         case .exerciseTime: return "figure.run"
+        case .standHours: return "figure.stand"
         }
     }
 
@@ -44,6 +46,7 @@ enum MetricType: String, CaseIterable {
         case .flightsClimbed: return "fl"
         case .walkingDistance: return "km"
         case .exerciseTime: return "min"
+        case .standHours: return "h"
         }
     }
 
@@ -60,12 +63,13 @@ enum MetricType: String, CaseIterable {
         case .flightsClimbed: return Color(hex: "BF5AF2")
         case .walkingDistance: return Color(hex: "64D2FF")
         case .exerciseTime: return RTColor.strain
+        case .standHours: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -125,6 +129,11 @@ enum MetricType: String, CaseIterable {
             if value < 30 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some exercise volume") }
             if value < 45 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid exercise minutes") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Great exercise day")
+        case .standHours:
+            if value < 6 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below typical stand hours") }
+            if value < 9 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some stand hours") }
+            if value < 12 { return MetricZone(label: "On track", color: RTColor.good, description: "Near the 12-hour goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Stand ring goal hit")
         }
     }
 }

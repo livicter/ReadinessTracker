@@ -182,6 +182,7 @@ struct MetricCorrelationView: View {
         case .flightsClimbed: return data.flightsClimbed
         case .walkingDistance: return data.distanceWalkingRunningKm
         case .exerciseTime: return data.appleExerciseTimeMinutes
+        case .standHours: return data.appleStandHours
         }
     }
 }
