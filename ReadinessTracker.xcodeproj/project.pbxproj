@@ -11,6 +11,7 @@
 		57AA00F40000000000000001 /* GoogleOAuthRedirectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00F30000000000000001 /* GoogleOAuthRedirectTests.swift */; };
 		57AA00F60000000000000001 /* GoogleHealthRHRMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00F50000000000000001 /* GoogleHealthRHRMapperTests.swift */; };
 		57AA00F80000000000000001 /* GoogleHealthHRVMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00F70000000000000001 /* GoogleHealthHRVMapperTests.swift */; };
+		57AA00FA0000000000000001 /* GoogleHealthSpO2MapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57AA00F90000000000000001 /* GoogleHealthSpO2MapperTests.swift */; };
 		0D80F6655B854E14A02126F1 /* HRVFrequencyAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62408C1DCFEF4F609D6EDA9C /* HRVFrequencyAnalysis.swift */; };
 		56F4F492351341BDBD8C8569 /* HRZoneAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D52E5A5B824443682FB278A /* HRZoneAnalysis.swift */; };
 		F10A71AB7ABBA40001B10001 /* FloatingPillTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10A71AB7ABBA40001F10001 /* FloatingPillTabBar.swift */; };
@@ -406,6 +407,7 @@
 		57AA00F30000000000000001 /* GoogleOAuthRedirectTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleOAuthRedirectTests.swift; sourceTree = "<group>"; };
 		57AA00F50000000000000001 /* GoogleHealthRHRMapperTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleHealthRHRMapperTests.swift; sourceTree = "<group>"; };
 		57AA00F70000000000000001 /* GoogleHealthHRVMapperTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleHealthHRVMapperTests.swift; sourceTree = "<group>"; };
+		57AA00F90000000000000001 /* GoogleHealthSpO2MapperTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GoogleHealthSpO2MapperTests.swift; sourceTree = "<group>"; };
 		57AA00050000000000000001 /* SleepCycleDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SleepCycleDetector.swift; sourceTree = "<group>"; };
 		57AA00070000000000000001 /* SleepCycleDetectorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SleepCycleDetectorTests.swift; sourceTree = "<group>"; };
 		57AA00090000000000000001 /* HypnogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HypnogramView.swift; sourceTree = "<group>"; };
@@ -1025,6 +1027,7 @@
 				57AA00F30000000000000001 /* GoogleOAuthRedirectTests.swift */,
 				57AA00F50000000000000001 /* GoogleHealthRHRMapperTests.swift */,
 				57AA00F70000000000000001 /* GoogleHealthHRVMapperTests.swift */,
+				57AA00F90000000000000001 /* GoogleHealthSpO2MapperTests.swift */,
 				57AA00130000000000000001 /* ChartScrubSelectionTests.swift */,
 				57AA00270000000000000001 /* TripleRingGeometryTests.swift */,
 				57AA00290000000000000001 /* HomeWidgetCaptureTests.swift */,
@@ -1374,6 +1377,7 @@
 				57AA00F40000000000000001 /* GoogleOAuthRedirectTests.swift in Sources */,
 				57AA00F60000000000000001 /* GoogleHealthRHRMapperTests.swift in Sources */,
 				57AA00F80000000000000001 /* GoogleHealthHRVMapperTests.swift in Sources */,
+				57AA00FA0000000000000001 /* GoogleHealthSpO2MapperTests.swift in Sources */,
 				57AA00140000000000000001 /* ChartScrubSelectionTests.swift in Sources */,
 				57AA00280000000000000001 /* TripleRingGeometryTests.swift in Sources */,
 				57AA002A00000000000001 /* HomeWidgetCaptureTests.swift in Sources */,

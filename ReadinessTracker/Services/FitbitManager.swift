@@ -5,7 +5,7 @@ import UIKit
 import CryptoKit
 import Security
 
-/// Fitbit data source manager — backed by Google Health API (sleep + daily RHR + HRV).
+/// Fitbit data source manager — backed by Google Health API (sleep + RHR + HRV + SpO2).
 /// User-facing product language stays "Fitbit" / `DataSource.fitbit`.
 @MainActor
 class FitbitManager: NSObject, ObservableObject {
@@ -21,7 +21,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let redirectUri: String
     private let callbackURLScheme: String
     private let sleepScope = "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
-    /// Required for `daily-resting-heart-rate`, `daily-heart-rate-variability` (and later SpO2).
+    /// Required for `daily-resting-heart-rate`, `daily-heart-rate-variability`, `daily-oxygen-saturation`.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -31,6 +31,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let sleepListURL = "https://health.googleapis.com/v4/users/me/dataTypes/sleep/dataPoints"
     private let rhrListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints"
     private let hrvListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-variability/dataPoints"
+    private let spo2ListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-oxygen-saturation/dataPoints"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -360,14 +361,16 @@ class FitbitManager: NSObject, ObservableObject {
         async let sleepTask = fetchSleep(token: token)
         async let rhrTask = fetchRestingHeartRate(token: token)
         async let hrvTask = fetchHeartRateVariability(token: token)
+        async let spo2Task = fetchBloodOxygen(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
+        let spo2Pct = await spo2Task
 
-        // Activity / SpO2 deferred to later Honest PRs.
-        guard sleepResult != nil || (rhrBPM ?? 0) > 0 || (hrvMs ?? 0) > 0 else {
+        // Activity deferred to later Honest PRs.
+        guard sleepResult != nil || (rhrBPM ?? 0) > 0 || (hrvMs ?? 0) > 0 || (spo2Pct ?? 0) > 0 else {
             if errorMessage == nil {
-                errorMessage = "No sleep, resting heart rate, or HRV found for today."
+                errorMessage = "No sleep, RHR, HRV, or SpO2 found for today."
             }
             return
         }
@@ -393,7 +396,9 @@ class FitbitManager: NSObject, ObservableObject {
             restingHeartRate: rhrBPM ?? 0,
             activeCalories: 0,
             steps: 0,
-            workoutMinutes: 0
+            workoutMinutes: 0,
+            // Google Health daily SpO2 averagePercentage is 0–100 (same as HK after *100).
+            bloodOxygen: spo2Pct
         )
 
         self.latestData = data
@@ -552,6 +557,64 @@ class FitbitManager: NSObject, ObservableObject {
         } catch {
             if errorMessage == nil {
                 errorMessage = "HRV sync failed: \(error.localizedDescription)"
+            }
+            return nil
+        }
+    }
+
+    /// Daily SpO2 (%) from Google Health `daily-oxygen-saturation` (same vitals scope as RHR/HRV).
+    private func fetchBloodOxygen(token: String) async -> Double? {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: Date())
+        let startOfTomorrow = cal.date(byAdding: .day, value: 1, to: startOfToday) ?? startOfToday.addingTimeInterval(86400)
+        let dayFmt = DateFormatter()
+        dayFmt.calendar = cal
+        dayFmt.locale = Locale(identifier: "en_US_POSIX")
+        dayFmt.timeZone = cal.timeZone
+        dayFmt.dateFormat = "yyyy-MM-dd"
+        let today = dayFmt.string(from: startOfToday)
+        let tomorrow = dayFmt.string(from: startOfTomorrow)
+        // Daily summary filter uses civil date (ISO YYYY-MM-DD); camelCase matches RHR/HRV.
+        let filter = "dailyOxygenSaturation.date >= \"\(today)\" AND dailyOxygenSaturation.date < \"\(tomorrow)\""
+
+        var components = URLComponents(string: spo2ListURL)!
+        components.queryItems = [
+            URLQueryItem(name: "filter", value: filter),
+            URLQueryItem(name: "pageSize", value: "10")
+        ]
+        guard let url = components.url else { return nil }
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode == 412 {
+                    errorMessage = "No Google Health profile yet. Open the Google Health / Fitbit app, finish setup, then reconnect."
+                    return nil
+                }
+                if http.statusCode == 403 {
+                    // Scope missing on token — sleep may still succeed; soft-fail SpO2 (same as RHR/HRV).
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "SpO2 needs Google Health vitals scope. Re-Connect Fitbit after Console scope add. (\(body.prefix(120)))"
+                    }
+                    return nil
+                }
+                if !(200...299).contains(http.statusCode) {
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "SpO2 sync failed (\(http.statusCode)): \(body.prefix(180))"
+                    }
+                    return nil
+                }
+            }
+            return try GoogleHealthSpO2Mapper.mapListResponse(data)
+        } catch {
+            if errorMessage == nil {
+                errorMessage = "SpO2 sync failed: \(error.localizedDescription)"
             }
             return nil
         }
@@ -1076,6 +1139,54 @@ enum GoogleHealthHRVMapper {
             return deep
         }
         return nil
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        let y = date.year ?? 0
+        let m = date.month ?? 0
+        let d = date.day ?? 0
+        return y * 10_000 + m * 100 + d
+    }
+}
+
+// MARK: - Google Health daily SpO2 JSON → averagePercentage (0–100)
+
+enum GoogleHealthSpO2Mapper {
+    struct ListResponse: Codable {
+        let dataPoints: [DataPoint]?
+        let nextPageToken: String?
+    }
+
+    struct DataPoint: Codable {
+        let name: String?
+        let dailyOxygenSaturation: DailySpO2Payload?
+    }
+
+    struct DailySpO2Payload: Codable {
+        let date: CivilDate?
+        let averagePercentage: GoogleHealthHRVMapper.FlexibleDouble?
+        let lowerBoundPercentage: GoogleHealthHRVMapper.FlexibleDouble?
+        let upperBoundPercentage: GoogleHealthHRVMapper.FlexibleDouble?
+        let standardDeviationPercentage: GoogleHealthHRVMapper.FlexibleDouble?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    /// Returns latest daily SpO2 average percentage (0–100), or nil when empty / unparseable.
+    static func mapListResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(ListResponse.self, from: data)
+        guard let points = decoded.dataPoints, !points.isEmpty else { return nil }
+        let payloads = points.compactMap { $0.dailyOxygenSaturation }
+        guard let best = payloads.max(by: { a, b in civilRank(a.date) < civilRank(b.date) }) else {
+            return nil
+        }
+        guard let pct = best.averagePercentage?.value, pct > 0, pct <= 100 else { return nil }
+        return pct
     }
 
     static func civilRank(_ date: CivilDate?) -> Int {
