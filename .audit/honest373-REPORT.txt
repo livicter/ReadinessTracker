@@ -1,0 +1,4 @@
+Honest #373 — SleepEfficiencyCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:23)
+Tip base: 9578113 (#372)
+Tests: unit 179/19/0; testSleepEfficiencyCardMetricDetailNavSurface PASS

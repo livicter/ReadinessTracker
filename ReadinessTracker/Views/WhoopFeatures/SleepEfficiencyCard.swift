@@ -8,6 +8,10 @@ struct SleepEfficiencyCard: View {
     let currentEfficiency: Double
     let history: [(date: Date, efficiency: Double)]
     let baseline: Double
+    /// Honest #373: classic MetricDetailView(.sleep) — total asleep hours.
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private func asPercent(_ value: Double) -> Double {
         // Accept fraction (0.9) or already-percent (90).
@@ -45,6 +49,23 @@ struct SleepEfficiencyCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -112,6 +133,7 @@ struct SleepEfficiencyCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.sleepEfficiencySpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -159,11 +181,15 @@ struct SleepEfficiencyCard: View {
                     }
                     .frame(height: 88)
                     .accessibilityLabel("Sleep efficiency trend last nights")
+                    .allowsHitTesting(false)
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepEfficiencyCard)
+        .accessibilityLabel("Sleep Efficiency")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
