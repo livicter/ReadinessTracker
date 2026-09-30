@@ -1,8 +1,8 @@
-# Fitbit / Google Health API Setup (Honest #360 / #361 / #362 / #363 / #364)
+# Fitbit / Google Health API Setup (Honest #360–#365)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep**, **daily RHR**, **daily HRV (RMSSD)**, and **daily SpO2 (blood oxygen)**.
+and syncs **sleep**, **daily RHR**, **daily HRV (RMSSD)**, **daily SpO2**, plus **steps** and **active calories**.
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -24,11 +24,12 @@ Docs:
    (also as `REVERSED_CLIENT_ID` in a downloaded GoogleService-Info-style plist).
 5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
-   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362 / #363 / #364** — RHR, HRV, SpO2; no extra scope for SpO2)
+   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362 / #363 / #364** — RHR, HRV, SpO2)
+   - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365** — required for `steps` + `active-energy-burned` dailyRollUp)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
-7. **After adding the vitals scope:** disconnect Fitbit in Settings and **Connect** again so the
-   consent screen grants the new Restricted scope (existing sleep-only tokens will get HTTP 403 on RHR).
+7. **After adding vitals and/or activity scopes:** disconnect Fitbit in Settings and **Connect** again so the
+   consent screen grants the new Restricted scopes (older tokens soft-fail 403 on missing metrics).
 8. Copy the **iOS Client ID**. Do **not** put a client secret in the iOS binary (PKCE public client).
 
 ### Redirect URI (Honest #361)
@@ -85,7 +86,8 @@ OAuth will not start.
 - **Resting HR** from `GET .../dataTypes/daily-resting-heart-rate/dataPoints` -> `DailyHealthData.restingHeartRate` (`source: .fitbit`) — needs vitals scope above
 - **HRV (RMSSD)** from `GET .../dataTypes/daily-heart-rate-variability/dataPoints` -> `DailyHealthData.hrv` + `hrvIsRMSSD: true` (`source: .fitbit`) — **same** vitals scope as RHR (Honest #363); no new Console scope
 - **SpO2** from `GET .../dataTypes/daily-oxygen-saturation/dataPoints` -> `DailyHealthData.bloodOxygen` (averagePercentage 0–100; `source: .fitbit`) — **same** vitals scope (Honest #364); no new Console scope
-- Activity Google Health sync **deferred** to later Honest PRs
+- **Steps** from `POST .../dataTypes/steps/dataPoints:dailyRollUp` -> `DailyHealthData.steps` (`countSum`; `source: .fitbit`) — needs **activity** scope (Honest #365)
+- **Active calories** from `POST .../dataTypes/active-energy-burned/dataPoints:dailyRollUp` -> `DailyHealthData.activeCalories` (`kcalSum`; `source: .fitbit`) — same activity scope
 
 ## 4. Important notes
 
