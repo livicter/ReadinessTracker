@@ -1208,6 +1208,7 @@ struct MetricDetailView: View {
         case .exerciseTime: return data.appleExerciseTimeMinutes ?? 0
         case .standHours: return data.appleStandHours ?? 0
         case .standTime: return data.appleStandTimeMinutes ?? 0
+        case .moveTime: return data.appleMoveTimeMinutes ?? 0
         }
     }
 
@@ -1215,7 +1216,7 @@ struct MetricDetailView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime:
             return "\(Int(value))"
         }
     }
@@ -1370,6 +1371,8 @@ extension MetricDetailView {
             return (.standHours, .exerciseTime)
         case .standTime:
             return (.standTime, .standHours)
+        case .moveTime:
+            return (.moveTime, .activeCalories)
         }
     }
 }

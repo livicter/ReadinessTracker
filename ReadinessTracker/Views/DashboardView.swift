@@ -952,6 +952,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #393: WHOOP strain.moveTime.card → classic MetricDetailView(.moveTime)
             AppleMoveTimeTonightBaselineCard(
                 minutes: data.appleMoveTimeMinutes,
                 history: history.compactMap { day in
@@ -961,9 +962,10 @@ struct DashboardView: View {
                 baseline: AppleMoveTimeBaseline.average(
                     from: history,
                     fallback: data.appleMoveTimeMinutes ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.appleMoveTimeCard)
 
 
             DailyTRIMPCard(
