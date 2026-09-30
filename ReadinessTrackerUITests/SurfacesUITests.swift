@@ -7787,6 +7787,31 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "strain.standHours.card → metric.detail")
     }
 
+    func testStandTimeCardMetricDetailNavSurface() throws {
+        // Honest #392: WHOOP strain.standTime.card → classic MetricDetailView (.standTime).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Stand Time"].exists && n < 40 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Stand Time"].firstMatch
+        let card = app.descendants(matching: .any)["strain.standTime.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Stand Time"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Stand Time"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-stand-time-metric-detail.png")
+        XCTAssertTrue(landed, "strain.standTime.card → metric.detail")
+    }
+
 
     func testSleepLatencySurface() throws {
         // Honest #109: WHOOP Sleep Latency Tonight | Baseline + 7-night spark on Today.
