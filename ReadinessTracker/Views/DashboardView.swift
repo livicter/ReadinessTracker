@@ -744,6 +744,7 @@ struct DashboardView: View {
 
 
 
+            // Honest #376: WHOOP sleep.inbed.card → classic MetricDetailView(.sleep)
             TimeInBedCard(
                 sleepHours: data.sleepHours,
                 sleepEfficiency: data.sleepEfficiency,
@@ -755,9 +756,10 @@ struct DashboardView: View {
                 baselineAsleep: TimeInBed.baselineAsleep(
                     from: history,
                     fallback: data.sleepHours
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.timeInBedCard)
 
 
             AwakeHoursCard(
