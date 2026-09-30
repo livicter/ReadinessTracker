@@ -8,6 +8,9 @@ struct StepsTonightBaselineCard: View {
     let currentSteps: Int
     let history: [(date: Date, steps: Double)]
     let baseline: Double
+    /// Honest #383: classic MetricDetailView(.steps).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let goal: Double = 10_000
 
@@ -57,6 +60,23 @@ struct StepsTonightBaselineCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .steps,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -123,6 +143,7 @@ struct StepsTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.optimal)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.stepsSpark)
                     }
                 }
@@ -170,12 +191,16 @@ struct StepsTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Steps trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.stepsCard)
+        .accessibilityLabel("Steps")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

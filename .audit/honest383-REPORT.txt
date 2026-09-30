@@ -1,0 +1,4 @@
+Honest #383 — StepsTonightBaselineCard → MetricDetailView(.steps)
+Date: 2026-10-01 HKT ~04:31
+Tests: unit green; testStepsCardMetricDetailNavSurface PASS
+New MetricType.steps + exhaustive switch updates.

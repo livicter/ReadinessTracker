@@ -6,6 +6,7 @@ enum MetricType: String, CaseIterable {
     case restingHR = "Resting HR"
     case activeCalories = "Active Calories"
     case bloodOxygen = "Blood Oxygen"
+    case steps = "Steps"
 
     var title: String { rawValue }
 
@@ -16,6 +17,7 @@ enum MetricType: String, CaseIterable {
         case .restingHR: return "heart.fill"
         case .activeCalories: return "flame.fill"
         case .bloodOxygen: return "drop.fill"
+        case .steps: return "figure.walk"
         }
     }
 
@@ -26,6 +28,7 @@ enum MetricType: String, CaseIterable {
         case .restingHR: return "bpm"
         case .activeCalories: return "cal"
         case .bloodOxygen: return "%"
+        case .steps: return "steps"
         }
     }
 
@@ -36,12 +39,13 @@ enum MetricType: String, CaseIterable {
         case .restingHR: return RTColor.strain
         case .activeCalories: return RTColor.caution
         case .bloodOxygen: return RTColor.optimal
+        case .steps: return RTColor.strain
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps: return true
         case .restingHR: return false
         }
     }
@@ -70,6 +74,11 @@ enum MetricType: String, CaseIterable {
             if percent < 90 { return MetricZone(label: "Low", color: RTColor.warning, description: "May indicate hypoxemia") }
             if percent < 95 { return MetricZone(label: "Moderate", color: RTColor.caution, description: "Below optimal range") }
             return MetricZone(label: "Optimal", color: RTColor.optimal, description: "Healthy oxygen saturation")
+        case .steps:
+            if value < 4000 { return MetricZone(label: "Sedentary", color: RTColor.warning, description: "Try to move more") }
+            if value < 7500 { return MetricZone(label: "Light", color: RTColor.caution, description: "Building toward goal") }
+            if value < 10000 { return MetricZone(label: "On track", color: RTColor.good, description: "Near the 10k goal") }
+            return MetricZone(label: "Goal hit", color: RTColor.optimal, description: "Great daily volume")
         }
     }
 }

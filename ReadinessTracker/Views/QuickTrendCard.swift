@@ -106,7 +106,7 @@ struct QuickTrendCard: View {
         switch metric {
         case .sleep:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories:
+        case .hrv, .restingHR, .activeCalories, .steps:
             return "\(Int(value))"
         case .bloodOxygen:
             return String(format: "%.0f", value)
@@ -143,6 +143,7 @@ struct QuickTrendCard: View {
         case .restingHR: return data.restingHeartRate
         case .activeCalories: return data.activeCalories
         case .bloodOxygen: return data.bloodOxygen
+        case .steps: return Double(data.steps)
         }
     }
 }

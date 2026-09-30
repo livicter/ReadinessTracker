@@ -1200,6 +1200,7 @@ struct MetricDetailView: View {
         case .restingHR: return data.restingHeartRate
         case .activeCalories: return data.activeCalories
         case .bloodOxygen: return data.bloodOxygen ?? 0
+        case .steps: return Double(data.steps)
         }
     }
 
@@ -1207,7 +1208,7 @@ struct MetricDetailView: View {
         switch metric {
         case .sleep:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps:
             return "\(Int(value))"
         }
     }
@@ -1346,6 +1347,8 @@ extension MetricDetailView {
             return (.activeCalories, .sleep)
         case .bloodOxygen:
             return (.bloodOxygen, .hrv)
+        case .steps:
+            return (.steps, .activeCalories)
         }
     }
 }

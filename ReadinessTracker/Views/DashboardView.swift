@@ -1583,15 +1583,17 @@ struct DashboardView: View {
                     }
                 }
 
+                // Honest #383: WHOOP body.steps.card → classic MetricDetailView(.steps)
                 StepsTonightBaselineCard(
                     currentSteps: data.steps,
                     history: history.map { ($0.date, Double($0.steps)) },
                     baseline: StepsBaseline.average(
                         from: history,
                         fallback: Double(data.steps)
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.stepsCard)
 
                 FlightsClimbedTonightBaselineCard(
                     flights: data.flightsClimbed,
