@@ -7,6 +7,9 @@ struct RespiratoryRateCard: View {
     let currentRate: Double      // breaths per minute
     let history: [(date: Date, value: Double)]
     let baseline: Double
+    /// Honest #384: classic MetricDetailView(.respiratoryRate).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var deviation: Double {
         guard baseline > 0 else { return 0 }
@@ -40,6 +43,23 @@ struct RespiratoryRateCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .respiratoryRate,
+            currentValue: currentRate,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header
@@ -108,6 +128,7 @@ struct RespiratoryRateCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.respiratory)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.respiratorySpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -170,6 +191,7 @@ struct RespiratoryRateCard: View {
                         }
                     }
                     .frame(height: 120)
+                            .allowsHitTesting(false)
                     .chartYScale(domain: yDomain)
                     .chartYAxis {
                         AxisMarks { _ in
@@ -217,6 +239,8 @@ struct RespiratoryRateCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.respiratoryCard)
         .accessibilityLabel("Respiratory Rate")
+        .accessibilityElement(children: .contain)
+        .contentShape(Rectangle())
     }
 
     private var deltaCaption: String {

@@ -7,6 +7,7 @@ enum MetricType: String, CaseIterable {
     case activeCalories = "Active Calories"
     case bloodOxygen = "Blood Oxygen"
     case steps = "Steps"
+    case respiratoryRate = "Respiratory Rate"
 
     var title: String { rawValue }
 
@@ -18,6 +19,7 @@ enum MetricType: String, CaseIterable {
         case .activeCalories: return "flame.fill"
         case .bloodOxygen: return "drop.fill"
         case .steps: return "figure.walk"
+        case .respiratoryRate: return "lungs.fill"
         }
     }
 
@@ -29,6 +31,7 @@ enum MetricType: String, CaseIterable {
         case .activeCalories: return "cal"
         case .bloodOxygen: return "%"
         case .steps: return "steps"
+        case .respiratoryRate: return "br/min"
         }
     }
 
@@ -40,13 +43,14 @@ enum MetricType: String, CaseIterable {
         case .activeCalories: return RTColor.caution
         case .bloodOxygen: return RTColor.optimal
         case .steps: return RTColor.strain
+        case .respiratoryRate: return RTColor.respiratory
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps: return true
-        case .restingHR: return false
+        case .restingHR, .respiratoryRate: return false
         }
     }
 
@@ -79,6 +83,11 @@ enum MetricType: String, CaseIterable {
             if value < 7500 { return MetricZone(label: "Light", color: RTColor.caution, description: "Building toward goal") }
             if value < 10000 { return MetricZone(label: "On track", color: RTColor.good, description: "Near the 10k goal") }
             return MetricZone(label: "Goal hit", color: RTColor.optimal, description: "Great daily volume")
+        case .respiratoryRate:
+            if value < 12 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below typical resting range") }
+            if value <= 18 { return MetricZone(label: "Normal", color: RTColor.optimal, description: "Healthy resting breaths/min") }
+            if value <= 20 { return MetricZone(label: "Slightly Elevated", color: RTColor.caution, description: "Upper end of resting range") }
+            return MetricZone(label: "Elevated", color: RTColor.warning, description: "Above typical resting range")
         }
     }
 }

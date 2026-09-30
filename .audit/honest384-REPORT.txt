@@ -1,0 +1,4 @@
+Honest #384 — RespiratoryRateCard → MetricDetailView(.respiratoryRate)
+Date: 2026-10-01 HKT ~04:37
+Tests: unit green; testRespiratoryRateCardMetricDetailNavSurface PASS
+New MetricType.respiratoryRate + exhaustive switch updates.

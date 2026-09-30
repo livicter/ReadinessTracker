@@ -1214,14 +1214,16 @@ struct DashboardView: View {
 
 
             if let respRate = data.respiratoryRate {
+                // Honest #384: WHOOP respiratory.card → classic MetricDetailView(.respiratoryRate)
                 RespiratoryRateCard(
                     currentRate: respRate,
                     history: history.compactMap { d in
                         d.respiratoryRate.map { (d.date, $0) }
                     },
-                    baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count))
+                    baseline: history.compactMap { $0.respiratoryRate }.reduce(0, +) / Double(max(1, history.compactMap { $0.respiratoryRate }.count)),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.respiratoryCard)
             } else {
                 MissingMetricRow(title: "Respiratory Rate", icon: "lungs.fill", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.respiratoryCard)
