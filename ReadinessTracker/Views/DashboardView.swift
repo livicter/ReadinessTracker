@@ -922,6 +922,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #391: WHOOP strain.standHours.card → classic MetricDetailView(.standHours)
             AppleStandHoursTonightBaselineCard(
                 hours: data.appleStandHours,
                 history: history.compactMap { day in
@@ -931,9 +932,10 @@ struct DashboardView: View {
                 baseline: AppleStandHoursBaseline.average(
                     from: history,
                     fallback: data.appleStandHours ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.appleStandHoursCard)
 
             AppleStandTimeTonightBaselineCard(
                 minutes: data.appleStandTimeMinutes,
