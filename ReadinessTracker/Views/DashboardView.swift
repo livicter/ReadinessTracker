@@ -790,6 +790,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+                        // Honest #379: WHOOP sleep.midpoint.card → classic MetricDetailView(.sleep)
             SleepMidpointCard(
                 currentMinutes: SleepMidpoint.minutes(start: data.sleepStartTime, end: data.sleepEndTime) ?? 0,
                 history: history.compactMap { day -> (Date, Double)? in
@@ -799,9 +800,11 @@ struct DashboardView: View {
                 baseline: sleepMidpointBaseline(
                     from: history,
                     fallback: SleepMidpoint.minutes(start: data.sleepStartTime, end: data.sleepEndTime) ?? 0
-                )
+                ),
+                sleepHours: data.sleepHours,
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.sleepMidpointCard)
 
 
 

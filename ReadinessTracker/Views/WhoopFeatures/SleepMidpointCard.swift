@@ -9,6 +9,10 @@ struct SleepMidpointCard: View {
     let currentMinutes: Double
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #379: classic MetricDetailView(.sleep).
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double {
         var m = currentMinutes.truncatingRemainder(dividingBy: 1440)
@@ -65,6 +69,23 @@ struct SleepMidpointCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -131,7 +152,9 @@ struct SleepMidpointCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.sleepMidpointSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -178,12 +201,16 @@ struct SleepMidpointCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Sleep midpoint trend last nights")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepMidpointCard)
+        .accessibilityLabel("Sleep Midpoint")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
