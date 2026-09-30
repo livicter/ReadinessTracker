@@ -8,6 +8,9 @@ struct RestingHRCard: View {
     let currentBPM: Double
     let history: [(date: Date, value: Double)]
     let baseline: Double
+    /// Honest #367: classic MetricDetailView destination (WHOOP card was display-only; #358 SpO2 parity).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var deviation: Double {
         guard baseline > 0 else { return 0 }
@@ -53,6 +56,23 @@ struct RestingHRCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .restingHR,
+            currentValue: currentBPM,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -119,6 +139,7 @@ struct RestingHRCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.strain)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.restingHRSpark)
+                            .allowsHitTesting(false)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -196,6 +217,7 @@ struct RestingHRCard: View {
                         }
                     }
                     .accessibilityLabel("Resting heart rate trend with baseline band")
+                    .allowsHitTesting(false)
                 }
 
                 if abs(deviation) > 8 {
@@ -223,7 +245,10 @@ struct RestingHRCard: View {
                 }
             }
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.restingHRCard)
+        .accessibilityLabel("Resting Heart Rate")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

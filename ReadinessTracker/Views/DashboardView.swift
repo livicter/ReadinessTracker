@@ -993,17 +993,14 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.strainZoneDistCard)
 
+            // Honest #367: WHOOP resting.hr.card → classic MetricDetailView (#358 SpO2 parity)
             RestingHRCard(
-
                 currentBPM: Double(data.restingHeartRate),
-
                 history: history.map { ($0.date, Double($0.restingHeartRate)) },
-
-                baseline: BaselineManager.rhrBaseline(from: history)
-
+                baseline: BaselineManager.rhrBaseline(from: history),
+                dailyHistory: history,
+                source: selectedSource
             )
-
-            .accessibilityIdentifier(SurfaceID.restingHRCard)
 
             PeakHeartRateTonightBaselineCard(
                 peakBPM: data.maxHeartRate,
