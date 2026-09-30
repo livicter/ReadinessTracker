@@ -10,6 +10,9 @@ struct ActiveCaloriesTonightBaselineCard: View {
     let currentCalories: Double
     let history: [(date: Date, calories: Double)]
     let baseline: Double
+    /// Honest #369: classic MetricDetailView destination (#358 SpO2 / #367 RHR parity).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal: Double = 500
 
@@ -60,6 +63,23 @@ struct ActiveCaloriesTonightBaselineCard: View {
     private let calColor = Color(hex: "FF9500")
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .activeCalories,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -127,6 +147,7 @@ struct ActiveCaloriesTonightBaselineCard: View {
                         AnimatedSparkline(data: sparklineValues, color: calColor)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.activeCaloriesSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,11 +195,15 @@ struct ActiveCaloriesTonightBaselineCard: View {
                     }
                     .frame(height: 88)
                     .accessibilityLabel("Active calories trend last seven days")
+                    .allowsHitTesting(false)
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.activeCaloriesCard)
+        .accessibilityLabel("Active Calories")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

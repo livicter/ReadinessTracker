@@ -1,0 +1,2 @@
+Unit (ci-verify, iPhone 17 / 26.5): 174 passed, 19 skipped, 0 failures
+UITest SurfacesUITests/testActiveCaloriesCardMetricDetailNavSurface: PASS (~46s)

@@ -2043,15 +2043,17 @@ struct DashboardView: View {
 
 
 
+                // Honest #369: WHOOP active.calories.card → classic MetricDetailView (#358/#367 parity)
                 ActiveCaloriesTonightBaselineCard(
                     currentCalories: data.activeCalories,
                     history: history.map { ($0.date, $0.activeCalories) },
                     baseline: ActiveCaloriesBaseline.average(
                         from: history,
                         fallback: data.activeCalories
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.activeCaloriesCard)
 
 
                 BasalEnergyTonightBaselineCard(
