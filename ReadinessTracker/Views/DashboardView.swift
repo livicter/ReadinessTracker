@@ -780,22 +780,15 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+                        // Honest #378: WHOOP wake.episodes.card → classic MetricDetailView(.sleep)
             WakeEpisodesCard(
-
-
                 currentCount: data.wakeEpisodes,
-
-
                 history: history.map { ($0.date, Double($0.wakeEpisodes)) },
-
-
-                baseline: wakeEpisodesBaseline(from: history, fallback: Double(data.wakeEpisodes))
-
-
+                baseline: wakeEpisodesBaseline(from: history, fallback: Double(data.wakeEpisodes)),
+                sleepHours: data.sleepHours,
+                dailyHistory: history,
+                source: selectedSource
             )
-
-
-            .accessibilityIdentifier(SurfaceID.wakeEpisodesCard)
 
             SleepMidpointCard(
                 currentMinutes: SleepMidpoint.minutes(start: data.sleepStartTime, end: data.sleepEndTime) ?? 0,
