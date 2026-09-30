@@ -7331,6 +7331,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.steps.card → metric.detail")
     }
 
+    func testRespiratoryRateCardMetricDetailNavSurface() throws {
+        // Honest #384: WHOOP respiratory.card → classic MetricDetailView (.respiratoryRate).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Respiratory Rate"].exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Respiratory Rate"].firstMatch
+        let card = app.descendants(matching: .any)["respiratory.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Respiratory Rate"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Respiratory Rate"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-respiratory-rate-metric-detail.png")
+        XCTAssertTrue(landed, "respiratory.card → metric.detail")
+    }
+
+
 
     func testSleepHRVCardMetricDetailNavSurface() throws {
         // Honest #371: WHOOP sleepHRVCard → classic MetricDetailView (.hrv).

@@ -545,6 +545,7 @@ struct AdvancedMetricDetailView: View {
         case .activeCalories: return data.activeCalories
         case .bloodOxygen: return data.bloodOxygen ?? 0
         case .steps: return Double(data.steps)
+        case .respiratoryRate: return data.respiratoryRate ?? 0
         }
     }
     
@@ -556,12 +557,13 @@ struct AdvancedMetricDetailView: View {
         case .activeCalories: return data.activeCalories
         case .bloodOxygen: return data.bloodOxygen ?? 0
         case .steps: return Double(data.steps)
+        case .respiratoryRate: return data.respiratoryRate ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep:
+        case .sleep, .respiratoryRate:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps:
             return "\(Int(value))"

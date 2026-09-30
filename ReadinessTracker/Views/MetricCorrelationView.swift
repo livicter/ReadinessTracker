@@ -177,6 +177,7 @@ struct MetricCorrelationView: View {
         case .activeCalories: return data.activeCalories
         case .bloodOxygen: return data.bloodOxygen
         case .steps: return Double(data.steps)
+        case .respiratoryRate: return data.respiratoryRate
         }
     }
 }
