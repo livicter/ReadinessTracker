@@ -81,6 +81,7 @@ struct SmartInsightsView: View {
                 case .exerciseTime: normalizedSlope = slope / 30.0 * 100
                 case .standHours: normalizedSlope = slope / 12.0 * 100
                 case .standTime: normalizedSlope = slope / 90.0 * 100
+                case .moveTime: normalizedSlope = slope / 45.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

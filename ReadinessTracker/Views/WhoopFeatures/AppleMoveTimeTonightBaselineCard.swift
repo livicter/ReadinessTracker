@@ -8,6 +8,9 @@ struct AppleMoveTimeTonightBaselineCard: View {
     let minutes: Double?
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #393: classic MetricDetailView(.moveTime).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { minutes.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct AppleMoveTimeTonightBaselineCard: View {
     private let moveColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.appleMoveTimeCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .moveTime,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -127,6 +138,7 @@ struct AppleMoveTimeTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: moveColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.appleMoveTimeSpark)
                     }
                 }
@@ -174,12 +186,16 @@ struct AppleMoveTimeTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Move time trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.appleMoveTimeCard)
+        .accessibilityLabel("Move Time")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
