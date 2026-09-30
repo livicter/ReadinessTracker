@@ -9,6 +9,9 @@ struct AppleExerciseTimeTonightBaselineCard: View {
     let minutes: Double?
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #390: classic MetricDetailView(.exerciseTime).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { minutes.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct AppleExerciseTimeTonightBaselineCard: View {
     private let exerciseColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.appleExerciseTimeCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .exerciseTime,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -128,6 +139,7 @@ struct AppleExerciseTimeTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: exerciseColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.appleExerciseTimeSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct AppleExerciseTimeTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Headphone audio trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.appleExerciseTimeCard)
+        .accessibilityLabel("Exercise Time")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
