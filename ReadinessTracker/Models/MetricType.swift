@@ -17,6 +17,7 @@ enum MetricType: String, CaseIterable {
     case moveTime = "Move Time"
     case basalEnergy = "Basal Energy"
     case wheelchairDistance = "Wheelchair Distance"
+    case bodyMass = "Body Mass"
 
     var title: String { rawValue }
 
@@ -38,6 +39,7 @@ enum MetricType: String, CaseIterable {
         case .moveTime: return "figure.walk"
         case .basalEnergy: return "flame"
         case .wheelchairDistance: return "figure.roll"
+        case .bodyMass: return "scalemass"
         }
     }
 
@@ -59,6 +61,7 @@ enum MetricType: String, CaseIterable {
         case .moveTime: return "min"
         case .basalEnergy: return "cal"
         case .wheelchairDistance: return "km"
+        case .bodyMass: return "kg"
         }
     }
 
@@ -80,12 +83,13 @@ enum MetricType: String, CaseIterable {
         case .moveTime: return Color(hex: "FF9F0A")
         case .basalEnergy: return Color(hex: "FF9500")
         case .wheelchairDistance: return Color(hex: "0A84FF")
+        case .bodyMass: return Color(hex: "8E8E93")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -170,6 +174,11 @@ enum MetricType: String, CaseIterable {
             if value < 3 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some mobility volume") }
             if value < 5 { return MetricZone(label: "Active", color: RTColor.good, description: "Solid wheelchair distance") }
             return MetricZone(label: "High", color: RTColor.optimal, description: "Great mobility day")
+        case .bodyMass:
+            if value < 50 { return MetricZone(label: "Light", color: RTColor.caution, description: "Below common adult band") }
+            if value < 90 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common adult band") }
+            if value < 110 { return MetricZone(label: "Higher", color: RTColor.caution, description: "Upper end of common band") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "Above common adult band")
         }
     }
 }

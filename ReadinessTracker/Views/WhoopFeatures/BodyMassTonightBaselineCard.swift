@@ -8,6 +8,9 @@ struct BodyMassTonightBaselineCard: View {
     let kg: Double?
     let history: [(date: Date, kg: Double)]
     let baseline: Double
+    /// Honest #396: classic MetricDetailView(.bodyMass).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kg.map { max(0, $0) } }
 
@@ -48,15 +51,23 @@ struct BodyMassTonightBaselineCard: View {
     private let massColor = Color(hex: "8E8E93")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.bodyMassCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .bodyMass,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -126,6 +137,7 @@ struct BodyMassTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: massColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.bodyMassSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct BodyMassTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Body mass trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.bodyMassCard)
+        .accessibilityLabel("Body Mass")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

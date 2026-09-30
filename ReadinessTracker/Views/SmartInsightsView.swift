@@ -84,6 +84,7 @@ struct SmartInsightsView: View {
                 case .moveTime: normalizedSlope = slope / 45.0 * 100
                 case .basalEnergy: normalizedSlope = slope / 1600.0 * 100
                 case .wheelchairDistance: normalizedSlope = slope / 5.0 * 100
+                case .bodyMass: normalizedSlope = slope / 5.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
