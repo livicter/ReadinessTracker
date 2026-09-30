@@ -7406,6 +7406,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.flights.card → metric.detail")
     }
 
+    func testWalkingDistanceCardMetricDetailNavSurface() throws {
+        // Honest #389: WHOOP body.distance.card → classic MetricDetailView (.walkingDistance).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Walking Distance"].exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Walking Distance"].firstMatch
+        let card = app.descendants(matching: .any)["body.distance.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Walking Distance"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Walking Distance"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-walking-distance-metric-detail.png")
+        XCTAssertTrue(landed, "body.distance.card → metric.detail")
+    }
+
+
 
 
 

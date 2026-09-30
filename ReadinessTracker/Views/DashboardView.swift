@@ -1614,6 +1614,7 @@ struct DashboardView: View {
                     source: selectedSource
                 )
 
+                // Honest #389: WHOOP body.distance.card → classic MetricDetailView(.walkingDistance)
                 DistanceTonightBaselineCard(
                     kilometers: data.distanceWalkingRunningKm,
                     history: history.compactMap { day in
@@ -1623,9 +1624,10 @@ struct DashboardView: View {
                     baseline: DistanceBaseline.average(
                         from: history,
                         fallback: data.distanceWalkingRunningKm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.distanceCard)
 
                 WalkingDoubleSupportTonightBaselineCard(
                     percent: data.walkingDoubleSupportPercent,

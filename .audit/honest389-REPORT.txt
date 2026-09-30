@@ -1,0 +1,4 @@
+Honest #389 — DistanceTonightBaselineCard → MetricDetailView(.walkingDistance)
+Date: 2026-10-01 HKT ~05:21
+Tests: unit green; testWalkingDistanceCardMetricDetailNavSurface PASS
+New MetricType.walkingDistance; NavigationLink Steps-parity.

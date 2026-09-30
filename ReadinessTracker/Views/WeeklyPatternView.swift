@@ -81,7 +81,7 @@ struct WeeklyPatternView: View {
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed:
             return "\(Int(value))"
