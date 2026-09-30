@@ -1599,6 +1599,7 @@ struct DashboardView: View {
                     source: selectedSource
                 )
 
+                // Honest #388: WHOOP flights.climbed.card → classic MetricDetailView(.flightsClimbed)
                 FlightsClimbedTonightBaselineCard(
                     flights: data.flightsClimbed,
                     history: history.compactMap { day in
@@ -1608,9 +1609,10 @@ struct DashboardView: View {
                     baseline: FlightsClimbedBaseline.average(
                         from: history,
                         fallback: data.flightsClimbed ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.flightsClimbedCard)
 
                 DistanceTonightBaselineCard(
                     kilometers: data.distanceWalkingRunningKm,

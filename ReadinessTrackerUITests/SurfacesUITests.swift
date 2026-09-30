@@ -7381,6 +7381,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "skin.temp.card → metric.detail")
     }
 
+    func testFlightsClimbedCardMetricDetailNavSurface() throws {
+        // Honest #388: WHOOP flights climbed card → classic MetricDetailView (.flightsClimbed).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Flights Climbed"].exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Flights Climbed"].firstMatch
+        let card = app.descendants(matching: .any)["body.flights.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Flights Climbed"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Flights Climbed"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-flights-climbed-metric-detail.png")
+        XCTAssertTrue(landed, "body.flights.card → metric.detail")
+    }
+
+
 
 
 

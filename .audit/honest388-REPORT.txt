@@ -1,0 +1,4 @@
+Honest #388 — FlightsClimbedTonightBaselineCard → MetricDetailView(.flightsClimbed)
+Date: 2026-10-01 HKT ~05:13
+Tests: unit green; testFlightsClimbedCardMetricDetailNavSurface PASS
+New MetricType.flightsClimbed; NavigationLink Steps-parity (always hosted).

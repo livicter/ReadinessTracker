@@ -741,7 +741,7 @@ struct AdvancedMetricChartView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed:
             return "\(Int(value))"
         }
     }
