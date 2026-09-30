@@ -1,8 +1,8 @@
-# Fitbit / Google Health API Setup (Honest #360–#365)
+# Fitbit / Google Health API Setup (Honest #360–#366)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep**, **daily RHR**, **daily HRV (RMSSD)**, **daily SpO2**, plus **steps** and **active calories**.
+and syncs **sleep**, **RHR / HRV / SpO2 / respiratory rate / sleep skin temp**, plus **steps** and **active calories**.
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -24,7 +24,7 @@ Docs:
    (also as `REVERSED_CLIENT_ID` in a downloaded GoogleService-Info-style plist).
 5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
-   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362 / #363 / #364** — RHR, HRV, SpO2)
+   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362–#364 / #366** — RHR, HRV, SpO2, respiratory rate, sleep skin temp)
    - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365** — required for `steps` + `active-energy-burned` dailyRollUp)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
@@ -88,6 +88,8 @@ OAuth will not start.
 - **SpO2** from `GET .../dataTypes/daily-oxygen-saturation/dataPoints` -> `DailyHealthData.bloodOxygen` (averagePercentage 0–100; `source: .fitbit`) — **same** vitals scope (Honest #364); no new Console scope
 - **Steps** from `POST .../dataTypes/steps/dataPoints:dailyRollUp` -> `DailyHealthData.steps` (`countSum`; `source: .fitbit`) — needs **activity** scope (Honest #365)
 - **Active calories** from `POST .../dataTypes/active-energy-burned/dataPoints:dailyRollUp` -> `DailyHealthData.activeCalories` (`kcalSum`; `source: .fitbit`) — same activity scope
+- **Respiratory rate** from `GET .../dataTypes/daily-respiratory-rate/dataPoints` -> `DailyHealthData.respiratoryRate` (`breathsPerMinute`; `source: .fitbit`) — **same** vitals scope (Honest #366); no new Console scope
+- **Sleep skin temperature** from `GET .../dataTypes/daily-sleep-temperature-derivations/dataPoints` -> `DailyHealthData.skinTemperature` (`nightlyTemperatureCelsius`; `source: .fitbit`) — **same** vitals scope (Honest #366); no new Console scope
 
 ## 4. Important notes
 

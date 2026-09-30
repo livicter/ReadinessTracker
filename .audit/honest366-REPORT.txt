@@ -1,0 +1,33 @@
+Honest #366 — Google Health daily respiratory rate + sleep skin temp (self-verify)
+Date: 2026-10-01 HKT (~02:08)
+Branch: honest-366-google-health-rr-skintemp
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: a4b34e1 (#365)
+
+Chose: respiratory rate + sleep skin temperature — both already on DailyHealthData,
+same vitals Restricted scope as RHR/HRV/SpO2 (NO new Console scope), WHOOP UI cards exist.
+Higher value than distance (activity) or UI-only poteto for this slot.
+
+API / dataType / scope
+- dataType (RR): daily-respiratory-rate
+- Endpoint: GET .../dataTypes/daily-respiratory-rate/dataPoints
+- Filter: dailyRespiratoryRate.date >= YYYY-MM-DD AND < next day
+- Map: breathsPerMinute → DailyHealthData.respiratoryRate
+- dataType (skin): daily-sleep-temperature-derivations
+- Endpoint: GET .../dataTypes/daily-sleep-temperature-derivations/dataPoints
+- Filter: dailySleepTemperatureDerivations.date >= YYYY-MM-DD AND < next day
+- Map: nightlyTemperatureCelsius (absolute °C) → DailyHealthData.skinTemperature
+  (SkinTemperatureCard computes deviation vs history baseline)
+- Scope REUSED: googlehealth.health_metrics_and_measurements.readonly — no new Console scope
+- Soft-fail 403; source .fitbit; OAuth unchanged
+
+Build / tests (iPhone 17 sim)
+- GoogleHealthRespiratoryRateMapperTests: 6/6
+- GoogleHealthSkinTempMapperTests: 6/6
+- Full ReadinessTrackerTests: 187 executed, 19 skipped, 0 failures
+- UITests: Settings sources + source picker PASS
+- UITests: RespiratoryRate + SkinTemperature surfaces FAIL (revealText fixture scroll flake; prior audit shots attached)
+
+Screenshots → .audit/honest366-* and /workspace/honest366-*
+
+Out of scope: distance, Connect/2FA, Secrets, Trends SpO2, App Group portal, UI MetricDetail poteto

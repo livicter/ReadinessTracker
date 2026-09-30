@@ -5,7 +5,7 @@ import UIKit
 import CryptoKit
 import Security
 
-/// Fitbit data source manager — backed by Google Health API (sleep + RHR + HRV + SpO2 + steps/calories).
+/// Fitbit data source manager — backed by Google Health API (sleep, vitals, activity).
 /// User-facing product language stays "Fitbit" / `DataSource.fitbit`.
 @MainActor
 class FitbitManager: NSObject, ObservableObject {
@@ -21,7 +21,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let redirectUri: String
     private let callbackURLScheme: String
     private let sleepScope = "https://www.googleapis.com/auth/googlehealth.sleep.readonly"
-    /// Required for `daily-resting-heart-rate`, `daily-heart-rate-variability`, `daily-oxygen-saturation`.
+    /// Required for RHR / HRV / SpO2 / respiratory rate / sleep skin temperature.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
     /// Required for `steps` / `active-energy-burned` dailyRollUp. Restricted scope —
@@ -35,6 +35,8 @@ class FitbitManager: NSObject, ObservableObject {
     private let rhrListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints"
     private let hrvListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-variability/dataPoints"
     private let spo2ListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-oxygen-saturation/dataPoints"
+    private let respiratoryRateListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-respiratory-rate/dataPoints"
+    private let sleepTempListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-sleep-temperature-derivations/dataPoints"
     private let stepsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp"
     private let activeEnergyDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-energy-burned/dataPoints:dailyRollUp"
 
@@ -367,12 +369,16 @@ class FitbitManager: NSObject, ObservableObject {
         async let rhrTask = fetchRestingHeartRate(token: token)
         async let hrvTask = fetchHeartRateVariability(token: token)
         async let spo2Task = fetchBloodOxygen(token: token)
+        async let rrTask = fetchRespiratoryRate(token: token)
+        async let skinTask = fetchSkinTemperature(token: token)
         async let stepsTask = fetchSteps(token: token)
         async let caloriesTask = fetchActiveCalories(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
         let spo2Pct = await spo2Task
+        let respRate = await rrTask
+        let skinTemp = await skinTask
         let stepsCount = await stepsTask
         let activeKcal = await caloriesTask
 
@@ -380,6 +386,8 @@ class FitbitManager: NSObject, ObservableObject {
                 || (rhrBPM ?? 0) > 0
                 || (hrvMs ?? 0) > 0
                 || (spo2Pct ?? 0) > 0
+                || (respRate ?? 0) > 0
+                || (skinTemp ?? 0) > 0
                 || (stepsCount ?? 0) > 0
                 || (activeKcal ?? 0) > 0 else {
             if errorMessage == nil {
@@ -410,6 +418,9 @@ class FitbitManager: NSObject, ObservableObject {
             activeCalories: activeKcal ?? 0,
             steps: stepsCount ?? 0,
             workoutMinutes: 0,
+            // Nightly absolute °C (SkinTemperatureCard computes deviation vs history baseline).
+            skinTemperature: skinTemp,
+            respiratoryRate: respRate,
             // Google Health daily SpO2 averagePercentage is 0–100 (same as HK after *100).
             bloodOxygen: spo2Pct
         )
@@ -628,6 +639,90 @@ class FitbitManager: NSObject, ObservableObject {
         } catch {
             if errorMessage == nil {
                 errorMessage = "SpO2 sync failed: \(error.localizedDescription)"
+            }
+            return nil
+        }
+    }
+
+    /// Daily respiratory rate (breaths/min) from Google Health `daily-respiratory-rate` (vitals scope).
+    private func fetchRespiratoryRate(token: String) async -> Double? {
+        await fetchDailyVitalsList(
+            token: token,
+            urlString: respiratoryRateListURL,
+            filterField: "dailyRespiratoryRate.date",
+            metricLabel: "Respiratory rate",
+            map: { try GoogleHealthRespiratoryRateMapper.mapListResponse($0) }
+        )
+    }
+
+    /// Nightly skin temperature (°C) from Google Health `daily-sleep-temperature-derivations` (vitals scope).
+    private func fetchSkinTemperature(token: String) async -> Double? {
+        await fetchDailyVitalsList(
+            token: token,
+            urlString: sleepTempListURL,
+            filterField: "dailySleepTemperatureDerivations.date",
+            metricLabel: "Skin temperature",
+            map: { try GoogleHealthSkinTempMapper.mapListResponse($0) }
+        )
+    }
+
+    /// Shared GET list for daily vitals summaries (civil date today window). Soft-fails HTTP 403.
+    private func fetchDailyVitalsList<T>(
+        token: String,
+        urlString: String,
+        filterField: String,
+        metricLabel: String,
+        map: (Data) throws -> T?
+    ) async -> T? {
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: Date())
+        let startOfTomorrow = cal.date(byAdding: .day, value: 1, to: startOfToday) ?? startOfToday.addingTimeInterval(86400)
+        let dayFmt = DateFormatter()
+        dayFmt.calendar = cal
+        dayFmt.locale = Locale(identifier: "en_US_POSIX")
+        dayFmt.timeZone = cal.timeZone
+        dayFmt.dateFormat = "yyyy-MM-dd"
+        let today = dayFmt.string(from: startOfToday)
+        let tomorrow = dayFmt.string(from: startOfTomorrow)
+        let filter = "\(filterField) >= \"\(today)\" AND \(filterField) < \"\(tomorrow)\""
+
+        var components = URLComponents(string: urlString)!
+        components.queryItems = [
+            URLQueryItem(name: "filter", value: filter),
+            URLQueryItem(name: "pageSize", value: "10")
+        ]
+        guard let url = components.url else { return nil }
+
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode == 412 {
+                    errorMessage = "No Google Health profile yet. Open the Google Health / Fitbit app, finish setup, then reconnect."
+                    return nil
+                }
+                if http.statusCode == 403 {
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "\(metricLabel) needs Google Health vitals scope. Re-Connect Fitbit after Console scope add. (\(body.prefix(120)))"
+                    }
+                    return nil
+                }
+                if !(200...299).contains(http.statusCode) {
+                    let body = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "\(metricLabel) sync failed (\(http.statusCode)): \(body.prefix(180))"
+                    }
+                    return nil
+                }
+            }
+            return try map(data)
+        } catch {
+            if errorMessage == nil {
+                errorMessage = "\(metricLabel) sync failed: \(error.localizedDescription)"
             }
             return nil
         }
@@ -1373,5 +1468,92 @@ enum GoogleHealthActiveCaloriesMapper {
         })
         guard let kcal = best?.activeEnergyBurned?.kcalSum?.value, kcal > 0 else { return nil }
         return kcal
+    }
+}
+
+// MARK: - Google Health daily respiratory rate JSON → breaths/min
+
+enum GoogleHealthRespiratoryRateMapper {
+    struct ListResponse: Codable {
+        let dataPoints: [DataPoint]?
+        let nextPageToken: String?
+    }
+
+    struct DataPoint: Codable {
+        let name: String?
+        let dailyRespiratoryRate: DailyRRPayload?
+    }
+
+    struct DailyRRPayload: Codable {
+        let date: CivilDate?
+        let breathsPerMinute: GoogleHealthHRVMapper.FlexibleDouble?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    static func mapListResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(ListResponse.self, from: data)
+        guard let points = decoded.dataPoints, !points.isEmpty else { return nil }
+        let payloads = points.compactMap { $0.dailyRespiratoryRate }
+        guard let best = payloads.max(by: { a, b in civilRank(a.date) < civilRank(b.date) }) else {
+            return nil
+        }
+        guard let bpm = best.breathsPerMinute?.value, bpm > 0, bpm < 80 else { return nil }
+        return bpm
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        return (date.year ?? 0) * 10_000 + (date.month ?? 0) * 100 + (date.day ?? 0)
+    }
+}
+
+// MARK: - Google Health daily sleep skin temperature JSON → nightly °C
+
+enum GoogleHealthSkinTempMapper {
+    struct ListResponse: Codable {
+        let dataPoints: [DataPoint]?
+        let nextPageToken: String?
+    }
+
+    struct DataPoint: Codable {
+        let name: String?
+        let dailySleepTemperatureDerivations: DailySkinTempPayload?
+    }
+
+    struct DailySkinTempPayload: Codable {
+        let date: CivilDate?
+        let nightlyTemperatureCelsius: GoogleHealthHRVMapper.FlexibleDouble?
+        let baselineTemperatureCelsius: GoogleHealthHRVMapper.FlexibleDouble?
+        let relativeNightlyStddev30dCelsius: GoogleHealthHRVMapper.FlexibleDouble?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    /// Returns nightly absolute skin temperature °C (Dashboard computes deviation vs history baseline).
+    static func mapListResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(ListResponse.self, from: data)
+        guard let points = decoded.dataPoints, !points.isEmpty else { return nil }
+        let payloads = points.compactMap { $0.dailySleepTemperatureDerivations }
+        guard let best = payloads.max(by: { a, b in civilRank(a.date) < civilRank(b.date) }) else {
+            return nil
+        }
+        guard let nightly = best.nightlyTemperatureCelsius?.value, nightly > 20, nightly < 45 else {
+            return nil
+        }
+        return nightly
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        return (date.year ?? 0) * 10_000 + (date.month ?? 0) * 100 + (date.day ?? 0)
     }
 }
