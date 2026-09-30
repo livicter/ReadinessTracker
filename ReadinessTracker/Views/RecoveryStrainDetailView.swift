@@ -368,10 +368,13 @@ struct RecoveryStrainDetailView: View {
                     d.skinTemperature.map { (date: d.date, value: $0) }
                 }
                 let baseline = tempHistory.map { $0.value }.reduce(0, +) / Double(max(1, tempHistory.count))
+                // Honest #385: WHOOP skin.temp.card → classic MetricDetailView(.skinTemperature)
                 SkinTemperatureCard(
                     currentTemp: skinTemp,
                     baselineTemp: baseline > 0 ? baseline : skinTemp,
-                    history: tempHistory
+                    history: tempHistory,
+                    dailyHistory: history,
+                    source: data.source
                 )
             }
 

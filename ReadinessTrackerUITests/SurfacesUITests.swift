@@ -7356,6 +7356,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "respiratory.card → metric.detail")
     }
 
+    func testSkinTemperatureCardMetricDetailNavSurface() throws {
+        // Honest #385: WHOOP skin.temp.card → classic MetricDetailView (.skinTemperature).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Skin Temperature"].exists && n < 28 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Skin Temperature"].firstMatch
+        let card = app.descendants(matching: .any)["skin.temp.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Skin Temperature"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Skin Temperature"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-skin-temperature-metric-detail.png")
+        XCTAssertTrue(landed, "skin.temp.card → metric.detail")
+    }
+
+
 
 
     func testSleepHRVCardMetricDetailNavSurface() throws {

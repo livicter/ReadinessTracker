@@ -1,0 +1,4 @@
+Honest #385 — SkinTemperatureCard → MetricDetailView(.skinTemperature)
+Date: 2026-10-01 HKT ~04:41
+Tests: unit green; testSkinTemperatureCardMetricDetailNavSurface PASS
+New MetricType.skinTemperature + exhaustive switch updates.

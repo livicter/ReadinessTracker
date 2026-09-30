@@ -1202,12 +1202,13 @@ struct MetricDetailView: View {
         case .bloodOxygen: return data.bloodOxygen ?? 0
         case .steps: return Double(data.steps)
         case .respiratoryRate: return data.respiratoryRate ?? 0
+        case .skinTemperature: return data.skinTemperature ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate:
+        case .sleep, .respiratoryRate, .skinTemperature:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps:
             return "\(Int(value))"
@@ -1352,6 +1353,8 @@ extension MetricDetailView {
             return (.steps, .activeCalories)
         case .respiratoryRate:
             return (.respiratoryRate, .hrv)
+        case .skinTemperature:
+            return (.skinTemperature, .sleep)
         }
     }
 }

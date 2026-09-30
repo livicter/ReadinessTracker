@@ -104,7 +104,7 @@ struct QuickTrendCard: View {
 
     private func formattedAverage(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate:
+        case .sleep, .respiratoryRate, .skinTemperature:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .steps:
             return "\(Int(value))"
@@ -145,6 +145,7 @@ struct QuickTrendCard: View {
         case .bloodOxygen: return data.bloodOxygen
         case .steps: return Double(data.steps)
         case .respiratoryRate: return data.respiratoryRate
+        case .skinTemperature: return data.skinTemperature
         }
     }
 }

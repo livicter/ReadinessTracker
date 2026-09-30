@@ -8,6 +8,7 @@ enum MetricType: String, CaseIterable {
     case bloodOxygen = "Blood Oxygen"
     case steps = "Steps"
     case respiratoryRate = "Respiratory Rate"
+    case skinTemperature = "Skin Temperature"
 
     var title: String { rawValue }
 
@@ -20,6 +21,7 @@ enum MetricType: String, CaseIterable {
         case .bloodOxygen: return "drop.fill"
         case .steps: return "figure.walk"
         case .respiratoryRate: return "lungs.fill"
+        case .skinTemperature: return "thermometer.medium"
         }
     }
 
@@ -32,6 +34,7 @@ enum MetricType: String, CaseIterable {
         case .bloodOxygen: return "%"
         case .steps: return "steps"
         case .respiratoryRate: return "br/min"
+        case .skinTemperature: return "°C"
         }
     }
 
@@ -44,13 +47,14 @@ enum MetricType: String, CaseIterable {
         case .bloodOxygen: return RTColor.optimal
         case .steps: return RTColor.strain
         case .respiratoryRate: return RTColor.respiratory
+        case .skinTemperature: return RTColor.skinTemp
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps: return true
-        case .restingHR, .respiratoryRate: return false
+        case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
 
@@ -88,6 +92,12 @@ enum MetricType: String, CaseIterable {
             if value <= 18 { return MetricZone(label: "Normal", color: RTColor.optimal, description: "Healthy resting breaths/min") }
             if value <= 20 { return MetricZone(label: "Slightly Elevated", color: RTColor.caution, description: "Upper end of resting range") }
             return MetricZone(label: "Elevated", color: RTColor.warning, description: "Above typical resting range")
+        case .skinTemperature:
+            // Wrist/skin absolute °C bands (device-dependent; detail view still shows vs personal baseline on card).
+            if value < 32.0 { return MetricZone(label: "Cool", color: RTColor.caution, description: "Below typical skin range") }
+            if value <= 35.5 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common skin range") }
+            if value <= 36.5 { return MetricZone(label: "Warm", color: RTColor.caution, description: "Upper end of skin range") }
+            return MetricZone(label: "Hot", color: RTColor.warning, description: "Above typical skin range")
         }
     }
 }
