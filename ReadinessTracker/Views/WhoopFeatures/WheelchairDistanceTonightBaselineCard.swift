@@ -8,6 +8,9 @@ struct WheelchairDistanceTonightBaselineCard: View {
     let kilometers: Double?
     let history: [(date: Date, km: Double)]
     let baseline: Double
+    /// Honest #395: classic MetricDetailView(.wheelchairDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kilometers.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct WheelchairDistanceTonightBaselineCard: View {
     private let wheelchairDistanceColor = Color(hex: "0A84FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.wheelchairDistanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .wheelchairDistance,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -127,6 +138,7 @@ struct WheelchairDistanceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: wheelchairDistanceColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.wheelchairDistanceSpark)
                     }
                 }
@@ -174,12 +186,16 @@ struct WheelchairDistanceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Wheelchair distance trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.wheelchairDistanceCard)
+        .accessibilityLabel("Wheelchair Distance")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

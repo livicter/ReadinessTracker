@@ -100,7 +100,7 @@ struct DistributionHistogramView: View {
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance: return String(format: "%.1f", value)
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance: return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy: return "\(Int(value))"
         }
     }
@@ -135,7 +135,7 @@ struct HistogramBucket: Identifiable {
         switch metric {
         case .sleep:
             return "\(Int(range.lowerBound))-\(Int(range.upperBound))h"
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .respiratoryRate, .skinTemperature, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .respiratoryRate, .skinTemperature, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance:
             return "\(Int(range.lowerBound))-\(Int(range.upperBound))"
         }
     }

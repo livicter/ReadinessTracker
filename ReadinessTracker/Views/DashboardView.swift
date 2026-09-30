@@ -1137,6 +1137,7 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.wheelchairPushesCard)
 
 
+            // Honest #395: WHOOP body.wheelchairDistance.card → classic MetricDetailView(.wheelchairDistance)
             WheelchairDistanceTonightBaselineCard(
                 kilometers: data.distanceWheelchairKm,
                 history: history.compactMap { day in
@@ -1146,9 +1147,10 @@ struct DashboardView: View {
                 baseline: WheelchairDistanceBaseline.average(
                     from: history,
                     fallback: data.distanceWheelchairKm ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.wheelchairDistanceCard)
 
 
 

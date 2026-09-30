@@ -554,6 +554,7 @@ struct AdvancedMetricDetailView: View {
         case .standTime: return data.appleStandTimeMinutes ?? 0
         case .moveTime: return data.appleMoveTimeMinutes ?? 0
         case .basalEnergy: return data.basalEnergyKcal ?? 0
+        case .wheelchairDistance: return data.distanceWheelchairKm ?? 0
         }
     }
     
@@ -574,12 +575,13 @@ struct AdvancedMetricDetailView: View {
         case .standTime: return data.appleStandTimeMinutes ?? 0
         case .moveTime: return data.appleMoveTimeMinutes ?? 0
         case .basalEnergy: return data.basalEnergyKcal ?? 0
+        case .wheelchairDistance: return data.distanceWheelchairKm ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
             return "\(Int(value))"

@@ -739,7 +739,7 @@ struct AdvancedMetricChartView: View {
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
             return "\(Int(value))"
