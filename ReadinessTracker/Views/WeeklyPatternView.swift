@@ -83,7 +83,7 @@ struct WeeklyPatternView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime:
             return "\(Int(value))"
         }
     }

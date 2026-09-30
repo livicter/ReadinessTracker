@@ -74,12 +74,13 @@ struct SmartInsightsView: View {
                 case .activeCalories: normalizedSlope = slope / 400.0 * 100
                 case .bloodOxygen: normalizedSlope = slope / 5.0 * 100
                 case .steps: normalizedSlope = slope / 10000.0 * 100
-        case .respiratoryRate: normalizedSlope = slope / 16.0 * 100
-        case .skinTemperature: normalizedSlope = slope / 1.0 * 100
-        case .flightsClimbed: normalizedSlope = slope / 10.0 * 100
-        case .walkingDistance: normalizedSlope = slope / 5.0 * 100
-        case .exerciseTime: normalizedSlope = slope / 30.0 * 100
-        case .standHours: normalizedSlope = slope / 12.0 * 100
+                case .respiratoryRate: normalizedSlope = slope / 16.0 * 100
+                case .skinTemperature: normalizedSlope = slope / 1.0 * 100
+                case .flightsClimbed: normalizedSlope = slope / 10.0 * 100
+                case .walkingDistance: normalizedSlope = slope / 5.0 * 100
+                case .exerciseTime: normalizedSlope = slope / 30.0 * 100
+                case .standHours: normalizedSlope = slope / 12.0 * 100
+                case .standTime: normalizedSlope = slope / 90.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
