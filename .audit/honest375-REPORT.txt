@@ -1,0 +1,4 @@
+Honest #375 — RestorativeSleepCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:36)
+Tip base: 5959613 (#374)
+Tests: unit 179/19/0; testRestorativeSleepCardMetricDetailNavSurface PASS

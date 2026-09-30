@@ -808,13 +808,15 @@ struct DashboardView: View {
 
 
 
+            // Honest #375: WHOOP sleep.restorative.card → classic MetricDetailView(.sleep)
             RestorativeSleepCard(
                 sleepHours: data.sleepHours,
                 deepPercent: data.deepSleepPercent,
                 remPercent: data.remSleepPercent,
-                history: history.map { ($0.date, $0.sleepHours, $0.deepSleepPercent, $0.remSleepPercent) }
+                history: history.map { ($0.date, $0.sleepHours, $0.deepSleepPercent, $0.remSleepPercent) },
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.sleepRestorativeCard)
 
 
             // Honest #372: WHOOP sleep.core.card → classic MetricDetailView(.sleep)
