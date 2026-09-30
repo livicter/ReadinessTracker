@@ -2095,6 +2095,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #394: WHOOP body.basal.card → classic MetricDetailView(.basalEnergy)
                 BasalEnergyTonightBaselineCard(
                     kcal: data.basalEnergyKcal,
                     history: history.compactMap { day in
@@ -2104,9 +2105,10 @@ struct DashboardView: View {
                     baseline: BasalEnergyBaseline.average(
                         from: history,
                         fallback: data.basalEnergyKcal ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.basalEnergyCard)
 
 
                 ToothbrushingTonightBaselineCard(

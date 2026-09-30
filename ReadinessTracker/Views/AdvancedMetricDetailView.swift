@@ -553,6 +553,7 @@ struct AdvancedMetricDetailView: View {
         case .standHours: return data.appleStandHours ?? 0
         case .standTime: return data.appleStandTimeMinutes ?? 0
         case .moveTime: return data.appleMoveTimeMinutes ?? 0
+        case .basalEnergy: return data.basalEnergyKcal ?? 0
         }
     }
     
@@ -572,6 +573,7 @@ struct AdvancedMetricDetailView: View {
         case .standHours: return data.appleStandHours ?? 0
         case .standTime: return data.appleStandTimeMinutes ?? 0
         case .moveTime: return data.appleMoveTimeMinutes ?? 0
+        case .basalEnergy: return data.basalEnergyKcal ?? 0
         }
     }
     
@@ -579,7 +581,7 @@ struct AdvancedMetricDetailView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
             return "\(Int(value))"
         }
     }
