@@ -2848,6 +2848,7 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.waistCircumferenceCard)
 
 
+                // Honest #397: WHOOP body.bodyFat.card → classic MetricDetailView(.bodyFat)
                 BodyFatTonightBaselineCard(
                     percent: data.bodyFatPercent,
                     history: history.compactMap { day in
@@ -2857,9 +2858,10 @@ struct DashboardView: View {
                     baseline: BodyFatBaseline.average(
                         from: history,
                         fallback: data.bodyFatPercent ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.bodyFatCard)
 
                 if UserSettings.load().trackMenstrualCycle {
                     CycleTonightBaselineCard(

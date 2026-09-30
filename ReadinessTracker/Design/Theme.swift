@@ -391,9 +391,10 @@ enum SurfaceID {
     static let waistCircumferenceCard = "body.waist.card"
     static let waistCircumferenceBaselineCallout = "body.waist.baseline"
     static let waistCircumferenceSpark = "body.waist.spark"
-    static let bodyFatCard = "body.fat.card"
-    static let bodyFatBaselineCallout = "body.fat.baseline"
-    static let bodyFatSpark = "body.fat.spark"
+    // Honest #397: disambiguate from dietaryFatCard ("body.fat.card")
+    static let bodyFatCard = "body.bodyFat.card"
+    static let bodyFatBaselineCallout = "body.bodyFat.baseline"
+    static let bodyFatSpark = "body.bodyFat.spark"
     static let basalEnergyCard = "body.basal.card"
     static let basalEnergyBaselineCallout = "body.basal.baseline"
     static let basalEnergySpark = "body.basal.spark"

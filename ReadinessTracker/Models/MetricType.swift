@@ -18,6 +18,7 @@ enum MetricType: String, CaseIterable {
     case basalEnergy = "Basal Energy"
     case wheelchairDistance = "Wheelchair Distance"
     case bodyMass = "Body Mass"
+    case bodyFat = "Body Fat"
 
     var title: String { rawValue }
 
@@ -40,6 +41,7 @@ enum MetricType: String, CaseIterable {
         case .basalEnergy: return "flame"
         case .wheelchairDistance: return "figure.roll"
         case .bodyMass: return "scalemass"
+        case .bodyFat: return "percent"
         }
     }
 
@@ -62,6 +64,7 @@ enum MetricType: String, CaseIterable {
         case .basalEnergy: return "cal"
         case .wheelchairDistance: return "km"
         case .bodyMass: return "kg"
+        case .bodyFat: return "%"
         }
     }
 
@@ -84,13 +87,14 @@ enum MetricType: String, CaseIterable {
         case .basalEnergy: return Color(hex: "FF9500")
         case .wheelchairDistance: return Color(hex: "0A84FF")
         case .bodyMass: return Color(hex: "8E8E93")
+        case .bodyFat: return Color(hex: "AF52DE")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass: return true
-        case .restingHR, .respiratoryRate, .skinTemperature: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat: return false
         }
     }
 
@@ -179,6 +183,11 @@ enum MetricType: String, CaseIterable {
             if value < 90 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common adult band") }
             if value < 110 { return MetricZone(label: "Higher", color: RTColor.caution, description: "Upper end of common band") }
             return MetricZone(label: "High", color: RTColor.warning, description: "Above common adult band")
+        case .bodyFat:
+            if value < 10 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below common body-fat band") }
+            if value < 25 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common body-fat band") }
+            if value < 35 { return MetricZone(label: "Higher", color: RTColor.caution, description: "Upper end of common band") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "Above common body-fat band")
         }
     }
 }

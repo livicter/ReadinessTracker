@@ -7912,6 +7912,28 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.mass.card → metric.detail")
     }
 
+    func testBodyFatCardMetricDetailNavSurface() throws {
+        // Honest #397: body.bodyFat.card → MetricDetailView (.bodyFat).
+        // SurfaceID unique vs dietaryFatCard ("body.fat.card").
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let card = app.descendants(matching: .any)["body.bodyFat.card"].firstMatch
+        while !card.exists && n < 50 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(card.waitForExistence(timeout: 8), "body.bodyFat.card")
+        // Bring into hit zone (exists can be true slightly off-screen)
+        for _ in 0..<3 { app.swipeUp() }
+        card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        let landed = app.navigationBars["Body Fat"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+        saveShot("verify-body-fat-metric-detail.png")
+        XCTAssertTrue(landed, "body.bodyFat.card → metric.detail")
+    }
+
+
+
 
     func testSleepLatencySurface() throws {
         // Honest #109: WHOOP Sleep Latency Tonight | Baseline + 7-night spark on Today.
@@ -10449,19 +10471,20 @@ final class SurfacesUITests: XCTestCase {
 
     func testBodyFatTonightBaselineSurface() throws {
         // Honest #187: Body Fat Tonight | Baseline (HK bodyFatPercentage).
+        // Honest #397: SurfaceIDs body.bodyFat.* (dietary macros keep body.fat.*).
         var n = 0
-        while !app.descendants(matching: .any)["body.fat.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.bodyFat.card"].exists && n < 48 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.fat.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.bodyFat.card"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Body Fat card")
         XCTAssertTrue(app.staticTexts["Body Fat"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
         XCTAssertTrue(app.staticTexts["Baseline"].exists)
-        _ = app.descendants(matching: .any)["body.fat.baseline"].exists
+        _ = app.descendants(matching: .any)["body.bodyFat.baseline"].exists
         _ = app.staticTexts["7-Day Body Fat"].exists
-        _ = app.descendants(matching: .any)["body.fat.spark"].exists
+        _ = app.descendants(matching: .any)["body.bodyFat.spark"].exists
         saveShot("verify-body-fat-tonight-baseline.png")
     }
 
