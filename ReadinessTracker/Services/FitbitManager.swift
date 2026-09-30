@@ -24,8 +24,8 @@ class FitbitManager: NSObject, ObservableObject {
     /// Required for RHR / HRV / SpO2 / respiratory rate / sleep skin temperature.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
-    /// Required for `steps` / `active-energy-burned` / `distance` / `floors` dailyRollUp. Restricted scope —
-    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368/#370).
+    /// Required for `steps` / `active-energy-burned` / `distance` / `floors` / `active-minutes` dailyRollUp. Restricted scope —
+    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368/#370/#386).
     private let activityScope = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
@@ -41,6 +41,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let activeEnergyDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-energy-burned/dataPoints:dailyRollUp"
     private let distanceDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/distance/dataPoints:dailyRollUp"
     private let floorsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/floors/dataPoints:dailyRollUp"
+    private let activeMinutesDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-minutes/dataPoints:dailyRollUp"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -377,6 +378,7 @@ class FitbitManager: NSObject, ObservableObject {
         async let caloriesTask = fetchActiveCalories(token: token)
         async let distanceTask = fetchDistance(token: token)
         async let floorsTask = fetchFloors(token: token)
+        async let activeMinutesTask = fetchActiveMinutes(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
@@ -387,6 +389,7 @@ class FitbitManager: NSObject, ObservableObject {
         let activeKcal = await caloriesTask
         let distanceKm = await distanceTask
         let floorsCount = await floorsTask
+        let activeMinutes = await activeMinutesTask
 
         guard sleepResult != nil
                 || (rhrBPM ?? 0) > 0
@@ -397,7 +400,8 @@ class FitbitManager: NSObject, ObservableObject {
                 || (stepsCount ?? 0) > 0
                 || (activeKcal ?? 0) > 0
                 || (distanceKm ?? 0) > 0
-                || (floorsCount ?? 0) > 0 else {
+                || (floorsCount ?? 0) > 0
+                || (activeMinutes ?? 0) > 0 else {
             if errorMessage == nil {
                 errorMessage = "No sleep, vitals, or activity found for today."
             }
@@ -450,7 +454,9 @@ class FitbitManager: NSObject, ObservableObject {
             // Google Health floors dailyRollUp countSum (Honest #370).
             flightsClimbed: floorsCount,
             // Google Health distance dailyRollUp millimetersSum → km (Honest #368).
-            distanceWalkingRunningKm: distanceKm
+            distanceWalkingRunningKm: distanceKm,
+            // Google Health active-minutes dailyRollUp sum of activeMinutesSum (Honest #386).
+            appleExerciseTimeMinutes: activeMinutes
         )
 
         self.latestData = data
@@ -795,6 +801,17 @@ class FitbitManager: NSObject, ObservableObject {
             map: { try GoogleHealthFloorsMapper.mapDailyRollupResponse($0) }
         )
     }
+
+    /// Daily active minutes from Google Health `active-minutes` dailyRollUp (activity scope).
+    private func fetchActiveMinutes(token: String) async -> Double? {
+        await fetchDailyRollup(
+            token: token,
+            urlString: activeMinutesDailyRollupURL,
+            metricLabel: "Active minutes",
+            map: { try GoogleHealthActiveMinutesMapper.mapDailyRollupResponse($0) }
+        )
+    }
+
 
     /// Shared POST dailyRollUp for civil-date today window. Soft-fails HTTP 403 (missing activity scope).
     private func fetchDailyRollup<T>(
@@ -1574,6 +1591,43 @@ enum GoogleHealthFloorsMapper {
         })
         guard let sum = best?.floors?.countSum?.value, sum > 0 else { return nil }
         return Double(sum)
+    }
+}
+
+
+// MARK: - Google Health active-minutes dailyRollUp → sum(activeMinutesSum)
+
+enum GoogleHealthActiveMinutesMapper {
+    struct RollupResponse: Codable {
+        let rollupDataPoints: [RollupPoint]?
+    }
+
+    struct RollupPoint: Codable {
+        let civilStartTime: GoogleHealthStepsMapper.CivilDateTime?
+        let activeMinutes: ActiveMinutesValue?
+    }
+
+    struct ActiveMinutesValue: Codable {
+        let activeMinutesRollupByActivityLevel: [ByLevel]?
+    }
+
+    struct ByLevel: Codable {
+        let activityLevel: String?
+        let activeMinutesSum: GoogleHealthSleepMapper.FlexibleInt64?
+    }
+
+    /// Returns latest day's total active minutes (sum across activity levels), or nil when empty / zero.
+    static func mapDailyRollupResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(RollupResponse.self, from: data)
+        guard let points = decoded.rollupDataPoints, !points.isEmpty else { return nil }
+        let best = points.max(by: { a, b in
+            GoogleHealthStepsMapper.civilRank(a.civilStartTime?.date)
+                < GoogleHealthStepsMapper.civilRank(b.civilStartTime?.date)
+        })
+        let levels = best?.activeMinutes?.activeMinutesRollupByActivityLevel ?? []
+        let total = levels.compactMap { $0.activeMinutesSum?.value }.reduce(0, +)
+        guard total > 0 else { return nil }
+        return Double(total)
     }
 }
 
