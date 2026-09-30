@@ -857,10 +857,13 @@ struct DashboardView: View {
                     history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) }
                 )
                 .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
+                // Honest #380: WHOOP sleepConsistency → classic MetricDetailView(.sleep)
                 SleepConsistencyTracker(
-                    history: history.map { ($0.date, $0.sleepStartTime, $0.sleepEndTime, $0.sleepHours) }
+                    history: history.map { ($0.date, $0.sleepStartTime, $0.sleepEndTime, $0.sleepHours) },
+                    sleepHours: data.sleepHours,
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.sleepConsistency)
             } else {
                 MissingMetricRow(title: "Sleep Debt", icon: "bed.double.fill", tint: RTColor.sleep)
                     .accessibilityIdentifier(SurfaceID.sleepDebtCard)
