@@ -1,0 +1,3 @@
+Honest #382 — SleepQualityTrend → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT ~04:24
+Tests: unit green; testSleepQualityTrendCardMetricDetailNavSurface PASS

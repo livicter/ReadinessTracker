@@ -5,6 +5,10 @@ import Charts
 /// score bars with zone bands, and daily mini rings.
 struct SleepQualityTrend: View {
     let history: [(date: Date, sleepScore: Int, sleepHours: Double, efficiency: Double)]
+    /// Honest #382: classic MetricDetailView(.sleep).
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var averageScore: Double {
         guard !history.isEmpty else { return 0 }
@@ -49,6 +53,23 @@ struct SleepQualityTrend: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header + clearer average score ring
@@ -106,6 +127,7 @@ struct SleepQualityTrend: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.sleepQualitySpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -142,6 +164,7 @@ struct SleepQualityTrend: View {
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                     }
                     .frame(height: 140)
+                            .allowsHitTesting(false)
                     .chartYScale(domain: 0...100)
                     .chartYAxis {
                         AxisMarks { _ in
@@ -201,6 +224,7 @@ struct SleepQualityTrend: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepQualityTrend)
         .accessibilityLabel("Sleep Quality Trend")
+        .contentShape(Rectangle())
     }
 
     private func barColor(_ score: Int) -> Color {
