@@ -1,0 +1,3 @@
+Honest #379 — SleepMidpointCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT ~04:08
+Tests: unit green; testSleepMidpointCardMetricDetailNavSurface PASS
