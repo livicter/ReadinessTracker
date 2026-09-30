@@ -1,0 +1,4 @@
+Honest #386 — Google Health active-minutes → appleExerciseTimeMinutes
+Date: 2026-10-01 HKT ~04:46
+Tests: unit green (incl. GoogleHealthActiveMinutesMapperTests); Exercise Time surface UITest PASS
+Soft-fail 403 under activity scope (same as steps/floors).
