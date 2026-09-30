@@ -9,6 +9,7 @@ enum MetricType: String, CaseIterable {
     case steps = "Steps"
     case respiratoryRate = "Respiratory Rate"
     case skinTemperature = "Skin Temperature"
+    case flightsClimbed = "Flights Climbed"
 
     var title: String { rawValue }
 
@@ -22,6 +23,7 @@ enum MetricType: String, CaseIterable {
         case .steps: return "figure.walk"
         case .respiratoryRate: return "lungs.fill"
         case .skinTemperature: return "thermometer.medium"
+        case .flightsClimbed: return "figure.stairs"
         }
     }
 
@@ -35,6 +37,7 @@ enum MetricType: String, CaseIterable {
         case .steps: return "steps"
         case .respiratoryRate: return "br/min"
         case .skinTemperature: return "°C"
+        case .flightsClimbed: return "fl"
         }
     }
 
@@ -48,12 +51,13 @@ enum MetricType: String, CaseIterable {
         case .steps: return RTColor.strain
         case .respiratoryRate: return RTColor.respiratory
         case .skinTemperature: return RTColor.skinTemp
+        case .flightsClimbed: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -98,6 +102,11 @@ enum MetricType: String, CaseIterable {
             if value <= 35.5 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common skin range") }
             if value <= 36.5 { return MetricZone(label: "Warm", color: RTColor.caution, description: "Upper end of skin range") }
             return MetricZone(label: "Hot", color: RTColor.warning, description: "Above typical skin range")
+        case .flightsClimbed:
+            if value < 5 { return MetricZone(label: "Low", color: RTColor.warning, description: "Few floors today") }
+            if value < 10 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some elevation work") }
+            if value < 15 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid floor volume") }
+            return MetricZone(label: "Strong", color: RTColor.optimal, description: "Great elevation day")
         }
     }
 }

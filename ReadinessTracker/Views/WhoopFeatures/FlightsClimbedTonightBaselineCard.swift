@@ -9,6 +9,9 @@ struct FlightsClimbedTonightBaselineCard: View {
     let flights: Double?
     let history: [(date: Date, flights: Double)]
     let baseline: Double
+    /// Honest #388: classic MetricDetailView(.flightsClimbed).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { flights.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct FlightsClimbedTonightBaselineCard: View {
     private let flightsColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.flightsClimbedCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .flightsClimbed,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -82,8 +93,8 @@ struct FlightsClimbedTonightBaselineCard: View {
                         .background(status.color.opacity(0.12))
                         .clipShape(Capsule())
                         .accessibilityLabel(
-                            tonight.map { "Headphone audio \($0.rounded()) decibels, \(status.label)" }
-                                ?? "No UV"
+                            tonight.map { "\(Int($0.rounded())) flights, \(status.label)" }
+                                ?? "No flights climbed"
                         )
                 }
 
@@ -128,6 +139,7 @@ struct FlightsClimbedTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: flightsColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.flightsClimbedSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct FlightsClimbedTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Headphone audio trend last seven days")
+                            .allowsHitTesting(false)
+                    .accessibilityLabel("Flights climbed trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.flightsClimbedCard)
+        .accessibilityLabel("Flights Climbed")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

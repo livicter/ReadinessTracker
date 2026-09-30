@@ -547,6 +547,7 @@ struct AdvancedMetricDetailView: View {
         case .steps: return Double(data.steps)
         case .respiratoryRate: return data.respiratoryRate ?? 0
         case .skinTemperature: return data.skinTemperature ?? 0
+        case .flightsClimbed: return data.flightsClimbed ?? 0
         }
     }
     
@@ -560,6 +561,7 @@ struct AdvancedMetricDetailView: View {
         case .steps: return Double(data.steps)
         case .respiratoryRate: return data.respiratoryRate ?? 0
         case .skinTemperature: return data.skinTemperature ?? 0
+        case .flightsClimbed: return data.flightsClimbed ?? 0
         }
     }
     
@@ -567,7 +569,7 @@ struct AdvancedMetricDetailView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed:
             return "\(Int(value))"
         }
     }
