@@ -8,6 +8,10 @@ struct WakeEpisodesCard: View {
     let currentCount: Int
     let history: [(date: Date, count: Double)]
     let baseline: Double
+    /// Honest #378: classic MetricDetailView(.sleep).
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double { max(0, Double(currentCount)) }
     private var base: Double {
@@ -40,6 +44,23 @@ struct WakeEpisodesCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -107,6 +128,7 @@ struct WakeEpisodesCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.wakeEpisodesSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -153,12 +175,16 @@ struct WakeEpisodesCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Wake episodes trend last nights")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.wakeEpisodesCard)
+        .accessibilityLabel("Wake Episodes")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

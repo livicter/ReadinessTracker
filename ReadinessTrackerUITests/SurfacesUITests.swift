@@ -7481,6 +7481,31 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "sleep.awake.card → metric.detail")
     }
 
+    func testWakeEpisodesCardMetricDetailNavSurface() throws {
+        // Honest #378: WHOOP wake.episodes.card → classic MetricDetailView (.sleep).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Wake Episodes"].exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Wake Episodes"].firstMatch
+        let card = app.descendants(matching: .any)["wake.episodes.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Wake Episodes"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Sleep"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-wake-episodes-metric-detail.png")
+        XCTAssertTrue(landed, "wake.episodes.card → metric.detail")
+    }
+
 
     func testSleepLatencySurface() throws {
         // Honest #109: WHOOP Sleep Latency Tonight | Baseline + 7-night spark on Today.
