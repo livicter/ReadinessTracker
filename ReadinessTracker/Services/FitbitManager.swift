@@ -24,8 +24,8 @@ class FitbitManager: NSObject, ObservableObject {
     /// Required for RHR / HRV / SpO2 / respiratory rate / sleep skin temperature.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
-    /// Required for `steps` / `active-energy-burned` / `distance` / `floors` / `active-minutes` dailyRollUp. Restricted scope —
-    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368/#370/#386).
+    /// Required for `steps` / `active-energy-burned` / `distance` / `floors` / `active-minutes` / `total-calories` dailyRollUp. Restricted scope —
+    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368/#370/#386/#387).
     private let activityScope = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
@@ -42,6 +42,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let distanceDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/distance/dataPoints:dailyRollUp"
     private let floorsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/floors/dataPoints:dailyRollUp"
     private let activeMinutesDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-minutes/dataPoints:dailyRollUp"
+    private let totalCaloriesDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/total-calories/dataPoints:dailyRollUp"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -379,6 +380,7 @@ class FitbitManager: NSObject, ObservableObject {
         async let distanceTask = fetchDistance(token: token)
         async let floorsTask = fetchFloors(token: token)
         async let activeMinutesTask = fetchActiveMinutes(token: token)
+        async let totalCaloriesTask = fetchTotalCalories(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
@@ -390,6 +392,7 @@ class FitbitManager: NSObject, ObservableObject {
         let distanceKm = await distanceTask
         let floorsCount = await floorsTask
         let activeMinutes = await activeMinutesTask
+        let totalKcal = await totalCaloriesTask
 
         guard sleepResult != nil
                 || (rhrBPM ?? 0) > 0
@@ -401,7 +404,8 @@ class FitbitManager: NSObject, ObservableObject {
                 || (activeKcal ?? 0) > 0
                 || (distanceKm ?? 0) > 0
                 || (floorsCount ?? 0) > 0
-                || (activeMinutes ?? 0) > 0 else {
+                || (activeMinutes ?? 0) > 0
+                || (totalKcal ?? 0) > 0 else {
             if errorMessage == nil {
                 errorMessage = "No sleep, vitals, or activity found for today."
             }
@@ -425,6 +429,13 @@ class FitbitManager: NSObject, ObservableObject {
         let rhrValue = rhrBPM ?? 0
         let caloriesValue = activeKcal ?? 0
         let stepsValue = stepsCount ?? 0
+        // Honest #387: total-calories − active-energy ≈ basal for the day (basal-energy-burned has no dailyRollUp).
+        let basalKcal: Double? = {
+            guard let total = totalKcal, total > 0 else { return nil }
+            let active = caloriesValue
+            let basal = total - active
+            return basal > 0 ? basal : (active <= 0 ? total : nil)
+        }()
         let data = DailyHealthData(
             date: Date(),
             source: .fitbit,
@@ -451,6 +462,8 @@ class FitbitManager: NSObject, ObservableObject {
             respiratoryRate: respRate,
             // Google Health daily SpO2 averagePercentage is 0–100 (same as HK after *100).
             bloodOxygen: spo2Pct,
+            // Honest #387: derived basal = total-calories − active-energy-burned.
+            basalEnergyKcal: basalKcal,
             // Google Health floors dailyRollUp countSum (Honest #370).
             flightsClimbed: floorsCount,
             // Google Health distance dailyRollUp millimetersSum → km (Honest #368).
@@ -811,6 +824,17 @@ class FitbitManager: NSObject, ObservableObject {
             map: { try GoogleHealthActiveMinutesMapper.mapDailyRollupResponse($0) }
         )
     }
+
+    /// Daily total calories (kcal) from Google Health `total-calories` dailyRollUp (activity scope).
+    private func fetchTotalCalories(token: String) async -> Double? {
+        await fetchDailyRollup(
+            token: token,
+            urlString: totalCaloriesDailyRollupURL,
+            metricLabel: "Total calories",
+            map: { try GoogleHealthTotalCaloriesMapper.mapDailyRollupResponse($0) }
+        )
+    }
+
 
 
     /// Shared POST dailyRollUp for civil-date today window. Soft-fails HTTP 403 (missing activity scope).
@@ -1594,6 +1618,36 @@ enum GoogleHealthFloorsMapper {
     }
 }
 
+
+
+// MARK: - Google Health total-calories dailyRollUp → kcalSum
+
+enum GoogleHealthTotalCaloriesMapper {
+    struct RollupResponse: Codable {
+        let rollupDataPoints: [RollupPoint]?
+    }
+
+    struct RollupPoint: Codable {
+        let civilStartTime: GoogleHealthStepsMapper.CivilDateTime?
+        let totalCalories: EnergyValue?
+    }
+
+    struct EnergyValue: Codable {
+        let kcalSum: GoogleHealthHRVMapper.FlexibleDouble?
+    }
+
+    /// Returns latest day's total calories kcalSum, or nil when empty / zero.
+    static func mapDailyRollupResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(RollupResponse.self, from: data)
+        guard let points = decoded.rollupDataPoints, !points.isEmpty else { return nil }
+        let best = points.max(by: { a, b in
+            GoogleHealthStepsMapper.civilRank(a.civilStartTime?.date)
+                < GoogleHealthStepsMapper.civilRank(b.civilStartTime?.date)
+        })
+        guard let kcal = best?.totalCalories?.kcalSum?.value, kcal > 0 else { return nil }
+        return kcal
+    }
+}
 
 // MARK: - Google Health active-minutes dailyRollUp → sum(activeMinutesSum)
 

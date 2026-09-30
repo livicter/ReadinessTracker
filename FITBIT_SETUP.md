@@ -2,7 +2,7 @@
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep**, **RHR / HRV / SpO2 / respiratory rate / sleep skin temp**, plus **steps**, **active calories**, **distance**, **floors**, and **active minutes**.
+and syncs **sleep**, **RHR / HRV / SpO2 / respiratory rate / sleep skin temp**, plus **steps**, **active calories**, **distance**, **floors**, **active minutes**, and **total calories** (→ basal).
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -25,7 +25,7 @@ Docs:
 5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
    - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362–#364 / #366** — RHR, HRV, SpO2, respiratory rate, sleep skin temp)
-   - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365/#368/#370/#386** — required for `steps` + `active-energy-burned` + `distance` + `floors` + `active-minutes` dailyRollUp)
+   - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365/#368/#370/#386/#387** — required for `steps` + `active-energy-burned` + `distance` + `floors` + `active-minutes` + `total-calories` dailyRollUp)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
 7. **After adding vitals and/or activity scopes:** disconnect Fitbit in Settings and **Connect** again so the

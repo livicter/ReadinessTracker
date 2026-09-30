@@ -1,0 +1,5 @@
+Honest #387 — Google Health total-calories → basalEnergyKcal (total − active)
+Date: 2026-10-01 HKT ~04:49
+Tests: unit green (GoogleHealthTotalCaloriesMapperTests); Basal Energy surface UITest PASS
+basal-energy-burned has no dailyRollUp; derive basal = total-calories − active-energy-burned.
+Soft-fail 403 under activity scope.
