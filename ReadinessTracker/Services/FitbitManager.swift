@@ -5,7 +5,7 @@ import UIKit
 import CryptoKit
 import Security
 
-/// Fitbit data source manager — backed by Google Health API (sleep + RHR + HRV + SpO2).
+/// Fitbit data source manager — backed by Google Health API (sleep + RHR + HRV + SpO2 + steps/calories).
 /// User-facing product language stays "Fitbit" / `DataSource.fitbit`.
 @MainActor
 class FitbitManager: NSObject, ObservableObject {
@@ -24,6 +24,9 @@ class FitbitManager: NSObject, ObservableObject {
     /// Required for `daily-resting-heart-rate`, `daily-heart-rate-variability`, `daily-oxygen-saturation`.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
+    /// Required for `steps` / `active-energy-burned` dailyRollUp. Restricted scope —
+    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365).
+    private let activityScope = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
     private let revokeEndpoint = "https://oauth2.googleapis.com/revoke"
@@ -32,6 +35,8 @@ class FitbitManager: NSObject, ObservableObject {
     private let rhrListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-resting-heart-rate/dataPoints"
     private let hrvListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-variability/dataPoints"
     private let spo2ListURL = "https://health.googleapis.com/v4/users/me/dataTypes/daily-oxygen-saturation/dataPoints"
+    private let stepsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp"
+    private let activeEnergyDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-energy-burned/dataPoints:dailyRollUp"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -123,7 +128,7 @@ class FitbitManager: NSObject, ObservableObject {
             URLQueryItem(name: "response_type", value: "code"),
             URLQueryItem(name: "client_id", value: clientId),
             URLQueryItem(name: "redirect_uri", value: redirectUri),
-            URLQueryItem(name: "scope", value: "\(sleepScope) \(vitalsScope)"),
+            URLQueryItem(name: "scope", value: "\(sleepScope) \(vitalsScope) \(activityScope)"),
             URLQueryItem(name: "access_type", value: "offline"),
             URLQueryItem(name: "code_challenge", value: PKCE.codeChallengeS256(for: verifier)),
             URLQueryItem(name: "code_challenge_method", value: "S256")
@@ -362,15 +367,23 @@ class FitbitManager: NSObject, ObservableObject {
         async let rhrTask = fetchRestingHeartRate(token: token)
         async let hrvTask = fetchHeartRateVariability(token: token)
         async let spo2Task = fetchBloodOxygen(token: token)
+        async let stepsTask = fetchSteps(token: token)
+        async let caloriesTask = fetchActiveCalories(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
         let spo2Pct = await spo2Task
+        let stepsCount = await stepsTask
+        let activeKcal = await caloriesTask
 
-        // Activity deferred to later Honest PRs.
-        guard sleepResult != nil || (rhrBPM ?? 0) > 0 || (hrvMs ?? 0) > 0 || (spo2Pct ?? 0) > 0 else {
+        guard sleepResult != nil
+                || (rhrBPM ?? 0) > 0
+                || (hrvMs ?? 0) > 0
+                || (spo2Pct ?? 0) > 0
+                || (stepsCount ?? 0) > 0
+                || (activeKcal ?? 0) > 0 else {
             if errorMessage == nil {
-                errorMessage = "No sleep, RHR, HRV, or SpO2 found for today."
+                errorMessage = "No sleep, vitals, or activity found for today."
             }
             return
         }
@@ -394,8 +407,8 @@ class FitbitManager: NSObject, ObservableObject {
             hrv: hrvMs ?? 0,
             hrvIsRMSSD: (hrvMs ?? 0) > 0,
             restingHeartRate: rhrBPM ?? 0,
-            activeCalories: 0,
-            steps: 0,
+            activeCalories: activeKcal ?? 0,
+            steps: stepsCount ?? 0,
             workoutMinutes: 0,
             // Google Health daily SpO2 averagePercentage is 0–100 (same as HK after *100).
             bloodOxygen: spo2Pct
@@ -615,6 +628,74 @@ class FitbitManager: NSObject, ObservableObject {
         } catch {
             if errorMessage == nil {
                 errorMessage = "SpO2 sync failed: \(error.localizedDescription)"
+            }
+            return nil
+        }
+    }
+
+    /// Daily step total from Google Health `steps` dailyRollUp (activity scope).
+    private func fetchSteps(token: String) async -> Int? {
+        await fetchDailyRollup(
+            token: token,
+            urlString: stepsDailyRollupURL,
+            metricLabel: "Steps",
+            map: { try GoogleHealthStepsMapper.mapDailyRollupResponse($0) }
+        )
+    }
+
+    /// Daily active energy (kcal) from Google Health `active-energy-burned` dailyRollUp (activity scope).
+    private func fetchActiveCalories(token: String) async -> Double? {
+        await fetchDailyRollup(
+            token: token,
+            urlString: activeEnergyDailyRollupURL,
+            metricLabel: "Active calories",
+            map: { try GoogleHealthActiveCaloriesMapper.mapDailyRollupResponse($0) }
+        )
+    }
+
+    /// Shared POST dailyRollUp for civil-date today window. Soft-fails HTTP 403 (missing activity scope).
+    private func fetchDailyRollup<T>(
+        token: String,
+        urlString: String,
+        metricLabel: String,
+        map: (Data) throws -> T?
+    ) async -> T? {
+        guard let url = URL(string: urlString),
+              let body = GoogleHealthDailyRollupRequest.todayCivilRangeJSON() else { return nil }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = body
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse {
+                if http.statusCode == 412 {
+                    errorMessage = "No Google Health profile yet. Open the Google Health / Fitbit app, finish setup, then reconnect."
+                    return nil
+                }
+                if http.statusCode == 403 {
+                    let bodyText = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "\(metricLabel) needs Google Health activity scope. Re-Connect Fitbit after Console scope add. (\(bodyText.prefix(120)))"
+                    }
+                    return nil
+                }
+                if !(200...299).contains(http.statusCode) {
+                    let bodyText = String(data: data, encoding: .utf8) ?? ""
+                    if errorMessage == nil {
+                        errorMessage = "\(metricLabel) sync failed (\(http.statusCode)): \(bodyText.prefix(180))"
+                    }
+                    return nil
+                }
+            }
+            return try map(data)
+        } catch {
+            if errorMessage == nil {
+                errorMessage = "\(metricLabel) sync failed: \(error.localizedDescription)"
             }
             return nil
         }
@@ -1195,5 +1276,102 @@ enum GoogleHealthSpO2Mapper {
         let m = date.month ?? 0
         let d = date.day ?? 0
         return y * 10_000 + m * 100 + d
+    }
+}
+
+// MARK: - Google Health dailyRollUp request body (civil date window)
+
+enum GoogleHealthDailyRollupRequest {
+    /// POST body for today's civil day → tomorrow (exclusive), windowSizeDays=1, google-sources family.
+    static func todayCivilRangeJSON(now: Date = Date(), calendar: Calendar = .current) -> Data? {
+        let start = calendar.startOfDay(for: now)
+        guard let end = calendar.date(byAdding: .day, value: 1, to: start) else { return nil }
+        let s = calendar.dateComponents([.year, .month, .day], from: start)
+        let e = calendar.dateComponents([.year, .month, .day], from: end)
+        guard let sy = s.year, let sm = s.month, let sd = s.day,
+              let ey = e.year, let em = e.month, let ed = e.day else { return nil }
+        let payload: [String: Any] = [
+            "range": [
+                "start": [
+                    "date": ["year": sy, "month": sm, "day": sd]
+                ],
+                "end": [
+                    "date": ["year": ey, "month": em, "day": ed]
+                ]
+            ],
+            "windowSizeDays": 1,
+            "dataSourceFamily": "users/me/dataSourceFamilies/google-sources"
+        ]
+        return try? JSONSerialization.data(withJSONObject: payload)
+    }
+}
+
+// MARK: - Google Health steps dailyRollUp → countSum
+
+enum GoogleHealthStepsMapper {
+    struct RollupResponse: Codable {
+        let rollupDataPoints: [RollupPoint]?
+    }
+
+    struct RollupPoint: Codable {
+        let civilStartTime: CivilDateTime?
+        let steps: StepsValue?
+    }
+
+    struct CivilDateTime: Codable {
+        let date: CivilDate?
+    }
+
+    struct CivilDate: Codable {
+        let year: Int?
+        let month: Int?
+        let day: Int?
+    }
+
+    struct StepsValue: Codable {
+        let countSum: GoogleHealthSleepMapper.FlexibleInt64?
+    }
+
+    /// Returns latest (or only) day's step countSum, or nil when empty / zero.
+    static func mapDailyRollupResponse(_ data: Data) throws -> Int? {
+        let decoded = try JSONDecoder().decode(RollupResponse.self, from: data)
+        guard let points = decoded.rollupDataPoints, !points.isEmpty else { return nil }
+        let best = points.max(by: { a, b in civilRank(a.civilStartTime?.date) < civilRank(b.civilStartTime?.date) })
+        guard let sum = best?.steps?.countSum?.value, sum > 0 else { return nil }
+        return Int(sum)
+    }
+
+    static func civilRank(_ date: CivilDate?) -> Int {
+        guard let date else { return 0 }
+        return (date.year ?? 0) * 10_000 + (date.month ?? 0) * 100 + (date.day ?? 0)
+    }
+}
+
+// MARK: - Google Health active-energy-burned dailyRollUp → kcalSum
+
+enum GoogleHealthActiveCaloriesMapper {
+    struct RollupResponse: Codable {
+        let rollupDataPoints: [RollupPoint]?
+    }
+
+    struct RollupPoint: Codable {
+        let civilStartTime: GoogleHealthStepsMapper.CivilDateTime?
+        let activeEnergyBurned: EnergyValue?
+    }
+
+    struct EnergyValue: Codable {
+        let kcalSum: GoogleHealthHRVMapper.FlexibleDouble?
+    }
+
+    /// Returns latest day's active energy kcalSum, or nil when empty / zero.
+    static func mapDailyRollupResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(RollupResponse.self, from: data)
+        guard let points = decoded.rollupDataPoints, !points.isEmpty else { return nil }
+        let best = points.max(by: { a, b in
+            GoogleHealthStepsMapper.civilRank(a.civilStartTime?.date)
+                < GoogleHealthStepsMapper.civilRank(b.civilStartTime?.date)
+        })
+        guard let kcal = best?.activeEnergyBurned?.kcalSum?.value, kcal > 0 else { return nil }
+        return kcal
     }
 }

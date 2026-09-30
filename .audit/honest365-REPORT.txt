@@ -1,0 +1,41 @@
+Honest #365 — Google Health daily steps + active calories (self-verify)
+Date: 2026-10-01 HKT (~01:48)
+Branch: honest-365-google-health-steps
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: d98b84b (#364)
+
+Chosen: steps (primary) + active-energy-burned (same activity scope) via dailyRollUp.
+Not deferred — new Restricted activity scope soft-fails 403 cleanly like vitals.
+
+API / dataType / scope
+- dataType (steps): steps
+- Endpoint: POST https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp
+- Body: civil range today→tomorrow, windowSizeDays=1, dataSourceFamily=google-sources
+- Map: rollupDataPoints[].steps.countSum → DailyHealthData.steps
+- dataType (calories): active-energy-burned
+- Endpoint: POST .../dataTypes/active-energy-burned/dataPoints:dailyRollUp
+- Map: rollupDataPoints[].activeEnergyBurned.kcalSum → DailyHealthData.activeCalories
+- Source: DataSource.fitbit
+- Scope ADDED to authorize: https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly
+- Soft-fail HTTP 403; OAuth redirect unchanged (#361); no dual-link
+
+Victor Console action REQUIRED
+- Add activity_and_fitness.readonly on OAuth consent Data Access
+- Disconnect + re-Connect Fitbit so consent grants new Restricted scope
+- Until then: steps/calories soft-fail 403; sleep/vitals still work if those scopes granted
+
+Build / tests (iPhone 17 sim id 3CC80890-…)
+- GoogleHealthStepsMapperTests: 6/6 pass
+- GoogleHealthActiveCaloriesMapperTests: 4/4 pass
+- Full ReadinessTrackerTests: 175 executed, 19 skipped, 0 failures
+- UITests: testBodyActivityVisibleAfterScroll, RestingHR, Settings sources, source picker: all PASS
+
+Screenshots
+- .audit/honest365-01-dashboard.png
+- .audit/honest365-03-body-activity.png
+- .audit/honest365-04-resting-hr-surface.png
+- .audit/honest365-05-settings-sources.png
+- .audit/honest365-06-source-picker.png
+- Copied to box /workspace/honest365-*
+
+Out of scope: workoutMinutes/exercise sessions, Connect/2FA, Secrets commit
