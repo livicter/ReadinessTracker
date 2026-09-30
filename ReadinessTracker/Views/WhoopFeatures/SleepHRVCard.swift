@@ -9,6 +9,9 @@ struct SleepHRVCard: View {
     let hrvHistory: [(date: Date, value: Double)]
     let baselineHRV: Double          // Personal baseline
     let sleepQuality: Double         // 0-1 sleep quality score
+    /// Honest #371: classic MetricDetailView destination (#358/#367/#369 parity).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var hRVDeviation: Double {
         guard baselineHRV > 0 else { return 0 }
@@ -74,6 +77,23 @@ struct SleepHRVCard: View {
 
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .hrv,
+            currentValue: currentHRV,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header
@@ -143,6 +163,7 @@ struct SleepHRVCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.hrv)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.sleepHRVSpark)
+                            .allowsHitTesting(false)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -222,6 +243,7 @@ struct SleepHRVCard: View {
                         }
                     }
                     .accessibilityLabel("Sleep HRV trend with baseline band")
+                    .allowsHitTesting(false)
                 }
 
                 // Honest #103: WHOOP-style Poincaré RR scatter (synthetic when beat-to-beat absent).
@@ -233,6 +255,7 @@ struct SleepHRVCard: View {
                         .frame(maxWidth: .infinity)
                         .accessibilityIdentifier(SurfaceID.sleepHRVPoincare)
                         .accessibilityLabel("Poincaré plot of successive RR intervals")
+                        .allowsHitTesting(false)
                 }
                 .padding(.top, 4)
 
@@ -326,6 +349,7 @@ struct SleepHRVCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepHRVCard)
         .accessibilityLabel("Sleep HRV")
+        .contentShape(Rectangle())
     }
 
     private var deltaCaption: String {
