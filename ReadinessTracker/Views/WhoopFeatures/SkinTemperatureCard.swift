@@ -7,6 +7,9 @@ struct SkinTemperatureCard: View {
     let currentTemp: Double      // Current skin temp in Celsius
     let baselineTemp: Double     // Personal baseline
     let history: [(date: Date, value: Double)]
+    /// Honest #385: classic MetricDetailView(.skinTemperature).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var deviation: Double {
         currentTemp - baselineTemp
@@ -36,6 +39,23 @@ struct SkinTemperatureCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .skinTemperature,
+            currentValue: currentTemp,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header
@@ -104,6 +124,7 @@ struct SkinTemperatureCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: RTColor.skinTemp)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.skinTempSpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -166,6 +187,7 @@ struct SkinTemperatureCard: View {
                         }
                     }
                     .frame(height: 120)
+                            .allowsHitTesting(false)
                     .chartYScale(domain: yDomain)
                     .chartYAxis {
                         AxisMarks { _ in
@@ -213,6 +235,8 @@ struct SkinTemperatureCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.skinTempCard)
         .accessibilityLabel("Skin Temperature")
+        .accessibilityElement(children: .contain)
+        .contentShape(Rectangle())
     }
 
     private var deltaCaption: String {
