@@ -1,8 +1,8 @@
-# Fitbit / Google Health API Setup (Honest #360 / #361 / #362 / #363)
+# Fitbit / Google Health API Setup (Honest #360 / #361 / #362 / #363 / #364)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep**, **daily resting heart rate (RHR)**, and **daily heart rate variability (HRV / RMSSD)**.
+and syncs **sleep**, **daily RHR**, **daily HRV (RMSSD)**, and **daily SpO2 (blood oxygen)**.
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -24,7 +24,7 @@ Docs:
    (also as `REVERSED_CLIENT_ID` in a downloaded GoogleService-Info-style plist).
 5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
-   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362 / #363** — required for `daily-resting-heart-rate` and `daily-heart-rate-variability`; no extra scope for HRV)
+   - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362 / #363 / #364** — RHR, HRV, SpO2; no extra scope for SpO2)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
 7. **After adding the vitals scope:** disconnect Fitbit in Settings and **Connect** again so the
@@ -84,7 +84,8 @@ OAuth will not start.
 - **Sleep** from `GET .../dataTypes/sleep/dataPoints` -> `DailyHealthData` / `DataStore` (`source: .fitbit`)
 - **Resting HR** from `GET .../dataTypes/daily-resting-heart-rate/dataPoints` -> `DailyHealthData.restingHeartRate` (`source: .fitbit`) — needs vitals scope above
 - **HRV (RMSSD)** from `GET .../dataTypes/daily-heart-rate-variability/dataPoints` -> `DailyHealthData.hrv` + `hrvIsRMSSD: true` (`source: .fitbit`) — **same** vitals scope as RHR (Honest #363); no new Console scope
-- Activity / SpO2 Google Health sync **deferred** to later Honest PRs
+- **SpO2** from `GET .../dataTypes/daily-oxygen-saturation/dataPoints` -> `DailyHealthData.bloodOxygen` (averagePercentage 0–100; `source: .fitbit`) — **same** vitals scope (Honest #364); no new Console scope
+- Activity Google Health sync **deferred** to later Honest PRs
 
 ## 4. Important notes
 

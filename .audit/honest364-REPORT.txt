@@ -1,0 +1,41 @@
+Honest #364 — Google Health daily SpO2 (blood oxygen) sync (self-verify)
+Date: 2026-10-01 HKT (~01:38)
+Branch: honest-364-google-health-spo2
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: 275ead4 (#363)
+
+Chosen metric: SpO2 (daily-oxygen-saturation) — clear dataType + same vitals Restricted
+scope as RHR/HRV; DailyHealthData.bloodOxygen already exists; UI surfaces present.
+No fallback to activity needed.
+
+API / dataType / scope
+- dataType: daily-oxygen-saturation
+- Endpoint: GET https://health.googleapis.com/v4/users/me/dataTypes/daily-oxygen-saturation/dataPoints
+- Filter: dailyOxygenSaturation.date >= "YYYY-MM-DD" AND dailyOxygenSaturation.date < "YYYY-MM-DD+1"
+- JSON: dataPoints[].dailyOxygenSaturation.averagePercentage (0–100; FlexibleDouble)
+- Optional fields parsed: lowerBoundPercentage, upperBoundPercentage, standardDeviationPercentage
+- Map: → DailyHealthData.bloodOxygen (Double?); source: .fitbit
+- Scope REUSED (no new Console scope): https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly
+- Soft-fail HTTP 403 like RHR/HRV
+- Product label: DataSource.fitbit; OAuth redirect unchanged (#361); no dual-link
+
+Victor Console action
+- NEW scope: NOT required for SpO2 (covered by existing vitals scope from #362)
+- If vitals scope / re-Connect still pending: RHR + HRV + SpO2 soft-fail 403 until then
+
+Build / tests (iPhone 17 sim id 3CC80890-…)
+- GoogleHealthSpO2MapperTests: 6/6 pass
+- Related Google Health mappers + OAuthRedirect: pass
+- Full ReadinessTrackerTests: 165 executed, 19 skipped, 0 failures
+- UITests: testRestingHRSurface, testSettingsSourcesConnectRows, testSourcePickerWellSurface: PASS
+- UITests: testBloodOxygenSurface: FAIL (fixture scroll flake — same class as #363 Sleep HRV; out of scope poteto UI)
+
+Screenshots
+- .audit/honest364-01-dashboard.png
+- .audit/honest364-03-resting-hr-surface.png
+- .audit/honest364-04-settings-sources.png
+- .audit/honest364-05-source-picker.png
+- .audit/honest364-06-blood-oxygen-prior.png (prior audit; live Blood Oxygen UITest failed)
+- Copied to box /workspace/honest364-*
+
+Out of scope: activity/steps, Connect/2FA, Trends SpO2 UI work, Secrets commit, poteto MetricDetail

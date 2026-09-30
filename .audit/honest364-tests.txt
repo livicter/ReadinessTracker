@@ -1,0 +1,15 @@
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.006 (0.006) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.005 (0.005) seconds
+	 Executed 7 tests, with 0 failures (0 unexpected) in 0.003 (0.007) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.001 (0.001) seconds
+	 Executed 4 tests, with 4 tests skipped and 0 failures (0 unexpected) in 0.007 (0.008) seconds
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.001 (0.006) seconds
+	 Executed 13 tests, with 0 failures (0 unexpected) in 0.013 (0.020) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.001 (0.001) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.004 (0.005) seconds
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.075 (0.076) seconds
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.001 (0.001) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.690 (0.694) seconds
+	 Executed 165 tests, with 19 tests skipped and 0 failures (0 unexpected) in 1.227 (1.350) seconds
+	 Executed 165 tests, with 19 tests skipped and 0 failures (0 unexpected) in 1.227 (1.358) seconds
+** TEST SUCCEEDED **
