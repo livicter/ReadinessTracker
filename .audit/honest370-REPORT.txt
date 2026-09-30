@@ -1,0 +1,30 @@
+Honest #370 — Google Health floors dailyRollUp (self-verify)
+Date: 2026-10-01 HKT (~03:02)
+Branch: honest-370-google-health-floors
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: cd7e3fd (#369)
+
+Chose: Google Health `floors` dailyRollUp → DailyHealthData.flightsClimbed.
+Why: Continues activity fill-in after distance (#368); modeled (#141); reuses activity
+Restricted scope; soft-fail 403. Split DailyHealthData locals to keep type-checker happy.
+
+API / dataType / scope
+- dataType: floors
+- Endpoint: POST .../dataTypes/floors/dataPoints:dailyRollUp
+- Map: floors.countSum → flightsClimbed
+- Scope REUSED: googlehealth.activity_and_fitness.readonly
+- Soft-fail 403; source .fitbit; OAuth unchanged
+
+Build / tests (iPhone 17 / 26.5)
+- GoogleHealthFloorsMapperTests: 5/5
+- Full ReadinessTrackerTests: 179 passed, 19 skipped, 0 failures
+- UITests: FlightsClimbed + Settings + source picker PASS
+
+Screenshots
+- .audit/honest370-01-flights-climbed.png
+- .audit/honest370-02-settings-sources.png
+- .audit/honest370-03-source-picker.png
+
+Blockers unchanged
+- Console vitals + activity Restricted scopes still need morning grant + reconnect
+- No Secrets.xcconfig commit; self-hosted Actions runner offline (local verify + tree-guard)

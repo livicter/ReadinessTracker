@@ -1,8 +1,8 @@
-# Fitbit / Google Health API Setup (Honest #360–#368)
+# Fitbit / Google Health API Setup (Honest #360–#370)
 
 Legacy Fitbit Web API + Fitbit OAuth (FOT) are replaced by the **Google Health API**
 and **Google OAuth 2.0**. ReadinessTracker's Fitbit data source authenticates with Google
-and syncs **sleep**, **RHR / HRV / SpO2 / respiratory rate / sleep skin temp**, plus **steps**, **active calories**, and **distance**.
+and syncs **sleep**, **RHR / HRV / SpO2 / respiratory rate / sleep skin temp**, plus **steps**, **active calories**, **distance**, and **floors**.
 
 **Product labeling:** Settings / source picker still say **Fitbit** (`DataSource.fitbit`) for
 minimal UI churn. Internally auth + sync are Google Health (`oauthType=google` in Keychain).
@@ -25,7 +25,7 @@ Docs:
 5. On **Data Access**, add scopes:
    - `https://www.googleapis.com/auth/googlehealth.sleep.readonly`
    - `https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly` (**Honest #362–#364 / #366** — RHR, HRV, SpO2, respiratory rate, sleep skin temp)
-   - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365/#368** — required for `steps` + `active-energy-burned` + `distance` dailyRollUp)
+   - `https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly` (**Honest #365/#368/#370** — required for `steps` + `active-energy-burned` + `distance` + `floors` dailyRollUp)
 6. Under **Audience**, add yourself as a test user (unverified apps: **100-user** cap; Restricted
    scopes need later verification / CASA -- fine for personal use).
 7. **After adding vitals and/or activity scopes:** disconnect Fitbit in Settings and **Connect** again so the
@@ -89,6 +89,7 @@ OAuth will not start.
 - **Steps** from `POST .../dataTypes/steps/dataPoints:dailyRollUp` -> `DailyHealthData.steps` (`countSum`; `source: .fitbit`) — needs **activity** scope (Honest #365)
 - **Active calories** from `POST .../dataTypes/active-energy-burned/dataPoints:dailyRollUp` -> `DailyHealthData.activeCalories` (`kcalSum`; `source: .fitbit`) — same activity scope
 - **Distance** from `POST .../dataTypes/distance/dataPoints:dailyRollUp` -> `DailyHealthData.distanceWalkingRunningKm` (`millimetersSum` → km; `source: .fitbit`) — same activity scope (Honest #368); soft-fail 403
+- **Floors** from `POST .../dataTypes/floors/dataPoints:dailyRollUp` -> `DailyHealthData.flightsClimbed` (`countSum`; `source: .fitbit`) — same activity scope (Honest #370); soft-fail 403
 - **Respiratory rate** from `GET .../dataTypes/daily-respiratory-rate/dataPoints` -> `DailyHealthData.respiratoryRate` (`breathsPerMinute`; `source: .fitbit`) — **same** vitals scope (Honest #366); no new Console scope
 - **Sleep skin temperature** from `GET .../dataTypes/daily-sleep-temperature-derivations/dataPoints` -> `DailyHealthData.skinTemperature` (`nightlyTemperatureCelsius`; `source: .fitbit`) — **same** vitals scope (Honest #366); no new Console scope
 

@@ -24,8 +24,8 @@ class FitbitManager: NSObject, ObservableObject {
     /// Required for RHR / HRV / SpO2 / respiratory rate / sleep skin temperature.
     /// Restricted scope — Victor must add it on the OAuth consent screen and users must re-Connect.
     private let vitalsScope = "https://www.googleapis.com/auth/googlehealth.health_metrics_and_measurements.readonly"
-    /// Required for `steps` / `active-energy-burned` / `distance` dailyRollUp. Restricted scope —
-    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368).
+    /// Required for `steps` / `active-energy-burned` / `distance` / `floors` dailyRollUp. Restricted scope —
+    /// Victor must add it on the OAuth consent screen and users must re-Connect (#365/#368/#370).
     private let activityScope = "https://www.googleapis.com/auth/googlehealth.activity_and_fitness.readonly"
     private let authorizeEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
     private let tokenEndpoint = "https://oauth2.googleapis.com/token"
@@ -40,6 +40,7 @@ class FitbitManager: NSObject, ObservableObject {
     private let stepsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp"
     private let activeEnergyDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/active-energy-burned/dataPoints:dailyRollUp"
     private let distanceDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/distance/dataPoints:dailyRollUp"
+    private let floorsDailyRollupURL = "https://health.googleapis.com/v4/users/me/dataTypes/floors/dataPoints:dailyRollUp"
 
     private var accessToken: String?
     private var refreshToken: String?
@@ -375,6 +376,7 @@ class FitbitManager: NSObject, ObservableObject {
         async let stepsTask = fetchSteps(token: token)
         async let caloriesTask = fetchActiveCalories(token: token)
         async let distanceTask = fetchDistance(token: token)
+        async let floorsTask = fetchFloors(token: token)
         let sleepResult = await sleepTask
         let rhrBPM = await rhrTask
         let hrvMs = await hrvTask
@@ -384,6 +386,7 @@ class FitbitManager: NSObject, ObservableObject {
         let stepsCount = await stepsTask
         let activeKcal = await caloriesTask
         let distanceKm = await distanceTask
+        let floorsCount = await floorsTask
 
         guard sleepResult != nil
                 || (rhrBPM ?? 0) > 0
@@ -393,7 +396,8 @@ class FitbitManager: NSObject, ObservableObject {
                 || (skinTemp ?? 0) > 0
                 || (stepsCount ?? 0) > 0
                 || (activeKcal ?? 0) > 0
-                || (distanceKm ?? 0) > 0 else {
+                || (distanceKm ?? 0) > 0
+                || (floorsCount ?? 0) > 0 else {
             if errorMessage == nil {
                 errorMessage = "No sleep, vitals, or activity found for today."
             }
@@ -401,32 +405,50 @@ class FitbitManager: NSObject, ObservableObject {
         }
 
         let sleep = sleepResult
+        // Locals keep DailyHealthData(...) under the type-checker budget as activity fields grow.
+        let sleepHours = sleep?.hours ?? 0
+        let sleepEfficiency = sleep?.efficiency ?? 0
+        let deepSleepPercent = sleep?.deepPercent ?? 0
+        let remSleepPercent = sleep?.remPercent ?? 0
+        let lightSleepPercent = sleep?.lightPercent ?? 0
+        let awakePercent = sleep?.awakePercent ?? 0
+        let sleepOnsetMinutes = sleep?.onsetMinutes ?? 0
+        let sleepStartTime = sleep?.start
+        let sleepEndTime = sleep?.end
+        let wakeEpisodes = sleep?.wakeEpisodes ?? 0
+        let sleepStages = sleep?.stages ?? []
+        let hrvValue = hrvMs ?? 0
+        let rhrValue = rhrBPM ?? 0
+        let caloriesValue = activeKcal ?? 0
+        let stepsValue = stepsCount ?? 0
         let data = DailyHealthData(
             date: Date(),
             source: .fitbit,
-            sleepHours: sleep?.hours ?? 0,
-            sleepEfficiency: sleep?.efficiency ?? 0,
-            deepSleepPercent: sleep?.deepPercent ?? 0,
-            remSleepPercent: sleep?.remPercent ?? 0,
-            lightSleepPercent: sleep?.lightPercent ?? 0,
-            awakePercent: sleep?.awakePercent ?? 0,
-            sleepOnsetMinutes: sleep?.onsetMinutes ?? 0,
-            sleepStartTime: sleep?.start,
-            sleepEndTime: sleep?.end,
-            wakeEpisodes: sleep?.wakeEpisodes ?? 0,
-            sleepStages: sleep?.stages ?? [],
+            sleepHours: sleepHours,
+            sleepEfficiency: sleepEfficiency,
+            deepSleepPercent: deepSleepPercent,
+            remSleepPercent: remSleepPercent,
+            lightSleepPercent: lightSleepPercent,
+            awakePercent: awakePercent,
+            sleepOnsetMinutes: sleepOnsetMinutes,
+            sleepStartTime: sleepStartTime,
+            sleepEndTime: sleepEndTime,
+            wakeEpisodes: wakeEpisodes,
+            sleepStages: sleepStages,
             // Google Health daily HRV is RMSSD (ms).
-            hrv: hrvMs ?? 0,
-            hrvIsRMSSD: (hrvMs ?? 0) > 0,
-            restingHeartRate: rhrBPM ?? 0,
-            activeCalories: activeKcal ?? 0,
-            steps: stepsCount ?? 0,
+            hrv: hrvValue,
+            hrvIsRMSSD: hrvValue > 0,
+            restingHeartRate: rhrValue,
+            activeCalories: caloriesValue,
+            steps: stepsValue,
             workoutMinutes: 0,
             // Nightly absolute °C (SkinTemperatureCard computes deviation vs history baseline).
             skinTemperature: skinTemp,
             respiratoryRate: respRate,
             // Google Health daily SpO2 averagePercentage is 0–100 (same as HK after *100).
             bloodOxygen: spo2Pct,
+            // Google Health floors dailyRollUp countSum (Honest #370).
+            flightsClimbed: floorsCount,
             // Google Health distance dailyRollUp millimetersSum → km (Honest #368).
             distanceWalkingRunningKm: distanceKm
         )
@@ -761,6 +783,16 @@ class FitbitManager: NSObject, ObservableObject {
             urlString: distanceDailyRollupURL,
             metricLabel: "Distance",
             map: { try GoogleHealthDistanceMapper.mapDailyRollupResponse($0) }
+        )
+    }
+
+    /// Daily floors climbed from Google Health `floors` dailyRollUp (activity scope).
+    private func fetchFloors(token: String) async -> Double? {
+        await fetchDailyRollup(
+            token: token,
+            urlString: floorsDailyRollupURL,
+            metricLabel: "Floors",
+            map: { try GoogleHealthFloorsMapper.mapDailyRollupResponse($0) }
         )
     }
 
@@ -1513,6 +1545,35 @@ enum GoogleHealthDistanceMapper {
         })
         guard let mm = best?.distance?.millimetersSum?.value, mm > 0 else { return nil }
         return Double(mm) / 1_000_000.0
+    }
+}
+
+// MARK: - Google Health floors dailyRollUp → countSum
+
+enum GoogleHealthFloorsMapper {
+    struct RollupResponse: Codable {
+        let rollupDataPoints: [RollupPoint]?
+    }
+
+    struct RollupPoint: Codable {
+        let civilStartTime: GoogleHealthStepsMapper.CivilDateTime?
+        let floors: FloorsValue?
+    }
+
+    struct FloorsValue: Codable {
+        let countSum: GoogleHealthSleepMapper.FlexibleInt64?
+    }
+
+    /// Returns latest day's floors countSum as Double, or nil when empty / zero.
+    static func mapDailyRollupResponse(_ data: Data) throws -> Double? {
+        let decoded = try JSONDecoder().decode(RollupResponse.self, from: data)
+        guard let points = decoded.rollupDataPoints, !points.isEmpty else { return nil }
+        let best = points.max(by: { a, b in
+            GoogleHealthStepsMapper.civilRank(a.civilStartTime?.date)
+                < GoogleHealthStepsMapper.civilRank(b.civilStartTime?.date)
+        })
+        guard let sum = best?.floors?.countSum?.value, sum > 0 else { return nil }
+        return Double(sum)
     }
 }
 

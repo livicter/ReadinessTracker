@@ -1,0 +1,4 @@
+Unit (ci-verify, iPhone 17 / 26.5): 179 passed, 19 skipped, 0 failures (+5 Floors mapper)
+UITest testFlightsClimbedTonightBaselineSurface: PASS
+UITest testSettingsSourcesConnectRows: PASS
+UITest testSourcePickerWellSurface: PASS
