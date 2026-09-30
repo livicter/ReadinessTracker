@@ -16,6 +16,7 @@ enum MetricType: String, CaseIterable {
     case standTime = "Stand Time"
     case moveTime = "Move Time"
     case basalEnergy = "Basal Energy"
+    case wheelchairDistance = "Wheelchair Distance"
 
     var title: String { rawValue }
 
@@ -36,6 +37,7 @@ enum MetricType: String, CaseIterable {
         case .standTime: return "timer"
         case .moveTime: return "figure.walk"
         case .basalEnergy: return "flame"
+        case .wheelchairDistance: return "figure.roll"
         }
     }
 
@@ -56,6 +58,7 @@ enum MetricType: String, CaseIterable {
         case .standTime: return "min"
         case .moveTime: return "min"
         case .basalEnergy: return "cal"
+        case .wheelchairDistance: return "km"
         }
     }
 
@@ -76,12 +79,13 @@ enum MetricType: String, CaseIterable {
         case .standTime: return Color(hex: "64D2FF")
         case .moveTime: return Color(hex: "FF9F0A")
         case .basalEnergy: return Color(hex: "FF9500")
+        case .wheelchairDistance: return Color(hex: "0A84FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance: return true
         case .restingHR, .respiratoryRate, .skinTemperature: return false
         }
     }
@@ -161,6 +165,11 @@ enum MetricType: String, CaseIterable {
             if value < 1400 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some basal energy") }
             if value < 1600 { return MetricZone(label: "On track", color: RTColor.good, description: "Solid resting burn") }
             return MetricZone(label: "Solid", color: RTColor.optimal, description: "Healthy basal energy")
+        case .wheelchairDistance:
+            if value < 1 { return MetricZone(label: "Low", color: RTColor.warning, description: "Short wheelchair distance") }
+            if value < 3 { return MetricZone(label: "Building", color: RTColor.caution, description: "Some mobility volume") }
+            if value < 5 { return MetricZone(label: "Active", color: RTColor.good, description: "Solid wheelchair distance") }
+            return MetricZone(label: "High", color: RTColor.optimal, description: "Great mobility day")
         }
     }
 }

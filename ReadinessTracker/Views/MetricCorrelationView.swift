@@ -186,6 +186,7 @@ struct MetricCorrelationView: View {
         case .standTime: return data.appleStandTimeMinutes
         case .moveTime: return data.appleMoveTimeMinutes
         case .basalEnergy: return data.basalEnergyKcal
+        case .wheelchairDistance: return data.distanceWheelchairKm
         }
     }
 }
