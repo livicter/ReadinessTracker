@@ -1,0 +1,4 @@
+Honest #377 — AwakeHoursCard → MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:49)
+Tip base: c20f055 (#376)
+Tests: unit 179/19/0; testAwakeHoursCardMetricDetailNavSurface PASS

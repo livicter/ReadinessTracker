@@ -12,6 +12,9 @@ struct AwakeHoursCard: View {
     /// Prior nights: (date, sleepHours, sleepEfficiency, awakePercent).
     let history: [(date: Date, sleepHours: Double, sleepEfficiency: Double, awakePercent: Double)]
     let baselineHours: Double
+    /// Honest #377: classic MetricDetailView(.sleep).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double {
         AwakeHours.hours(
@@ -75,6 +78,23 @@ struct AwakeHoursCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -142,6 +162,7 @@ struct AwakeHoursCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.caution)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.awakeHoursSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -188,12 +209,16 @@ struct AwakeHoursCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Awake hours trend last nights")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.awakeHoursCard)
+        .accessibilityLabel("Awake Hours")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
