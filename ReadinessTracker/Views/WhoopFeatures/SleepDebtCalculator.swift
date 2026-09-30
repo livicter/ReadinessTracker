@@ -5,6 +5,10 @@ import SwiftUI
 struct SleepDebtCalculator: View {
     let history: [(date: Date, sleepHours: Double)]
     let sleepNeed: Double // Personal sleep need in hours (e.g. 8.0)
+    /// Honest #381: classic MetricDetailView(.sleep).
+    let sleepHours: Double
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var debtData: [(date: Date, cumulativeDebt: Double, dailyHours: Double, dailyChange: Double)] {
         var cumulative: Double = 0
@@ -72,6 +76,23 @@ struct SleepDebtCalculator: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 // Header
@@ -212,6 +233,7 @@ struct SleepDebtCalculator: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: debtStatus.color)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.sleepDebtSpark)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -261,6 +283,7 @@ struct SleepDebtCalculator: View {
                             }
                         }
                         .accessibilityIdentifier(SurfaceID.sleepDebtBars)
+                        .allowsHitTesting(false)
                     }
                     .padding(.top, 2)
                 }
@@ -269,6 +292,7 @@ struct SleepDebtCalculator: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepDebtCard)
         .accessibilityLabel("Sleep Debt")
+        .contentShape(Rectangle())
     }
 
     private var lastNightDeltaCaption: String {

@@ -848,11 +848,14 @@ struct DashboardView: View {
             }
 
             if history.contains(where: { $0.sleepHours > 0 }) {
+                // Honest #381: WHOOP sleepDebtCard → classic MetricDetailView(.sleep)
                 SleepDebtCalculator(
                     history: history.map { ($0.date, $0.sleepHours) },
-                    sleepNeed: sleepNeed
+                    sleepNeed: sleepNeed,
+                    sleepHours: data.sleepHours,
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.sleepDebtCard)
                 SleepQualityTrend(
                     history: history.map { ($0.date, $0.sleepData.score(), $0.sleepHours, $0.sleepEfficiency) }
                 )
