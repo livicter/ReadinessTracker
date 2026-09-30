@@ -7281,6 +7281,31 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "resting.hr.card → metric.detail")
     }
 
+    func testActiveCaloriesCardMetricDetailNavSurface() throws {
+        // Honest #369: WHOOP active.calories.card → classic MetricDetailView (#358/#367 parity).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Active Calories"].exists && n < 24 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Active Calories"].firstMatch
+        let card = app.descendants(matching: .any)["active.calories.card"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Active Calories"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Active Calories"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-active-calories-metric-detail.png")
+        XCTAssertTrue(landed, "active.calories.card → metric.detail")
+    }
+
 
     func testSleepLatencySurface() throws {
         // Honest #109: WHOOP Sleep Latency Tonight | Baseline + 7-night spark on Today.

@@ -1,0 +1,24 @@
+Honest #369 — ActiveCaloriesTonightBaselineCard → classic MetricDetailView (self-verify)
+Date: 2026-10-01 HKT (~02:50)
+Branch: honest-369-active-calories-card-metric-detail
+Machine: Victor Mac mini (a1a8c734-a5c9-4238-8430-691762d135d7)
+Tip base: baaf546 (#368)
+
+Chose: UI MetricDetail poteto — Active Calories Body card NavigationLink → MetricDetailView(.activeCalories).
+Why: Continues #358/#367 hosting parity after GH distance (#368). Card was display-only;
+Breakdown Strain already had detail; classic MetricDetail unused from WHOOP Body card.
+Skipped: widget App Group (portal/device); Connect/2FA; Secrets; Trends/BAC.
+
+Change
+- ActiveCaloriesTonightBaselineCard: dailyHistory + source; navigableBody; allowsHitTesting(false)
+- DashboardView: pass dailyHistory/source; remove outer SurfaceID (on cardChrome)
+- UITest: testActiveCaloriesCardMetricDetailNavSurface
+- Feature skill: active-calories-card-metric-detail-nav.md
+
+Build / tests (iPhone 17 / 26.5)
+- ReadinessTrackerTests: 174 passed, 19 skipped, 0 failures
+- UITest testActiveCaloriesCardMetricDetailNavSurface: PASS
+
+Screenshots
+- .audit/honest369-01-active-calories-metric-detail.png
+- .audit/verify-active-calories-metric-detail.png
