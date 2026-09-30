@@ -9,6 +9,9 @@ struct RestorativeSleepCard: View {
     let remPercent: Double
     /// Prior nights for spark: (date, sleepHours, deepPercent, remPercent).
     let history: [(date: Date, sleepHours: Double, deepPercent: Double, remPercent: Double)]
+    /// Honest #375: classic MetricDetailView(.sleep).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private func asFraction(_ value: Double) -> Double {
         // Accept fraction (0.17) or already-percent (17).
@@ -54,6 +57,23 @@ struct RestorativeSleepCard: View {
     }
 
     var body: some View {
+        navigableBody
+    }
+
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .sleep,
+            currentValue: sleepHours,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -121,6 +141,7 @@ struct RestorativeSleepCard: View {
                         AnimatedSparkline(data: sparklineValues, color: RTColor.sleep)
                             .frame(height: 28)
                             .accessibilityIdentifier(SurfaceID.sleepRestorativeSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -167,12 +188,16 @@ struct RestorativeSleepCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Restorative sleep trend last nights")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.sleepRestorativeCard)
+        .accessibilityLabel("Restorative Sleep")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
