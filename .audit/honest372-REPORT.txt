@@ -1,0 +1,6 @@
+Honest #372 — CoreSleepCard → classic MetricDetailView(.sleep)
+Date: 2026-10-01 HKT (~03:18)
+Tip base: 711458c (#371)
+Choice: UI MetricDetail nav parity for sleep.core.card (display-only → Sleep detail).
+currentValue = total asleep hours; card chrome still shows core/light hours.
+Tests: unit 179/19/0; testCoreSleepCardMetricDetailNavSurface PASS

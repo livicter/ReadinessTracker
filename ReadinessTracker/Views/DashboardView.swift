@@ -811,6 +811,7 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.sleepRestorativeCard)
 
 
+            // Honest #372: WHOOP sleep.core.card → classic MetricDetailView(.sleep)
             CoreSleepCard(
                 sleepHours: data.sleepHours,
                 lightPercent: data.lightSleepPercent,
@@ -818,9 +819,10 @@ struct DashboardView: View {
                 baselineHours: CoreSleep.baseline(
                     from: history,
                     fallback: CoreSleep.hours(asleep: data.sleepHours, lightPercent: data.lightSleepPercent)
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.coreSleepCard)
 
             if data.hrv > 0 {
                 // Honest #371: WHOOP sleepHRVCard → classic MetricDetailView (#358/#367/#369 parity)
