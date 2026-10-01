@@ -9,6 +9,9 @@ struct WalkingHRTonightBaselineCard: View {
     let walkingHR: Double?
     let history: [(date: Date, bpm: Double)]
     let baseline: Double
+    /// Honest #402: classic MetricDetailView(.walkingHeartRate).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { walkingHR.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct WalkingHRTonightBaselineCard: View {
     private let walkingColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.walkingHRCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .walkingHeartRate,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct WalkingHRTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#402).
                 .accessibilityIdentifier(SurfaceID.walkingHRBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct WalkingHRTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: walkingColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.walkingHRSpark)
                     }
                 }
@@ -177,12 +189,16 @@ struct WalkingHRTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Walking heart rate trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.walkingHRCard)
+        .accessibilityLabel("Walking Heart Rate")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

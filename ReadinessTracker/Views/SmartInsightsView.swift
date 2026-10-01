@@ -90,6 +90,7 @@ struct SmartInsightsView: View {
                 case .waistCircumference: normalizedSlope = slope / 5.0 * 100
                 case .bloodGlucose: normalizedSlope = slope / 20.0 * 100
                 case .vo2Max: normalizedSlope = slope / 5.0 * 100
+                case .walkingHeartRate: normalizedSlope = slope / 10.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

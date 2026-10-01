@@ -1059,6 +1059,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #402: WHOOP vitals.walkinghr.card → classic MetricDetailView(.walkingHeartRate)
             WalkingHRTonightBaselineCard(
                 walkingHR: data.walkingHeartRateAverage,
                 history: history.compactMap { day in
@@ -1068,9 +1069,10 @@ struct DashboardView: View {
                 baseline: WalkingHRBaseline.average(
                     from: history,
                     fallback: data.walkingHeartRateAverage ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.walkingHRCard)
 
             HeartRateRecoveryTonightBaselineCard(
                 recoveryBpm: data.heartRateRecoveryOneMinuteBpm,

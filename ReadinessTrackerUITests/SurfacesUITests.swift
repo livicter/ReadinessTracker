@@ -8070,6 +8070,38 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "vitals.vo2.card → metric.detail")
     }
 
+    func testWalkingHeartRateCardMetricDetailNavSurface() throws {
+        // Honest #402: WHOOP vitals.walkinghr.card → classic MetricDetailView (.walkingHeartRate).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Walking HR"]
+        while !spark.exists && n < 55 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Walking HR")
+        let link = app.buttons["Walking Heart Rate"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Walking Heart Rate"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Walking Heart Rate"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-walking-heart-rate-metric-detail.png")
+        XCTAssertTrue(landed, "vitals.walkinghr.card → metric.detail")
+    }
+
+
 
 
 
