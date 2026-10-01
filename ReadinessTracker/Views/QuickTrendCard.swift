@@ -104,9 +104,9 @@ struct QuickTrendCard: View {
 
     private func formattedAverage(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose:
+        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max:
             return "\(Int(value))"
         case .bloodOxygen:
             return String(format: "%.0f", value)
@@ -159,6 +159,7 @@ struct QuickTrendCard: View {
         case .leanBodyMass: return data.leanBodyMassKg
         case .waistCircumference: return data.waistCircumferenceCm
         case .bloodGlucose: return data.bloodGlucoseMgDl
+        case .vo2Max: return data.vo2Max
         }
     }
 }

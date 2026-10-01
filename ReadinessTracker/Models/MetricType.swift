@@ -26,6 +26,8 @@ enum MetricType: String, CaseIterable {
 
     case bloodGlucose = "Blood Glucose"
 
+    case vo2Max = "VO2 Max"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -51,6 +53,7 @@ enum MetricType: String, CaseIterable {
         case .leanBodyMass: return "figure.arms.open"
         case .waistCircumference: return "ruler"
         case .bloodGlucose: return "drop.fill"
+        case .vo2Max: return "lungs.fill"
         }
     }
 
@@ -77,6 +80,7 @@ enum MetricType: String, CaseIterable {
         case .leanBodyMass: return "kg"
         case .waistCircumference: return "cm"
         case .bloodGlucose: return "mg/dL"
+        case .vo2Max: return "ml/kg/min"
         }
     }
 
@@ -103,12 +107,13 @@ enum MetricType: String, CaseIterable {
         case .leanBodyMass: return Color(hex: "32ADE6")
         case .waistCircumference: return Color(hex: "FF9F0A")
         case .bloodGlucose: return Color(hex: "FF375F")
+        case .vo2Max: return Color(hex: "30D158")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose: return false
         }
     }
@@ -218,6 +223,11 @@ enum MetricType: String, CaseIterable {
             if value < 100 { return MetricZone(label: "Optimal", color: RTColor.optimal, description: "Within common fasting band") }
             if value < 126 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Upper end of common band") }
             return MetricZone(label: "High", color: RTColor.warning, description: "Above common glucose band")
+        case .vo2Max:
+            if value < 38 { return MetricZone(label: "Building", color: RTColor.warning, description: "Below common fitness band") }
+            if value < 45 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Within common fitness band") }
+            if value < 50 { return MetricZone(label: "Strong", color: RTColor.good, description: "Upper end of common band") }
+            return MetricZone(label: "Elite", color: RTColor.optimal, description: "Above common fitness band")
         }
     }
 }
