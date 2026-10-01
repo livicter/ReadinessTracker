@@ -9,6 +9,9 @@ struct TimeInDaylightTonightBaselineCard: View {
     let minutes: Double?
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #404: classic MetricDetailView(.timeInDaylight).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { minutes.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct TimeInDaylightTonightBaselineCard: View {
     private let reductionColor = Color(hex: "FFD60A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.timeInDaylightCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .timeInDaylight,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct TimeInDaylightTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#404).
                 .accessibilityIdentifier(SurfaceID.timeInDaylightBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct TimeInDaylightTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: reductionColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.timeInDaylightSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct TimeInDaylightTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Sound reduction trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.timeInDaylightCard)
+        .accessibilityLabel("Time in Daylight")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

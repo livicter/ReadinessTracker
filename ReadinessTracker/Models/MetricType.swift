@@ -32,6 +32,8 @@ enum MetricType: String, CaseIterable {
 
     case mindfulMinutes = "Mindful"
 
+    case timeInDaylight = "Time in Daylight"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -60,6 +62,7 @@ enum MetricType: String, CaseIterable {
         case .vo2Max: return "lungs.fill"
         case .walkingHeartRate: return "heart.fill"
         case .mindfulMinutes: return "brain.head.profile"
+        case .timeInDaylight: return "sun.max.fill"
         }
     }
 
@@ -89,6 +92,7 @@ enum MetricType: String, CaseIterable {
         case .vo2Max: return "ml/kg/min"
         case .walkingHeartRate: return "bpm"
         case .mindfulMinutes: return "min"
+        case .timeInDaylight: return "min"
         }
     }
 
@@ -118,12 +122,13 @@ enum MetricType: String, CaseIterable {
         case .vo2Max: return Color(hex: "30D158")
         case .walkingHeartRate: return Color(hex: "64D2FF")
         case .mindfulMinutes: return Color(hex: "BF5AF2")
+        case .timeInDaylight: return Color(hex: "FFD60A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate: return false
         }
     }
@@ -248,6 +253,11 @@ enum MetricType: String, CaseIterable {
             if value < 10 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft goal") }
             if value < 20 { return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~10 min band") }
             return MetricZone(label: "Deep", color: RTColor.optimal, description: "Above soft mindful band")
+        case .timeInDaylight:
+            if value < 30 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below common daylight band") }
+            if value < 60 { return MetricZone(label: "Modest", color: RTColor.caution, description: "Approaching common band") }
+            if value < 120 { return MetricZone(label: "Good", color: RTColor.good, description: "Within common daylight band") }
+            return MetricZone(label: "Strong", color: RTColor.optimal, description: "Above common daylight band")
         }
     }
 }

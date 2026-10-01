@@ -195,6 +195,7 @@ struct MetricCorrelationView: View {
         case .vo2Max: return data.vo2Max
         case .walkingHeartRate: return data.walkingHeartRateAverage
         case .mindfulMinutes: return data.mindfulMinutes
+        case .timeInDaylight: return data.timeInDaylightMinutes
         }
     }
 }

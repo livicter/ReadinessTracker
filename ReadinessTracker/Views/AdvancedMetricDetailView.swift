@@ -563,6 +563,7 @@ struct AdvancedMetricDetailView: View {
         case .vo2Max: return data.vo2Max ?? 0
         case .walkingHeartRate: return data.walkingHeartRateAverage ?? 0
         case .mindfulMinutes: return data.mindfulMinutes ?? 0
+        case .timeInDaylight: return data.timeInDaylightMinutes ?? 0
         }
     }
     
@@ -592,14 +593,15 @@ struct AdvancedMetricDetailView: View {
         case .vo2Max: return data.vo2Max ?? 0
         case .walkingHeartRate: return data.walkingHeartRateAverage ?? 0
         case .mindfulMinutes: return data.mindfulMinutes ?? 0
+        case .timeInDaylight: return data.timeInDaylightMinutes ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight:
             return "\(Int(value))"
         }
     }
