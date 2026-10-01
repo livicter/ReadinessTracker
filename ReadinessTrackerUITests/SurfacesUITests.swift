@@ -7913,24 +7913,48 @@ final class SurfacesUITests: XCTestCase {
     }
 
     func testBodyFatCardMetricDetailNavSurface() throws {
-        // Honest #397: body.bodyFat.card → MetricDetailView (.bodyFat).
-        // SurfaceID unique vs dietaryFatCard ("body.fat.card").
+        // Honest #397: composition Body Fat → MetricDetailView (.bodyFat).
+        // Card sits below waist — scroll until the NavigationLink button is hittable
+        // (partially-on-screen cards divert taps to nested elements).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         var n = 0
-        let card = app.descendants(matching: .any)["body.bodyFat.card"].firstMatch
-        while !card.exists && n < 50 {
+        let spark = app.staticTexts["7-Day Body Fat"]
+        while !spark.exists && n < 55 {
             app.swipeUp()
             n += 1
         }
-        XCTAssertTrue(card.waitForExistence(timeout: 8), "body.bodyFat.card")
-        // Bring into hit zone (exists can be true slightly off-screen)
-        for _ in 0..<3 { app.swipeUp() }
-        card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Body Fat")
+        let link = app.buttons["Body Fat"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            // Title row of the link (top), not baseline band.
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Body Fat"].firstMatch.tap()
+        }
         let landed = app.navigationBars["Body Fat"].waitForExistence(timeout: 10)
             || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
         saveShot("verify-body-fat-metric-detail.png")
-        XCTAssertTrue(landed, "body.bodyFat.card → metric.detail")
+        XCTAssertTrue(landed, "composition Body Fat → metric.detail")
     }
+
+
+
+
+
+
+
+
+
+
 
 
 

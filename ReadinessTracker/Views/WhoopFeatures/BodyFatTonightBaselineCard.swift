@@ -120,7 +120,7 @@ struct BodyFatTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#397).
                 .accessibilityIdentifier(SurfaceID.bodyFatBaselineCallout)
 
                 if sparklineValues.count >= 2 {
