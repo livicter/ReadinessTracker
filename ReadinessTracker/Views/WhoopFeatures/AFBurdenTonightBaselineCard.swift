@@ -8,6 +8,9 @@ struct AFBurdenTonightBaselineCard: View {
     let percent: Double?
     let history: [(date: Date, percent: Double)]
     let baseline: Double
+    /// Honest #406: classic MetricDetailView(.afBurden).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { percent.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct AFBurdenTonightBaselineCard: View {
     private let afColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.afBurdenCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .afBurden,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,7 +121,7 @@ struct AFBurdenTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#406).
                 .accessibilityIdentifier(SurfaceID.afBurdenBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -127,6 +138,7 @@ struct AFBurdenTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: afColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.afBurdenSpark)
                     }
                 }
@@ -176,12 +188,16 @@ struct AFBurdenTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("AF burden trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.afBurdenCard)
+        .accessibilityLabel("AF Burden")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
