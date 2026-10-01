@@ -104,7 +104,7 @@ struct QuickTrendCard: View {
 
     private func formattedAverage(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
             return "\(Int(value))"
@@ -157,6 +157,7 @@ struct QuickTrendCard: View {
         case .bodyFat: return data.bodyFatPercent
         case .bodyMass: return data.bodyMassKg
         case .leanBodyMass: return data.leanBodyMassKg
+        case .waistCircumference: return data.waistCircumferenceCm
         }
     }
 }

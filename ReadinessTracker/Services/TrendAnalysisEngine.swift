@@ -169,6 +169,7 @@ struct TrendAnalysisEngine {
         case .bodyMass: normalizedSlope = slope / 5.0 * 100
         case .bodyFat: normalizedSlope = slope / 5.0 * 100
         case .leanBodyMass: normalizedSlope = slope / 5.0 * 100
+        case .waistCircumference: normalizedSlope = slope / 5.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
