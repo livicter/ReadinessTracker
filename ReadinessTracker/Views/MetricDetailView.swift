@@ -1211,13 +1211,14 @@ struct MetricDetailView: View {
         case .moveTime: return data.appleMoveTimeMinutes ?? 0
         case .basalEnergy: return data.basalEnergyKcal ?? 0
         case .wheelchairDistance: return data.distanceWheelchairKm ?? 0
+        case .bodyFat: return data.bodyFatPercent ?? 0
         case .bodyMass: return data.bodyMassKg ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat:
             return String(format: "%.1f", value)
         case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
             return "\(Int(value))"
@@ -1382,6 +1383,8 @@ extension MetricDetailView {
             return (.wheelchairDistance, .steps)
         case .bodyMass:
             return (.bodyMass, .activeCalories)
+        case .bodyFat:
+            return (.bodyFat, .bodyMass)
         }
     }
 }

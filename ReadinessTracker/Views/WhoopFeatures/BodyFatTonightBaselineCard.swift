@@ -8,6 +8,9 @@ struct BodyFatTonightBaselineCard: View {
     let percent: Double?
     let history: [(date: Date, percent: Double)]
     let baseline: Double
+    /// Honest #397: classic MetricDetailView(.bodyFat).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { percent.map { max(0, $0) } }
 
@@ -48,15 +51,23 @@ struct BodyFatTonightBaselineCard: View {
     private let fatColor = Color(hex: "AF52DE")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.bodyFatCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .bodyFat,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,7 +120,7 @@ struct BodyFatTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#397).
                 .accessibilityIdentifier(SurfaceID.bodyFatBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -126,6 +137,7 @@ struct BodyFatTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: fatColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.bodyFatSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct BodyFatTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Body fat trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.bodyFatCard)
+        .accessibilityLabel("Body Fat")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

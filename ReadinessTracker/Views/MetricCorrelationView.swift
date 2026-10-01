@@ -187,6 +187,7 @@ struct MetricCorrelationView: View {
         case .moveTime: return data.appleMoveTimeMinutes
         case .basalEnergy: return data.basalEnergyKcal
         case .wheelchairDistance: return data.distanceWheelchairKm
+        case .bodyFat: return data.bodyFatPercent
         case .bodyMass: return data.bodyMassKg
         }
     }
