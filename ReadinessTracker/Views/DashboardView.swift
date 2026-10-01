@@ -1117,6 +1117,7 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
 
+            // Honest #407: WHOOP body.falls.card → classic MetricDetailView(.falls)
             FallsTonightBaselineCard(
                 count: data.numberOfTimesFallen,
                 history: history.compactMap { day in
@@ -1126,9 +1127,10 @@ struct DashboardView: View {
                 baseline: FallsBaseline.average(
                     from: history,
                     fallback: data.numberOfTimesFallen ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.fallsCard)
 
 
             WheelchairPushesTonightBaselineCard(
