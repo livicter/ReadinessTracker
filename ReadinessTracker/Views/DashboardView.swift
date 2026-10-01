@@ -2836,6 +2836,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #399: WHOOP body.waist.card → classic MetricDetailView(.waistCircumference)
                 WaistCircumferenceTonightBaselineCard(
                     cm: data.waistCircumferenceCm,
                     history: history.compactMap { day in
@@ -2845,9 +2846,10 @@ struct DashboardView: View {
                     baseline: WaistCircumferenceBaseline.average(
                         from: history,
                         fallback: data.waistCircumferenceCm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.waistCircumferenceCard)
 
 
                 // Honest #397: WHOOP body.bodyFat.card → classic MetricDetailView(.bodyFat)

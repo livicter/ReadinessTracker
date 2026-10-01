@@ -8,6 +8,9 @@ struct WaistCircumferenceTonightBaselineCard: View {
     let cm: Double?
     let history: [(date: Date, cm: Double)]
     let baseline: Double
+    /// Honest #399: classic MetricDetailView(.waistCircumference).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { cm.map { max(0, $0) } }
 
@@ -48,15 +51,23 @@ struct WaistCircumferenceTonightBaselineCard: View {
     private let waistColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.waistCircumferenceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .waistCircumference,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,7 +120,7 @@ struct WaistCircumferenceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#399).
                 .accessibilityIdentifier(SurfaceID.waistCircumferenceBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -126,6 +137,7 @@ struct WaistCircumferenceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: waistColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.waistCircumferenceSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct WaistCircumferenceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Waist circumference trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.waistCircumferenceCard)
+        .accessibilityLabel("Waist Circumference")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
