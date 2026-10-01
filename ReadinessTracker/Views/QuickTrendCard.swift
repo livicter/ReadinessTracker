@@ -104,9 +104,9 @@ struct QuickTrendCard: View {
 
     private func formattedAverage(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate:
+        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes:
             return "\(Int(value))"
         case .bloodOxygen:
             return String(format: "%.0f", value)
@@ -161,6 +161,7 @@ struct QuickTrendCard: View {
         case .bloodGlucose: return data.bloodGlucoseMgDl
         case .vo2Max: return data.vo2Max
         case .walkingHeartRate: return data.walkingHeartRateAverage
+        case .mindfulMinutes: return data.mindfulMinutes
         }
     }
 }

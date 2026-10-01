@@ -194,6 +194,7 @@ struct MetricCorrelationView: View {
         case .bloodGlucose: return data.bloodGlucoseMgDl
         case .vo2Max: return data.vo2Max
         case .walkingHeartRate: return data.walkingHeartRateAverage
+        case .mindfulMinutes: return data.mindfulMinutes
         }
     }
 }

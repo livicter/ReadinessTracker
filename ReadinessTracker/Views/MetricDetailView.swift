@@ -1218,14 +1218,15 @@ struct MetricDetailView: View {
         case .bloodGlucose: return data.bloodGlucoseMgDl ?? 0
         case .vo2Max: return data.vo2Max ?? 0
         case .walkingHeartRate: return data.walkingHeartRateAverage ?? 0
+        case .mindfulMinutes: return data.mindfulMinutes ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes:
             return "\(Int(value))"
         }
     }
@@ -1400,6 +1401,8 @@ extension MetricDetailView {
             return (.vo2Max, .activeCalories)
         case .walkingHeartRate:
             return (.walkingHeartRate, .restingHR)
+        case .mindfulMinutes:
+            return (.mindfulMinutes, .sleep)
         }
     }
 }
