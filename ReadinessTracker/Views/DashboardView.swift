@@ -1199,6 +1199,7 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.envSoundReductionCard)
 
+            // Honest #404: WHOOP vitals.daylight.card → classic MetricDetailView(.timeInDaylight)
             TimeInDaylightTonightBaselineCard(
                 minutes: data.timeInDaylightMinutes,
                 history: history.compactMap { day in
@@ -1208,9 +1209,10 @@ struct DashboardView: View {
                 baseline: TimeInDaylightBaseline.average(
                     from: history,
                     fallback: data.timeInDaylightMinutes ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.timeInDaylightCard)
 
             UVExposureTonightBaselineCard(
                 uvIndex: data.uvExposureIndex,
