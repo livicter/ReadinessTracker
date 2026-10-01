@@ -1217,6 +1217,7 @@ struct MetricDetailView: View {
         case .waistCircumference: return data.waistCircumferenceCm ?? 0
         case .bloodGlucose: return data.bloodGlucoseMgDl ?? 0
         case .vo2Max: return data.vo2Max ?? 0
+        case .walkingHeartRate: return data.walkingHeartRateAverage ?? 0
         }
     }
 
@@ -1224,7 +1225,7 @@ struct MetricDetailView: View {
         switch metric {
         case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate:
             return "\(Int(value))"
         }
     }
@@ -1397,6 +1398,8 @@ extension MetricDetailView {
             return (.bloodGlucose, .bodyMass)
         case .vo2Max:
             return (.vo2Max, .activeCalories)
+        case .walkingHeartRate:
+            return (.walkingHeartRate, .restingHR)
         }
     }
 }

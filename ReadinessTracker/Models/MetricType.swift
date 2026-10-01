@@ -28,6 +28,8 @@ enum MetricType: String, CaseIterable {
 
     case vo2Max = "VO2 Max"
 
+    case walkingHeartRate = "Walking Heart Rate"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -54,6 +56,7 @@ enum MetricType: String, CaseIterable {
         case .waistCircumference: return "ruler"
         case .bloodGlucose: return "drop.fill"
         case .vo2Max: return "lungs.fill"
+        case .walkingHeartRate: return "heart.fill"
         }
     }
 
@@ -81,6 +84,7 @@ enum MetricType: String, CaseIterable {
         case .waistCircumference: return "cm"
         case .bloodGlucose: return "mg/dL"
         case .vo2Max: return "ml/kg/min"
+        case .walkingHeartRate: return "bpm"
         }
     }
 
@@ -108,13 +112,14 @@ enum MetricType: String, CaseIterable {
         case .waistCircumference: return Color(hex: "FF9F0A")
         case .bloodGlucose: return Color(hex: "FF375F")
         case .vo2Max: return Color(hex: "30D158")
+        case .walkingHeartRate: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate: return false
         }
     }
 
@@ -228,6 +233,11 @@ enum MetricType: String, CaseIterable {
             if value < 45 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Within common fitness band") }
             if value < 50 { return MetricZone(label: "Strong", color: RTColor.good, description: "Upper end of common band") }
             return MetricZone(label: "Elite", color: RTColor.optimal, description: "Above common fitness band")
+        case .walkingHeartRate:
+            if value < 90 { return MetricZone(label: "Easy", color: RTColor.optimal, description: "Low walking effort") }
+            if value < 110 { return MetricZone(label: "Steady", color: RTColor.good, description: "Typical walking effort") }
+            if value < 130 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Higher walking effort") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "High walking effort")
         }
     }
 }
