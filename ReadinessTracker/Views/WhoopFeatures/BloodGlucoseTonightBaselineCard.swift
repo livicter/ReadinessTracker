@@ -8,6 +8,9 @@ struct BloodGlucoseTonightBaselineCard: View {
     let mgDl: Double?
     let history: [(date: Date, mgDl: Double)]
     let baseline: Double
+    /// Honest #400: classic MetricDetailView(.bloodGlucose).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { mgDl.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct BloodGlucoseTonightBaselineCard: View {
     private let glucoseColor = Color(hex: "FF375F")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.bloodGlucoseCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .bloodGlucose,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct BloodGlucoseTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#400).
                 .accessibilityIdentifier(SurfaceID.bloodGlucoseBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct BloodGlucoseTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: glucoseColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.bloodGlucoseSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct BloodGlucoseTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Blood glucose trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.bloodGlucoseCard)
+        .accessibilityLabel("Blood Glucose")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

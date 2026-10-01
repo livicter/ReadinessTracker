@@ -191,6 +191,7 @@ struct MetricCorrelationView: View {
         case .bodyMass: return data.bodyMassKg
         case .leanBodyMass: return data.leanBodyMassKg
         case .waistCircumference: return data.waistCircumferenceCm
+        case .bloodGlucose: return data.bloodGlucoseMgDl
         }
     }
 }
