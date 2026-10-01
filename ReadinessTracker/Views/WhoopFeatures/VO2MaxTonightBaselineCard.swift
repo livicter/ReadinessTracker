@@ -9,6 +9,9 @@ struct VO2MaxTonightBaselineCard: View {
     let vo2Max: Double?
     let history: [(date: Date, vo2: Double)]
     let baseline: Double
+    /// Honest #401: classic MetricDetailView(.vo2Max).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { vo2Max.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct VO2MaxTonightBaselineCard: View {
     private let vo2Color = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.vo2MaxCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .vo2Max,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct VO2MaxTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#401).
                 .accessibilityIdentifier(SurfaceID.vo2MaxBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct VO2MaxTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: vo2Color)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.vo2MaxSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct VO2MaxTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("VO2 Max trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.vo2MaxCard)
+        .accessibilityLabel("VO2 Max")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

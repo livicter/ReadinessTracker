@@ -1044,6 +1044,7 @@ struct DashboardView: View {
             )
             .accessibilityIdentifier(SurfaceID.peakHRCard)
 
+            // Honest #401: WHOOP vitals.vo2.card → classic MetricDetailView(.vo2Max)
             VO2MaxTonightBaselineCard(
                 vo2Max: data.vo2Max,
                 history: history.compactMap { day in
@@ -1053,9 +1054,10 @@ struct DashboardView: View {
                 baseline: VO2MaxBaseline.average(
                     from: history,
                     fallback: data.vo2Max ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.vo2MaxCard)
 
             WalkingHRTonightBaselineCard(
                 walkingHR: data.walkingHeartRateAverage,
