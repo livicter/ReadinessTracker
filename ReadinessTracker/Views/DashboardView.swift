@@ -2145,6 +2145,7 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.handwashingCard)
 
 
+                // Honest #403: WHOOP body.mindful.card → classic MetricDetailView(.mindfulMinutes)
                 MindfulTonightBaselineCard(
                     minutes: data.mindfulMinutes,
                     history: history.compactMap { day in
@@ -2154,9 +2155,10 @@ struct DashboardView: View {
                     baseline: MindfulBaseline.average(
                         from: history,
                         fallback: data.mindfulMinutes ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.mindfulCard)
 
                 HydrationTonightBaselineCard(
                     waterLiters: data.nutrition.waterLiters,

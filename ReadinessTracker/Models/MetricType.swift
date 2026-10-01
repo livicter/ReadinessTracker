@@ -30,6 +30,8 @@ enum MetricType: String, CaseIterable {
 
     case walkingHeartRate = "Walking Heart Rate"
 
+    case mindfulMinutes = "Mindful"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -57,6 +59,7 @@ enum MetricType: String, CaseIterable {
         case .bloodGlucose: return "drop.fill"
         case .vo2Max: return "lungs.fill"
         case .walkingHeartRate: return "heart.fill"
+        case .mindfulMinutes: return "brain.head.profile"
         }
     }
 
@@ -85,6 +88,7 @@ enum MetricType: String, CaseIterable {
         case .bloodGlucose: return "mg/dL"
         case .vo2Max: return "ml/kg/min"
         case .walkingHeartRate: return "bpm"
+        case .mindfulMinutes: return "min"
         }
     }
 
@@ -113,12 +117,13 @@ enum MetricType: String, CaseIterable {
         case .bloodGlucose: return Color(hex: "FF375F")
         case .vo2Max: return Color(hex: "30D158")
         case .walkingHeartRate: return Color(hex: "64D2FF")
+        case .mindfulMinutes: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate: return false
         }
     }
@@ -238,6 +243,11 @@ enum MetricType: String, CaseIterable {
             if value < 110 { return MetricZone(label: "Steady", color: RTColor.good, description: "Typical walking effort") }
             if value < 130 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Higher walking effort") }
             return MetricZone(label: "High", color: RTColor.warning, description: "High walking effort")
+        case .mindfulMinutes:
+            if value < 5 { return MetricZone(label: "Light", color: RTColor.caution, description: "Below soft mindful band") }
+            if value < 10 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft goal") }
+            if value < 20 { return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~10 min band") }
+            return MetricZone(label: "Deep", color: RTColor.optimal, description: "Above soft mindful band")
         }
     }
 }
