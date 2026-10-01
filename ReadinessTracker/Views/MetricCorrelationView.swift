@@ -189,6 +189,7 @@ struct MetricCorrelationView: View {
         case .wheelchairDistance: return data.distanceWheelchairKm
         case .bodyFat: return data.bodyFatPercent
         case .bodyMass: return data.bodyMassKg
+        case .leanBodyMass: return data.leanBodyMassKg
         }
     }
 }

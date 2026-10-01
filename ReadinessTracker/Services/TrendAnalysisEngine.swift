@@ -168,6 +168,7 @@ struct TrendAnalysisEngine {
         case .wheelchairDistance: normalizedSlope = slope / 5.0 * 100
         case .bodyMass: normalizedSlope = slope / 5.0 * 100
         case .bodyFat: normalizedSlope = slope / 5.0 * 100
+        case .leanBodyMass: normalizedSlope = slope / 5.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

@@ -8,6 +8,9 @@ struct LeanBodyMassTonightBaselineCard: View {
     let kg: Double?
     let history: [(date: Date, kg: Double)]
     let baseline: Double
+    /// Honest #398: classic MetricDetailView(.leanBodyMass).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kg.map { max(0, $0) } }
 
@@ -48,15 +51,23 @@ struct LeanBodyMassTonightBaselineCard: View {
     private let leanColor = Color(hex: "32ADE6")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.leanBodyMassCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .leanBodyMass,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,7 +120,7 @@ struct LeanBodyMassTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#398).
                 .accessibilityIdentifier(SurfaceID.leanBodyMassBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -126,6 +137,7 @@ struct LeanBodyMassTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: leanColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.leanBodyMassSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct LeanBodyMassTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Lean body mass trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.leanBodyMassCard)
+        .accessibilityLabel("Lean Body Mass")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
