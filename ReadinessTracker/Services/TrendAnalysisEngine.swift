@@ -175,6 +175,7 @@ struct TrendAnalysisEngine {
         case .walkingHeartRate: normalizedSlope = slope / 10.0 * 100
         case .mindfulMinutes: normalizedSlope = slope / 5.0 * 100
         case .timeInDaylight: normalizedSlope = slope / 30.0 * 100
+        case .heartRateRecovery: normalizedSlope = slope / 5.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

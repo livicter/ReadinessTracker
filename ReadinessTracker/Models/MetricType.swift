@@ -34,6 +34,8 @@ enum MetricType: String, CaseIterable {
 
     case timeInDaylight = "Time in Daylight"
 
+    case heartRateRecovery = "HR Recovery"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -63,6 +65,7 @@ enum MetricType: String, CaseIterable {
         case .walkingHeartRate: return "heart.fill"
         case .mindfulMinutes: return "brain.head.profile"
         case .timeInDaylight: return "sun.max.fill"
+        case .heartRateRecovery: return "arrow.down.heart.fill"
         }
     }
 
@@ -93,6 +96,7 @@ enum MetricType: String, CaseIterable {
         case .walkingHeartRate: return "bpm"
         case .mindfulMinutes: return "min"
         case .timeInDaylight: return "min"
+        case .heartRateRecovery: return "bpm"
         }
     }
 
@@ -123,12 +127,13 @@ enum MetricType: String, CaseIterable {
         case .walkingHeartRate: return Color(hex: "64D2FF")
         case .mindfulMinutes: return Color(hex: "BF5AF2")
         case .timeInDaylight: return Color(hex: "FFD60A")
+        case .heartRateRecovery: return Color(hex: "FF375F")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate: return false
         }
     }
@@ -258,6 +263,11 @@ enum MetricType: String, CaseIterable {
             if value < 60 { return MetricZone(label: "Modest", color: RTColor.caution, description: "Approaching common band") }
             if value < 120 { return MetricZone(label: "Good", color: RTColor.good, description: "Within common daylight band") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Above common daylight band")
+        case .heartRateRecovery:
+            if value < 12 { return MetricZone(label: "Slow", color: RTColor.warning, description: "Below common HRR band") }
+            if value < 18 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Approaching common HRR band") }
+            if value < 25 { return MetricZone(label: "Solid", color: RTColor.good, description: "Within common HRR band") }
+            return MetricZone(label: "Strong", color: RTColor.optimal, description: "Above common HRR band")
         }
     }
 }

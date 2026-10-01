@@ -8,6 +8,9 @@ struct HeartRateRecoveryTonightBaselineCard: View {
     let recoveryBpm: Double?
     let history: [(date: Date, bpm: Double)]
     let baseline: Double
+    /// Honest #405: classic MetricDetailView(.heartRateRecovery).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { recoveryBpm.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct HeartRateRecoveryTonightBaselineCard: View {
     private let hrrColor = Color(hex: "FF375F")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.heartRateRecoveryCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .heartRateRecovery,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,7 +121,7 @@ struct HeartRateRecoveryTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#405).
                 .accessibilityIdentifier(SurfaceID.heartRateRecoveryBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -127,6 +138,7 @@ struct HeartRateRecoveryTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: hrrColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.heartRateRecoverySpark)
                     }
                 }
@@ -176,12 +188,16 @@ struct HeartRateRecoveryTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Heart rate recovery trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.heartRateRecoveryCard)
+        .accessibilityLabel("HR Recovery")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
