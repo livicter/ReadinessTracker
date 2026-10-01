@@ -197,6 +197,7 @@ struct MetricCorrelationView: View {
         case .mindfulMinutes: return data.mindfulMinutes
         case .timeInDaylight: return data.timeInDaylightMinutes
         case .heartRateRecovery: return data.heartRateRecoveryOneMinuteBpm
+        case .afBurden: return data.atrialFibrillationBurdenPercent
         }
     }
 }

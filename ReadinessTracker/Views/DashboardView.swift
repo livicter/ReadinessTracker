@@ -1089,6 +1089,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #406: WHOOP vitals.afBurden.card → classic MetricDetailView(.afBurden)
             AFBurdenTonightBaselineCard(
                 percent: data.atrialFibrillationBurdenPercent,
                 history: history.compactMap { day in
@@ -1098,9 +1099,10 @@ struct DashboardView: View {
                 baseline: AFBurdenBaseline.average(
                     from: history,
                     fallback: data.atrialFibrillationBurdenPercent ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.afBurdenCard)
 
             PeripheralPerfusionTonightBaselineCard(
                 percent: data.peripheralPerfusionIndexPercent,

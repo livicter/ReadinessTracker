@@ -36,6 +36,8 @@ enum MetricType: String, CaseIterable {
 
     case heartRateRecovery = "HR Recovery"
 
+    case afBurden = "AF Burden"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -66,6 +68,7 @@ enum MetricType: String, CaseIterable {
         case .mindfulMinutes: return "brain.head.profile"
         case .timeInDaylight: return "sun.max.fill"
         case .heartRateRecovery: return "arrow.down.heart.fill"
+        case .afBurden: return "waveform.path.ecg"
         }
     }
 
@@ -97,6 +100,7 @@ enum MetricType: String, CaseIterable {
         case .mindfulMinutes: return "min"
         case .timeInDaylight: return "min"
         case .heartRateRecovery: return "bpm"
+        case .afBurden: return "%"
         }
     }
 
@@ -128,13 +132,14 @@ enum MetricType: String, CaseIterable {
         case .mindfulMinutes: return Color(hex: "BF5AF2")
         case .timeInDaylight: return Color(hex: "FFD60A")
         case .heartRateRecovery: return Color(hex: "FF375F")
+        case .afBurden: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden: return false
         }
     }
 
@@ -268,6 +273,11 @@ enum MetricType: String, CaseIterable {
             if value < 18 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Approaching common HRR band") }
             if value < 25 { return MetricZone(label: "Solid", color: RTColor.good, description: "Within common HRR band") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Above common HRR band")
+        case .afBurden:
+            if value < 0.5 { return MetricZone(label: "Low", color: RTColor.optimal, description: "Minimal AF burden") }
+            if value < 2 { return MetricZone(label: "Modest", color: RTColor.good, description: "Within common AF band") }
+            if value < 5 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Upper end of common band") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "Above common AF band")
         }
     }
 }
