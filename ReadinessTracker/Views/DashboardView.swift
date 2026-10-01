@@ -2820,6 +2820,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #398: WHOOP body.lean.card → classic MetricDetailView(.leanBodyMass)
                 LeanBodyMassTonightBaselineCard(
                     kg: data.leanBodyMassKg,
                     history: history.compactMap { day in
@@ -2829,9 +2830,10 @@ struct DashboardView: View {
                     baseline: LeanBodyMassBaseline.average(
                         from: history,
                         fallback: data.leanBodyMassKg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.leanBodyMassCard)
 
 
                 WaistCircumferenceTonightBaselineCard(
