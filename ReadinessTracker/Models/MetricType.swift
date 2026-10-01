@@ -38,6 +38,8 @@ enum MetricType: String, CaseIterable {
 
     case afBurden = "AF Burden"
 
+    case falls = "Falls"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -69,6 +71,7 @@ enum MetricType: String, CaseIterable {
         case .timeInDaylight: return "sun.max.fill"
         case .heartRateRecovery: return "arrow.down.heart.fill"
         case .afBurden: return "waveform.path.ecg"
+        case .falls: return "figure.fall"
         }
     }
 
@@ -101,6 +104,7 @@ enum MetricType: String, CaseIterable {
         case .timeInDaylight: return "min"
         case .heartRateRecovery: return "bpm"
         case .afBurden: return "%"
+        case .falls: return "count"
         }
     }
 
@@ -133,13 +137,14 @@ enum MetricType: String, CaseIterable {
         case .timeInDaylight: return Color(hex: "FFD60A")
         case .heartRateRecovery: return Color(hex: "FF375F")
         case .afBurden: return Color(hex: "BF5AF2")
+        case .falls: return Color(hex: "FF9F0A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls: return false
         }
     }
 
@@ -278,6 +283,11 @@ enum MetricType: String, CaseIterable {
             if value < 2 { return MetricZone(label: "Modest", color: RTColor.good, description: "Within common AF band") }
             if value < 5 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Upper end of common band") }
             return MetricZone(label: "High", color: RTColor.warning, description: "Above common AF band")
+        case .falls:
+            if value < 1 { return MetricZone(label: "None", color: RTColor.optimal, description: "No falls logged") }
+            if value < 2 { return MetricZone(label: "One", color: RTColor.caution, description: "Single fall event") }
+            if value < 4 { return MetricZone(label: "Few", color: RTColor.warning, description: "Multiple fall events") }
+            return MetricZone(label: "Many", color: RTColor.warning, description: "Elevated fall count")
         }
     }
 }

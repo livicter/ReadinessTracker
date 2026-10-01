@@ -8,6 +8,9 @@ struct FallsTonightBaselineCard: View {
     let count: Double?
     let history: [(date: Date, count: Double)]
     let baseline: Double
+    /// Honest #407: classic MetricDetailView(.falls).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { count.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct FallsTonightBaselineCard: View {
     private let fallsColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.fallsCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .falls,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,7 +121,7 @@ struct FallsTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#407).
                 .accessibilityIdentifier(SurfaceID.fallsBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -127,6 +138,7 @@ struct FallsTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: fallsColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.fallsSpark)
                     }
                 }
@@ -176,12 +188,16 @@ struct FallsTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Falls trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fallsCard)
+        .accessibilityLabel("Falls")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
