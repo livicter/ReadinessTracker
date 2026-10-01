@@ -1215,14 +1215,15 @@ struct MetricDetailView: View {
         case .bodyMass: return data.bodyMassKg ?? 0
         case .leanBodyMass: return data.leanBodyMassKg ?? 0
         case .waistCircumference: return data.waistCircumferenceCm ?? 0
+        case .bloodGlucose: return data.bloodGlucoseMgDl ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose:
             return "\(Int(value))"
         }
     }
@@ -1391,6 +1392,8 @@ extension MetricDetailView {
             return (.leanBodyMass, .bodyMass)
         case .waistCircumference:
             return (.waistCircumference, .bodyMass)
+        case .bloodGlucose:
+            return (.bloodGlucose, .bodyMass)
         }
     }
 }

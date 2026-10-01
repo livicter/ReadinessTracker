@@ -24,6 +24,8 @@ enum MetricType: String, CaseIterable {
 
     case waistCircumference = "Waist Circumference"
 
+    case bloodGlucose = "Blood Glucose"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -48,6 +50,7 @@ enum MetricType: String, CaseIterable {
         case .bodyFat: return "percent"
         case .leanBodyMass: return "figure.arms.open"
         case .waistCircumference: return "ruler"
+        case .bloodGlucose: return "drop.fill"
         }
     }
 
@@ -73,6 +76,7 @@ enum MetricType: String, CaseIterable {
         case .bodyFat: return "%"
         case .leanBodyMass: return "kg"
         case .waistCircumference: return "cm"
+        case .bloodGlucose: return "mg/dL"
         }
     }
 
@@ -98,13 +102,14 @@ enum MetricType: String, CaseIterable {
         case .bodyFat: return Color(hex: "AF52DE")
         case .leanBodyMass: return Color(hex: "32ADE6")
         case .waistCircumference: return Color(hex: "FF9F0A")
+        case .bloodGlucose: return Color(hex: "FF375F")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose: return false
         }
     }
 
@@ -208,6 +213,11 @@ enum MetricType: String, CaseIterable {
             if value < 94 { return MetricZone(label: "Typical", color: RTColor.optimal, description: "Within common waist band") }
             if value < 102 { return MetricZone(label: "Higher", color: RTColor.caution, description: "Upper end of common band") }
             return MetricZone(label: "High", color: RTColor.warning, description: "Above common waist band")
+        case .bloodGlucose:
+            if value < 70 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below common glucose band") }
+            if value < 100 { return MetricZone(label: "Optimal", color: RTColor.optimal, description: "Within common fasting band") }
+            if value < 126 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Upper end of common band") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "Above common glucose band")
         }
     }
 }
