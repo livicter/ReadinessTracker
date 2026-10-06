@@ -9164,6 +9164,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.vitamink.md.nav → metric.detail")
     }
 
+    func testDietaryVitaminB6CardMetricDetailNavSurface() throws {
+        // Honest #439: WHOOP body.b6.md.nav → classic MetricDetailView (.dietaryVitaminB6).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Vitamin B6"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Vitamin B6")
+        let link = app.buttons["Vitamin B6"].firstMatch
+        let card = app.descendants(matching: .any)["body.b6.md.nav"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Vitamin B6"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-vitamin-b6-metric-detail.png")
+        XCTAssertTrue(landed, "body.b6.md.nav → metric.detail")
+    }
+
 
 
 
@@ -11027,11 +11053,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryVitaminB6TonightBaselineSurface() throws {
         // Honest #205: Vitamin B6 Tonight | Baseline (HK dietaryVitaminB6).
         var n = 0
-        while !app.descendants(matching: .any)["body.b6.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.b6.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.b6.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.b6.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Vitamin B6 card")
         XCTAssertTrue(app.staticTexts["Vitamin B6"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)

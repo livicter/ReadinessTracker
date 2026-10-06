@@ -209,6 +209,7 @@ struct TrendAnalysisEngine {
         case .dietaryVitaminA: normalizedSlope = slope / 150.0 * 100
         case .dietaryVitaminE: normalizedSlope = slope / 2.5 * 100
         case .dietaryVitaminK: normalizedSlope = slope / 20.0 * 100
+        case .dietaryVitaminB6: normalizedSlope = slope / 0.2833333333333333 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
