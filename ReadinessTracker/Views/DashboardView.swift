@@ -2498,9 +2498,11 @@ struct DashboardView: View {
                     baselineMcg: DietaryFolateBaseline.average(
                         from: history,
                         fallback: data.nutrition.folateMcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryFolateCard)
+                // Honest #435: NavigationLink hosts SurfaceID.dietaryFolateCard (body.folate.nav)
 
 
                 DietaryVitaminATonightBaselineCard(

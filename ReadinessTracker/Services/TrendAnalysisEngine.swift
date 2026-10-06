@@ -205,6 +205,7 @@ struct TrendAnalysisEngine {
         case .dietaryCalcium: normalizedSlope = slope / 150.0 * 100
         case .dietaryMagnesium: normalizedSlope = slope / 60.0 * 100
         case .dietaryZinc: normalizedSlope = slope / 2.0 * 100
+        case .dietaryFolate: normalizedSlope = slope / 66.66666666666667 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
