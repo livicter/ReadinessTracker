@@ -105,6 +105,7 @@ struct SmartInsightsView: View {
                 case .envSoundReduction: normalizedSlope = slope / 5.0 * 100
                 case .protein: normalizedSlope = slope / 25.0 * 100
                 case .dietaryEnergy: normalizedSlope = slope / 400.0 * 100
+                case .hydration: normalizedSlope = slope / 0.5 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

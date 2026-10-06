@@ -10,6 +10,9 @@ struct HydrationTonightBaselineCard: View {
     let proteinGrams: Double?
     let history: [(date: Date, water: Double)]
     let baselineLiters: Double
+    /// Honest #417: classic MetricDetailView(.hydration).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let waterTarget = 2.5
     private let caffeineLimit = 200.0
@@ -68,14 +71,23 @@ struct HydrationTonightBaselineCard: View {
     private let waterColor = Color(hex: "5AC8FA")
 
     var body: some View {
-        Group {
-            if waterLiters != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .hydration,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -125,7 +137,7 @@ struct HydrationTonightBaselineCard: View {
                         icon: "chart.line.flattrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#417).
                 .accessibilityIdentifier(SurfaceID.hydrationBaselineCallout)
 
                 Text(companionCaption)
@@ -147,6 +159,7 @@ struct HydrationTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: waterColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.hydrationSpark)
                     }
                 }
@@ -194,12 +207,16 @@ struct HydrationTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Water intake trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.hydrationCard)
+        .accessibilityLabel("Hydration")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

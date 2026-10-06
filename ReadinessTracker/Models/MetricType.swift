@@ -58,6 +58,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryEnergy = "Dietary Energy"
 
+    case hydration = "Hydration"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -99,6 +101,7 @@ enum MetricType: String, CaseIterable {
         case .envSoundReduction: return "ear.fill"
         case .protein: return "fork.knife"
         case .dietaryEnergy: return "flame.fill"
+        case .hydration: return "drop.fill"
         }
     }
 
@@ -141,6 +144,7 @@ enum MetricType: String, CaseIterable {
         case .envSoundReduction: return "dB"
         case .protein: return "g"
         case .dietaryEnergy: return "kcal"
+        case .hydration: return "L"
         }
     }
 
@@ -183,12 +187,13 @@ enum MetricType: String, CaseIterable {
         case .envSoundReduction: return Color(hex: "30D158")
         case .protein: return Color(hex: "34C759")
         case .dietaryEnergy: return Color(hex: "FF9500")
+        case .hydration: return Color(hex: "5AC8FA")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio: return false
         }
     }
@@ -378,6 +383,11 @@ enum MetricType: String, CaseIterable {
             if value < 1500 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft energy goal") }
             if value < 2000 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~2000 kcal goal") }
             return MetricZone(label: "Goal met", color: RTColor.optimal, description: "Met soft ~2000 kcal goal")
+        case .hydration:
+            if value < 1.5 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below soft hydration band") }
+            if value < 2.0 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft ~2.5 L goal") }
+            if value < 2.5 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~2.5 L goal") }
+            return MetricZone(label: "Hydrated", color: RTColor.optimal, description: "Met soft ~2.5 L hydration goal")
         }
     }
 }

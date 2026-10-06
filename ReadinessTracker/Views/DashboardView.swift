@@ -2182,6 +2182,7 @@ struct DashboardView: View {
                     source: selectedSource
                 )
 
+                // Honest #417: WHOOP body.hydration.card → classic MetricDetailView(.hydration)
                 HydrationTonightBaselineCard(
                     waterLiters: data.nutrition.waterLiters,
                     caffeineMg: data.nutrition.caffeineMg,
@@ -2193,9 +2194,10 @@ struct DashboardView: View {
                     baselineLiters: HydrationBaseline.averageWater(
                         from: history,
                         fallback: data.nutrition.waterLiters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.hydrationCard)
 
                 CaffeineTonightBaselineCard(
                     caffeineMg: data.nutrition.caffeineMg,

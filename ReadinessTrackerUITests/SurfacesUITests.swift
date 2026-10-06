@@ -8535,6 +8535,37 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.energy.card → metric.detail")
     }
 
+    func testHydrationCardMetricDetailNavSurface() throws {
+        // Honest #417: WHOOP body.hydration.card → classic MetricDetailView (.hydration).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Water"]
+        while !spark.exists && n < 70 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Water")
+        let link = app.buttons["Hydration"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Hydration"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Hydration"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-hydration-metric-detail.png")
+        XCTAssertTrue(landed, "body.hydration.card → metric.detail")
+    }
+
 
 
 
