@@ -568,6 +568,7 @@ struct AdvancedMetricDetailView: View {
         case .afBurden: return data.atrialFibrillationBurdenPercent ?? 0
         case .falls: return data.numberOfTimesFallen ?? 0
         case .uvExposure: return data.uvExposureIndex ?? 0
+        case .wheelchairPushes: return data.pushCount ?? 0
         }
     }
     
@@ -602,14 +603,15 @@ struct AdvancedMetricDetailView: View {
         case .afBurden: return data.atrialFibrillationBurdenPercent ?? 0
         case .falls: return data.numberOfTimesFallen ?? 0
         case .uvExposure: return data.uvExposureIndex ?? 0
+        case .wheelchairPushes: return data.pushCount ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes:
             return "\(Int(value))"
         }
     }
