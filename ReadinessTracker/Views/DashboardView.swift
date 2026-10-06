@@ -1762,6 +1762,7 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
 
+                // Honest #411: WHOOP body.swimDistance.card → classic MetricDetailView(.swimDistance)
                 SwimDistanceTonightBaselineCard(
                     meters: data.distanceSwimmingMeters,
                     history: history.compactMap { day in
@@ -1771,9 +1772,10 @@ struct DashboardView: View {
                     baseline: SwimDistanceBaseline.average(
                         from: history,
                         fallback: data.distanceSwimmingMeters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.swimDistanceCard)
 
                 SwimStrokesTonightBaselineCard(
                     strokes: data.swimmingStrokeCount,

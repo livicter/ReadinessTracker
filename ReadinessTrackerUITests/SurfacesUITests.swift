@@ -8349,6 +8349,37 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "vitals.ppi.card → metric.detail")
     }
 
+    func testSwimDistanceCardMetricDetailNavSurface() throws {
+        // Honest #411: WHOOP body.swimDistance.card → classic MetricDetailView (.swimDistance).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Swim Distance"]
+        while !spark.exists && n < 70 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Swim Distance")
+        let link = app.buttons["Swim Distance"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Swim Distance"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Swim Distance"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-swim-distance-metric-detail.png")
+        XCTAssertTrue(landed, "body.swimDistance.card → metric.detail")
+    }
+
 
 
 

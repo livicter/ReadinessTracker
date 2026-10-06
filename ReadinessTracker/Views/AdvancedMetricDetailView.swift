@@ -570,6 +570,7 @@ struct AdvancedMetricDetailView: View {
         case .uvExposure: return data.uvExposureIndex ?? 0
         case .wheelchairPushes: return data.pushCount ?? 0
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent ?? 0
+        case .swimDistance: return data.distanceSwimmingMeters ?? 0
         }
     }
     
@@ -606,14 +607,15 @@ struct AdvancedMetricDetailView: View {
         case .uvExposure: return data.uvExposureIndex ?? 0
         case .wheelchairPushes: return data.pushCount ?? 0
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent ?? 0
+        case .swimDistance: return data.distanceSwimmingMeters ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance:
             return "\(Int(value))"
         }
     }
