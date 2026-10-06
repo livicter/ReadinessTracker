@@ -316,7 +316,7 @@ enum SurfaceID {
     static let dietaryThiaminCard = "body.thiamin.md.nav"  // unique md.nav
     static let dietaryThiaminBaselineCallout = "body.thiamin.baseline"
     static let dietaryThiaminSpark = "body.thiamin.spark"
-    static let dietaryRiboflavinCard = "body.riboflavin.card"
+    static let dietaryRiboflavinCard = "body.riboflavin.md.nav"  // unique md.nav
     static let dietaryRiboflavinBaselineCallout = "body.riboflavin.baseline"
     static let dietaryRiboflavinSpark = "body.riboflavin.spark"
     static let dietaryNiacinCard = "body.niacin.card"
