@@ -2155,6 +2155,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #420: WHOOP body.wash.card → classic MetricDetailView(.handwashing)
                 HandwashingTonightBaselineCard(
                     minutes: data.handwashingMinutes,
                     history: history.compactMap { day in
@@ -2164,9 +2165,10 @@ struct DashboardView: View {
                     baseline: HandwashingBaseline.average(
                         from: history,
                         fallback: data.handwashingMinutes ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.handwashingCard)
 
 
                 // Honest #403: WHOOP body.mindful.card → classic MetricDetailView(.mindfulMinutes)
