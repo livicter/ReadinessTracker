@@ -8,6 +8,9 @@ struct DietarySugarTonightBaselineCard: View {
     let sugarGrams: Double?
     let history: [(date: Date, grams: Double)]
     let baselineGrams: Double
+    /// Honest #424: classic MetricDetailView(.dietarySugar).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softLimit = 50.0
     private let cautionLimit = 75.0
@@ -50,14 +53,23 @@ struct DietarySugarTonightBaselineCard: View {
     private let sugarColor = Color(hex: "FF2D55")
 
     var body: some View {
-        Group {
-            if sugarGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietarySugar,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -107,7 +119,7 @@ struct DietarySugarTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#424).
                 .accessibilityIdentifier(SurfaceID.dietarySugarBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -124,6 +136,7 @@ struct DietarySugarTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: sugarColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietarySugarSpark)
                     }
                 }
@@ -171,12 +184,16 @@ struct DietarySugarTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary sugar trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dietarySugarCard)
+        .accessibilityLabel("Dietary Sugar")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

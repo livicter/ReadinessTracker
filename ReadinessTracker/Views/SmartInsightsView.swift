@@ -112,6 +112,7 @@ struct SmartInsightsView: View {
                 case .dietaryCarbs: normalizedSlope = slope / 50.0 * 100
                 case .dietaryFat: normalizedSlope = slope / 15.0 * 100
                 case .dietaryFiber: normalizedSlope = slope / 5.0 * 100
+                case .dietarySugar: normalizedSlope = slope / 10.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

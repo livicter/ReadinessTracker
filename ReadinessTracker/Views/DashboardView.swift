@@ -2299,18 +2299,20 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #424: WHOOP body.sugar.card → classic MetricDetailView(.dietarySugar)
                 DietarySugarTonightBaselineCard(
                     sugarGrams: data.nutrition.sugarGrams,
                     history: history.compactMap { day in
                         guard let g = day.nutrition.sugarGrams else { return nil }
-                        return (day.date, g)
+                        return (date: day.date, grams: g)
                     },
                     baselineGrams: DietarySugarBaseline.average(
                         from: history,
                         fallback: data.nutrition.sugarGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietarySugarCard)
 
 
                 DietarySodiumTonightBaselineCard(
