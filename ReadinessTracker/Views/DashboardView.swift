@@ -2250,6 +2250,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #421: WHOOP body.carbs.card → classic MetricDetailView(.dietaryCarbs)
                 DietaryCarbsTonightBaselineCard(
                     carbohydrateGrams: data.nutrition.carbohydrateGrams,
                     history: history.compactMap { day in
@@ -2259,9 +2260,10 @@ struct DashboardView: View {
                     baselineGrams: DietaryCarbsBaseline.average(
                         from: history,
                         fallback: data.nutrition.carbohydrateGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryCarbsCard)
 
 
                 DietaryFatTonightBaselineCard(

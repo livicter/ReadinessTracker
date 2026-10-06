@@ -191,6 +191,7 @@ struct TrendAnalysisEngine {
         case .caffeine: normalizedSlope = slope / 50.0 * 100
         case .toothbrushing: normalizedSlope = slope / 1.0 * 100
         case .handwashing: normalizedSlope = slope / 0.5 * 100
+        case .dietaryCarbs: normalizedSlope = slope / 50.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

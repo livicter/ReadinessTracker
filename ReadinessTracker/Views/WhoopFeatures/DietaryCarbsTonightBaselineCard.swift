@@ -8,6 +8,9 @@ struct DietaryCarbsTonightBaselineCard: View {
     let carbohydrateGrams: Double?
     let history: [(date: Date, grams: Double)]
     let baselineGrams: Double
+    /// Honest #421: classic MetricDetailView(.dietaryCarbs).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 225.0
 
@@ -49,14 +52,23 @@ struct DietaryCarbsTonightBaselineCard: View {
     private let carbsColor = Color(hex: "AF52DE")
 
     var body: some View {
-        Group {
-            if carbohydrateGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryCarbs,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,7 +118,7 @@ struct DietaryCarbsTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#421).
                 .accessibilityIdentifier(SurfaceID.dietaryCarbsBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -123,6 +135,7 @@ struct DietaryCarbsTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: carbsColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryCarbsSpark)
                     }
                 }
@@ -170,12 +183,16 @@ struct DietaryCarbsTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Carbohydrate intake trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dietaryCarbsCard)
+        .accessibilityLabel("Carbohydrates")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
