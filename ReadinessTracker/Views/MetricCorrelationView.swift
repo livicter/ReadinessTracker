@@ -203,6 +203,7 @@ struct MetricCorrelationView: View {
         case .wheelchairPushes: return data.pushCount
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent
         case .swimDistance: return data.distanceSwimmingMeters
+        case .environmentalAudio: return data.environmentalAudioExposureDBA
         }
     }
 }

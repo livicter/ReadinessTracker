@@ -1170,6 +1170,7 @@ struct DashboardView: View {
 
 
 
+            // Honest #412: WHOOP vitals.envaudio.card → classic MetricDetailView(.environmentalAudio)
             EnvironmentalAudioTonightBaselineCard(
                 exposureDBA: data.environmentalAudioExposureDBA,
                 history: history.compactMap { day in
@@ -1179,9 +1180,10 @@ struct DashboardView: View {
                 baseline: EnvironmentalAudioBaseline.average(
                     from: history,
                     fallback: data.environmentalAudioExposureDBA ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.environmentalAudioCard)
 
             HeadphoneAudioTonightBaselineCard(
                 exposureDBA: data.headphoneAudioExposureDBA,

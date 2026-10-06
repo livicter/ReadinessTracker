@@ -9,6 +9,9 @@ struct EnvironmentalAudioTonightBaselineCard: View {
     let exposureDBA: Double?
     let history: [(date: Date, dba: Double)]
     let baseline: Double
+    /// Honest #412: classic MetricDetailView(.environmentalAudio).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { exposureDBA.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct EnvironmentalAudioTonightBaselineCard: View {
     private let audioColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.environmentalAudioCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .environmentalAudio,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct EnvironmentalAudioTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#412).
                 .accessibilityIdentifier(SurfaceID.environmentalAudioBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct EnvironmentalAudioTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: audioColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.environmentalAudioSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct EnvironmentalAudioTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Environmental audio trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.environmentalAudioCard)
+        .accessibilityLabel("Environmental Audio")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
