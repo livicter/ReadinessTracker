@@ -218,6 +218,7 @@ struct MetricCorrelationView: View {
         case .dietarySugar: return data.nutrition.sugarGrams
         case .dietarySodium: return data.nutrition.sodiumMg
         case .dietaryPotassium: return data.nutrition.potassiumMg
+        case .dietaryCholesterol: return data.nutrition.cholesterolMg
         }
     }
 }

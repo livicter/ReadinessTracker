@@ -8,6 +8,9 @@ struct DietaryCholesterolTonightBaselineCard: View {
     let cholesterolMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #427: classic MetricDetailView(.dietaryCholesterol).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softLimit = 300.0
     private let cautionLimit = 400.0
@@ -50,14 +53,25 @@ struct DietaryCholesterolTonightBaselineCard: View {
     private let cholesterolColor = Color(hex: "FF453A")
 
     var body: some View {
-        Group {
-            if cholesterolMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryCholesterol,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryCholesterolCard)
+        .accessibilityLabel("Dietary Cholesterol")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -107,7 +121,7 @@ struct DietaryCholesterolTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#427).
                 .accessibilityIdentifier(SurfaceID.dietaryCholesterolBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -124,6 +138,7 @@ struct DietaryCholesterolTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: cholesterolColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryCholesterolSpark)
                     }
                 }
@@ -171,6 +186,7 @@ struct DietaryCholesterolTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary cholesterol trend last seven days")
                 }
             }
