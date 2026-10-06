@@ -206,6 +206,7 @@ struct MetricCorrelationView: View {
         case .environmentalAudio: return data.environmentalAudioExposureDBA
         case .headphoneAudio: return data.headphoneAudioExposureDBA
         case .envSoundReduction: return data.environmentalSoundReductionDBA
+        case .protein: return data.nutrition.proteinGrams
         }
     }
 }

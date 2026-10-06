@@ -8,6 +8,9 @@ struct ProteinTonightBaselineCard: View {
     let proteinGrams: Double?
     let history: [(date: Date, protein: Double)]
     let baselineGrams: Double
+    /// Honest #415: classic MetricDetailView(.protein).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 100.0
 
@@ -47,14 +50,23 @@ struct ProteinTonightBaselineCard: View {
     private let proteinColor = Color(hex: "34C759")
 
     var body: some View {
-        Group {
-            if proteinGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .protein,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -104,7 +116,7 @@ struct ProteinTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#415).
                 .accessibilityIdentifier(SurfaceID.proteinBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -121,6 +133,7 @@ struct ProteinTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: proteinColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.proteinSpark)
                     }
                 }
@@ -168,12 +181,16 @@ struct ProteinTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Protein intake trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.proteinCard)
+        .accessibilityLabel("Protein")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

@@ -2210,6 +2210,7 @@ struct DashboardView: View {
                 )
                 .accessibilityIdentifier(SurfaceID.caffeineCard)
 
+                // Honest #415: WHOOP body.protein.card → classic MetricDetailView(.protein)
                 ProteinTonightBaselineCard(
                     proteinGrams: data.nutrition.proteinGrams,
                     history: history.compactMap { day in
@@ -2219,9 +2220,10 @@ struct DashboardView: View {
                     baselineGrams: ProteinBaseline.average(
                         from: history,
                         fallback: data.nutrition.proteinGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.proteinCard)
 
 
                 DietaryEnergyTonightBaselineCard(
