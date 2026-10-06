@@ -301,7 +301,7 @@ enum SurfaceID {
     static let dietaryFolateCard = "body.folate.md.nav"  // unique — avoid ghost collision
     static let dietaryFolateBaselineCallout = "body.folate.baseline"
     static let dietaryFolateSpark = "body.folate.spark"
-    static let dietaryVitaminACard = "body.vitamina.card"
+    static let dietaryVitaminACard = "body.vitamina.md.nav"  // unique md.nav
     static let dietaryVitaminABaselineCallout = "body.vitamina.baseline"
     static let dietaryVitaminASpark = "body.vitamina.spark"
     static let dietaryVitaminECard = "body.vitamine.card"
