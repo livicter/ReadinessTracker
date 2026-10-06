@@ -8,6 +8,9 @@ struct DietaryVitaminB12TonightBaselineCard: View {
     let vitaminB12Mcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #430: classic MetricDetailView(.dietaryVitaminB12).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 2.4
     private let buildingFloor = 1.5
@@ -51,14 +54,25 @@ struct DietaryVitaminB12TonightBaselineCard: View {
     private let vitaminB12Color = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if vitaminB12Mcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryVitaminB12,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryVitaminB12Card)
+        .accessibilityLabel("Vitamin B12")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryVitaminB12TonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#430).
                 .accessibilityIdentifier(SurfaceID.dietaryVitaminB12BaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryVitaminB12TonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: vitaminB12Color)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryVitaminB12Spark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryVitaminB12TonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary vitaminB12 trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryVitaminB12Card)
+        .contentShape(Rectangle())
     }
 
 

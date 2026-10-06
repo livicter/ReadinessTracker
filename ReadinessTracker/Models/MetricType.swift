@@ -84,6 +84,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryVitaminD = "Vitamin D"
 
+    case dietaryVitaminB12 = "Vitamin B12"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -138,6 +140,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryCholesterol: return "heart.fill"
         case .dietaryVitaminC: return "carrot.fill"
         case .dietaryVitaminD: return "sun.max.fill"
+        case .dietaryVitaminB12: return "pills.fill"
         }
     }
 
@@ -193,6 +196,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryCholesterol: return "mg"
         case .dietaryVitaminC: return "mg"
         case .dietaryVitaminD: return "IU"
+        case .dietaryVitaminB12: return "mcg"
         }
     }
 
@@ -248,12 +252,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryCholesterol: return Color(hex: "FF453A")
         case .dietaryVitaminC: return Color(hex: "FFD60A")
         case .dietaryVitaminD: return Color(hex: "FF9F0A")
+        case .dietaryVitaminB12: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
         }
     }
@@ -508,6 +513,11 @@ enum MetricType: String, CaseIterable {
             if value < 400 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building vitamin D floor") }
             if value < 600 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~600 IU goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~600 IU vitamin D goal")
+        case .dietaryVitaminB12:
+            if value < 0.96 { return MetricZone(label: "Very low", color: RTColor.warning, description: "Below soft vitamin B12 band") }
+            if value < 1.5 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building vitamin B12 floor") }
+            if value < 2.4 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~2.4 mcg goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~2.4 mcg vitamin B12 goal")
         }
     }
 }
