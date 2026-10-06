@@ -9138,6 +9138,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.vitamine.md.nav → metric.detail")
     }
 
+    func testDietaryVitaminKCardMetricDetailNavSurface() throws {
+        // Honest #438: WHOOP body.vitamink.md.nav → classic MetricDetailView (.dietaryVitaminK).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Vitamin K"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Vitamin K")
+        let link = app.buttons["Vitamin K"].firstMatch
+        let card = app.descendants(matching: .any)["body.vitamink.md.nav"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Vitamin K"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-vitamin-k-metric-detail.png")
+        XCTAssertTrue(landed, "body.vitamink.md.nav → metric.detail")
+    }
+
 
 
 
@@ -10983,11 +11009,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryVitaminKTonightBaselineSurface() throws {
         // Honest #204: Vitamin K Tonight | Baseline (HK dietaryVitaminK).
         var n = 0
-        while !app.descendants(matching: .any)["body.vitamink.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.vitamink.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.vitamink.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.vitamink.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Vitamin K card")
         XCTAssertTrue(app.staticTexts["Vitamin K"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
