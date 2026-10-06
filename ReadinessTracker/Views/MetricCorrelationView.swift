@@ -221,6 +221,7 @@ struct MetricCorrelationView: View {
         case .dietaryCholesterol: return data.nutrition.cholesterolMg
         case .dietaryVitaminC: return data.nutrition.vitaminCMg
         case .dietaryVitaminD: return data.nutrition.vitaminDIU
+        case .dietaryVitaminB12: return data.nutrition.vitaminB12Mcg
         }
     }
 }

@@ -8922,6 +8922,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.vitamind.card → metric.detail")
     }
 
+    func testDietaryVitaminB12CardMetricDetailNavSurface() throws {
+        // Honest #430: WHOOP body.b12.card → classic MetricDetailView (.dietaryVitaminB12).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Vitamin B12"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Vitamin B12")
+        let link = app.buttons["Vitamin B12"].firstMatch
+        let card = app.descendants(matching: .any)["body.b12.card"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Vitamin B12"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-vitamin-b12-metric-detail.png")
+        XCTAssertTrue(landed, "body.b12.card → metric.detail")
+    }
+
 
 
 

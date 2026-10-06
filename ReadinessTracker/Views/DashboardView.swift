@@ -2409,6 +2409,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #430: WHOOP body.b12.card → classic MetricDetailView(.dietaryVitaminB12)
                 DietaryVitaminB12TonightBaselineCard(
                     vitaminB12Mcg: data.nutrition.vitaminB12Mcg,
                     history: history.compactMap { day in
@@ -2418,9 +2419,10 @@ struct DashboardView: View {
                     baselineMcg: DietaryVitaminB12Baseline.average(
                         from: history,
                         fallback: data.nutrition.vitaminB12Mcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryVitaminB12Card)
 
 
                 DietaryIronTonightBaselineCard(
