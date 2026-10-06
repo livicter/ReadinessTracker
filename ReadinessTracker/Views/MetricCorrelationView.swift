@@ -204,6 +204,7 @@ struct MetricCorrelationView: View {
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent
         case .swimDistance: return data.distanceSwimmingMeters
         case .environmentalAudio: return data.environmentalAudioExposureDBA
+        case .headphoneAudio: return data.headphoneAudioExposureDBA
         }
     }
 }
