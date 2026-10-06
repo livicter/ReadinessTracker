@@ -8,6 +8,9 @@ struct DietaryFolateTonightBaselineCard: View {
     let folateMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #435: classic MetricDetailView(.dietaryFolate).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 400.0
     private let buildingFloor = 280.0
@@ -51,14 +54,29 @@ struct DietaryFolateTonightBaselineCard: View {
     private let folateColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if folateMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        // Lazy destination (label:) — eager destination: init was flaky on deep dietary cards (#435).
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryFolate,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryFolateCard)
+        .accessibilityLabel("Dietary Folate")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryFolateTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryFolateBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#435).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,8 +142,9 @@ struct DietaryFolateTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: folateColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryFolateSpark)
+                            .allowsHitTesting(false)
                     }
+                    .allowsHitTesting(false)
                 }
 
                 if chartPoints.count >= 3 {
@@ -172,12 +190,13 @@ struct DietaryFolateTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary folate trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryFolateCard)
+        .contentShape(Rectangle())
     }
 
 
