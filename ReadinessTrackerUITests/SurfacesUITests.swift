@@ -9216,6 +9216,40 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.thiamin.md.nav → metric.detail")
     }
 
+    func testDietaryRiboflavinCardMetricDetailNavSurface() throws {
+        // Honest #442: WHOOP body.riboflavin.md.nav → classic MetricDetailView (.dietaryRiboflavin).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Riboflavin"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Riboflavin")
+        let link = app.buttons["Dietary Riboflavin"].firstMatch
+        let card = app.descendants(matching: .any)["body.riboflavin.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Riboflavin"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-riboflavin-metric-detail.png")
+        XCTAssertTrue(landed, "body.riboflavin.md.nav → metric.detail")
+    }
+
 
 
 

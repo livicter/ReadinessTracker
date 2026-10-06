@@ -8,6 +8,9 @@ struct DietaryRiboflavinTonightBaselineCard: View {
     let riboflavinMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #442: classic MetricDetailView(.dietaryRiboflavin).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 1.3
     private let buildingFloor = 0.9
@@ -51,14 +54,29 @@ struct DietaryRiboflavinTonightBaselineCard: View {
     private let riboflavinColor = Color(hex: "FFB340")
 
     var body: some View {
-        Group {
-            if riboflavinMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryRiboflavin,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryRiboflavinCard)
+        .accessibilityLabel("Dietary Riboflavin")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryRiboflavinTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryRiboflavinBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#442).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,8 +142,9 @@ struct DietaryRiboflavinTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: riboflavinColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryRiboflavinSpark)
+                            .allowsHitTesting(false)
                     }
+                    .allowsHitTesting(false)
                 }
 
                 if chartPoints.count >= 3 {
@@ -172,12 +190,13 @@ struct DietaryRiboflavinTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary riboflavin trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryRiboflavinCard)
+        .contentShape(Rectangle())
     }
 
 
