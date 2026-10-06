@@ -2347,6 +2347,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #427: WHOOP body.cholesterol.card → classic MetricDetailView(.dietaryCholesterol)
                 DietaryCholesterolTonightBaselineCard(
                     cholesterolMg: data.nutrition.cholesterolMg,
                     history: history.compactMap { day in
@@ -2356,9 +2357,10 @@ struct DashboardView: View {
                     baselineMg: DietaryCholesterolBaseline.average(
                         from: history,
                         fallback: data.nutrition.cholesterolMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryCholesterolCard)
 
 
                 DietarySatFatTonightBaselineCard(
