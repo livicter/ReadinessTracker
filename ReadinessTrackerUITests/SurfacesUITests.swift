@@ -8659,6 +8659,37 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.wash.card → metric.detail")
     }
 
+    func testDietaryCarbsCardMetricDetailNavSurface() throws {
+        // Honest #421: WHOOP body.carbs.card → classic MetricDetailView (.dietaryCarbs).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Carbs"]
+        while !spark.exists && n < 70 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Carbs")
+        let link = app.buttons["Carbohydrates"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Carbohydrates"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Carbohydrates"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-carbs-metric-detail.png")
+        XCTAssertTrue(landed, "body.carbs.card → metric.detail")
+    }
+
 
 
 
