@@ -2594,9 +2594,11 @@ struct DashboardView: View {
                     baselineMg: DietaryRiboflavinBaseline.average(
                         from: history,
                         fallback: data.nutrition.riboflavinMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryRiboflavinCard)
+                // Honest #442: NavigationLink hosts SurfaceID.dietaryRiboflavinCard (body.riboflavin.md.nav)
 
 
                 DietaryNiacinTonightBaselineCard(

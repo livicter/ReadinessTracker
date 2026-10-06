@@ -106,6 +106,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryThiamin = "Dietary Thiamin"
 
+    case dietaryRiboflavin = "Dietary Riboflavin"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -171,6 +173,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryVitaminK: return "fork.knife"
         case .dietaryVitaminB6: return "fork.knife"
         case .dietaryThiamin: return "fork.knife"
+        case .dietaryRiboflavin: return "fork.knife"
         }
     }
 
@@ -237,6 +240,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryVitaminK: return "mcg"
         case .dietaryVitaminB6: return "mg"
         case .dietaryThiamin: return "mg"
+        case .dietaryRiboflavin: return "mg"
         }
     }
 
@@ -303,12 +307,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryVitaminK: return Color(hex: "32D74B")
         case .dietaryVitaminB6: return Color(hex: "5E5CE6")
         case .dietaryThiamin: return Color(hex: "FF6B6B")
+        case .dietaryRiboflavin: return Color(hex: "FFB340")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
         }
     }
@@ -618,6 +623,11 @@ enum MetricType: String, CaseIterable {
             if value < 0.8 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Thiamin floor") }
             if value < 1.2 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~1.2 mg goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~1.2 mg Thiamin goal")
+        case .dietaryRiboflavin:
+            if value < 0.52 { return MetricZone(label: "Very low", color: RTColor.warning, description: "Below soft Riboflavin band") }
+            if value < 0.9 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Riboflavin floor") }
+            if value < 1.3 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~1.3 mg goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~1.3 mg Riboflavin goal")
         }
     }
 }
