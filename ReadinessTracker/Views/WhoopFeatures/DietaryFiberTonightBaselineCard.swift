@@ -8,6 +8,9 @@ struct DietaryFiberTonightBaselineCard: View {
     let fiberGrams: Double?
     let history: [(date: Date, grams: Double)]
     let baselineGrams: Double
+    /// Honest #423: classic MetricDetailView(.dietaryFiber).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 30.0
 
@@ -49,14 +52,23 @@ struct DietaryFiberTonightBaselineCard: View {
     private let fiberColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if fiberGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryFiber,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,7 +118,7 @@ struct DietaryFiberTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#423).
                 .accessibilityIdentifier(SurfaceID.dietaryFiberBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -123,6 +135,7 @@ struct DietaryFiberTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: fiberColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryFiberSpark)
                     }
                 }
@@ -170,12 +183,16 @@ struct DietaryFiberTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary fiber trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dietaryFiberCard)
+        .accessibilityLabel("Dietary Fiber")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

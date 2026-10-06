@@ -70,6 +70,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryFat = "Dietary Fat"
 
+    case dietaryFiber = "Dietary Fiber"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -117,6 +119,7 @@ enum MetricType: String, CaseIterable {
         case .handwashing: return "hands.sparkles.fill"
         case .dietaryCarbs: return "chart.pie.fill"
         case .dietaryFat: return "drop.triangle.fill"
+        case .dietaryFiber: return "leaf.fill"
         }
     }
 
@@ -165,6 +168,7 @@ enum MetricType: String, CaseIterable {
         case .handwashing: return "min"
         case .dietaryCarbs: return "g"
         case .dietaryFat: return "g"
+        case .dietaryFiber: return "g"
         }
     }
 
@@ -213,12 +217,13 @@ enum MetricType: String, CaseIterable {
         case .handwashing: return Color(hex: "5AC8FA")
         case .dietaryCarbs: return Color(hex: "AF52DE")
         case .dietaryFat: return Color(hex: "FFCC00")
+        case .dietaryFiber: return Color(hex: "30D158")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine: return false
         }
     }
@@ -438,6 +443,11 @@ enum MetricType: String, CaseIterable {
             if value < 52 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft fat goal") }
             if value < 70 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~70 g fat goal") }
             return MetricZone(label: "Goal met", color: RTColor.optimal, description: "Met soft ~70 g fat goal")
+        case .dietaryFiber:
+            if value < 15 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below soft ~30 g fiber band") }
+            if value < 22 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft fiber goal") }
+            if value < 30 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~30 g fiber goal") }
+            return MetricZone(label: "Goal met", color: RTColor.optimal, description: "Met soft ~30 g fiber goal")
         }
     }
 }
