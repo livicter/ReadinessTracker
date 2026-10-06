@@ -2530,9 +2530,11 @@ struct DashboardView: View {
                     baselineMg: DietaryVitaminEBaseline.average(
                         from: history,
                         fallback: data.nutrition.vitaminEMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryVitaminECard)
+                // Honest #437: NavigationLink hosts SurfaceID.dietaryVitaminECard (body.vitamine.md.nav)
 
 
                 DietaryVitaminKTonightBaselineCard(

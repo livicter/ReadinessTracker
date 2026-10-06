@@ -228,6 +228,7 @@ struct MetricCorrelationView: View {
         case .dietaryZinc: return data.nutrition.zincMg
         case .dietaryFolate: return data.nutrition.folateMcg
         case .dietaryVitaminA: return data.nutrition.vitaminAMcg
+        case .dietaryVitaminE: return data.nutrition.vitaminEMg
         }
     }
 }
