@@ -9,6 +9,9 @@ struct UVExposureTonightBaselineCard: View {
     let uvIndex: Double?
     let history: [(date: Date, index: Double)]
     let baseline: Double
+    /// Honest #408: classic MetricDetailView(.uvExposure).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { uvIndex.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct UVExposureTonightBaselineCard: View {
     private let uvColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.uvExposureCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .uvExposure,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct UVExposureTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#408).
                 .accessibilityIdentifier(SurfaceID.uvExposureBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct UVExposureTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: uvColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.uvExposureSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct UVExposureTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Headphone audio trend last seven days")
+                            .allowsHitTesting(false)
+                    .accessibilityLabel("UV Exposure trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.uvExposureCard)
+        .accessibilityLabel("UV Exposure")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

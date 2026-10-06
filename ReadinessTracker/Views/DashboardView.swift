@@ -1220,6 +1220,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #408: WHOOP vitals.uv.card → classic MetricDetailView(.uvExposure)
             UVExposureTonightBaselineCard(
                 uvIndex: data.uvExposureIndex,
                 history: history.compactMap { day in
@@ -1229,9 +1230,10 @@ struct DashboardView: View {
                 baseline: UVExposureBaseline.average(
                     from: history,
                     fallback: data.uvExposureIndex ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.uvExposureCard)
 
 
 
