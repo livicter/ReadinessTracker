@@ -208,6 +208,7 @@ struct MetricCorrelationView: View {
         case .envSoundReduction: return data.environmentalSoundReductionDBA
         case .protein: return data.nutrition.proteinGrams
         case .dietaryEnergy: return data.nutrition.energyKcal
+        case .hydration: return data.nutrition.waterLiters
         }
     }
 }
