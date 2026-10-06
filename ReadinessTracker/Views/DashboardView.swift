@@ -2266,6 +2266,8 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #422: WHOOP body.fat.card → classic MetricDetailView(.dietaryFat)
+                // SurfaceIDs remain body.fat.* (composition body fat uses body.bodyFat.*).
                 DietaryFatTonightBaselineCard(
                     fatGrams: data.nutrition.fatGrams,
                     history: history.compactMap { day in
@@ -2275,9 +2277,10 @@ struct DashboardView: View {
                     baselineGrams: DietaryFatBaseline.average(
                         from: history,
                         fallback: data.nutrition.fatGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryFatCard)
 
 
                 DietaryFiberTonightBaselineCard(

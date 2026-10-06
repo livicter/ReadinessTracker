@@ -8,6 +8,9 @@ struct DietaryFatTonightBaselineCard: View {
     let fatGrams: Double?
     let history: [(date: Date, grams: Double)]
     let baselineGrams: Double
+    /// Honest #422: classic MetricDetailView(.dietaryFat). SurfaceIDs stay body.fat.* (vs body.bodyFat.*).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 70.0
 
@@ -49,14 +52,23 @@ struct DietaryFatTonightBaselineCard: View {
     private let fatColor = Color(hex: "FFCC00")
 
     var body: some View {
-        Group {
-            if fatGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryFat,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,7 +118,7 @@ struct DietaryFatTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#422).
                 .accessibilityIdentifier(SurfaceID.dietaryFatBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -123,6 +135,7 @@ struct DietaryFatTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: fatColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryFatSpark)
                     }
                 }
@@ -170,12 +183,16 @@ struct DietaryFatTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary fat trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dietaryFatCard)
+        .accessibilityLabel("Dietary Fat")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
