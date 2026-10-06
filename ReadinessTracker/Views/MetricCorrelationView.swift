@@ -216,6 +216,7 @@ struct MetricCorrelationView: View {
         case .dietaryFat: return data.nutrition.fatGrams
         case .dietaryFiber: return data.nutrition.fiberGrams
         case .dietarySugar: return data.nutrition.sugarGrams
+        case .dietarySodium: return data.nutrition.sodiumMg
         }
     }
 }

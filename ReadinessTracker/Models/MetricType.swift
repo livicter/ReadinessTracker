@@ -74,6 +74,8 @@ enum MetricType: String, CaseIterable {
 
     case dietarySugar = "Dietary Sugar"
 
+    case dietarySodium = "Dietary Sodium"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -123,6 +125,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryFat: return "drop.triangle.fill"
         case .dietaryFiber: return "leaf.fill"
         case .dietarySugar: return "cube.fill"
+        case .dietarySodium: return "cube.fill"
         }
     }
 
@@ -173,6 +176,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryFat: return "g"
         case .dietaryFiber: return "g"
         case .dietarySugar: return "g"
+        case .dietarySodium: return "mg"
         }
     }
 
@@ -223,13 +227,14 @@ enum MetricType: String, CaseIterable {
         case .dietaryFat: return Color(hex: "FFCC00")
         case .dietaryFiber: return Color(hex: "30D158")
         case .dietarySugar: return Color(hex: "FF2D55")
+        case .dietarySodium: return Color(hex: "FF9500")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium: return false
         }
     }
 
@@ -458,6 +463,11 @@ enum MetricType: String, CaseIterable {
             if value >= 50 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "At or above soft sugar limit") }
             if value >= 25 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Within moderate sugar band") }
             return MetricZone(label: "Clear", color: RTColor.optimal, description: "Well under soft ~50 g sugar limit")
+        case .dietarySodium:
+            if value >= 3000 { return MetricZone(label: "High", color: RTColor.warning, description: "Above soft ~2300 mg sodium limit") }
+            if value >= 2300 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "At or above soft sodium limit") }
+            if value >= 1150 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Within moderate sodium band") }
+            return MetricZone(label: "Clear", color: RTColor.optimal, description: "Well under soft ~2300 mg sodium limit")
         }
     }
 }
