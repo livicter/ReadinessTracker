@@ -8,6 +8,9 @@ struct PeripheralPerfusionTonightBaselineCard: View {
     let percent: Double?
     let history: [(date: Date, percent: Double)]
     let baseline: Double
+    /// Honest #410: classic MetricDetailView(.peripheralPerfusion).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { percent.map { max(0, $0) } }
 
@@ -49,15 +52,23 @@ struct PeripheralPerfusionTonightBaselineCard: View {
     private let ppiColor = Color(hex: "32ADE6")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .peripheralPerfusion,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,7 +121,7 @@ struct PeripheralPerfusionTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#410).
                 .accessibilityIdentifier(SurfaceID.peripheralPerfusionBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -127,6 +138,7 @@ struct PeripheralPerfusionTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: ppiColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.peripheralPerfusionSpark)
                     }
                 }
@@ -176,12 +188,16 @@ struct PeripheralPerfusionTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Perfusion index trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
+        .accessibilityLabel("Perfusion Index")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
