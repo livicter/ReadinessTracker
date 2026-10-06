@@ -8256,6 +8256,37 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.falls.card → metric.detail")
     }
 
+    func testUVExposureCardMetricDetailNavSurface() throws {
+        // Honest #408: WHOOP vitals.uv.card → classic MetricDetailView (.uvExposure).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day UV Exposure"]
+        while !spark.exists && n < 55 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day UV Exposure")
+        let link = app.buttons["UV Exposure"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["UV Exposure"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["UV Exposure"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-uv-exposure-metric-detail.png")
+        XCTAssertTrue(landed, "vitals.uv.card → metric.detail")
+    }
+
 
 
 

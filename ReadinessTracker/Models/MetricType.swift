@@ -40,6 +40,8 @@ enum MetricType: String, CaseIterable {
 
     case falls = "Falls"
 
+    case uvExposure = "UV Exposure"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -72,6 +74,7 @@ enum MetricType: String, CaseIterable {
         case .heartRateRecovery: return "arrow.down.heart.fill"
         case .afBurden: return "waveform.path.ecg"
         case .falls: return "figure.fall"
+        case .uvExposure: return "sun.max.trianglebadge.exclamationmark"
         }
     }
 
@@ -105,6 +108,7 @@ enum MetricType: String, CaseIterable {
         case .heartRateRecovery: return "bpm"
         case .afBurden: return "%"
         case .falls: return "count"
+        case .uvExposure: return "UVI"
         }
     }
 
@@ -138,13 +142,14 @@ enum MetricType: String, CaseIterable {
         case .heartRateRecovery: return Color(hex: "FF375F")
         case .afBurden: return Color(hex: "BF5AF2")
         case .falls: return Color(hex: "FF9F0A")
+        case .uvExposure: return Color(hex: "FF9F0A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure: return false
         }
     }
 
@@ -288,6 +293,11 @@ enum MetricType: String, CaseIterable {
             if value < 2 { return MetricZone(label: "One", color: RTColor.caution, description: "Single fall event") }
             if value < 4 { return MetricZone(label: "Few", color: RTColor.warning, description: "Multiple fall events") }
             return MetricZone(label: "Many", color: RTColor.warning, description: "Elevated fall count")
+        case .uvExposure:
+            if value < 3 { return MetricZone(label: "Low", color: RTColor.optimal, description: "Below moderate UV band") }
+            if value < 6 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate UV exposure") }
+            if value < 8 { return MetricZone(label: "High", color: RTColor.caution, description: "High UV exposure") }
+            return MetricZone(label: "Very High", color: RTColor.warning, description: "Very high UV exposure")
         }
     }
 }
