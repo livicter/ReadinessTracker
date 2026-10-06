@@ -1237,14 +1237,15 @@ struct MetricDetailView: View {
         case .toothbrushing: return data.toothbrushingMinutes ?? 0
         case .handwashing: return data.handwashingMinutes ?? 0
         case .dietaryCarbs: return data.nutrition.carbohydrateGrams ?? 0
+        case .dietaryFat: return data.nutrition.fatGrams ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat:
             return "\(Int(value))"
         }
     }
@@ -1457,6 +1458,8 @@ extension MetricDetailView {
             return (.handwashing, .toothbrushing)
         case .dietaryCarbs:
             return (.dietaryCarbs, .protein)
+        case .dietaryFat:
+            return (.dietaryFat, .dietaryCarbs)
         }
     }
 }

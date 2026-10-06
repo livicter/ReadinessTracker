@@ -213,6 +213,7 @@ struct MetricCorrelationView: View {
         case .toothbrushing: return data.toothbrushingMinutes
         case .handwashing: return data.handwashingMinutes
         case .dietaryCarbs: return data.nutrition.carbohydrateGrams
+        case .dietaryFat: return data.nutrition.fatGrams
         }
     }
 }
