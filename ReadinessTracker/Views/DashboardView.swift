@@ -2377,6 +2377,7 @@ struct DashboardView: View {
                 .accessibilityIdentifier(SurfaceID.dietarySatFatCard)
 
 
+                // Honest #428: WHOOP body.vitaminc.card → classic MetricDetailView(.dietaryVitaminC)
                 DietaryVitaminCTonightBaselineCard(
                     vitaminCMg: data.nutrition.vitaminCMg,
                     history: history.compactMap { day in
@@ -2386,9 +2387,10 @@ struct DashboardView: View {
                     baselineMg: DietaryVitaminCBaseline.average(
                         from: history,
                         fallback: data.nutrition.vitaminCMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryVitaminCCard)
 
 
                 DietaryVitaminDTonightBaselineCard(
