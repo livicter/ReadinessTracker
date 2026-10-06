@@ -48,6 +48,8 @@ enum MetricType: String, CaseIterable {
 
     case swimDistance = "Swim Distance"
 
+    case environmentalAudio = "Environmental Audio"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -84,6 +86,7 @@ enum MetricType: String, CaseIterable {
         case .wheelchairPushes: return "figure.roll"
         case .peripheralPerfusion: return "drop.triangle.fill"
         case .swimDistance: return "figure.pool.swim"
+        case .environmentalAudio: return "speaker.wave.2.fill"
         }
     }
 
@@ -121,6 +124,7 @@ enum MetricType: String, CaseIterable {
         case .wheelchairPushes: return "pushes"
         case .peripheralPerfusion: return "%"
         case .swimDistance: return "m"
+        case .environmentalAudio: return "dBA"
         }
     }
 
@@ -158,13 +162,14 @@ enum MetricType: String, CaseIterable {
         case .wheelchairPushes: return Color(hex: "5AC8FA")
         case .peripheralPerfusion: return Color(hex: "32ADE6")
         case .swimDistance: return Color(hex: "64D2FF")
+        case .environmentalAudio: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio: return false
         }
     }
 
@@ -328,6 +333,11 @@ enum MetricType: String, CaseIterable {
             if value < 800 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light swim volume") }
             if value < 1500 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid swim volume") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Strong swim volume")
+        case .environmentalAudio:
+            if value < 55 { return MetricZone(label: "Quiet", color: RTColor.optimal, description: "Quiet environmental band") }
+            if value < 70 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate environmental exposure") }
+            if value < 80 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated environmental exposure") }
+            return MetricZone(label: "Loud", color: RTColor.warning, description: "Loud environmental exposure")
         }
     }
 }
