@@ -2610,9 +2610,11 @@ struct DashboardView: View {
                     baselineMg: DietaryNiacinBaseline.average(
                         from: history,
                         fallback: data.nutrition.niacinMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryNiacinCard)
+                // Honest #443: NavigationLink hosts SurfaceID.dietaryNiacinCard (body.niacin.md.nav)
 
 
                 DietaryPantothenicAcidTonightBaselineCard(
