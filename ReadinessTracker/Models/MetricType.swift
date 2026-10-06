@@ -54,6 +54,8 @@ enum MetricType: String, CaseIterable {
 
     case envSoundReduction = "Sound Reduction"
 
+    case protein = "Protein"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -93,6 +95,7 @@ enum MetricType: String, CaseIterable {
         case .environmentalAudio: return "speaker.wave.2.fill"
         case .headphoneAudio: return "headphones"
         case .envSoundReduction: return "ear.fill"
+        case .protein: return "fork.knife"
         }
     }
 
@@ -133,6 +136,7 @@ enum MetricType: String, CaseIterable {
         case .environmentalAudio: return "dBA"
         case .headphoneAudio: return "dBA"
         case .envSoundReduction: return "dB"
+        case .protein: return "g"
         }
     }
 
@@ -173,12 +177,13 @@ enum MetricType: String, CaseIterable {
         case .environmentalAudio: return Color(hex: "BF5AF2")
         case .headphoneAudio: return Color(hex: "64D2FF")
         case .envSoundReduction: return Color(hex: "30D158")
+        case .protein: return Color(hex: "34C759")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio: return false
         }
     }
@@ -358,6 +363,11 @@ enum MetricType: String, CaseIterable {
             if value < 12 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light ambient attenuation") }
             if value < 20 { return MetricZone(label: "Good", color: RTColor.good, description: "Good ambient attenuation") }
             return MetricZone(label: "Strong", color: RTColor.optimal, description: "Strong ambient attenuation")
+        case .protein:
+            if value < 50 { return MetricZone(label: "Low", color: RTColor.warning, description: "Below soft ~100 g protein band") }
+            if value < 75 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft protein goal") }
+            if value < 100 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~100 g protein goal") }
+            return MetricZone(label: "Goal met", color: RTColor.optimal, description: "Met soft ~100 g protein goal")
         }
     }
 }

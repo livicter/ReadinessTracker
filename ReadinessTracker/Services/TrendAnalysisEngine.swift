@@ -185,6 +185,7 @@ struct TrendAnalysisEngine {
         case .environmentalAudio: normalizedSlope = slope / 10.0 * 100
         case .headphoneAudio: normalizedSlope = slope / 10.0 * 100
         case .envSoundReduction: normalizedSlope = slope / 5.0 * 100
+        case .protein: normalizedSlope = slope / 25.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
