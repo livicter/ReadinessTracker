@@ -2425,6 +2425,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #431: WHOOP body.iron.card → classic MetricDetailView(.dietaryIron)
                 DietaryIronTonightBaselineCard(
                     ironMg: data.nutrition.ironMg,
                     history: history.compactMap { day in
@@ -2434,9 +2435,10 @@ struct DashboardView: View {
                     baselineMg: DietaryIronBaseline.average(
                         from: history,
                         fallback: data.nutrition.ironMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryIronCard)
 
 
                 DietaryCalciumTonightBaselineCard(
