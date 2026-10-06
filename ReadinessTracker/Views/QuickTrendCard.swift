@@ -104,9 +104,9 @@ struct QuickTrendCard: View {
 
     private func formattedAverage(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion:
+        case .hrv, .restingHR, .activeCalories, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance:
             return "\(Int(value))"
         case .bloodOxygen:
             return String(format: "%.0f", value)
@@ -169,6 +169,7 @@ struct QuickTrendCard: View {
         case .uvExposure: return data.uvExposureIndex
         case .wheelchairPushes: return data.pushCount
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent
+        case .swimDistance: return data.distanceSwimmingMeters
         }
     }
 }

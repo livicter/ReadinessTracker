@@ -8,6 +8,9 @@ struct SwimDistanceTonightBaselineCard: View {
     let meters: Double?
     let history: [(date: Date, meters: Double)]
     let baseline: Double
+    /// Honest #411: classic MetricDetailView(.swimDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { meters.map { max(0, $0) } }
 
@@ -48,15 +51,23 @@ struct SwimDistanceTonightBaselineCard: View {
     private let swimColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.swimDistanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .swimDistance,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,7 +120,7 @@ struct SwimDistanceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#411).
                 .accessibilityIdentifier(SurfaceID.swimDistanceBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -126,6 +137,7 @@ struct SwimDistanceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: swimColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.swimDistanceSpark)
                     }
                 }
@@ -173,12 +185,16 @@ struct SwimDistanceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Swim distance trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.swimDistanceCard)
+        .accessibilityLabel("Swim Distance")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

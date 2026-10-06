@@ -202,6 +202,7 @@ struct MetricCorrelationView: View {
         case .uvExposure: return data.uvExposureIndex
         case .wheelchairPushes: return data.pushCount
         case .peripheralPerfusion: return data.peripheralPerfusionIndexPercent
+        case .swimDistance: return data.distanceSwimmingMeters
         }
     }
 }
