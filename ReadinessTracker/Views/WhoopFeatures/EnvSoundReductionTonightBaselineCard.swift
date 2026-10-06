@@ -9,6 +9,9 @@ struct EnvSoundReductionTonightBaselineCard: View {
     let exposureDBA: Double?
     let history: [(date: Date, dba: Double)]
     let baseline: Double
+    /// Honest #414: classic MetricDetailView(.envSoundReduction).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { exposureDBA.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct EnvSoundReductionTonightBaselineCard: View {
     private let reductionColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.envSoundReductionCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .envSoundReduction,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct EnvSoundReductionTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#414).
                 .accessibilityIdentifier(SurfaceID.envSoundReductionBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct EnvSoundReductionTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: reductionColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.envSoundReductionSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct EnvSoundReductionTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Sound reduction trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.envSoundReductionCard)
+        .accessibilityLabel("Sound Reduction")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

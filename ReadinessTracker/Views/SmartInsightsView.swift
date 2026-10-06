@@ -102,6 +102,7 @@ struct SmartInsightsView: View {
                 case .swimDistance: normalizedSlope = slope / 400.0 * 100
                 case .environmentalAudio: normalizedSlope = slope / 10.0 * 100
                 case .headphoneAudio: normalizedSlope = slope / 10.0 * 100
+                case .envSoundReduction: normalizedSlope = slope / 5.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
