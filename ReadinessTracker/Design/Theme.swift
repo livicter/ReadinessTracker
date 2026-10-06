@@ -289,7 +289,7 @@ enum SurfaceID {
     static let dietaryIronCard = "body.iron.nav"  // avoid collision with legacy body.iron.card ghost
     static let dietaryIronBaselineCallout = "body.iron.baseline"
     static let dietaryIronSpark = "body.iron.spark"
-    static let dietaryCalciumCard = "body.calcium.card"
+    static let dietaryCalciumCard = "body.calcium.nav"  // avoid chrome/ghost collision
     static let dietaryCalciumBaselineCallout = "body.calcium.baseline"
     static let dietaryCalciumSpark = "body.calcium.spark"
     static let dietaryMagnesiumCard = "body.magnesium.card"

@@ -8,6 +8,9 @@ struct DietaryCalciumTonightBaselineCard: View {
     let calciumMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #432: classic MetricDetailView(.dietaryCalcium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 1000.0
     private let buildingFloor = 700.0
@@ -51,14 +54,25 @@ struct DietaryCalciumTonightBaselineCard: View {
     private let calciumColor = Color(hex: "5AC8FA")
 
     var body: some View {
-        Group {
-            if calciumMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryCalcium,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryCalciumCard)
+        .accessibilityLabel("Dietary Calcium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryCalciumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#432).
                 .accessibilityIdentifier(SurfaceID.dietaryCalciumBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryCalciumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: calciumColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryCalciumSpark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryCalciumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary calcium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryCalciumCard)
+        .contentShape(Rectangle())
     }
 
 

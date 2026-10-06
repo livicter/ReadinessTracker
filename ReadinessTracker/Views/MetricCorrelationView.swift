@@ -223,6 +223,7 @@ struct MetricCorrelationView: View {
         case .dietaryVitaminD: return data.nutrition.vitaminDIU
         case .dietaryVitaminB12: return data.nutrition.vitaminB12Mcg
         case .dietaryIron: return data.nutrition.ironMg
+        case .dietaryCalcium: return data.nutrition.calciumMg
         }
     }
 }
