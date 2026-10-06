@@ -1246,14 +1246,15 @@ struct MetricDetailView: View {
         case .dietaryVitaminC: return data.nutrition.vitaminCMg ?? 0
         case .dietaryVitaminD: return data.nutrition.vitaminDIU ?? 0
         case .dietaryVitaminB12: return data.nutrition.vitaminB12Mcg ?? 0
+        case .dietaryIron: return data.nutrition.ironMg ?? 0
         }
     }
 
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietarySugar, .dietarySodium, .dietaryPotassium, .dietaryCholesterol, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietarySugar, .dietarySodium, .dietaryPotassium, .dietaryCholesterol, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietarySugar, .dietarySodium, .dietaryPotassium, .dietaryCholesterol, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietarySugar, .dietarySodium, .dietaryPotassium, .dietaryCholesterol, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron:
             return "\(Int(value))"
         }
     }
@@ -1484,6 +1485,8 @@ extension MetricDetailView {
             return (.dietaryVitaminD, .timeInDaylight)
         case .dietaryVitaminB12:
             return (.dietaryVitaminB12, .dietaryEnergy)
+        case .dietaryIron:
+            return (.dietaryIron, .dietaryEnergy)
         }
     }
 }

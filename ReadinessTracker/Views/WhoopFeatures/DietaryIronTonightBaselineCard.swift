@@ -8,6 +8,9 @@ struct DietaryIronTonightBaselineCard: View {
     let ironMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #431: classic MetricDetailView(.dietaryIron).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 18.0
     private let buildingFloor = 10.0
@@ -51,14 +54,25 @@ struct DietaryIronTonightBaselineCard: View {
     private let ironColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if ironMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryIron,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryIronCard)
+        .accessibilityLabel("Dietary Iron")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryIronTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#431).
                 .accessibilityIdentifier(SurfaceID.dietaryIronBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryIronTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: ironColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryIronSpark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryIronTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary iron trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryIronCard)
+        .contentShape(Rectangle())
     }
 
 
