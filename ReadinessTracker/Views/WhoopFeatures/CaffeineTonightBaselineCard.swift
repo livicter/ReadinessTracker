@@ -8,6 +8,9 @@ struct CaffeineTonightBaselineCard: View {
     let caffeineMg: Double?
     let history: [(date: Date, caffeine: Double)]
     let baselineMg: Double
+    /// Honest #418: classic MetricDetailView(.caffeine).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softLimit = 200.0
     private let cautionLimit = 250.0
@@ -48,14 +51,23 @@ struct CaffeineTonightBaselineCard: View {
     private let caffeineColor = Color(hex: "AC8E68")
 
     var body: some View {
-        Group {
-            if caffeineMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .caffeine,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -105,7 +117,7 @@ struct CaffeineTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#418).
                 .accessibilityIdentifier(SurfaceID.caffeineBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -122,6 +134,7 @@ struct CaffeineTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: caffeineColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.caffeineSpark)
                     }
                 }
@@ -169,12 +182,16 @@ struct CaffeineTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Caffeine intake trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.caffeineCard)
+        .accessibilityLabel("Caffeine")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
