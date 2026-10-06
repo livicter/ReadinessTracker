@@ -578,6 +578,7 @@ struct AdvancedMetricDetailView: View {
         case .dietaryEnergy: return data.nutrition.energyKcal ?? 0
         case .hydration: return data.nutrition.waterLiters ?? 0
         case .caffeine: return data.nutrition.caffeineMg ?? 0
+        case .toothbrushing: return data.toothbrushingMinutes ?? 0
         }
     }
     
@@ -622,14 +623,15 @@ struct AdvancedMetricDetailView: View {
         case .dietaryEnergy: return data.nutrition.energyKcal ?? 0
         case .hydration: return data.nutrition.waterLiters ?? 0
         case .caffeine: return data.nutrition.caffeineMg ?? 0
+        case .toothbrushing: return data.toothbrushingMinutes ?? 0
         }
     }
     
     private func formattedValue(_ value: Double) -> String {
         switch metric {
-        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine:
+        case .sleep, .respiratoryRate, .skinTemperature, .walkingDistance, .wheelchairDistance, .bodyMass, .bodyFat, .leanBodyMass, .waistCircumference, .bloodGlucose, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing:
             return String(format: "%.1f", value)
-        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine:
+        case .hrv, .restingHR, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .bloodGlucose, .vo2Max, .walkingHeartRate, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .afBurden, .falls, .uvExposure, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .environmentalAudio, .headphoneAudio, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .caffeine, .toothbrushing:
             return "\(Int(value))"
         }
     }

@@ -8,6 +8,9 @@ struct ToothbrushingTonightBaselineCard: View {
     let minutes: Double?
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #419: classic MetricDetailView(.toothbrushing).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 4.0
 
@@ -52,15 +55,23 @@ struct ToothbrushingTonightBaselineCard: View {
     private let brushColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.toothbrushingCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .toothbrushing,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -113,7 +124,7 @@ struct ToothbrushingTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#419).
                 .accessibilityIdentifier(SurfaceID.toothbrushingBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -130,6 +141,7 @@ struct ToothbrushingTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: brushColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.toothbrushingSpark)
                     }
                 }
@@ -177,12 +189,16 @@ struct ToothbrushingTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Toothbrushing duration trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.toothbrushingCard)
+        .accessibilityLabel("Toothbrushing")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

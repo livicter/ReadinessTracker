@@ -210,6 +210,7 @@ struct MetricCorrelationView: View {
         case .dietaryEnergy: return data.nutrition.energyKcal
         case .hydration: return data.nutrition.waterLiters
         case .caffeine: return data.nutrition.caffeineMg
+        case .toothbrushing: return data.toothbrushingMinutes
         }
     }
 }
