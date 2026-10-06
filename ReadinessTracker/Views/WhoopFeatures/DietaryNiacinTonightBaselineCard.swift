@@ -8,6 +8,9 @@ struct DietaryNiacinTonightBaselineCard: View {
     let niacinMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #443: classic MetricDetailView(.dietaryNiacin).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 16.0
     private let buildingFloor = 11.0
@@ -51,14 +54,29 @@ struct DietaryNiacinTonightBaselineCard: View {
     private let niacinColor = Color(hex: "FF375F")
 
     var body: some View {
-        Group {
-            if niacinMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryNiacin,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryNiacinCard)
+        .accessibilityLabel("Dietary Niacin")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryNiacinTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryNiacinBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#443).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryNiacinTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: niacinColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryNiacinSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryNiacinTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary niacin trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryNiacinCard)
+        .contentShape(Rectangle())
     }
 
 
