@@ -2450,9 +2450,11 @@ struct DashboardView: View {
                     baselineMg: DietaryCalciumBaseline.average(
                         from: history,
                         fallback: data.nutrition.calciumMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryCalciumCard)
+                // Honest #432: NavigationLink hosts SurfaceID.dietaryCalciumCard (body.calcium.nav)
 
 
                 DietaryMagnesiumTonightBaselineCard(

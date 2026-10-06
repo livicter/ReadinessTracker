@@ -8974,6 +8974,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.iron.card → metric.detail")
     }
 
+    func testDietaryCalciumCardMetricDetailNavSurface() throws {
+        // Honest #432: WHOOP body.calcium.nav → classic MetricDetailView (.dietaryCalcium).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Calcium"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Calcium")
+        let link = app.buttons["Dietary Calcium"].firstMatch
+        let card = app.descendants(matching: .any)["body.calcium.nav"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Calcium"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-calcium-metric-detail.png")
+        XCTAssertTrue(landed, "body.calcium.nav → metric.detail")
+    }
+
 
 
 
@@ -10711,11 +10737,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryCalciumTonightBaselineSurface() throws {
         // Honest #198: Dietary Calcium Tonight | Baseline (HK dietaryCalcium).
         var n = 0
-        while !app.descendants(matching: .any)["body.calcium.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.calcium.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.calcium.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.calcium.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Calcium card")
         XCTAssertTrue(app.staticTexts["Dietary Calcium"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
