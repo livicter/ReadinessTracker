@@ -205,6 +205,7 @@ struct MetricCorrelationView: View {
         case .swimDistance: return data.distanceSwimmingMeters
         case .environmentalAudio: return data.environmentalAudioExposureDBA
         case .headphoneAudio: return data.headphoneAudioExposureDBA
+        case .envSoundReduction: return data.environmentalSoundReductionDBA
         }
     }
 }
