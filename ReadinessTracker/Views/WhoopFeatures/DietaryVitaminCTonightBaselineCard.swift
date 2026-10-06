@@ -8,6 +8,9 @@ struct DietaryVitaminCTonightBaselineCard: View {
     let vitaminCMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #428: classic MetricDetailView(.dietaryVitaminC).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 90.0
     private let buildingFloor = 60.0
@@ -51,14 +54,25 @@ struct DietaryVitaminCTonightBaselineCard: View {
     private let vitaminCColor = Color(hex: "FFD60A")
 
     var body: some View {
-        Group {
-            if vitaminCMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryVitaminC,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryVitaminCCard)
+        .accessibilityLabel("Vitamin C")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryVitaminCTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#428).
                 .accessibilityIdentifier(SurfaceID.dietaryVitaminCBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryVitaminCTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: vitaminCColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryVitaminCSpark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryVitaminCTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary vitaminC trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryVitaminCCard)
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

@@ -8862,6 +8862,40 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.cholesterol.card → metric.detail")
     }
 
+    func testDietaryVitaminCCardMetricDetailNavSurface() throws {
+        // Honest #428: WHOOP body.vitaminc.card → classic MetricDetailView (.dietaryVitaminC).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Vitamin C"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Vitamin C")
+        let link = app.buttons["Vitamin C"].firstMatch
+        let card = app.descendants(matching: .any)["body.vitaminc.card"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Vitamin C"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Vitamin C"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-vitamin-c-metric-detail.png")
+        XCTAssertTrue(landed, "body.vitaminc.card → metric.detail")
+    }
+
 
 
 
