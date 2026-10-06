@@ -62,6 +62,8 @@ enum MetricType: String, CaseIterable {
 
     case caffeine = "Caffeine"
 
+    case toothbrushing = "Toothbrushing"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -105,6 +107,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryEnergy: return "flame.fill"
         case .hydration: return "drop.fill"
         case .caffeine: return "cup.and.saucer.fill"
+        case .toothbrushing: return "mouth.fill"
         }
     }
 
@@ -149,6 +152,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryEnergy: return "kcal"
         case .hydration: return "L"
         case .caffeine: return "mg"
+        case .toothbrushing: return "min"
         }
     }
 
@@ -193,12 +197,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryEnergy: return Color(hex: "FF9500")
         case .hydration: return Color(hex: "5AC8FA")
         case .caffeine: return Color(hex: "AC8E68")
+        case .toothbrushing: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine: return false
         }
     }
@@ -398,6 +403,11 @@ enum MetricType: String, CaseIterable {
             if value < 200 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Within soft ~200 mg band") }
             if value < 250 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "At or above soft caffeine limit") }
             return MetricZone(label: "High", color: RTColor.warning, description: "Above caution caffeine band")
+        case .toothbrushing:
+            if value <= 0 { return MetricZone(label: "Missed", color: RTColor.warning, description: "No brushing logged") }
+            if value < 2 { return MetricZone(label: "Light", color: RTColor.caution, description: "Below soft hygiene band") }
+            if value < 4 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~4 min goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~4 min brushing goal")
         }
     }
 }
