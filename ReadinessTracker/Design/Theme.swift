@@ -295,7 +295,7 @@ enum SurfaceID {
     static let dietaryMagnesiumCard = "body.magnesium.nav"  // avoid chrome/ghost collision
     static let dietaryMagnesiumBaselineCallout = "body.magnesium.baseline"
     static let dietaryMagnesiumSpark = "body.magnesium.spark"
-    static let dietaryZincCard = "body.zinc.card"
+    static let dietaryZincCard = "body.zinc.nav"  // avoid chrome/ghost collision
     static let dietaryZincBaselineCallout = "body.zinc.baseline"
     static let dietaryZincSpark = "body.zinc.spark"
     static let dietaryFolateCard = "body.folate.card"
