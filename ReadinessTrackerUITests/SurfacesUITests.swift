@@ -11115,11 +11115,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryRiboflavinTonightBaselineSurface() throws {
         // Honest #207: Dietary Riboflavin Tonight | Baseline (HK dietaryRiboflavin).
         var n = 0
-        while !app.descendants(matching: .any)["body.riboflavin.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.riboflavin.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.riboflavin.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.riboflavin.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Riboflavin card")
         XCTAssertTrue(app.staticTexts["Dietary Riboflavin"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
