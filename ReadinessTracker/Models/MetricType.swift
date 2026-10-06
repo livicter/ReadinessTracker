@@ -60,6 +60,8 @@ enum MetricType: String, CaseIterable {
 
     case hydration = "Hydration"
 
+    case caffeine = "Caffeine"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -102,6 +104,7 @@ enum MetricType: String, CaseIterable {
         case .protein: return "fork.knife"
         case .dietaryEnergy: return "flame.fill"
         case .hydration: return "drop.fill"
+        case .caffeine: return "cup.and.saucer.fill"
         }
     }
 
@@ -145,6 +148,7 @@ enum MetricType: String, CaseIterable {
         case .protein: return "g"
         case .dietaryEnergy: return "kcal"
         case .hydration: return "L"
+        case .caffeine: return "mg"
         }
     }
 
@@ -188,13 +192,14 @@ enum MetricType: String, CaseIterable {
         case .protein: return Color(hex: "34C759")
         case .dietaryEnergy: return Color(hex: "FF9500")
         case .hydration: return Color(hex: "5AC8FA")
+        case .caffeine: return Color(hex: "AC8E68")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine: return false
         }
     }
 
@@ -388,6 +393,11 @@ enum MetricType: String, CaseIterable {
             if value < 2.0 { return MetricZone(label: "Building", color: RTColor.caution, description: "Approaching soft ~2.5 L goal") }
             if value < 2.5 { return MetricZone(label: "On track", color: RTColor.good, description: "Near soft ~2.5 L goal") }
             return MetricZone(label: "Hydrated", color: RTColor.optimal, description: "Met soft ~2.5 L hydration goal")
+        case .caffeine:
+            if value < 100 { return MetricZone(label: "Clear", color: RTColor.optimal, description: "Well under soft caffeine limit") }
+            if value < 200 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Within soft ~200 mg band") }
+            if value < 250 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "At or above soft caffeine limit") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "Above caution caffeine band")
         }
     }
 }
