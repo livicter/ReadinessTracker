@@ -42,6 +42,8 @@ enum MetricType: String, CaseIterable {
 
     case uvExposure = "UV Exposure"
 
+    case wheelchairPushes = "Wheelchair Pushes"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -75,6 +77,7 @@ enum MetricType: String, CaseIterable {
         case .afBurden: return "waveform.path.ecg"
         case .falls: return "figure.fall"
         case .uvExposure: return "sun.max.trianglebadge.exclamationmark"
+        case .wheelchairPushes: return "figure.roll"
         }
     }
 
@@ -109,6 +112,7 @@ enum MetricType: String, CaseIterable {
         case .afBurden: return "%"
         case .falls: return "count"
         case .uvExposure: return "UVI"
+        case .wheelchairPushes: return "pushes"
         }
     }
 
@@ -143,12 +147,13 @@ enum MetricType: String, CaseIterable {
         case .afBurden: return Color(hex: "BF5AF2")
         case .falls: return Color(hex: "FF9F0A")
         case .uvExposure: return Color(hex: "FF9F0A")
+        case .wheelchairPushes: return Color(hex: "5AC8FA")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure: return false
         }
     }
@@ -298,6 +303,11 @@ enum MetricType: String, CaseIterable {
             if value < 6 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate UV exposure") }
             if value < 8 { return MetricZone(label: "High", color: RTColor.caution, description: "High UV exposure") }
             return MetricZone(label: "Very High", color: RTColor.warning, description: "Very high UV exposure")
+        case .wheelchairPushes:
+            if value <= 0 { return MetricZone(label: "None", color: RTColor.secondaryText, description: "No pushes logged") }
+            if value < 500 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light wheelchair mobility") }
+            if value < 2000 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady wheelchair mobility") }
+            return MetricZone(label: "Active", color: RTColor.optimal, description: "Active wheelchair mobility")
         }
     }
 }
