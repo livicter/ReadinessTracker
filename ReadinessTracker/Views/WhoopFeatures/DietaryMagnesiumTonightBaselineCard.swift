@@ -8,6 +8,9 @@ struct DietaryMagnesiumTonightBaselineCard: View {
     let magnesiumMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #433: classic MetricDetailView(.dietaryMagnesium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 400.0
     private let buildingFloor = 280.0
@@ -51,14 +54,25 @@ struct DietaryMagnesiumTonightBaselineCard: View {
     private let magnesiumColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if magnesiumMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryMagnesium,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryMagnesiumCard)
+        .accessibilityLabel("Dietary Magnesium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryMagnesiumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#433).
                 .accessibilityIdentifier(SurfaceID.dietaryMagnesiumBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryMagnesiumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: magnesiumColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryMagnesiumSpark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryMagnesiumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary magnesium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryMagnesiumCard)
+        .contentShape(Rectangle())
     }
 
 

@@ -9000,6 +9000,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.calcium.nav → metric.detail")
     }
 
+    func testDietaryMagnesiumCardMetricDetailNavSurface() throws {
+        // Honest #433: WHOOP body.magnesium.nav → classic MetricDetailView (.dietaryMagnesium).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Magnesium"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Magnesium")
+        let link = app.buttons["Dietary Magnesium"].firstMatch
+        let card = app.descendants(matching: .any)["body.magnesium.nav"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Magnesium"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-magnesium-metric-detail.png")
+        XCTAssertTrue(landed, "body.magnesium.nav → metric.detail")
+    }
+
 
 
 
@@ -10755,11 +10781,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryMagnesiumTonightBaselineSurface() throws {
         // Honest #199: Dietary Magnesium Tonight | Baseline (HK dietaryMagnesium).
         var n = 0
-        while !app.descendants(matching: .any)["body.magnesium.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.magnesium.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.magnesium.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.magnesium.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Magnesium card")
         XCTAssertTrue(app.staticTexts["Dietary Magnesium"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
