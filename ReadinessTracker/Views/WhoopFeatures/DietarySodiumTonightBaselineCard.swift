@@ -8,6 +8,9 @@ struct DietarySodiumTonightBaselineCard: View {
     let sodiumMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #425: classic MetricDetailView(.dietarySodium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softLimit = 2300.0
     private let cautionLimit = 3000.0
@@ -50,14 +53,25 @@ struct DietarySodiumTonightBaselineCard: View {
     private let sodiumColor = Color(hex: "FF9500")
 
     var body: some View {
-        Group {
-            if sodiumMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietarySodium,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietarySodiumCard)
+        .accessibilityLabel("Dietary Sodium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -107,7 +121,7 @@ struct DietarySodiumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#425).
                 .accessibilityIdentifier(SurfaceID.dietarySodiumBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -124,6 +138,7 @@ struct DietarySodiumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: sodiumColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietarySodiumSpark)
                     }
                 }
@@ -159,7 +174,7 @@ struct DietarySodiumTonightBaselineCard: View {
                     .chartYScale(domain: 0...(max(softLimit * 1.3, (chartPoints.map(\.value).max() ?? softLimit) * 1.2)))
                     .chartXAxis(.hidden)
                     .chartYAxis {
-                        AxisMarks(position: .leading, values: [25, 50]) { value in
+                        AxisMarks(position: .leading, values: [1150, 2300]) { value in
                             AxisGridLine()
                             AxisValueLabel {
                                 if let v = value.as(Double.self) {
@@ -171,12 +186,14 @@ struct DietarySodiumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary sodium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietarySodiumCard)
+        .accessibilityElement(children: .combine)
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
