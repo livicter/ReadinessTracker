@@ -8,6 +8,9 @@ struct DietaryEnergyTonightBaselineCard: View {
     let energyKcal: Double?
     let history: [(date: Date, kcal: Double)]
     let baselineKcal: Double
+    /// Honest #416: classic MetricDetailView(.dietaryEnergy).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 2000.0
 
@@ -49,14 +52,23 @@ struct DietaryEnergyTonightBaselineCard: View {
     private let energyColor = Color(hex: "FF9500")
 
     var body: some View {
-        Group {
-            if energyKcal != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryEnergy,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,7 +118,7 @@ struct DietaryEnergyTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#416).
                 .accessibilityIdentifier(SurfaceID.dietaryEnergyBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -123,6 +135,7 @@ struct DietaryEnergyTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: energyColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryEnergySpark)
                     }
                 }
@@ -170,12 +183,16 @@ struct DietaryEnergyTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary energy trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.dietaryEnergyCard)
+        .accessibilityLabel("Dietary Energy")
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(
