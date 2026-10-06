@@ -50,6 +50,8 @@ enum MetricType: String, CaseIterable {
 
     case environmentalAudio = "Environmental Audio"
 
+    case headphoneAudio = "Headphone Audio"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -87,6 +89,7 @@ enum MetricType: String, CaseIterable {
         case .peripheralPerfusion: return "drop.triangle.fill"
         case .swimDistance: return "figure.pool.swim"
         case .environmentalAudio: return "speaker.wave.2.fill"
+        case .headphoneAudio: return "headphones"
         }
     }
 
@@ -125,6 +128,7 @@ enum MetricType: String, CaseIterable {
         case .peripheralPerfusion: return "%"
         case .swimDistance: return "m"
         case .environmentalAudio: return "dBA"
+        case .headphoneAudio: return "dBA"
         }
     }
 
@@ -163,13 +167,14 @@ enum MetricType: String, CaseIterable {
         case .peripheralPerfusion: return Color(hex: "32ADE6")
         case .swimDistance: return Color(hex: "64D2FF")
         case .environmentalAudio: return Color(hex: "BF5AF2")
+        case .headphoneAudio: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio: return false
         }
     }
 
@@ -338,6 +343,11 @@ enum MetricType: String, CaseIterable {
             if value < 70 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate environmental exposure") }
             if value < 80 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated environmental exposure") }
             return MetricZone(label: "Loud", color: RTColor.warning, description: "Loud environmental exposure")
+        case .headphoneAudio:
+            if value < 55 { return MetricZone(label: "Quiet", color: RTColor.optimal, description: "Quiet headphone band") }
+            if value < 70 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate headphone exposure") }
+            if value < 80 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated headphone exposure") }
+            return MetricZone(label: "Loud", color: RTColor.warning, description: "Loud headphone exposure")
         }
     }
 }

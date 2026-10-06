@@ -8411,6 +8411,37 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "vitals.envaudio.card → metric.detail")
     }
 
+    func testHeadphoneAudioCardMetricDetailNavSurface() throws {
+        // Honest #413: WHOOP vitals.headaudio.card → classic MetricDetailView (.headphoneAudio).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Headphone Audio"]
+        while !spark.exists && n < 55 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Headphone Audio")
+        let link = app.buttons["Headphone Audio"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 8 {
+            if link.exists && link.isHittable { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.waitForExistence(timeout: 4), link.isHittable {
+            link.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            app.staticTexts["Headphone Audio"].firstMatch.tap()
+        }
+        let landed = app.navigationBars["Headphone Audio"].waitForExistence(timeout: 10)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-headphone-audio-metric-detail.png")
+        XCTAssertTrue(landed, "vitals.headaudio.card → metric.detail")
+    }
+
 
 
 

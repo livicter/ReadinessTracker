@@ -9,6 +9,9 @@ struct HeadphoneAudioTonightBaselineCard: View {
     let exposureDBA: Double?
     let history: [(date: Date, dba: Double)]
     let baseline: Double
+    /// Honest #413: classic MetricDetailView(.headphoneAudio).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { exposureDBA.map { max(0, $0) } }
 
@@ -50,15 +53,23 @@ struct HeadphoneAudioTonightBaselineCard: View {
     private let headphoneColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.headphoneAudioCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .headphoneAudio,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -111,7 +122,7 @@ struct HeadphoneAudioTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#413).
                 .accessibilityIdentifier(SurfaceID.headphoneAudioBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -128,6 +139,7 @@ struct HeadphoneAudioTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: headphoneColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.headphoneAudioSpark)
                     }
                 }
@@ -175,12 +187,16 @@ struct HeadphoneAudioTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Headphone audio trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.headphoneAudioCard)
+        .accessibilityLabel("Headphone Audio")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
