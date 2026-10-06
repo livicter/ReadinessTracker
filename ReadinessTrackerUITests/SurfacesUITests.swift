@@ -8810,6 +8810,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.sodium.card → metric.detail")
     }
 
+    func testDietaryPotassiumCardMetricDetailNavSurface() throws {
+        // Honest #426: WHOOP body.potassium.card → classic MetricDetailView (.dietaryPotassium).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Potassium"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Potassium")
+        let link = app.buttons["Dietary Potassium"].firstMatch
+        let card = app.descendants(matching: .any)["body.potassium.card"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Potassium"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-potassium-metric-detail.png")
+        XCTAssertTrue(landed, "body.potassium.card → metric.detail")
+    }
+
 
 
 

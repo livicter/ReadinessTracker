@@ -8,6 +8,9 @@ struct DietaryPotassiumTonightBaselineCard: View {
     let potassiumMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #426: classic MetricDetailView(.dietaryPotassium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 3400.0
     private let buildingFloor = 2500.0
@@ -51,14 +54,25 @@ struct DietaryPotassiumTonightBaselineCard: View {
     private let potassiumColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if potassiumMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryPotassium,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryPotassiumCard)
+        .accessibilityLabel("Dietary Potassium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryPotassiumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#426).
                 .accessibilityIdentifier(SurfaceID.dietaryPotassiumBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryPotassiumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: potassiumColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryPotassiumSpark)
                     }
                 }
@@ -172,12 +187,14 @@ struct DietaryPotassiumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary potassium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryPotassiumCard)
+        .accessibilityElement(children: .combine)
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

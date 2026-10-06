@@ -2331,6 +2331,7 @@ struct DashboardView: View {
                 )
 
 
+                // Honest #426: WHOOP body.potassium.card → classic MetricDetailView(.dietaryPotassium)
                 DietaryPotassiumTonightBaselineCard(
                     potassiumMg: data.nutrition.potassiumMg,
                     history: history.compactMap { day in
@@ -2340,9 +2341,10 @@ struct DashboardView: View {
                     baselineMg: DietaryPotassiumBaseline.average(
                         from: history,
                         fallback: data.nutrition.potassiumMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryPotassiumCard)
 
 
                 DietaryCholesterolTonightBaselineCard(
