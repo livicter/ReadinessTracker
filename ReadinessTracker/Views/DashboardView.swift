@@ -2482,9 +2482,11 @@ struct DashboardView: View {
                     baselineMg: DietaryZincBaseline.average(
                         from: history,
                         fallback: data.nutrition.zincMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryZincCard)
+                // Honest #434: NavigationLink hosts SurfaceID.dietaryZincCard (body.zinc.nav)
 
 
                 DietaryFolateTonightBaselineCard(

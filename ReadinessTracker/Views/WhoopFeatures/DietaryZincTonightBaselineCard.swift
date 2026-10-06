@@ -8,6 +8,9 @@ struct DietaryZincTonightBaselineCard: View {
     let zincMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #434: classic MetricDetailView(.dietaryZinc).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 11.0
     private let buildingFloor = 7.0
@@ -51,14 +54,25 @@ struct DietaryZincTonightBaselineCard: View {
     private let zincColor = Color(hex: "FFD60A")
 
     var body: some View {
-        Group {
-            if zincMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .dietaryZinc,
+            currentValue: tonight,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.dietaryZincCard)
+        .accessibilityLabel("Dietary Zinc")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,7 +122,7 @@ struct DietaryZincTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#434).
                 .accessibilityIdentifier(SurfaceID.dietaryZincBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -125,6 +139,7 @@ struct DietaryZincTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: zincColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.dietaryZincSpark)
                     }
                 }
@@ -172,12 +187,13 @@ struct DietaryZincTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary zinc trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryZincCard)
+        .contentShape(Rectangle())
     }
 
 
