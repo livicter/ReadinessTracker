@@ -211,6 +211,7 @@ struct MetricCorrelationView: View {
         case .hydration: return data.nutrition.waterLiters
         case .caffeine: return data.nutrition.caffeineMg
         case .toothbrushing: return data.toothbrushingMinutes
+        case .handwashing: return data.handwashingMinutes
         }
     }
 }

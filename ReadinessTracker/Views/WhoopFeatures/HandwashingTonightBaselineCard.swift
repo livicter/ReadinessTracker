@@ -8,6 +8,9 @@ struct HandwashingTonightBaselineCard: View {
     let minutes: Double?
     let history: [(date: Date, minutes: Double)]
     let baseline: Double
+    /// Honest #420: classic MetricDetailView(.handwashing).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 1.0
 
@@ -52,15 +55,23 @@ struct HandwashingTonightBaselineCard: View {
     private let washColor = Color(hex: "5AC8FA")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.handwashingCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink(destination: MetricDetailView(
+            metric: .handwashing,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -113,7 +124,7 @@ struct HandwashingTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
+                // No nested accessibilityElement — nested Buttons steal NavigationLink taps (#420).
                 .accessibilityIdentifier(SurfaceID.handwashingBaselineCallout)
 
                 if sparklineValues.count >= 2 {
@@ -130,6 +141,7 @@ struct HandwashingTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: washColor)
                             .frame(height: 28)
+                            .allowsHitTesting(false)
                             .accessibilityIdentifier(SurfaceID.handwashingSpark)
                     }
                 }
@@ -177,12 +189,16 @@ struct HandwashingTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Handwashing duration trend last seven days")
                 }
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.handwashingCard)
+        .accessibilityLabel("Handwashing")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
