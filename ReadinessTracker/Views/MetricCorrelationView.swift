@@ -231,6 +231,7 @@ struct MetricCorrelationView: View {
         case .dietaryVitaminE: return data.nutrition.vitaminEMg
         case .dietaryVitaminK: return data.nutrition.vitaminKMcg
         case .dietaryVitaminB6: return data.nutrition.vitaminB6Mg
+        case .dietaryThiamin: return data.nutrition.thiaminMg
         }
     }
 }
