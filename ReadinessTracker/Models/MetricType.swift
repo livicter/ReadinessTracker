@@ -44,6 +44,8 @@ enum MetricType: String, CaseIterable {
 
     case wheelchairPushes = "Wheelchair Pushes"
 
+    case peripheralPerfusion = "Perfusion Index"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -78,6 +80,7 @@ enum MetricType: String, CaseIterable {
         case .falls: return "figure.fall"
         case .uvExposure: return "sun.max.trianglebadge.exclamationmark"
         case .wheelchairPushes: return "figure.roll"
+        case .peripheralPerfusion: return "drop.triangle.fill"
         }
     }
 
@@ -113,6 +116,7 @@ enum MetricType: String, CaseIterable {
         case .falls: return "count"
         case .uvExposure: return "UVI"
         case .wheelchairPushes: return "pushes"
+        case .peripheralPerfusion: return "%"
         }
     }
 
@@ -148,12 +152,13 @@ enum MetricType: String, CaseIterable {
         case .falls: return Color(hex: "FF9F0A")
         case .uvExposure: return Color(hex: "FF9F0A")
         case .wheelchairPushes: return Color(hex: "5AC8FA")
+        case .peripheralPerfusion: return Color(hex: "32ADE6")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure: return false
         }
     }
@@ -308,6 +313,11 @@ enum MetricType: String, CaseIterable {
             if value < 500 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light wheelchair mobility") }
             if value < 2000 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady wheelchair mobility") }
             return MetricZone(label: "Active", color: RTColor.optimal, description: "Active wheelchair mobility")
+        case .peripheralPerfusion:
+            if value < 0.5 { return MetricZone(label: "Low", color: RTColor.warning, description: "Low peripheral perfusion") }
+            if value < 2.0 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Fair peripheral perfusion") }
+            if value < 5.0 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid peripheral perfusion") }
+            return MetricZone(label: "Strong", color: RTColor.optimal, description: "Strong peripheral perfusion")
         }
     }
 }

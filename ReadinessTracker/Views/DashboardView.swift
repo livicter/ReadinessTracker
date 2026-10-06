@@ -1104,6 +1104,7 @@ struct DashboardView: View {
                 source: selectedSource
             )
 
+            // Honest #410: WHOOP vitals.ppi.card → classic MetricDetailView(.peripheralPerfusion)
             PeripheralPerfusionTonightBaselineCard(
                 percent: data.peripheralPerfusionIndexPercent,
                 history: history.compactMap { day in
@@ -1113,9 +1114,10 @@ struct DashboardView: View {
                 baseline: PeripheralPerfusionBaseline.average(
                     from: history,
                     fallback: data.peripheralPerfusionIndexPercent ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.peripheralPerfusionCard)
 
             // Honest #407: WHOOP body.falls.card → classic MetricDetailView(.falls)
             FallsTonightBaselineCard(
