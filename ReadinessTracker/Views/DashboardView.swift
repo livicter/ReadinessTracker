@@ -2578,9 +2578,11 @@ struct DashboardView: View {
                     baselineMg: DietaryThiaminBaseline.average(
                         from: history,
                         fallback: data.nutrition.thiaminMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryThiaminCard)
+                // Honest #440: NavigationLink hosts SurfaceID.dietaryThiaminCard (body.thiamin.md.nav)
 
 
                 DietaryRiboflavinTonightBaselineCard(

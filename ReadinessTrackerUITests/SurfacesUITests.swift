@@ -9190,6 +9190,32 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.b6.md.nav → metric.detail")
     }
 
+    func testDietaryThiaminCardMetricDetailNavSurface() throws {
+        // Honest #440: WHOOP body.thiamin.md.nav → classic MetricDetailView (.dietaryThiamin).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Thiamin"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Thiamin")
+        let link = app.buttons["Dietary Thiamin"].firstMatch
+        let card = app.descendants(matching: .any)["body.thiamin.md.nav"].firstMatch
+        if link.waitForExistence(timeout: 3), link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Thiamin"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-thiamin-metric-detail.png")
+        XCTAssertTrue(landed, "body.thiamin.md.nav → metric.detail")
+    }
+
 
 
 
@@ -11071,11 +11097,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryThiaminTonightBaselineSurface() throws {
         // Honest #206: Dietary Thiamin Tonight | Baseline (HK dietaryThiamin).
         var n = 0
-        while !app.descendants(matching: .any)["body.thiamin.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.thiamin.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.thiamin.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.thiamin.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Thiamin card")
         XCTAssertTrue(app.staticTexts["Dietary Thiamin"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)

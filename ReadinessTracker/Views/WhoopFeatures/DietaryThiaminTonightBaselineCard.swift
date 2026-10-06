@@ -8,6 +8,9 @@ struct DietaryThiaminTonightBaselineCard: View {
     let thiaminMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #440: classic MetricDetailView(.dietaryThiamin).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 1.2
     private let buildingFloor = 0.8
@@ -51,14 +54,28 @@ struct DietaryThiaminTonightBaselineCard: View {
     private let thiaminColor = Color(hex: "FF6B6B")
 
     var body: some View {
-        Group {
-            if thiaminMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryThiamin,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryThiaminCard)
+        .accessibilityLabel("Dietary Thiamin")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +125,7 @@ struct DietaryThiaminTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryThiaminBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#440).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +141,7 @@ struct DietaryThiaminTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: thiaminColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryThiaminSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +188,13 @@ struct DietaryThiaminTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                            .allowsHitTesting(false)
                     .accessibilityLabel("Dietary thiamin trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryThiaminCard)
+        .contentShape(Rectangle())
     }
 
 
