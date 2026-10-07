@@ -2668,9 +2668,11 @@ struct DashboardView: View {
                     baselineMcg: DietarySeleniumBaseline.average(
                         from: history,
                         fallback: data.nutrition.seleniumMcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietarySeleniumCard)
+                // Honest #445: NavigationLink hosts SurfaceID.dietarySeleniumCard (body.selenium.md.nav)
 
 
                 DietaryManganeseTonightBaselineCard(

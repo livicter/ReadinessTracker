@@ -235,6 +235,7 @@ struct MetricCorrelationView: View {
         case .dietaryRiboflavin: return data.nutrition.riboflavinMg
         case .dietaryNiacin: return data.nutrition.niacinMg
         case .dietaryPhosphorus: return data.nutrition.phosphorusMg
+        case .dietarySelenium: return data.nutrition.seleniumMcg
         }
     }
 }
