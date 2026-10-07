@@ -146,6 +146,7 @@ struct SmartInsightsView: View {
                 case .dietaryPufa: normalizedSlope = slope / 2.5 * 100
                 case .cyclingDistance: normalizedSlope = slope / 6.666666666666667 * 100
                 case .cyclingSpeed: normalizedSlope = slope / 1.3333333333333333 * 100
+                case .cyclingCadence: normalizedSlope = slope / 15.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

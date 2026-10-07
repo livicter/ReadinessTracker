@@ -140,6 +140,8 @@ enum MetricType: String, CaseIterable {
 
     case cyclingSpeed = "Cycling Speed"
 
+    case cyclingCadence = "Cycling Cadence"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -222,6 +224,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryPufa: return "fork.knife"
         case .cyclingDistance: return "bicycle"
         case .cyclingSpeed: return "speedometer"
+        case .cyclingCadence: return "arrow.triangle.2.circlepath"
         }
     }
 
@@ -305,6 +308,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryPufa: return "g"
         case .cyclingDistance: return "km"
         case .cyclingSpeed: return "m/s"
+        case .cyclingCadence: return "rpm"
         }
     }
 
@@ -388,12 +392,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryPufa: return Color(hex: "0A84FF")
         case .cyclingDistance: return Color(hex: "FF9F0A")
         case .cyclingSpeed: return Color(hex: "FF375F")
+        case .cyclingCadence: return Color(hex: "FF9F0A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat: return false
         }
     }
@@ -788,6 +793,11 @@ enum MetricType: String, CaseIterable {
             if value >= 6 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady vs soft ~8 m/s Cycling Speed goal") }
             if value >= 4 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~8 m/s Cycling Speed goal") }
             return MetricZone(label: "Slow", color: RTColor.warning, description: "Slow vs soft ~8 m/s Cycling Speed goal")
+        case .cyclingCadence:
+            if value >= 90 { return MetricZone(label: "High", color: RTColor.optimal, description: "High vs soft ~90 rpm Cycling Cadence goal") }
+            if value >= 75 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~90 rpm Cycling Cadence goal") }
+            if value >= 60 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~90 rpm Cycling Cadence goal") }
+            return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~90 rpm Cycling Cadence goal")
         }
     }
 }
