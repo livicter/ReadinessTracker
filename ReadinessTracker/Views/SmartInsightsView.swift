@@ -135,6 +135,7 @@ struct SmartInsightsView: View {
                 case .dietarySelenium: normalizedSlope = slope / 9.166666666666666 * 100
                 case .dietaryCopper: normalizedSlope = slope / 0.15 * 100
                 case .dietaryManganese: normalizedSlope = slope / 0.3833333333333333 * 100
+                case .dietaryBiotin: normalizedSlope = slope / 5.0 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
