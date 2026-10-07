@@ -8,6 +8,9 @@ struct CyclingPowerTonightBaselineCard: View {
     let watts: Double?
     let history: [(date: Date, watts: Double)]
     let baseline: Double
+    /// Honest #460: classic MetricDetailView(.cyclingPower).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { watts.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct CyclingPowerTonightBaselineCard: View {
     private let powerColor = Color(hex: "FF453A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .cyclingPower,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
+        .accessibilityLabel("Cycling Power")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct CyclingPowerTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.cyclingPowerBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#460).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CyclingPowerTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: powerColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.cyclingPowerSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CyclingPowerTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Cycling power trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

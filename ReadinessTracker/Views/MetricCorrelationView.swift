@@ -250,6 +250,7 @@ struct MetricCorrelationView: View {
         case .cyclingDistance: return data.distanceCyclingKm
         case .cyclingSpeed: return data.cyclingSpeedMps
         case .cyclingCadence: return data.cyclingCadenceRpm
+        case .cyclingPower: return data.cyclingPowerWatts
         }
     }
 }

@@ -542,7 +542,7 @@ enum SurfaceID {
     static let waterTemperatureCard = "body.waterTemperature.card"
     static let waterTemperatureBaselineCallout = "body.waterTemperature.baseline"
     static let waterTemperatureSpark = "body.waterTemperature.spark"
-    static let cyclingPowerCard = "body.cyclingPower.card"
+    static let cyclingPowerCard = "body.cyclingPower.md.nav"  // unique md.nav
     static let cyclingPowerBaselineCallout = "body.cyclingPower.baseline"
     static let cyclingPowerSpark = "body.cyclingPower.spark"
     static let cyclingFTPCard = "body.cyclingFTP.card"
