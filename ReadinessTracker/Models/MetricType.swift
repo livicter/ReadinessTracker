@@ -134,6 +134,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryMufa = "Monounsaturated Fat"
 
+    case dietaryPufa = "Polyunsaturated Fat"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -213,6 +215,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryIodine: return "fork.knife"
         case .dietarySatFat: return "fork.knife"
         case .dietaryMufa: return "fork.knife"
+        case .dietaryPufa: return "fork.knife"
         }
     }
 
@@ -293,6 +296,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryIodine: return "mcg"
         case .dietarySatFat: return "g"
         case .dietaryMufa: return "g"
+        case .dietaryPufa: return "g"
         }
     }
 
@@ -373,12 +377,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryIodine: return Color(hex: "5AC8FA")
         case .dietarySatFat: return Color(hex: "FF9F0A")
         case .dietaryMufa: return Color(hex: "30D158")
+        case .dietaryPufa: return Color(hex: "0A84FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat: return false
         }
     }
@@ -758,6 +763,11 @@ enum MetricType: String, CaseIterable {
             if value >= 18.75 { return MetricZone(label: "On track", color: RTColor.good, description: "On track vs soft ~25 g Monounsaturated Fat goal") }
             if value >= 12.5 { return MetricZone(label: "Building", color: RTColor.caution, description: "Building vs soft ~25 g Monounsaturated Fat goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~25 g Monounsaturated Fat goal")
+        case .dietaryPufa:
+            if value >= 15 { return MetricZone(label: "Goal met", color: RTColor.optimal, description: "Goal met vs soft ~15 g Polyunsaturated Fat goal") }
+            if value >= 11.25 { return MetricZone(label: "On track", color: RTColor.good, description: "On track vs soft ~15 g Polyunsaturated Fat goal") }
+            if value >= 7.5 { return MetricZone(label: "Building", color: RTColor.caution, description: "Building vs soft ~15 g Polyunsaturated Fat goal") }
+            return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~15 g Polyunsaturated Fat goal")
         }
     }
 }

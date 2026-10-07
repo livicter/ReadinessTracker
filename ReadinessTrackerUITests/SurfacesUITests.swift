@@ -9692,6 +9692,40 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.mufa.md.nav → metric.detail")
     }
 
+    func testDietaryPufaCardMetricDetailNavSurface() throws {
+        // Honest #456: WHOOP body.pufa.md.nav → classic MetricDetailView (.dietaryPufa).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary PUFA"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary PUFA")
+        let link = app.buttons["Polyunsaturated Fat"].firstMatch
+        let card = app.descendants(matching: .any)["body.pufa.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Polyunsaturated Fat"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-pufa-metric-detail.png")
+        XCTAssertTrue(landed, "body.pufa.md.nav → metric.detail")
+    }
+
 
 
 
@@ -11825,11 +11859,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryPufaTonightBaselineSurface() throws {
         // Honest #220: Dietary Polyunsaturated Fat Tonight | Baseline (HK dietaryFatPolyunsaturated).
         var n = 0
-        while !app.descendants(matching: .any)["body.pufa.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.pufa.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.pufa.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.pufa.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary PUFA card")
         XCTAssertTrue(app.staticTexts["Dietary Polyunsaturated Fat"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)
