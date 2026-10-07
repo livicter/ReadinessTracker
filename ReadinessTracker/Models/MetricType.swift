@@ -130,6 +130,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryIodine = "Dietary Iodine"
 
+    case dietarySatFat = "Saturated Fat"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -207,6 +209,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryChromium: return "fork.knife"
         case .dietaryMolybdenum: return "fork.knife"
         case .dietaryIodine: return "fork.knife"
+        case .dietarySatFat: return "fork.knife"
         }
     }
 
@@ -285,6 +288,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryChromium: return "mcg"
         case .dietaryMolybdenum: return "mcg"
         case .dietaryIodine: return "mcg"
+        case .dietarySatFat: return "g"
         }
     }
 
@@ -363,13 +367,14 @@ enum MetricType: String, CaseIterable {
         case .dietaryChromium: return Color(hex: "8E8E93")
         case .dietaryMolybdenum: return Color(hex: "5856D6")
         case .dietaryIodine: return Color(hex: "5AC8FA")
+        case .dietarySatFat: return Color(hex: "FF9F0A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat: return false
         }
     }
 
@@ -738,6 +743,11 @@ enum MetricType: String, CaseIterable {
             if value < 100 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Iodine floor") }
             if value < 150 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~150 mcg goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~150 mcg Iodine goal")
+        case .dietarySatFat:
+            if value >= 30 { return MetricZone(label: "High", color: RTColor.warning, description: "High vs soft ~20 g Saturated Fat limit") }
+            if value >= 20 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated vs soft ~20 g Saturated Fat limit") }
+            if value >= 10 { return MetricZone(label: "Moderate", color: RTColor.good, description: "Moderate vs soft ~20 g Saturated Fat limit") }
+            return MetricZone(label: "Clear", color: RTColor.optimal, description: "Clear vs soft ~20 g Saturated Fat limit")
         }
     }
 }

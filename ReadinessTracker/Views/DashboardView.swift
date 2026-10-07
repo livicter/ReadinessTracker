@@ -2366,15 +2366,17 @@ struct DashboardView: View {
                 DietarySatFatTonightBaselineCard(
                     saturatedFatGrams: data.nutrition.saturatedFatGrams,
                     history: history.compactMap { day in
-                        guard let g = day.nutrition.saturatedFatGrams else { return nil }
-                        return (day.date, g)
+                        guard let v = day.nutrition.saturatedFatGrams else { return nil }
+                        return (day.date, v)
                     },
                     baselineGrams: DietarySatFatBaseline.average(
                         from: history,
                         fallback: data.nutrition.saturatedFatGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietarySatFatCard)
+                // Honest #454: NavigationLink hosts SurfaceID.dietarySatFatCard (body.satfat.md.nav)
 
 
                 // Honest #428: WHOOP body.vitaminc.card → classic MetricDetailView(.dietaryVitaminC)
