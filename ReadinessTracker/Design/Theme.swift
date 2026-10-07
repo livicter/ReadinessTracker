@@ -274,7 +274,7 @@ enum SurfaceID {
     static let dietaryCholesterolCard = "body.cholesterol.card"
     static let dietaryCholesterolBaselineCallout = "body.cholesterol.baseline"
     static let dietaryCholesterolSpark = "body.cholesterol.spark"
-    static let dietarySatFatCard = "body.satfat.card"
+    static let dietarySatFatCard = "body.satfat.md.nav"  // unique md.nav
     static let dietarySatFatBaselineCallout = "body.satfat.baseline"
     static let dietarySatFatSpark = "body.satfat.spark"
     static let dietaryVitaminCCard = "body.vitaminc.card"

@@ -244,6 +244,7 @@ struct MetricCorrelationView: View {
         case .dietaryChromium: return data.nutrition.chromiumMcg
         case .dietaryMolybdenum: return data.nutrition.molybdenumMcg
         case .dietaryIodine: return data.nutrition.iodineMcg
+        case .dietarySatFat: return data.nutrition.saturatedFatGrams
         }
     }
 }
