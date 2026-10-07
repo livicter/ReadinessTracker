@@ -225,6 +225,7 @@ struct TrendAnalysisEngine {
         case .dietaryIodine: normalizedSlope = slope / 25.0 * 100
         case .dietarySatFat: normalizedSlope = slope / 3.3333333333333335 * 100
         case .dietaryMufa: normalizedSlope = slope / 4.166666666666667 * 100
+        case .dietaryPufa: normalizedSlope = slope / 2.5 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

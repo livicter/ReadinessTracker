@@ -355,7 +355,7 @@ enum SurfaceID {
     static let dietaryMufaCard = "body.mufa.md.nav"  // unique md.nav
     static let dietaryMufaBaselineCallout = "body.mufa.baseline"
     static let dietaryMufaSpark = "body.mufa.spark"
-    static let dietaryPufaCard = "body.pufa.card"
+    static let dietaryPufaCard = "body.pufa.md.nav"  // unique md.nav
     static let dietaryPufaBaselineCallout = "body.pufa.baseline"
     static let dietaryPufaSpark = "body.pufa.spark"
     static let alcoholicBeveragesCard = "body.alcohol.card"

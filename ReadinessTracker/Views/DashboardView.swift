@@ -2798,9 +2798,11 @@ struct DashboardView: View {
                     baselineGrams: DietaryPufaBaseline.average(
                         from: history,
                         fallback: data.nutrition.polyunsaturatedFatGrams ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryPufaCard)
+                // Honest #456: NavigationLink hosts SurfaceID.dietaryPufaCard (body.pufa.md.nav)
 
                 AlcoholicBeveragesTonightBaselineCard(
                     count: data.nutrition.alcoholicBeverages,

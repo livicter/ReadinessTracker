@@ -246,6 +246,7 @@ struct MetricCorrelationView: View {
         case .dietaryIodine: return data.nutrition.iodineMcg
         case .dietarySatFat: return data.nutrition.saturatedFatGrams
         case .dietaryMufa: return data.nutrition.monounsaturatedFatGrams
+        case .dietaryPufa: return data.nutrition.polyunsaturatedFatGrams
         }
     }
 }
