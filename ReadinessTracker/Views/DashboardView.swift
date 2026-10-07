@@ -2706,9 +2706,11 @@ struct DashboardView: View {
                     baselineMcg: DietaryIodineBaseline.average(
                         from: history,
                         fallback: data.nutrition.iodineMcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryIodineCard)
+                // Honest #453: NavigationLink hosts SurfaceID.dietaryIodineCard (body.iodine.md.nav)
 
                 DietaryPhosphorusTonightBaselineCard(
                     phosphorusMg: data.nutrition.phosphorusMg,
