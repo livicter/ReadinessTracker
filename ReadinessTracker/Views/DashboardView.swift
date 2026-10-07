@@ -1917,9 +1917,11 @@ struct DashboardView: View {
                     baseline: CyclingCadenceBaseline.average(
                         from: history,
                         fallback: data.cyclingCadenceRpm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
+                // Honest #459: NavigationLink hosts SurfaceID.cyclingCadenceCard (body.cyclingCadence.md.nav)
 
                 UnderwaterDepthTonightBaselineCard(
                     meters: data.underwaterDepthMeters,

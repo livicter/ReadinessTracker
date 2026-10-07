@@ -8,6 +8,9 @@ struct CyclingCadenceTonightBaselineCard: View {
     let rpm: Double?
     let history: [(date: Date, rpm: Double)]
     let baseline: Double
+    /// Honest #459: classic MetricDetailView(.cyclingCadence).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { rpm.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct CyclingCadenceTonightBaselineCard: View {
     private let cadenceColor = Color(hex: "FF9F0A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .cyclingCadence,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
+        .accessibilityLabel("Cycling Cadence")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct CyclingCadenceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.cyclingCadenceBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#459).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CyclingCadenceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: cadenceColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.cyclingCadenceSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CyclingCadenceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Swim distance trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.cyclingCadenceCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
