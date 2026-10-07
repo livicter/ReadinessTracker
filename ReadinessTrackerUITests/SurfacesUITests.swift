@@ -9522,6 +9522,40 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.chloride.md.nav → metric.detail")
     }
 
+    func testDietaryChromiumCardMetricDetailNavSurface() throws {
+        // Honest #451: WHOOP body.chromium.md.nav → classic MetricDetailView (.dietaryChromium).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Chromium"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Chromium")
+        let link = app.buttons["Dietary Chromium"].firstMatch
+        let card = app.descendants(matching: .any)["body.chromium.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Chromium"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-chromium-metric-detail.png")
+        XCTAssertTrue(landed, "body.chromium.md.nav → metric.detail")
+    }
+
 
 
 
@@ -11583,11 +11617,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryChromiumTonightBaselineSurface() throws {
         // Honest #216: Dietary Chromium Tonight | Baseline (HK dietaryChromium).
         var n = 0
-        while !app.descendants(matching: .any)["body.chromium.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.chromium.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.chromium.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.chromium.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Chromium card")
         XCTAssertTrue(app.staticTexts["Dietary Chromium"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)

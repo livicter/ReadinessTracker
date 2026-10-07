@@ -2734,9 +2734,11 @@ struct DashboardView: View {
                     baselineMcg: DietaryChromiumBaseline.average(
                         from: history,
                         fallback: data.nutrition.chromiumMcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryChromiumCard)
+                // Honest #451: NavigationLink hosts SurfaceID.dietaryChromiumCard (body.chromium.md.nav)
 
                 DietaryMolybdenumTonightBaselineCard(
                     molybdenumMcg: data.nutrition.molybdenumMcg,
