@@ -231,6 +231,7 @@ struct TrendAnalysisEngine {
         case .cyclingCadence: normalizedSlope = slope / 15.0 * 100
         case .cyclingPower: normalizedSlope = slope / 36.666666666666664 * 100
         case .cyclingFTP: normalizedSlope = slope / 46.666666666666664 * 100
+        case .bloodPressureSystolic: normalizedSlope = slope / 20.0 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

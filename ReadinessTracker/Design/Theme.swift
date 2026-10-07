@@ -379,7 +379,7 @@ enum SurfaceID {
     static let bloodGlucoseCard = "body.glucose.card"
     static let bloodGlucoseBaselineCallout = "body.glucose.baseline"
     static let bloodGlucoseSpark = "body.glucose.spark"
-    static let bloodPressureCard = "body.bp.card"
+    static let bloodPressureCard = "body.bp.md.nav"  // unique md.nav
     static let bloodPressureBaselineCallout = "body.bp.baseline"
     static let bloodPressureSpark = "body.bp.spark"
     static let bodyMassCard = "body.mass.card"

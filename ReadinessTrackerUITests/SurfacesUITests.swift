@@ -9896,6 +9896,45 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.cyclingFTP.md.nav → metric.detail")
     }
 
+    func testBloodPressureSystolicCardMetricDetailNavSurface() throws {
+        // Honest #462: WHOOP body.bp.md.nav → classic MetricDetailView (.bloodPressureSystolic).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Systolic"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Systolic")
+        let link = app.buttons["Blood Pressure"].firstMatch
+        let card = app.descendants(matching: .any)["body.bp.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Systolic BP"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-blood-pressure-systolic-metric-detail.png")
+        XCTAssertTrue(landed, "body.bp.md.nav → metric.detail")
+        // Card proof: tap() auto-scrolled the card into view; Back restores that offset.
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        _ = card.waitForExistence(timeout: 6)
+        sleep(1)
+        saveShot("verify-blood-pressure-systolic-card-back.png")
+    }
+
 
 
 
@@ -12383,11 +12422,11 @@ final class SurfacesUITests: XCTestCase {
     func testBloodPressureTonightBaselineSurface() throws {
         // Honest #188: Blood Pressure Tonight | Baseline (HK systolic/diastolic).
         var n = 0
-        while !app.descendants(matching: .any)["body.bp.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.bp.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.bp.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.bp.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Blood Pressure card")
         XCTAssertTrue(app.staticTexts["Blood Pressure"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)

@@ -2922,9 +2922,11 @@ struct DashboardView: View {
                     baselineSystolic: BloodPressureBaseline.averageSystolic(
                         from: history,
                         fallback: data.bloodPressureSystolicMmHg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.bloodPressureCard)
+                // Honest #462: NavigationLink hosts SurfaceID.bloodPressureCard (body.bp.md.nav)
 
 
                 // Honest #396: WHOOP body.mass.card → classic MetricDetailView(.bodyMass)
