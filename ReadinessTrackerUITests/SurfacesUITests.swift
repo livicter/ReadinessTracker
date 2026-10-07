@@ -9590,6 +9590,40 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(landed, "body.molybdenum.md.nav → metric.detail")
     }
 
+    func testDietaryIodineCardMetricDetailNavSurface() throws {
+        // Honest #453: WHOOP body.iodine.md.nav → classic MetricDetailView (.dietaryIodine).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Dietary Iodine"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Dietary Iodine")
+        let link = app.buttons["Dietary Iodine"].firstMatch
+        let card = app.descendants(matching: .any)["body.iodine.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Dietary Iodine"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-dietary-iodine-metric-detail.png")
+        XCTAssertTrue(landed, "body.iodine.md.nav → metric.detail")
+    }
+
 
 
 
@@ -11615,11 +11649,11 @@ final class SurfacesUITests: XCTestCase {
     func testDietaryIodineTonightBaselineSurface() throws {
         // Honest #214: Dietary Iodine Tonight | Baseline (HK dietaryIodine).
         var n = 0
-        while !app.descendants(matching: .any)["body.iodine.card"].exists && n < 32 {
+        while !app.descendants(matching: .any)["body.iodine.md.nav"].exists && n < 32 {
             app.swipeUp()
             n += 1
         }
-        let card = app.descendants(matching: .any)["body.iodine.card"].firstMatch
+        let card = app.descendants(matching: .any)["body.iodine.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 8), "Dietary Iodine card")
         XCTAssertTrue(app.staticTexts["Dietary Iodine"].exists)
         XCTAssertTrue(app.staticTexts["Tonight"].exists)

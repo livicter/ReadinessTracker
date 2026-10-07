@@ -128,6 +128,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryMolybdenum = "Dietary Molybdenum"
 
+    case dietaryIodine = "Dietary Iodine"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -204,6 +206,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryChloride: return "fork.knife"
         case .dietaryChromium: return "fork.knife"
         case .dietaryMolybdenum: return "fork.knife"
+        case .dietaryIodine: return "fork.knife"
         }
     }
 
@@ -281,6 +284,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryChloride: return "mg"
         case .dietaryChromium: return "mcg"
         case .dietaryMolybdenum: return "mcg"
+        case .dietaryIodine: return "mcg"
         }
     }
 
@@ -358,12 +362,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryChloride: return Color(hex: "64D2FF")
         case .dietaryChromium: return Color(hex: "8E8E93")
         case .dietaryMolybdenum: return Color(hex: "5856D6")
+        case .dietaryIodine: return Color(hex: "5AC8FA")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
         }
     }
@@ -728,6 +733,11 @@ enum MetricType: String, CaseIterable {
             if value < 30 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Molybdenum floor") }
             if value < 45 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~45 mcg goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~45 mcg Molybdenum goal")
+        case .dietaryIodine:
+            if value < 60 { return MetricZone(label: "Very low", color: RTColor.warning, description: "Below soft Iodine band") }
+            if value < 100 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Iodine floor") }
+            if value < 150 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~150 mcg goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~150 mcg Iodine goal")
         }
     }
 }

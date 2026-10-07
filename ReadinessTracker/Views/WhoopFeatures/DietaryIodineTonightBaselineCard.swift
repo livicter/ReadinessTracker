@@ -8,6 +8,9 @@ struct DietaryIodineTonightBaselineCard: View {
     let iodineMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #453: classic MetricDetailView(.dietaryIodine).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 150.0
     private let buildingFloor = 100.0
@@ -51,14 +54,29 @@ struct DietaryIodineTonightBaselineCard: View {
     private let iodineColor = Color(hex: "5AC8FA")
 
     var body: some View {
-        Group {
-            if iodineMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryIodine,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryIodineCard)
+        .accessibilityLabel("Dietary Iodine")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryIodineTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryIodineBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#453).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryIodineTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: iodineColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryIodineSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryIodineTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary iodine trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryIodineCard)
+        .contentShape(Rectangle())
     }
 
 
