@@ -8,6 +8,9 @@ struct DietaryPhosphorusTonightBaselineCard: View {
     let phosphorusMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #444: classic MetricDetailView(.dietaryPhosphorus).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 700.0
     private let buildingFloor = 500.0
@@ -51,14 +54,29 @@ struct DietaryPhosphorusTonightBaselineCard: View {
     private let phosphorusColor = Color(hex: "6B8E9F")
 
     var body: some View {
-        Group {
-            if phosphorusMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryPhosphorus,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryPhosphorusCard)
+        .accessibilityLabel("Dietary Phosphorus")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryPhosphorusTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryPhosphorusBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#444).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryPhosphorusTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: phosphorusColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryPhosphorusSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryPhosphorusTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary phosphorus trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryPhosphorusCard)
+        .contentShape(Rectangle())
     }
 
 

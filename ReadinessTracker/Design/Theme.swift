@@ -340,7 +340,7 @@ enum SurfaceID {
     static let dietaryIodineCard = "body.iodine.card"
     static let dietaryIodineBaselineCallout = "body.iodine.baseline"
     static let dietaryIodineSpark = "body.iodine.spark"
-    static let dietaryPhosphorusCard = "body.phosphorus.card"
+    static let dietaryPhosphorusCard = "body.phosphorus.md.nav"  // unique md.nav
     static let dietaryPhosphorusBaselineCallout = "body.phosphorus.baseline"
     static let dietaryPhosphorusSpark = "body.phosphorus.spark"
     static let dietaryChromiumCard = "body.chromium.card"
