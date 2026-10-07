@@ -8,6 +8,9 @@ struct DietarySeleniumTonightBaselineCard: View {
     let seleniumMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #445: classic MetricDetailView(.dietarySelenium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 55.0
     private let buildingFloor = 40.0
@@ -51,14 +54,29 @@ struct DietarySeleniumTonightBaselineCard: View {
     private let seleniumColor = Color(hex: "8E8E93")
 
     var body: some View {
-        Group {
-            if seleniumMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietarySelenium,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietarySeleniumCard)
+        .accessibilityLabel("Dietary Selenium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietarySeleniumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietarySeleniumBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#445).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietarySeleniumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: seleniumColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietarySeleniumSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietarySeleniumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary selenium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietarySeleniumCard)
+        .contentShape(Rectangle())
     }
 
 
