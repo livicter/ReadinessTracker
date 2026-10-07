@@ -242,6 +242,7 @@ struct MetricCorrelationView: View {
         case .dietaryPantothenicAcid: return data.nutrition.pantothenicAcidMg
         case .dietaryChloride: return data.nutrition.chlorideMg
         case .dietaryChromium: return data.nutrition.chromiumMcg
+        case .dietaryMolybdenum: return data.nutrition.molybdenumMcg
         }
     }
 }

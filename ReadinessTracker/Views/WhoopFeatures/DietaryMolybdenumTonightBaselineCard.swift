@@ -8,6 +8,9 @@ struct DietaryMolybdenumTonightBaselineCard: View {
     let molybdenumMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #452: classic MetricDetailView(.dietaryMolybdenum).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 45.0
     private let buildingFloor = 30.0
@@ -51,14 +54,29 @@ struct DietaryMolybdenumTonightBaselineCard: View {
     private let molybdenumColor = Color(hex: "5856D6")
 
     var body: some View {
-        Group {
-            if molybdenumMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryMolybdenum,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryMolybdenumCard)
+        .accessibilityLabel("Dietary Molybdenum")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryMolybdenumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryMolybdenumBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#452).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryMolybdenumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: molybdenumColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryMolybdenumSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryMolybdenumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary molybdenum trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryMolybdenumCard)
+        .contentShape(Rectangle())
     }
 
 
