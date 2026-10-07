@@ -252,6 +252,7 @@ struct MetricCorrelationView: View {
         case .cyclingCadence: return data.cyclingCadenceRpm
         case .cyclingPower: return data.cyclingPowerWatts
         case .cyclingFTP: return data.cyclingFTPWatts
+        case .bloodPressureSystolic: return data.bloodPressureSystolicMmHg
         }
     }
 }

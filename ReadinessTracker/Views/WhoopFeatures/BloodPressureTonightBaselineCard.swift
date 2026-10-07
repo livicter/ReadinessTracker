@@ -9,6 +9,9 @@ struct BloodPressureTonightBaselineCard: View {
     let diastolic: Double?
     let history: [(date: Date, systolic: Double, diastolic: Double)]
     let baselineSystolic: Double
+    /// Honest #462: classic MetricDetailView(.bloodPressureSystolic).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonightSys: Double? { systolic.map { max(0, $0) } }
     private var tonightDia: Double? { diastolic.map { max(0, $0) } }
@@ -59,15 +62,29 @@ struct BloodPressureTonightBaselineCard: View {
     private let bpColor = Color(hex: "FF2D55")
 
     var body: some View {
-        Group {
-            if tonightSys != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.bloodPressureCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .bloodPressureSystolic,
+                currentValue: tonightSys ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.bloodPressureCard)
+        .accessibilityLabel("Blood Pressure")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -124,8 +141,7 @@ struct BloodPressureTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.bloodPressureBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#462).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -141,7 +157,7 @@ struct BloodPressureTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: bpColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.bloodPressureSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -188,12 +204,13 @@ struct BloodPressureTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Systolic blood pressure trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.bloodPressureCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {

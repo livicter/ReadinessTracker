@@ -146,6 +146,8 @@ enum MetricType: String, CaseIterable {
 
     case cyclingFTP = "Cycling FTP"
 
+    case bloodPressureSystolic = "Systolic BP"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -231,6 +233,7 @@ enum MetricType: String, CaseIterable {
         case .cyclingCadence: return "arrow.triangle.2.circlepath"
         case .cyclingPower: return "bolt.fill"
         case .cyclingFTP: return "bolt.circle.fill"
+        case .bloodPressureSystolic: return "heart.text.square"
         }
     }
 
@@ -317,6 +320,7 @@ enum MetricType: String, CaseIterable {
         case .cyclingCadence: return "rpm"
         case .cyclingPower: return "W"
         case .cyclingFTP: return "W"
+        case .bloodPressureSystolic: return "mmHg"
         }
     }
 
@@ -403,13 +407,14 @@ enum MetricType: String, CaseIterable {
         case .cyclingCadence: return Color(hex: "FF9F0A")
         case .cyclingPower: return Color(hex: "FF453A")
         case .cyclingFTP: return Color(hex: "BF5AF2")
+        case .bloodPressureSystolic: return Color(hex: "FF2D55")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic: return false
         }
     }
 
@@ -818,6 +823,11 @@ enum MetricType: String, CaseIterable {
             if value >= 230 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~280 W Cycling FTP goal") }
             if value >= 180 { return MetricZone(label: "Building", color: RTColor.caution, description: "Building vs soft ~280 W Cycling FTP goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~280 W Cycling FTP goal")
+        case .bloodPressureSystolic:
+            if value < 120 { return MetricZone(label: "Optimal", color: RTColor.optimal, description: "Systolic under 120 mmHg (glance band, not a diagnosis)") }
+            if value < 130 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Systolic 120–129 mmHg") }
+            if value < 140 { return MetricZone(label: "High", color: RTColor.warning, description: "Systolic 130–139 mmHg") }
+            return MetricZone(label: "Very high", color: RTColor.warning, description: "Systolic 140+ mmHg")
         }
     }
 }
