@@ -1998,9 +1998,11 @@ struct DashboardView: View {
                     baseline: CyclingSpeedBaseline.average(
                         from: history,
                         fallback: data.cyclingSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.cyclingSpeedCard)
+                // Honest #458: NavigationLink hosts SurfaceID.cyclingSpeedCard (body.cyclingSpeed.md.nav)
 
                 PhysicalEffortTonightBaselineCard(
                     effort: data.physicalEffortKcalPerHrKg,
