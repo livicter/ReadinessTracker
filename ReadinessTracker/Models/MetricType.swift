@@ -120,6 +120,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryBiotin = "Dietary Biotin"
 
+    case dietaryPantothenicAcid = "Pantothenic Acid"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -192,6 +194,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryCopper: return "fork.knife"
         case .dietaryManganese: return "fork.knife"
         case .dietaryBiotin: return "fork.knife"
+        case .dietaryPantothenicAcid: return "fork.knife"
         }
     }
 
@@ -265,6 +268,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryCopper: return "mg"
         case .dietaryManganese: return "mg"
         case .dietaryBiotin: return "mcg"
+        case .dietaryPantothenicAcid: return "mg"
         }
     }
 
@@ -338,12 +342,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryCopper: return Color(hex: "E37322")
         case .dietaryManganese: return Color(hex: "A2845E")
         case .dietaryBiotin: return Color(hex: "BF5AF2")
+        case .dietaryPantothenicAcid: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
         }
     }
@@ -688,6 +693,11 @@ enum MetricType: String, CaseIterable {
             if value < 20 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Biotin floor") }
             if value < 30 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~30 mcg goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~30 mcg Biotin goal")
+        case .dietaryPantothenicAcid:
+            if value < 2 { return MetricZone(label: "Very low", color: RTColor.warning, description: "Below soft Pantothenic Acid band") }
+            if value < 3.5 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Pantothenic Acid floor") }
+            if value < 5 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~5 mg goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~5 mg Pantothenic Acid goal")
         }
     }
 }

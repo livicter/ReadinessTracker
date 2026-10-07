@@ -239,6 +239,7 @@ struct MetricCorrelationView: View {
         case .dietaryCopper: return data.nutrition.copperMg
         case .dietaryManganese: return data.nutrition.manganeseMg
         case .dietaryBiotin: return data.nutrition.biotinMcg
+        case .dietaryPantothenicAcid: return data.nutrition.pantothenicAcidMg
         }
     }
 }
