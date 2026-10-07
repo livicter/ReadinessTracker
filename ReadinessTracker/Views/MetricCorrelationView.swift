@@ -251,6 +251,7 @@ struct MetricCorrelationView: View {
         case .cyclingSpeed: return data.cyclingSpeedMps
         case .cyclingCadence: return data.cyclingCadenceRpm
         case .cyclingPower: return data.cyclingPowerWatts
+        case .cyclingFTP: return data.cyclingFTPWatts
         }
     }
 }
