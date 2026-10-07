@@ -8,6 +8,9 @@ struct DietaryChlorideTonightBaselineCard: View {
     let chlorideMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #450: classic MetricDetailView(.dietaryChloride).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 2300.0
     private let buildingFloor = 1800.0
@@ -51,14 +54,29 @@ struct DietaryChlorideTonightBaselineCard: View {
     private let chlorideColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if chlorideMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryChloride,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryChlorideCard)
+        .accessibilityLabel("Dietary Chloride")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryChlorideTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryChlorideBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#450).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryChlorideTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: chlorideColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryChlorideSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryChlorideTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary chloride trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryChlorideCard)
+        .contentShape(Rectangle())
     }
 
 
