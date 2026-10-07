@@ -8,6 +8,9 @@ struct DietaryManganeseTonightBaselineCard: View {
     let manganeseMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #447: classic MetricDetailView(.dietaryManganese).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 2.3
     private let buildingFloor = 1.6
@@ -51,14 +54,29 @@ struct DietaryManganeseTonightBaselineCard: View {
     private let manganeseColor = Color(hex: "A2845E")
 
     var body: some View {
-        Group {
-            if manganeseMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryManganese,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryManganeseCard)
+        .accessibilityLabel("Dietary Manganese")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryManganeseTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryManganeseBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#447).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryManganeseTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: manganeseColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryManganeseSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryManganeseTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary manganese trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryManganeseCard)
+        .contentShape(Rectangle())
     }
 
 

@@ -334,7 +334,7 @@ enum SurfaceID {
     static let dietarySeleniumCard = "body.selenium.md.nav"  // unique md.nav
     static let dietarySeleniumBaselineCallout = "body.selenium.baseline"
     static let dietarySeleniumSpark = "body.selenium.spark"
-    static let dietaryManganeseCard = "body.manganese.card"
+    static let dietaryManganeseCard = "body.manganese.md.nav"  // unique md.nav
     static let dietaryManganeseBaselineCallout = "body.manganese.baseline"
     static let dietaryManganeseSpark = "body.manganese.spark"
     static let dietaryIodineCard = "body.iodine.card"

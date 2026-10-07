@@ -2686,9 +2686,11 @@ struct DashboardView: View {
                     baselineMg: DietaryManganeseBaseline.average(
                         from: history,
                         fallback: data.nutrition.manganeseMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryManganeseCard)
+                // Honest #447: NavigationLink hosts SurfaceID.dietaryManganeseCard (body.manganese.md.nav)
 
 
                 DietaryIodineTonightBaselineCard(
