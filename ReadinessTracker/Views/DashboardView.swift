@@ -2654,9 +2654,11 @@ struct DashboardView: View {
                     baselineMg: DietaryCopperBaseline.average(
                         from: history,
                         fallback: data.nutrition.copperMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryCopperCard)
+                // Honest #446: NavigationLink hosts SurfaceID.dietaryCopperCard (body.copper.md.nav)
 
 
                 DietarySeleniumTonightBaselineCard(

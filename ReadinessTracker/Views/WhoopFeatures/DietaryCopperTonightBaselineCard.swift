@@ -8,6 +8,9 @@ struct DietaryCopperTonightBaselineCard: View {
     let copperMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #446: classic MetricDetailView(.dietaryCopper).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 0.9
     private let buildingFloor = 0.6
@@ -51,14 +54,29 @@ struct DietaryCopperTonightBaselineCard: View {
     private let copperColor = Color(hex: "E37322")
 
     var body: some View {
-        Group {
-            if copperMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryCopper,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryCopperCard)
+        .accessibilityLabel("Dietary Copper")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryCopperTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryCopperBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#446).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryCopperTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: copperColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryCopperSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryCopperTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary copper trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryCopperCard)
+        .contentShape(Rectangle())
     }
 
 
