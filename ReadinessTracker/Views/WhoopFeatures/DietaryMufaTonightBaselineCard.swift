@@ -8,6 +8,9 @@ struct DietaryMufaTonightBaselineCard: View {
     let monounsaturatedFatGrams: Double?
     let history: [(date: Date, grams: Double)]
     let baselineGrams: Double
+    /// Honest #455: classic MetricDetailView(.dietaryMufa).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 25.0
 
@@ -49,14 +52,29 @@ struct DietaryMufaTonightBaselineCard: View {
     private let mufaColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if monounsaturatedFatGrams != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryMufa,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryMufaCard)
+        .accessibilityLabel("Monounsaturated Fat")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -106,8 +124,7 @@ struct DietaryMufaTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryMufaBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#455).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -123,7 +140,7 @@ struct DietaryMufaTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: mufaColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryMufaSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -170,12 +187,13 @@ struct DietaryMufaTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary MUFA trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryMufaCard)
+        .contentShape(Rectangle())
     }
 
     private func dualColumn(

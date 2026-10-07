@@ -352,7 +352,7 @@ enum SurfaceID {
     static let dietaryChlorideCard = "body.chloride.md.nav"  // unique md.nav
     static let dietaryChlorideBaselineCallout = "body.chloride.baseline"
     static let dietaryChlorideSpark = "body.chloride.spark"
-    static let dietaryMufaCard = "body.mufa.card"
+    static let dietaryMufaCard = "body.mufa.md.nav"  // unique md.nav
     static let dietaryMufaBaselineCallout = "body.mufa.baseline"
     static let dietaryMufaSpark = "body.mufa.spark"
     static let dietaryPufaCard = "body.pufa.card"
