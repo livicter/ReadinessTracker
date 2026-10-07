@@ -8,6 +8,9 @@ struct CyclingFTPTonightBaselineCard: View {
     let watts: Double?
     let history: [(date: Date, watts: Double)]
     let baseline: Double
+    /// Honest #461: classic MetricDetailView(.cyclingFTP).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { watts.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct CyclingFTPTonightBaselineCard: View {
     private let ftpColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.cyclingFTPCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .cyclingFTP,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.cyclingFTPCard)
+        .accessibilityLabel("Cycling FTP")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct CyclingFTPTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.cyclingFTPBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#461).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CyclingFTPTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: ftpColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.cyclingFTPSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CyclingFTPTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Cycling FTP trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.cyclingFTPCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
