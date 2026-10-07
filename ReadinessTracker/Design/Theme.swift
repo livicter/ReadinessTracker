@@ -548,7 +548,7 @@ enum SurfaceID {
     static let cyclingFTPCard = "body.cyclingFTP.card"
     static let cyclingFTPBaselineCallout = "body.cyclingFTP.baseline"
     static let cyclingFTPSpark = "body.cyclingFTP.spark"
-    static let cyclingDistanceCard = "body.cyclingDistance.card"
+    static let cyclingDistanceCard = "body.cyclingDistance.md.nav"  // unique md.nav
     static let cyclingDistanceBaselineCallout = "body.cyclingDistance.baseline"
     static let cyclingDistanceSpark = "body.cyclingDistance.spark"
     static let cyclingSpeedCard = "body.cyclingSpeed.card"

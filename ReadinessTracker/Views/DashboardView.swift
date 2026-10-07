@@ -1983,9 +1983,11 @@ struct DashboardView: View {
                     baseline: CyclingDistanceBaseline.average(
                         from: history,
                         fallback: data.distanceCyclingKm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.cyclingDistanceCard)
+                // Honest #457: NavigationLink hosts SurfaceID.cyclingDistanceCard (body.cyclingDistance.md.nav)
 
                 CyclingSpeedTonightBaselineCard(
                     metersPerSecond: data.cyclingSpeedMps,

@@ -247,6 +247,7 @@ struct MetricCorrelationView: View {
         case .dietarySatFat: return data.nutrition.saturatedFatGrams
         case .dietaryMufa: return data.nutrition.monounsaturatedFatGrams
         case .dietaryPufa: return data.nutrition.polyunsaturatedFatGrams
+        case .cyclingDistance: return data.distanceCyclingKm
         }
     }
 }
