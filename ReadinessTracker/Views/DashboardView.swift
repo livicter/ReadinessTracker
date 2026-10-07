@@ -2640,9 +2640,11 @@ struct DashboardView: View {
                     baselineMcg: DietaryBiotinBaseline.average(
                         from: history,
                         fallback: data.nutrition.biotinMcg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryBiotinCard)
+                // Honest #448: NavigationLink hosts SurfaceID.dietaryBiotinCard (body.biotin.md.nav)
 
 
                 DietaryCopperTonightBaselineCard(

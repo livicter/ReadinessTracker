@@ -118,6 +118,8 @@ enum MetricType: String, CaseIterable {
 
     case dietaryManganese = "Dietary Manganese"
 
+    case dietaryBiotin = "Dietary Biotin"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -189,6 +191,7 @@ enum MetricType: String, CaseIterable {
         case .dietarySelenium: return "fork.knife"
         case .dietaryCopper: return "fork.knife"
         case .dietaryManganese: return "fork.knife"
+        case .dietaryBiotin: return "fork.knife"
         }
     }
 
@@ -261,6 +264,7 @@ enum MetricType: String, CaseIterable {
         case .dietarySelenium: return "mcg"
         case .dietaryCopper: return "mg"
         case .dietaryManganese: return "mg"
+        case .dietaryBiotin: return "mcg"
         }
     }
 
@@ -333,12 +337,13 @@ enum MetricType: String, CaseIterable {
         case .dietarySelenium: return Color(hex: "8E8E93")
         case .dietaryCopper: return Color(hex: "E37322")
         case .dietaryManganese: return Color(hex: "A2845E")
+        case .dietaryBiotin: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol: return false
         }
     }
@@ -678,6 +683,11 @@ enum MetricType: String, CaseIterable {
             if value < 1.6 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Manganese floor") }
             if value < 2.3 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~2.3 mg goal") }
             return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~2.3 mg Manganese goal")
+        case .dietaryBiotin:
+            if value < 12 { return MetricZone(label: "Very low", color: RTColor.warning, description: "Below soft Biotin band") }
+            if value < 20 { return MetricZone(label: "Low", color: RTColor.caution, description: "Below building Biotin floor") }
+            if value < 30 { return MetricZone(label: "Building", color: RTColor.good, description: "Approaching soft ~30 mcg goal") }
+            return MetricZone(label: "Met", color: RTColor.optimal, description: "Met soft ~30 mcg Biotin goal")
         }
     }
 }

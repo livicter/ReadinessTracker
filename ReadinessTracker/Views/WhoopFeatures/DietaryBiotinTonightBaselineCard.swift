@@ -8,6 +8,9 @@ struct DietaryBiotinTonightBaselineCard: View {
     let biotinMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #448: classic MetricDetailView(.dietaryBiotin).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 30.0
     private let buildingFloor = 20.0
@@ -51,14 +54,29 @@ struct DietaryBiotinTonightBaselineCard: View {
     private let biotinColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if biotinMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryBiotin,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryBiotinCard)
+        .accessibilityLabel("Dietary Biotin")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryBiotinTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryBiotinBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#448).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryBiotinTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: biotinColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryBiotinSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryBiotinTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary biotin trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryBiotinCard)
+        .contentShape(Rectangle())
     }
 
 
