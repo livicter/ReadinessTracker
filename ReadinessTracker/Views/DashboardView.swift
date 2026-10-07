@@ -1959,9 +1959,11 @@ struct DashboardView: View {
                     baseline: CyclingPowerBaseline.average(
                         from: history,
                         fallback: data.cyclingPowerWatts ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.cyclingPowerCard)
+                // Honest #460: NavigationLink hosts SurfaceID.cyclingPowerCard (body.cyclingPower.md.nav)
 
                 CyclingFTPTonightBaselineCard(
                     watts: data.cyclingFTPWatts,
