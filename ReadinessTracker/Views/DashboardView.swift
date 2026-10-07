@@ -2626,9 +2626,11 @@ struct DashboardView: View {
                     baselineMg: DietaryPantothenicAcidBaseline.average(
                         from: history,
                         fallback: data.nutrition.pantothenicAcidMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidCard)
+                // Honest #449: NavigationLink hosts SurfaceID.dietaryPantothenicAcidCard (body.pantothenic.md.nav)
 
 
                 DietaryBiotinTonightBaselineCard(

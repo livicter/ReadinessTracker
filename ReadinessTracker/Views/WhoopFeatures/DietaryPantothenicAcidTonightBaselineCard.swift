@@ -8,6 +8,9 @@ struct DietaryPantothenicAcidTonightBaselineCard: View {
     let pantothenicAcidMg: Double?
     let history: [(date: Date, mg: Double)]
     let baselineMg: Double
+    /// Honest #449: classic MetricDetailView(.dietaryPantothenicAcid).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 5.0
     private let buildingFloor = 3.5
@@ -51,14 +54,29 @@ struct DietaryPantothenicAcidTonightBaselineCard: View {
     private let pantothenicColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if pantothenicAcidMg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryPantothenicAcid,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidCard)
+        .accessibilityLabel("Pantothenic Acid")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryPantothenicAcidTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#449).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryPantothenicAcidTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: pantothenicColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryPantothenicAcidTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary pantothenic acid trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryPantothenicAcidCard)
+        .contentShape(Rectangle())
     }
 
 
