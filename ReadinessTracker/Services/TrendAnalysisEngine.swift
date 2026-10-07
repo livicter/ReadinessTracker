@@ -227,6 +227,7 @@ struct TrendAnalysisEngine {
         case .dietaryMufa: normalizedSlope = slope / 4.166666666666667 * 100
         case .dietaryPufa: normalizedSlope = slope / 2.5 * 100
         case .cyclingDistance: normalizedSlope = slope / 6.666666666666667 * 100
+        case .cyclingSpeed: normalizedSlope = slope / 1.3333333333333333 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)

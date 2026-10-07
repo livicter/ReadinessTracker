@@ -138,6 +138,8 @@ enum MetricType: String, CaseIterable {
 
     case cyclingDistance = "Cycling Distance"
 
+    case cyclingSpeed = "Cycling Speed"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -219,6 +221,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryMufa: return "fork.knife"
         case .dietaryPufa: return "fork.knife"
         case .cyclingDistance: return "bicycle"
+        case .cyclingSpeed: return "speedometer"
         }
     }
 
@@ -301,6 +304,7 @@ enum MetricType: String, CaseIterable {
         case .dietaryMufa: return "g"
         case .dietaryPufa: return "g"
         case .cyclingDistance: return "km"
+        case .cyclingSpeed: return "m/s"
         }
     }
 
@@ -383,12 +387,13 @@ enum MetricType: String, CaseIterable {
         case .dietaryMufa: return Color(hex: "30D158")
         case .dietaryPufa: return Color(hex: "0A84FF")
         case .cyclingDistance: return Color(hex: "FF9F0A")
+        case .cyclingSpeed: return Color(hex: "FF375F")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat: return false
         }
     }
@@ -778,6 +783,11 @@ enum MetricType: String, CaseIterable {
             if value >= 20 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~40 km Cycling Distance goal") }
             if value >= 8 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light vs soft ~40 km Cycling Distance goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~40 km Cycling Distance goal")
+        case .cyclingSpeed:
+            if value >= 8 { return MetricZone(label: "Brisk", color: RTColor.optimal, description: "Brisk vs soft ~8 m/s Cycling Speed goal") }
+            if value >= 6 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady vs soft ~8 m/s Cycling Speed goal") }
+            if value >= 4 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~8 m/s Cycling Speed goal") }
+            return MetricZone(label: "Slow", color: RTColor.warning, description: "Slow vs soft ~8 m/s Cycling Speed goal")
         }
     }
 }

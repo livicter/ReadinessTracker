@@ -8,6 +8,9 @@ struct CyclingSpeedTonightBaselineCard: View {
     let metersPerSecond: Double?
     let history: [(date: Date, mps: Double)]
     let baseline: Double
+    /// Honest #458: classic MetricDetailView(.cyclingSpeed).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { metersPerSecond.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct CyclingSpeedTonightBaselineCard: View {
     private let rideColor = Color(hex: "FF375F")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.cyclingSpeedCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .cyclingSpeed,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.cyclingSpeedCard)
+        .accessibilityLabel("Cycling Speed")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct CyclingSpeedTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.cyclingSpeedBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#458).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CyclingSpeedTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: rideColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.cyclingSpeedSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CyclingSpeedTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Cycling speed trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.cyclingSpeedCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
