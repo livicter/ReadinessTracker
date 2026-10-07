@@ -2760,9 +2760,11 @@ struct DashboardView: View {
                     baselineMg: DietaryChlorideBaseline.average(
                         from: history,
                         fallback: data.nutrition.chlorideMg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.dietaryChlorideCard)
+                // Honest #450: NavigationLink hosts SurfaceID.dietaryChlorideCard (body.chloride.md.nav)
 
                 DietaryMufaTonightBaselineCard(
                     monounsaturatedFatGrams: data.nutrition.monounsaturatedFatGrams,
