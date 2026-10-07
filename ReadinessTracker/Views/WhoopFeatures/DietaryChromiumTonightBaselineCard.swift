@@ -8,6 +8,9 @@ struct DietaryChromiumTonightBaselineCard: View {
     let chromiumMcg: Double?
     let history: [(date: Date, mcg: Double)]
     let baselineMcg: Double
+    /// Honest #451: classic MetricDetailView(.dietaryChromium).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private let softGoal = 35.0
     private let buildingFloor = 25.0
@@ -51,14 +54,29 @@ struct DietaryChromiumTonightBaselineCard: View {
     private let chromiumColor = Color(hex: "8E8E93")
 
     var body: some View {
-        Group {
-            if chromiumMcg != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .dietaryChromium,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.dietaryChromiumCard)
+        .accessibilityLabel("Dietary Chromium")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -108,8 +126,7 @@ struct DietaryChromiumTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.dietaryChromiumBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#451).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -125,7 +142,7 @@ struct DietaryChromiumTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: chromiumColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.dietaryChromiumSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -172,12 +189,13 @@ struct DietaryChromiumTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
+                    .allowsHitTesting(false)
                     .accessibilityLabel("Dietary chromium trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.dietaryChromiumCard)
+        .contentShape(Rectangle())
     }
 
 
