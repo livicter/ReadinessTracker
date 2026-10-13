@@ -8,6 +8,9 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
     let metersPerSecond: Double?
     let history: [(date: Date, mps: Double)]
     let baseline: Double
+    /// Honest #464: classic MetricDetailView(.crossCountrySkiingSpeed).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { metersPerSecond.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
     private let xcSkiSpeedColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .crossCountrySkiingSpeed,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedCard)
+        .accessibilityLabel("Cross Country Skiing Speed")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -81,7 +98,7 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
                         .background(status.color.opacity(0.12))
                         .clipShape(Capsule())
                         .accessibilityLabel(
-                            tonight.map { "Rowing speed \(String(format: "%.2f", $0)) meters per second, \(status.label)" }
+                            tonight.map { "Cross country skiing speed \(String(format: "%.2f", $0)) meters per second, \(status.label)" }
                                 ?? "No cross country skiing speed"
                         )
                 }
@@ -110,8 +127,7 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#464).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: xcSkiSpeedColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CrossCountrySkiingSpeedTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Rowing speed trend last seven days")
+                    .allowsHitTesting(false)
+                    .accessibilityLabel("Cross country skiing speed trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
