@@ -530,7 +530,7 @@ enum SurfaceID {
     static let crossCountrySkiingSpeedCard = "body.crossCountrySkiingSpeed.md.nav"  // unique md.nav
     static let crossCountrySkiingSpeedBaselineCallout = "body.crossCountrySkiingSpeed.baseline"
     static let crossCountrySkiingSpeedSpark = "body.crossCountrySkiingSpeed.spark"
-    static let downhillSnowSportsDistanceCard = "body.downhillSnowSportsDistance.card"
+    static let downhillSnowSportsDistanceCard = "body.downhillSnowSportsDistance.md.nav"  // unique md.nav
     static let downhillSnowSportsDistanceBaselineCallout = "body.downhillSnowSportsDistance.baseline"
     static let downhillSnowSportsDistanceSpark = "body.downhillSnowSportsDistance.spark"
     static let cyclingCadenceCard = "body.cyclingCadence.md.nav"  // unique md.nav

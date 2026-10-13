@@ -8,6 +8,9 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
     let kilometers: Double?
     let history: [(date: Date, km: Double)]
     let baseline: Double
+    /// Honest #465: classic MetricDetailView(.downhillSnowSportsDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kilometers.map { max(0, $0) } }
 
@@ -25,7 +28,7 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
         guard let t = tonight else {
             return ("No reading", RTColor.secondaryText)
         }
-        // Rowing distance (km) — recreational / erg day volume.
+        // Downhill snow sports distance (km) — recreational day volume.
         if t >= 10 { return ("Long", RTColor.optimal) }
         if t >= 5 { return ("Solid", RTColor.good) }
         if t >= 2 { return ("Light", RTColor.caution) }
@@ -49,15 +52,29 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
     private let downhillDistColor = Color(hex: "FF6482")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .downhillSnowSportsDistance,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceCard)
+        .accessibilityLabel("Downhill Snow Sports Distance")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -81,7 +98,7 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
                         .background(status.color.opacity(0.12))
                         .clipShape(Capsule())
                         .accessibilityLabel(
-                            tonight.map { "Rowing distance \(String(format: "%.1f", $0)) kilometers, \(status.label)" }
+                            tonight.map { "Downhill snow sports distance \(String(format: "%.1f", $0)) kilometers, \(status.label)" }
                                 ?? "No downhill snow sports distance"
                         )
                 }
@@ -110,8 +127,7 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#465).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: downhillDistColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct DownhillSnowSportsDistanceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Rowing distance trend last seven days")
+                    .allowsHitTesting(false)
+                    .accessibilityLabel("Downhill snow sports distance trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
