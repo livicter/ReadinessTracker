@@ -148,6 +148,8 @@ enum MetricType: String, CaseIterable {
 
     case bloodPressureSystolic = "Systolic BP"
 
+    case crossCountrySkiingDistance = "Cross Country Skiing Distance"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -234,6 +236,7 @@ enum MetricType: String, CaseIterable {
         case .cyclingPower: return "bolt.fill"
         case .cyclingFTP: return "bolt.circle.fill"
         case .bloodPressureSystolic: return "heart.text.square"
+        case .crossCountrySkiingDistance: return "figure.skiing.crosscountry"
         }
     }
 
@@ -321,6 +324,7 @@ enum MetricType: String, CaseIterable {
         case .cyclingPower: return "W"
         case .cyclingFTP: return "W"
         case .bloodPressureSystolic: return "mmHg"
+        case .crossCountrySkiingDistance: return "km"
         }
     }
 
@@ -408,12 +412,13 @@ enum MetricType: String, CaseIterable {
         case .cyclingPower: return Color(hex: "FF453A")
         case .cyclingFTP: return Color(hex: "BF5AF2")
         case .bloodPressureSystolic: return Color(hex: "FF2D55")
+        case .crossCountrySkiingDistance: return Color(hex: "32ADE6")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic: return false
         }
     }
@@ -828,6 +833,11 @@ enum MetricType: String, CaseIterable {
             if value < 130 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Systolic 120–129 mmHg") }
             if value < 140 { return MetricZone(label: "High", color: RTColor.warning, description: "Systolic 130–139 mmHg") }
             return MetricZone(label: "Very high", color: RTColor.warning, description: "Systolic 140+ mmHg")
+        case .crossCountrySkiingDistance:
+            if value >= 10 { return MetricZone(label: "Long", color: RTColor.optimal, description: "Long vs soft ~10 km Cross Country Skiing Distance goal") }
+            if value >= 5 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~10 km Cross Country Skiing Distance goal") }
+            if value >= 2 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light vs soft ~10 km Cross Country Skiing Distance goal") }
+            return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~10 km Cross Country Skiing Distance goal")
         }
     }
 }

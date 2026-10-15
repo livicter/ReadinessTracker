@@ -253,6 +253,7 @@ struct MetricCorrelationView: View {
         case .cyclingPower: return data.cyclingPowerWatts
         case .cyclingFTP: return data.cyclingFTPWatts
         case .bloodPressureSystolic: return data.bloodPressureSystolicMmHg
+        case .crossCountrySkiingDistance: return data.distanceCrossCountrySkiingKm
         }
     }
 }
