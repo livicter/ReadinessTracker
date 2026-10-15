@@ -5,9 +5,8 @@ Honest #234. Net-new Tonight|Baseline card for HealthKit `distanceCrossCountrySk
 Next niche sports distance after skating. Soft glance bands only.
 
 ## Surfaces
-- `body.crossCountrySkiingDistance.card`
-- `body.crossCountrySkiingDistance.baseline`
-- `body.crossCountrySkiingDistance.spark`
+- `body.crossCountrySkiingDistance.md.nav` (Honest #463; was `.card`)
+- baseline / spark are no longer nested accessibility ids (link owns taps)
 
 ## Verify
 - UITest: `testCrossCountrySkiingDistanceTonightBaselineSurface`

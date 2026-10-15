@@ -8,6 +8,9 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
     let kilometers: Double?
     let history: [(date: Date, km: Double)]
     let baseline: Double
+    /// Honest #463: classic MetricDetailView(.crossCountrySkiingDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kilometers.map { max(0, $0) } }
 
@@ -25,7 +28,7 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
         guard let t = tonight else {
             return ("No reading", RTColor.secondaryText)
         }
-        // Rowing distance (km) — recreational / erg day volume.
+        // Cross country skiing distance (km) — recreational day volume.
         if t >= 10 { return ("Long", RTColor.optimal) }
         if t >= 5 { return ("Solid", RTColor.good) }
         if t >= 2 { return ("Light", RTColor.caution) }
@@ -49,15 +52,29 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
     private let xcSkiDistColor = Color(hex: "32ADE6")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.crossCountrySkiingDistanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .crossCountrySkiingDistance,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.crossCountrySkiingDistanceCard)
+        .accessibilityLabel("Cross Country Skiing Distance")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -81,7 +98,7 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
                         .background(status.color.opacity(0.12))
                         .clipShape(Capsule())
                         .accessibilityLabel(
-                            tonight.map { "Rowing distance \(String(format: "%.1f", $0)) kilometers, \(status.label)" }
+                            tonight.map { "Cross country skiing distance \(String(format: "%.1f", $0)) kilometers, \(status.label)" }
                                 ?? "No cross country skiing distance"
                         )
                 }
@@ -110,8 +127,7 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.crossCountrySkiingDistanceBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#463).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -127,7 +143,7 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
                         }
                         AnimatedSparkline(data: sparklineValues, color: xcSkiDistColor)
                             .frame(height: 28)
-                            .accessibilityIdentifier(SurfaceID.crossCountrySkiingDistanceSpark)
+                            .allowsHitTesting(false)
                     }
                 }
 
@@ -174,12 +190,13 @@ struct CrossCountrySkiingDistanceTonightBaselineCard: View {
                         }
                     }
                     .frame(height: 88)
-                    .accessibilityLabel("Rowing distance trend last seven days")
+                    .allowsHitTesting(false)
+                    .accessibilityLabel("Cross country skiing distance trend last seven days")
                 }
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.crossCountrySkiingDistanceCard)
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
