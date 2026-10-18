@@ -479,7 +479,7 @@ enum SurfaceID {
     static let distanceCard = "body.distance.card"
     static let distanceBaselineCallout = "body.distance.baseline"
     static let distanceSpark = "body.distance.spark"
-    static let walkingDoubleSupportCard = "body.doubleSupport.card"
+    static let walkingDoubleSupportCard = "body.doubleSupport.md.nav"  // unique md.nav
     static let walkingDoubleSupportBaselineCallout = "body.doubleSupport.baseline"
     static let walkingDoubleSupportSpark = "body.doubleSupport.spark"
     static let walkingAsymmetryCard = "body.asymmetry.card"
