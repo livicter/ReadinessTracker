@@ -191,6 +191,7 @@ enum MetricType: String, CaseIterable {
     case waterTemperature = "Water Temperature"
     case peakExpiratoryFlow = "Peak Expiratory Flow"
     case forcedVitalCapacity = "Forced Vital Capacity"
+    case forcedExpiratoryVolume1 = "Forced Expiratory Volume 1"
 
     var title: String { rawValue }
 
@@ -309,6 +310,7 @@ enum MetricType: String, CaseIterable {
         case .waterTemperature: return "thermometer.medium"
         case .peakExpiratoryFlow: return "wind"
         case .forcedVitalCapacity: return "lungs"
+        case .forcedExpiratoryVolume1: return "wind"
         }
     }
 
@@ -427,6 +429,7 @@ enum MetricType: String, CaseIterable {
         case .waterTemperature: return "°C"
         case .peakExpiratoryFlow: return "L/min"
         case .forcedVitalCapacity: return "L"
+        case .forcedExpiratoryVolume1: return "L"
         }
     }
 
@@ -545,12 +548,13 @@ enum MetricType: String, CaseIterable {
         case .waterTemperature: return Color(hex: "64D2FF")
         case .peakExpiratoryFlow: return Color(hex: "30D158")
         case .forcedVitalCapacity: return Color(hex: "64D2FF")
+        case .forcedExpiratoryVolume1: return Color(hex: "30B0C7")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride, .walkingSpeed, .walkingStepLength, .walkingSteadiness, .physicalEffort, .workoutEffort, .estimatedWorkoutEffort, .underwaterDepth, .waterTemperature, .peakExpiratoryFlow, .forcedVitalCapacity: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride, .walkingSpeed, .walkingStepLength, .walkingSteadiness, .physicalEffort, .workoutEffort, .estimatedWorkoutEffort, .underwaterDepth, .waterTemperature, .peakExpiratoryFlow, .forcedVitalCapacity, .forcedExpiratoryVolume1: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery, .alcoholicBeverages: return false
         }
     }
@@ -1121,6 +1125,11 @@ enum MetricType: String, CaseIterable {
             if value >= 3.5 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ≥4.5 L Forced Vital Capacity goal") }
             if value >= 2.5 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Fair vs soft ≥4.5 L Forced Vital Capacity goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ≥4.5 L Forced Vital Capacity goal")
+        case .forcedExpiratoryVolume1:
+            if value >= 3.5 { return MetricZone(label: "Strong", color: RTColor.optimal, description: "Strong vs soft ≥3.5 L Forced Expiratory Volume 1 goal") }
+            if value >= 2.8 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ≥3.5 L Forced Expiratory Volume 1 goal") }
+            if value >= 2.0 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Fair vs soft ≥3.5 L Forced Expiratory Volume 1 goal") }
+            return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ≥3.5 L Forced Expiratory Volume 1 goal")
         }
     }
 }

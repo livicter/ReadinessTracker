@@ -2937,9 +2937,11 @@ struct DashboardView: View {
                     baseline: ForcedExpiratoryVolume1Baseline.average(
                         from: history,
                         fallback: data.forcedExpiratoryVolume1Liters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.forcedExpiratoryVolume1Card)
+                // Honest #494: NavigationLink hosts SurfaceID.forcedExpiratoryVolume1Card (body.fev1.md.nav)
 
                 InsulinDeliveryTonightBaselineCard(
                     iu: data.insulinDeliveryIU,

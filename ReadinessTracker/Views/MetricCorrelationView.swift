@@ -284,6 +284,7 @@ struct MetricCorrelationView: View {
         case .waterTemperature: return data.waterTemperatureCelsius
         case .peakExpiratoryFlow: return data.peakExpiratoryFlowLpm
         case .forcedVitalCapacity: return data.forcedVitalCapacityLiters
+        case .forcedExpiratoryVolume1: return data.forcedExpiratoryVolume1Liters
         }
     }
 }

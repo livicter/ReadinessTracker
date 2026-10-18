@@ -8,6 +8,9 @@ struct ForcedExpiratoryVolume1TonightBaselineCard: View {
     let liters: Double?
     let history: [(date: Date, liters: Double)]
     let baseline: Double
+    /// Honest #494: classic MetricDetailView(.forcedExpiratoryVolume1).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { liters.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct ForcedExpiratoryVolume1TonightBaselineCard: View {
     private let fev1Color = Color(hex: "5AC8FA")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.forcedExpiratoryVolume1Card)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .forcedExpiratoryVolume1,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.forcedExpiratoryVolume1Card)
+        .accessibilityLabel("Forced Expiratory Volume 1")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct ForcedExpiratoryVolume1TonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.forcedExpiratoryVolume1BaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#494).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct ForcedExpiratoryVolume1TonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.forcedExpiratoryVolume1Card)
     }
 
     private var yDomain: ClosedRange<Double> {
