@@ -156,6 +156,8 @@ enum MetricType: String, CaseIterable {
 
     case paddleSportsDistance = "Paddle Sports Distance"
 
+    case paddleSportsSpeed = "Paddle Sports Speed"
+
     var title: String { rawValue }
 
     var icon: String {
@@ -246,6 +248,7 @@ enum MetricType: String, CaseIterable {
         case .crossCountrySkiingSpeed: return "speedometer"
         case .downhillSnowSportsDistance: return "figure.skiing.downhill"
         case .paddleSportsDistance: return "figure.kayaking"
+        case .paddleSportsSpeed: return "speedometer"
         }
     }
 
@@ -337,6 +340,7 @@ enum MetricType: String, CaseIterable {
         case .crossCountrySkiingSpeed: return "m/s"
         case .downhillSnowSportsDistance: return "km"
         case .paddleSportsDistance: return "km"
+        case .paddleSportsSpeed: return "m/s"
         }
     }
 
@@ -428,12 +432,13 @@ enum MetricType: String, CaseIterable {
         case .crossCountrySkiingSpeed: return Color(hex: "64D2FF")
         case .downhillSnowSportsDistance: return Color(hex: "FF6482")
         case .paddleSportsDistance: return Color(hex: "0A84FF")
+        case .paddleSportsSpeed: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic: return false
         }
     }
@@ -868,6 +873,11 @@ enum MetricType: String, CaseIterable {
             if value >= 5 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~10 km Paddle Sports Distance goal") }
             if value >= 2 { return MetricZone(label: "Light", color: RTColor.caution, description: "Light vs soft ~10 km Paddle Sports Distance goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~10 km Paddle Sports Distance goal")
+        case .paddleSportsSpeed:
+            if value >= 3.5 { return MetricZone(label: "Brisk", color: RTColor.optimal, description: "Brisk vs soft ~3.5 m/s Paddle Sports Speed goal") }
+            if value >= 2.5 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady vs soft ~3.5 m/s Paddle Sports Speed goal") }
+            if value >= 1.5 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~3.5 m/s Paddle Sports Speed goal") }
+            return MetricZone(label: "Slow", color: RTColor.warning, description: "Slow vs soft ~3.5 m/s Paddle Sports Speed goal")
         }
     }
 }
