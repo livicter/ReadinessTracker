@@ -431,7 +431,7 @@ enum SurfaceID {
     static let restingHRCard = "resting.hr.card"
     static let restingHRBaselineCallout = "resting.hr.baseline"
     static let restingHRSpark = "resting.hr.spark"
-    static let peakHRCard = "vitals.peakhr.card"
+    static let peakHRCard = "vitals.peakhr.md.nav"  // unique md.nav
     static let peakHRBaselineCallout = "vitals.peakhr.baseline"
     static let peakHRSpark = "vitals.peakhr.spark"
     static let vo2MaxCard = "vitals.vo2.card"

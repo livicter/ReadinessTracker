@@ -10391,6 +10391,37 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-six-minute-walk-card-back.png")
     }
 
+    func testPeakHeartRateCardMetricDetailNavSurface() throws {
+        // Honest #496: WHOOP vitals.peakhr.md.nav → classic MetricDetailView (.peakHeartRate).
+        // Exact RestingHR (#367) UITest parity.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        while !app.staticTexts["Peak Heart Rate"].exists && n < 24 {
+            app.swipeUp()
+            n += 1
+        }
+        let link = app.buttons["Peak Heart Rate"].firstMatch
+        let card = app.descendants(matching: .any)["vitals.peakhr.md.nav"].firstMatch
+        if link.waitForExistence(timeout: 5) {
+            if link.isHittable { link.tap() }
+            else { link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap() }
+        } else if card.exists {
+            card.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2)).tap()
+        } else {
+            app.staticTexts["Peak Heart Rate"].firstMatch.tap()
+        }
+        // MetricType rawValue title is "Peak Heart Rate"
+        let landed = app.navigationBars["Peak Heart Rate"].waitForExistence(timeout: 8)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-peak-heart-rate-metric-detail.png")
+        XCTAssertTrue(landed, "vitals.peakhr.md.nav → metric.detail")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        _ = card.waitForExistence(timeout: 6)
+        sleep(1)
+        saveShot("verify-peak-heart-rate-card-back.png")
+    }
+
     func testInhalerUsageCardMetricDetailNavSurface() throws {
         // Honest #495: WHOOP body.inhaler.md.nav → classic MetricDetailView (.inhalerUsage).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

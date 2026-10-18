@@ -1040,9 +1040,11 @@ struct DashboardView: View {
                 baseline: PeakHeartRateBaseline.average(
                     from: history,
                     fallback: data.maxHeartRate ?? 0
-                )
+                ),
+                dailyHistory: history,
+                source: selectedSource
             )
-            .accessibilityIdentifier(SurfaceID.peakHRCard)
+            // Honest #496: NavigationLink hosts SurfaceID.peakHRCard (vitals.peakhr.md.nav)
 
             // Honest #401: WHOOP vitals.vo2.card → classic MetricDetailView(.vo2Max)
             VO2MaxTonightBaselineCard(

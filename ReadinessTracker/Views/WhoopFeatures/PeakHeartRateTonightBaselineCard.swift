@@ -9,6 +9,9 @@ struct PeakHeartRateTonightBaselineCard: View {
     let peakBPM: Double?
     let history: [(date: Date, bpm: Double)]
     let baseline: Double
+    /// Honest #496: classic MetricDetailView(.peakHeartRate).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { peakBPM.map { max(0, $0) } }
 
@@ -50,11 +53,24 @@ struct PeakHeartRateTonightBaselineCard: View {
     private let peakColor = Color(hex: "FF453A")
 
     var body: some View {
-        cardBody
-        .accessibilityIdentifier(SurfaceID.peakHRCard)
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        // Honest #496: exact RestingHR (#367) NavigationLink parity inside whoopSection.
+        NavigationLink(destination: MetricDetailView(
+            metric: .peakHeartRate,
+            currentValue: tonight ?? 0,
+            history: dailyHistory,
+            source: source
+        )) {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -178,7 +194,10 @@ struct PeakHeartRateTonightBaselineCard: View {
             }
             .padding(16)
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.peakHRCard)
+        .accessibilityLabel("Peak Heart Rate")
+        .contentShape(Rectangle())
     }
 
     private var yDomain: ClosedRange<Double> {
