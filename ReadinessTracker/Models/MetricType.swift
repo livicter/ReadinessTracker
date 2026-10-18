@@ -173,6 +173,7 @@ enum MetricType: String, CaseIterable {
     case sixMinuteWalk = "Six-Minute Walk"
 
     case runningSpeed = "Running Speed"
+    case runningPower = "Running Power"
 
     var title: String { rawValue }
 
@@ -273,6 +274,7 @@ enum MetricType: String, CaseIterable {
         case .stairDescentSpeed: return "figure.stairs"
         case .sixMinuteWalk: return "figure.walk"
         case .runningSpeed: return "speedometer"
+        case .runningPower: return "bolt.fill"
         }
     }
 
@@ -373,6 +375,7 @@ enum MetricType: String, CaseIterable {
         case .stairDescentSpeed: return "m/s"
         case .sixMinuteWalk: return "m"
         case .runningSpeed: return "m/s"
+        case .runningPower: return "W"
         }
     }
 
@@ -473,12 +476,13 @@ enum MetricType: String, CaseIterable {
         case .stairDescentSpeed: return Color(hex: "64D2FF")
         case .sixMinuteWalk: return Color(hex: "30B0C7")
         case .runningSpeed: return Color(hex: "5E5CE6")
+        case .runningPower: return Color(hex: "30D158")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
-        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed: return true
+        case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower: return true
         case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic: return false
         }
     }
@@ -958,6 +962,11 @@ enum MetricType: String, CaseIterable {
             if value >= 2.8 { return MetricZone(label: "Steady", color: RTColor.good, description: "Steady vs soft ~3.3 m/s Running Speed goal") }
             if value >= 2.2 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~3.3 m/s Running Speed goal") }
             return MetricZone(label: "Slow", color: RTColor.warning, description: "Slow vs soft ~3.3 m/s Running Speed goal")
+        case .runningPower:
+            if value >= 300 { return MetricZone(label: "Strong", color: RTColor.optimal, description: "Strong vs soft ~300 W Running Power goal") }
+            if value >= 240 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~300 W Running Power goal") }
+            if value >= 180 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~300 W Running Power goal") }
+            return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~300 W Running Power goal")
         }
     }
 }

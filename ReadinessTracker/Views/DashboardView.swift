@@ -2084,9 +2084,11 @@ struct DashboardView: View {
                     baseline: RunningPowerBaseline.average(
                         from: history,
                         fallback: data.runningPowerWatts ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.runningPowerCard)
+                // Honest #476: NavigationLink hosts SurfaceID.runningPowerCard (body.runningPower.md.nav)
 
                 RunningSpeedTonightBaselineCard(
                     metersPerSecond: data.runningSpeedMps,
