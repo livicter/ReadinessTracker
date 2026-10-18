@@ -10430,6 +10430,15 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-readiness-load-simulator-presets.png")
             presets.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         }
+        // Honest #508: projected Gym/Work/Sleep ring chips
+        let rings = app.descendants(matching: .any)["sim.load.rings"].firstMatch
+        XCTAssertTrue(rings.waitForExistence(timeout: 5), "sim.load.rings")
+        if rings.isHittable {
+            rings.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.4)).tap()
+        } else {
+            rings.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.4)).tap()
+        }
+        saveShot("verify-readiness-load-simulator-rings.png")
     }
 
     func testRecommendationsCheckoffSurface() throws {
