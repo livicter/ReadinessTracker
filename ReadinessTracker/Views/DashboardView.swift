@@ -140,6 +140,13 @@ struct DashboardView: View {
                                 source: selectedSource
                             )
                             .slideIn(delay: 0.18)
+                            // Honest #498: Fitbit / Google Health air-data density card
+                            FitbitAirDataCard(
+                                data: data,
+                                history: history,
+                                source: selectedSource
+                            )
+                            .slideIn(delay: 0.19)
                             bodyActivitySection(data: data, history: history)
                                 .slideIn(delay: 0.2)
                             whoopSection(data: data, history: history, scores: finalScores)

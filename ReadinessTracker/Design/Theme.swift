@@ -194,6 +194,10 @@ enum SurfaceID {
     static let readinessLoadSimulatorSpark = "sim.load.spark"
     static let readinessSimulatorTasks = "sim.load.tasks"
     static let fitbitAirDataStrip = "fitbit.air.strip"
+    static let fitbitAirDataCard = "fitbit.air.card"  // Honest #498 unique
+    static let fitbitAirDataDensity = "fitbit.air.density"
+    static let fitbitAirDataChips = "fitbit.air.chips"
+    static let fitbitAirDataSpark = "fitbit.air.spark"
     static let sleepPerformance = "sleep.performance"
     static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
     static let sleepHRVSpark = "sleep.hrv.spark"

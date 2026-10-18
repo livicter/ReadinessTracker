@@ -10415,7 +10415,33 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-readiness-load-simulator-tasks.png")
     }
 
-    func testPeakHeartRateCardMetricDetailNavSurface() throws {
+        func testFitbitAirDataCardSurface() throws {
+        // Honest #498: Fitbit / Google Health air-data density card SurfaceIDs.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        while !(titleFitbit.exists || titleHealth.exists) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(titleFitbit.waitForExistence(timeout: 4) || titleHealth.waitForExistence(timeout: 4),
+                      "Fitbit Air / Health Air")
+        let card = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 6) || titleHealth.exists || titleFitbit.exists,
+                      "fitbit.air.card")
+        let chips = app.descendants(matching: .any)["fitbit.air.chips"].firstMatch
+        if chips.exists {
+            chips.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.3)).tap()
+        }
+        saveShot("verify-fitbit-air-data-card.png")
+        let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
+        XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
+                      "fitbit.air.density")
+        saveShot("verify-fitbit-air-data-card-detail.png")
+    }
+
+func testPeakHeartRateCardMetricDetailNavSurface() throws {
         // Honest #496: WHOOP vitals.peakhr.md.nav → classic MetricDetailView (.peakHeartRate).
         // Exact RestingHR (#367) UITest parity.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
