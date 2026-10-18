@@ -10535,11 +10535,16 @@ final class SurfacesUITests: XCTestCase {
             period.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-period.png")
         }
-        // Honest #505: spark metric Steps/Sleep/HRV/Active
+        // Honest #505/#510: spark metric Steps/Sleep/HRV/Active/RHR/SpO₂
         let metric = app.descendants(matching: .any)["fitbit.air.spark.metric"].firstMatch
         if metric.exists {
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-metric.png")
+            // Honest #510 extras — scroll toward RHR/SpO₂ end
+            let extra = app.descendants(matching: .any)["fitbit.air.spark.extra"].firstMatch
+            XCTAssertTrue(extra.waitForExistence(timeout: 4), "fitbit.air.spark.extra")
+            metric.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.5)).tap()
+            saveShot("verify-fitbit-air-data-spark-extra.png")
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).tap()
         }
         // Honest #507: spark scrub (while spark still on-screen)

@@ -211,6 +211,7 @@ enum SurfaceID {
     static let fitbitAirDataSparkScrub = "fitbit.air.spark.scrub"  // Honest #507
     static let readinessSimulatorRings = "sim.load.rings"  // Honest #508
     static let fitbitAirDataGaps = "fitbit.air.gaps"  // Honest #509
+    static let fitbitAirDataSparkExtra = "fitbit.air.spark.extra"  // Honest #510
     static let fitbitAirDataStrip = "fitbit.air.strip"
     static let fitbitAirDataCard = "fitbit.air.card"  // Honest #498 unique
     static let fitbitAirDataDensity = "fitbit.air.density"

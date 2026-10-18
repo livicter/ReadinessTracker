@@ -350,21 +350,29 @@ struct FitbitAirDataCard: View {
                 }
                 .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkPeriod)
             }
-            HStack(spacing: 6) {
-                ForEach(AirSparkMetric.allCases) { metric in
-                    Button {
-                        Haptic.selectionChanged()
-                        sparkMetric = metric
-                    } label: {
-                        Text(metric.title)
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(sparkMetric == metric ? Color.white : accent)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(sparkMetric == metric ? accent : accent.opacity(0.12))
-                            .clipShape(Capsule())
+            // Honest #510: scrollable Steps/Sleep/HRV/Active/RHR/SpO₂ (+ SurfaceID spark.extra)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(AirSparkMetric.allCases) { metric in
+                        Button {
+                            Haptic.selectionChanged()
+                            sparkMetric = metric
+                        } label: {
+                            Text(metric.title)
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(sparkMetric == metric ? Color.white : accent)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(sparkMetric == metric ? accent : accent.opacity(0.12))
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Spark metric \(metric.title)")
                     }
-                    .buttonStyle(.plain)
+                    // Invisible marker so #510 SurfaceID is unique & discoverable
+                    Color.clear.frame(width: 1, height: 1)
+                        .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkExtra)
+                        .accessibilityLabel("Spark metric extras")
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkMetric)
@@ -464,6 +472,8 @@ struct FitbitAirDataCard: View {
         case .sleep: return String(format: "%.1fh", value)
         case .hrv: return "\(Int(value.rounded())) ms"
         case .active: return "\(Int(value.rounded())) kcal"
+        case .rhr: return "\(Int(value.rounded())) bpm"
+        case .spo2: return String(format: "%.0f%%", value)
         }
     }
 
@@ -488,7 +498,7 @@ struct FitbitAirDataCard: View {
 // MARK: - Spark metric (Honest #505)
 
 enum AirSparkMetric: String, CaseIterable, Identifiable {
-    case steps, sleep, hrv, active
+    case steps, sleep, hrv, active, rhr, spo2
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -496,6 +506,8 @@ enum AirSparkMetric: String, CaseIterable, Identifiable {
         case .sleep: return "Sleep"
         case .hrv: return "HRV"
         case .active: return "Active"
+        case .rhr: return "RHR"
+        case .spo2: return "SpO₂"
         }
     }
     func value(from day: DailyHealthData) -> Double {
@@ -504,6 +516,8 @@ enum AirSparkMetric: String, CaseIterable, Identifiable {
         case .sleep: return day.sleepHours
         case .hrv: return day.hrv
         case .active: return day.activeCalories
+        case .rhr: return Double(day.restingHeartRate)
+        case .spo2: return day.bloodOxygen ?? 0
         }
     }
 }
