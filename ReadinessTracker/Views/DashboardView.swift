@@ -1672,9 +1672,11 @@ struct DashboardView: View {
                     baseline: WalkingDoubleSupportBaseline.average(
                         from: history,
                         fallback: data.walkingDoubleSupportPercent ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.walkingDoubleSupportCard)
+                // Honest #480: NavigationLink hosts SurfaceID.walkingDoubleSupportCard (body.doubleSupport.md.nav)
 
                 WalkingAsymmetryTonightBaselineCard(
                     percent: data.walkingAsymmetryPercent,

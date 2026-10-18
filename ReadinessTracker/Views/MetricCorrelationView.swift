@@ -270,6 +270,7 @@ struct MetricCorrelationView: View {
         case .runningGCT: return data.runningGroundContactMs
         case .runningStride: return data.runningStrideLengthMeters
         case .runningVO: return data.runningVerticalOscillationCm
+        case .walkingDoubleSupport: return data.walkingDoubleSupportPercent
         }
     }
 }
