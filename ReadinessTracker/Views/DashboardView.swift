@@ -1966,9 +1966,11 @@ struct DashboardView: View {
                     baseline: UnderwaterDepthBaseline.average(
                         from: history,
                         fallback: data.underwaterDepthMeters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
+                // Honest #490: NavigationLink hosts SurfaceID.underwaterDepthCard (body.underwaterDepth.md.nav)
 
 
                 WaterTemperatureTonightBaselineCard(

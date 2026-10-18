@@ -177,6 +177,7 @@ struct SmartInsightsView: View {
                 case .physicalEffort: normalizedSlope = slope / 0.8333333333333334 * 100
                 case .workoutEffort: normalizedSlope = slope / 1.6666666666666667 * 100
                 case .estimatedWorkoutEffort: normalizedSlope = slope / 1.6666666666666667 * 100
+                case .underwaterDepth: normalizedSlope = slope / 5 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)

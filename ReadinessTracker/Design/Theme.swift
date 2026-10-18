@@ -536,7 +536,7 @@ enum SurfaceID {
     static let cyclingCadenceCard = "body.cyclingCadence.md.nav"  // unique md.nav
     static let cyclingCadenceBaselineCallout = "body.cyclingCadence.baseline"
     static let cyclingCadenceSpark = "body.cyclingCadence.spark"
-    static let underwaterDepthCard = "body.underwaterDepth.card"
+    static let underwaterDepthCard = "body.underwaterDepth.md.nav"  // unique md.nav
     static let underwaterDepthBaselineCallout = "body.underwaterDepth.baseline"
     static let underwaterDepthSpark = "body.underwaterDepth.spark"
     static let waterTemperatureCard = "body.waterTemperature.card"
