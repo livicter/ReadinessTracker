@@ -242,6 +242,7 @@ struct TrendAnalysisEngine {
         case .rowingSpeed: normalizedSlope = slope / 1.1666666666666667 * 100
         case .swimStrokes: normalizedSlope = slope / 166.66666666666666 * 100
         case .stairAscentSpeed: normalizedSlope = slope / 0.075 * 100
+        case .stairDescentSpeed: normalizedSlope = slope / 0.075 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
