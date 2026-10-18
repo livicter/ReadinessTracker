@@ -18,6 +18,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var rhrDelta: Double = 0        // bpm (lower is better)
     @State private var spo2Delta: Double = 0       // percentage points
     @State private var completedTaskIDs: Set<String> = []
+    /// Honest #508: which projected ring chip is focused.
+    @State private var focusedRing: SimRingKind = .ready
 
     private var baseline: Int { scores.general }
 
@@ -40,6 +42,23 @@ struct ReadinessLoadSimulatorCard: View {
         case 50..<65: return ("Easy", RTColor.caution)
         default: return ("Rest", RTColor.warning)
         }
+    }
+
+    /// Honest #508: projected Gym / Work / Sleep chips that track lever scrubs.
+    private var projectedGym: Int {
+        let strainAdj = -strainDelta * (100.0 / 21.0) * 0.2
+        let rhrAdj = -rhrDelta * 0.5
+        return min(100, max(0, Int((Double(scores.gym) + strainAdj + rhrAdj).rounded())))
+    }
+    private var projectedWork: Int {
+        let hrvAdj = hrvDelta * 0.3
+        let sleepAdj = sleepDelta * 2.0
+        return min(100, max(0, Int((Double(scores.cognitive) + hrvAdj + sleepAdj).rounded())))
+    }
+    private var projectedSleep: Int {
+        let sleepAdj = sleepDelta * 5.0
+        let spo2Adj = spo2Delta * 1.0
+        return min(100, max(0, Int((Double(scores.breakdown.sleepScore) + sleepAdj + spo2Adj).rounded())))
     }
 
     private var tasks: [SimulatorTask] {
@@ -68,6 +87,7 @@ struct ReadinessLoadSimulatorCard: View {
                 header
                 simulatorPresets
                 projectionHero
+                projectedRingChips
                 interactiveControls
                 sparkProjection
                 if !fitbitAirChips.isEmpty {
@@ -189,6 +209,47 @@ struct ReadinessLoadSimulatorCard: View {
             spo2Delta = preset.spo2
             if preset == .reset { completedTaskIDs.removeAll() }
         }
+    }
+
+    private var projectedRingChips: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                ForEach(SimRingKind.allCases) { kind in
+                    let value: Int = {
+                        switch kind {
+                        case .ready: return projected
+                        case .gym: return projectedGym
+                        case .work: return projectedWork
+                        case .sleep: return projectedSleep
+                        }
+                    }()
+                    Button {
+                        Haptic.selectionChanged()
+                        focusedRing = kind
+                    } label: {
+                        VStack(spacing: 4) {
+                            Text(kind.title)
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(focusedRing == kind ? Color.white : RTColor.secondaryText)
+                            Text("\(value)")
+                                .font(.subheadline.weight(.bold).monospacedDigit())
+                                .foregroundStyle(focusedRing == kind ? Color.white : kind.color)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(focusedRing == kind ? kind.color : kind.color.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(kind.title) \(value)")
+                }
+            }
+            Text(focusedRing.caption(gym: projectedGym, work: projectedWork, sleep: projectedSleep, ready: projected))
+                .font(.caption)
+                .foregroundStyle(RTColor.secondaryText)
+        }
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorRings)
+        .accessibilityLabel("Projected ring chips")
     }
 
     private var interactiveControls: some View {
@@ -397,6 +458,38 @@ struct ReadinessLoadSimulatorCard: View {
 
 // MARK: - Presets (Honest #504)
 
+
+// MARK: - Projected ring focus (Honest #508)
+
+enum SimRingKind: String, CaseIterable, Identifiable {
+    case ready, gym, work, sleep
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .ready: return "READY"
+        case .gym: return "Gym"
+        case .work: return "Work"
+        case .sleep: return "Sleep"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .ready: return Color(hex: "5E5CE6")
+        case .gym: return Color(red: 255/255, green: 59/255, blue: 48/255)
+        case .work: return Color(red: 52/255, green: 199/255, blue: 89/255)
+        case .sleep: return Color(red: 88/255, green: 86/255, blue: 214/255)
+        }
+    }
+    func caption(gym: Int, work: Int, sleep: Int, ready: Int) -> String {
+        switch self {
+        case .ready: return "Projected READY \(ready) · rings update as you scrub levers"
+        case .gym: return "Gym \(gym) · strain & RHR scrubs weigh here"
+        case .work: return "Work \(work) · HRV & sleep scrubs weigh here"
+        case .sleep: return "Sleep \(sleep) · sleep hours & SpO₂ scrubs weigh here"
+        }
+    }
+}
+
 enum SimulatorPreset: String, CaseIterable, Identifiable {
     case rest, easy, push, reset
     var id: String { rawValue }
@@ -498,13 +591,31 @@ struct SimulatorTask: Identifiable {
                 icon: "lungs.fill"
             ))
         }
-        if source == .fitbit && out.count < 2 {
-            out.append(.init(
-                id: "fitbit-sync",
-                title: "Confirm Fitbit sync",
-                detail: "Pull-to-refresh so Google Health air fields stay current.",
-                icon: "arrow.triangle.2.circlepath"
-            ))
+        if source == .fitbit {
+            if data.hrv <= 0 {
+                out.append(.init(
+                    id: "fitbit-hrv-air",
+                    title: "Fill HRV air gap",
+                    detail: "Google Health has no HRV yet — wear overnight and sync Fitbit.",
+                    icon: "waveform.path.ecg"
+                ))
+            }
+            if data.sleepHours <= 0 {
+                out.append(.init(
+                    id: "fitbit-sleep-air",
+                    title: "Fill sleep air gap",
+                    detail: "No sleep hours in tonight’s Fitbit air — open Fitbit app, then refresh.",
+                    icon: "moon.zzz.fill"
+                ))
+            }
+            if out.count < 2 {
+                out.append(.init(
+                    id: "fitbit-sync",
+                    title: "Confirm Fitbit sync",
+                    detail: "Pull-to-refresh so Google Health air fields stay current.",
+                    icon: "arrow.triangle.2.circlepath"
+                ))
+            }
         }
         if out.isEmpty {
             out.append(.init(
