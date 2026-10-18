@@ -572,7 +572,7 @@ enum SurfaceID {
     static let runningGCTCard = "body.runningGCT.md.nav"  // unique md.nav
     static let runningGCTBaselineCallout = "body.runningGCT.baseline"
     static let runningGCTSpark = "body.runningGCT.spark"
-    static let runningStrideCard = "body.runningStride.card"
+    static let runningStrideCard = "body.runningStride.md.nav"  // unique md.nav
     static let runningStrideBaselineCallout = "body.runningStride.baseline"
     static let runningStrideSpark = "body.runningStride.spark"
     static let runningVOCard = "body.runningVO.card"
