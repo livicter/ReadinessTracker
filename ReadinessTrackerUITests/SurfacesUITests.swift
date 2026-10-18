@@ -10552,6 +10552,15 @@ final class SurfacesUITests: XCTestCase {
             if day.exists, day.isHittable { day.tap() }
             saveShot("verify-fitbit-air-data-spark-scrub.png")
         }
+        // Honest #509: air gaps strip (empty Google Health / Fitbit fields)
+        let gaps = app.descendants(matching: .any)["fitbit.air.gaps"].firstMatch
+        XCTAssertTrue(gaps.waitForExistence(timeout: 5), "fitbit.air.gaps")
+        if gaps.isHittable {
+            gaps.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        } else if gaps.exists {
+            gaps.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        }
+        saveShot("verify-fitbit-air-data-gaps.png")
         // Honest #506: air → classic MetricDetail (row under card header).
         // Prefer small swipeUp first (we are usually just below the card after scrub).
         var reanchor = 0
