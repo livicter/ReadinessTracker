@@ -1892,9 +1892,11 @@ struct DashboardView: View {
                     baseline: CrossCountrySkiingSpeedBaseline.average(
                         from: history,
                         fallback: data.crossCountrySkiingSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.crossCountrySkiingSpeedCard)
+                // Honest #464: NavigationLink hosts SurfaceID.crossCountrySkiingSpeedCard (body.crossCountrySkiingSpeed.md.nav)
 
 
                 DownhillSnowSportsDistanceTonightBaselineCard(
