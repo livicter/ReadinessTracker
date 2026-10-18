@@ -176,6 +176,7 @@ enum MetricType: String, CaseIterable {
     case runningPower = "Running Power"
     case runningGCT = "Ground Contact"
     case runningStride = "Run Stride"
+    case runningVO = "Vert Oscillation"
 
     var title: String { rawValue }
 
@@ -279,6 +280,7 @@ enum MetricType: String, CaseIterable {
         case .runningPower: return "bolt.fill"
         case .runningGCT: return "timer"
         case .runningStride: return "ruler"
+        case .runningVO: return "arrow.up.and.down"
         }
     }
 
@@ -382,6 +384,7 @@ enum MetricType: String, CaseIterable {
         case .runningPower: return "W"
         case .runningGCT: return "ms"
         case .runningStride: return "m"
+        case .runningVO: return "cm"
         }
     }
 
@@ -485,13 +488,14 @@ enum MetricType: String, CaseIterable {
         case .runningPower: return Color(hex: "30D158")
         case .runningGCT: return Color(hex: "64D2FF")
         case .runningStride: return Color(hex: "BF5AF2")
+        case .runningVO: return Color(hex: "FF375F")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO: return false
         }
     }
 
@@ -985,6 +989,11 @@ enum MetricType: String, CaseIterable {
             if value >= 1.05 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~1.20 m Run Stride goal") }
             if value >= 0.90 { return MetricZone(label: "Short", color: RTColor.caution, description: "Short vs soft ~1.20 m Run Stride goal") }
             return MetricZone(label: "Limited", color: RTColor.warning, description: "Limited vs soft ~1.20 m Run Stride goal")
+        case .runningVO:
+            if value <= 7.5 { return MetricZone(label: "Efficient", color: RTColor.optimal, description: "Efficient vs soft ≤7.5 cm Vert Oscillation goal") }
+            if value <= 9.0 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ≤7.5 cm Vert Oscillation goal") }
+            if value <= 11.0 { return MetricZone(label: "Bouncey", color: RTColor.caution, description: "Bouncey vs soft ≤7.5 cm Vert Oscillation goal") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "High vs soft ≤7.5 cm Vert Oscillation goal")
         }
     }
 }

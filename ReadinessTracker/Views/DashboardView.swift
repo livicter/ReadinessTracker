@@ -2144,9 +2144,11 @@ struct DashboardView: View {
                     baseline: RunningVOBaseline.average(
                         from: history,
                         fallback: data.runningVerticalOscillationCm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.runningVOCard)
+                // Honest #479: NavigationLink hosts SurfaceID.runningVOCard (body.runningVO.md.nav)
 
 
 
