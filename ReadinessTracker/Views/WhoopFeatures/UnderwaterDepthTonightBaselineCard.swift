@@ -8,6 +8,9 @@ struct UnderwaterDepthTonightBaselineCard: View {
     let meters: Double?
     let history: [(date: Date, meters: Double)]
     let baseline: Double
+    /// Honest #490: classic MetricDetailView(.underwaterDepth).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { meters.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct UnderwaterDepthTonightBaselineCard: View {
     private let depthColor = Color(hex: "0A84FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .underwaterDepth,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
+        .accessibilityLabel("Underwater Depth")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct UnderwaterDepthTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.underwaterDepthBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#490).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct UnderwaterDepthTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.underwaterDepthCard)
     }
 
     private var yDomain: ClosedRange<Double> {

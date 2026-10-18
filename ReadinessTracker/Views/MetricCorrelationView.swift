@@ -280,6 +280,7 @@ struct MetricCorrelationView: View {
         case .physicalEffort: return data.physicalEffortKcalPerHrKg
         case .workoutEffort: return data.workoutEffortScore
         case .estimatedWorkoutEffort: return data.estimatedWorkoutEffortScore
+        case .underwaterDepth: return data.underwaterDepthMeters
         }
     }
 }
