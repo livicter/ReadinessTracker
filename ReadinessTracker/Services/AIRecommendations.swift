@@ -65,7 +65,8 @@ struct TrainingRecommendation {
 
 /// Compact WHOOP-style morning card: title + reason + action cue.
 struct ActionableRecommendation: Identifiable {
-    let id = UUID()
+    /// Honest #502: stable id so Today checkoffs survive re-renders.
+    var id: String { title }
     let title: String
     let reason: String
     let action: String

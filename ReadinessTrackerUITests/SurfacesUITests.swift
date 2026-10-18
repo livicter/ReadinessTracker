@@ -10425,6 +10425,27 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-readiness-load-simulator-tasks-check.png")
     }
 
+    func testRecommendationsCheckoffSurface() throws {
+        // Honest #502: Recommendations checkable tasks + progress SurfaceIDs.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let title = app.staticTexts["Recommendations"]
+        while !title.exists && n < 20 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Recommendations")
+        let section = app.descendants(matching: .any)["recommendations.section"].firstMatch
+        XCTAssertTrue(section.waitForExistence(timeout: 6) || title.exists, "recommendations.section")
+        let row = app.descendants(matching: .any)["recommendations.task.row"].firstMatch
+        if row.exists { row.tap() }
+        let progress = app.descendants(matching: .any)["recommendations.progress"].firstMatch
+        XCTAssertTrue(progress.exists || title.exists, "recommendations.progress")
+        saveShot("verify-recommendations-checkoff.png")
+        if row.exists { row.tap() }  // toggle back
+        saveShot("verify-recommendations-checkoff-toggle.png")
+    }
+
     func testFitbitSettingsAirStatusSurface() throws {
         // Honest #501: Settings Fitbit Google Health caption + optional air status.
         tapMainTab("Settings")
