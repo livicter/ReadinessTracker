@@ -237,6 +237,7 @@ struct TrendAnalysisEngine {
         case .downhillSnowSportsDistance: normalizedSlope = slope / 1.6666666666666667 * 100
         case .paddleSportsDistance: normalizedSlope = slope / 1.6666666666666667 * 100
         case .paddleSportsSpeed: normalizedSlope = slope / 1.1666666666666667 * 100
+        case .skatingSportsDistance: normalizedSlope = slope / 1.6666666666666667 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
