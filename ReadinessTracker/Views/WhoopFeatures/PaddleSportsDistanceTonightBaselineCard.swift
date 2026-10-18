@@ -8,6 +8,9 @@ struct PaddleSportsDistanceTonightBaselineCard: View {
     let kilometers: Double?
     let history: [(date: Date, km: Double)]
     let baseline: Double
+    /// Honest #466: classic MetricDetailView(.paddleSportsDistance).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { kilometers.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct PaddleSportsDistanceTonightBaselineCard: View {
     private let paddleDistColor = Color(hex: "0A84FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.paddleSportsDistanceCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .paddleSportsDistance,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.paddleSportsDistanceCard)
+        .accessibilityLabel("Paddle Sports Distance")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct PaddleSportsDistanceTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.paddleSportsDistanceBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#466).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct PaddleSportsDistanceTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.paddleSportsDistanceCard)
     }
 
     private var yDomain: ClosedRange<Double> {
