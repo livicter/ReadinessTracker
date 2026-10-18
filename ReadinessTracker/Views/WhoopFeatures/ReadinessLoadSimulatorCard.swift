@@ -66,6 +66,7 @@ struct ReadinessLoadSimulatorCard: View {
         NativeCard {
             VStack(alignment: .leading, spacing: 16) {
                 header
+                simulatorPresets
                 projectionHero
                 interactiveControls
                 sparkProjection
@@ -154,6 +155,39 @@ struct ReadinessLoadSimulatorCard: View {
             Text(caption)
                 .font(.caption2)
                 .foregroundStyle(RTColor.tertiaryText)
+        }
+    }
+
+    /// Honest #504: scenario presets + reset for richer simulation.
+    private var simulatorPresets: some View {
+        HStack(spacing: 8) {
+            ForEach(SimulatorPreset.allCases) { preset in
+                Button {
+                    Haptic.selectionChanged()
+                    apply(preset)
+                } label: {
+                    Text(preset.title)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(preset == .reset ? RTColor.secondaryText : Color.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(preset == .reset ? RTColor.surfaceHighlight : accent.opacity(0.85))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorPresets)
+    }
+
+    private func apply(_ preset: SimulatorPreset) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            sleepDelta = preset.sleep
+            hrvDelta = preset.hrv
+            strainDelta = preset.strain
+            rhrDelta = preset.rhr
+            spo2Delta = preset.spo2
+            if preset == .reset { completedTaskIDs.removeAll() }
         }
     }
 
@@ -358,6 +392,36 @@ struct ReadinessLoadSimulatorCard: View {
         let rhrAdj = -rhr * 0.4
         let spo2Adj = spo2 * 1.5
         return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj + rhrAdj + spo2Adj).rounded())))
+    }
+}
+
+// MARK: - Presets (Honest #504)
+
+enum SimulatorPreset: String, CaseIterable, Identifiable {
+    case rest, easy, push, reset
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .rest: return "Rest"
+        case .easy: return "Easy"
+        case .push: return "Push"
+        case .reset: return "Reset"
+        }
+    }
+    var sleep: Double {
+        switch self { case .rest: return 1.0; case .easy: return 0.5; case .push: return -0.5; case .reset: return 0 }
+    }
+    var hrv: Double {
+        switch self { case .rest: return 8; case .easy: return 3; case .push: return -8; case .reset: return 0 }
+    }
+    var strain: Double {
+        switch self { case .rest: return -3; case .easy: return -1; case .push: return 4; case .reset: return 0 }
+    }
+    var rhr: Double {
+        switch self { case .rest: return -4; case .easy: return -1; case .push: return 4; case .reset: return 0 }
+    }
+    var spo2: Double {
+        switch self { case .rest: return 1; case .easy: return 0.5; case .push: return -1; case .reset: return 0 }
     }
 }
 

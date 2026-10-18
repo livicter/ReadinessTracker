@@ -10423,6 +10423,13 @@ final class SurfacesUITests: XCTestCase {
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85)).tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-check.png")
+        // Honest #504: scenario presets Rest/Easy/Push/Reset
+        let presets = app.descendants(matching: .any)["sim.load.presets"].firstMatch
+        if presets.exists {
+            presets.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+            saveShot("verify-readiness-load-simulator-presets.png")
+            presets.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        }
     }
 
     func testRecommendationsCheckoffSurface() throws {
