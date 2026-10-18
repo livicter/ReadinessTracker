@@ -273,6 +273,7 @@ struct MetricCorrelationView: View {
         case .walkingDoubleSupport: return data.walkingDoubleSupportPercent
         case .walkingAsymmetry: return data.walkingAsymmetryPercent
         case .walkingSpeed: return data.walkingSpeedMps
+        case .walkingStepLength: return data.walkingStepLengthMeters
         }
     }
 }
