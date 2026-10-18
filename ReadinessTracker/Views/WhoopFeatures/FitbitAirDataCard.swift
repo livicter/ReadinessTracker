@@ -10,6 +10,8 @@ struct FitbitAirDataCard: View {
     let source: DataSource
 
     @State private var selectedChipID: String?
+    /// Honest #503: interactive spark window.
+    @State private var sparkPeriod: Int = 7
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -24,7 +26,7 @@ struct FitbitAirDataCard: View {
     }
 
     private var sparkPoints: [(date: Date, value: Double)] {
-        history.suffix(7).map { (date: $0.date, value: Double($0.steps)) }
+        history.suffix(sparkPeriod).map { (date: $0.date, value: Double($0.steps)) }
     }
 
     private var selectedChip: AirChip? {
@@ -159,9 +161,30 @@ struct FitbitAirDataCard: View {
 
     private var sparkBlock: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Steps · 7d")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+            HStack {
+                Text("Steps · \(sparkPeriod)d")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                HStack(spacing: 4) {
+                    ForEach([7, 14, 30], id: \.self) { days in
+                        Button {
+                            Haptic.selectionChanged()
+                            sparkPeriod = days
+                        } label: {
+                            Text("\(days)d")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(sparkPeriod == days ? Color.white : accent)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(sparkPeriod == days ? accent : accent.opacity(0.12))
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkPeriod)
+            }
             Chart(sparkPoints, id: \.date) { pt in
                 AreaMark(
                     x: .value("Day", pt.date),
@@ -178,6 +201,7 @@ struct FitbitAirDataCard: View {
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
             .frame(height: 56)
+            .animation(.easeInOut(duration: 0.25), value: sparkPeriod)
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSpark)
         }
     }
