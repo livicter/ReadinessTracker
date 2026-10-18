@@ -8,6 +8,9 @@ struct WaterTemperatureTonightBaselineCard: View {
     let celsius: Double?
     let history: [(date: Date, celsius: Double)]
     let baseline: Double
+    /// Honest #491: classic MetricDetailView(.waterTemperature).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { celsius }
 
@@ -48,15 +51,29 @@ struct WaterTemperatureTonightBaselineCard: View {
     private let waterTempColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.waterTemperatureCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .waterTemperature,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.waterTemperatureCard)
+        .accessibilityLabel("Water Temperature")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,8 +126,7 @@ struct WaterTemperatureTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.waterTemperatureBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#491).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -178,7 +194,6 @@ struct WaterTemperatureTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.waterTemperatureCard)
     }
 
     private var yDomain: ClosedRange<Double> {

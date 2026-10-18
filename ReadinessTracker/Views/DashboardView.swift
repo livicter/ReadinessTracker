@@ -1982,9 +1982,11 @@ struct DashboardView: View {
                     baseline: WaterTemperatureBaseline.average(
                         from: history,
                         fallback: data.waterTemperatureCelsius ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.waterTemperatureCard)
+                // Honest #491: NavigationLink hosts SurfaceID.waterTemperatureCard (body.waterTemperature.md.nav)
 
                 CyclingPowerTonightBaselineCard(
                     watts: data.cyclingPowerWatts,

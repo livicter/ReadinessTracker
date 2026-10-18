@@ -281,6 +281,7 @@ struct MetricCorrelationView: View {
         case .workoutEffort: return data.workoutEffortScore
         case .estimatedWorkoutEffort: return data.estimatedWorkoutEffortScore
         case .underwaterDepth: return data.underwaterDepthMeters
+        case .waterTemperature: return data.waterTemperatureCelsius
         }
     }
 }
