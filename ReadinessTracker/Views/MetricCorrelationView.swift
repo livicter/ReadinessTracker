@@ -279,6 +279,7 @@ struct MetricCorrelationView: View {
         case .alcoholicBeverages: return data.nutrition.alcoholicBeverages
         case .physicalEffort: return data.physicalEffortKcalPerHrKg
         case .workoutEffort: return data.workoutEffortScore
+        case .estimatedWorkoutEffort: return data.estimatedWorkoutEffortScore
         }
     }
 }

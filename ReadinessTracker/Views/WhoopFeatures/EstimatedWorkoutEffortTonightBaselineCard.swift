@@ -8,6 +8,9 @@ struct EstimatedWorkoutEffortTonightBaselineCard: View {
     let score: Double?
     let history: [(date: Date, score: Double)]
     let baseline: Double
+    /// Honest #489: classic MetricDetailView(.estimatedWorkoutEffort).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { score.map { max(0, min(10, $0)) } }
 
@@ -49,15 +52,29 @@ struct EstimatedWorkoutEffortTonightBaselineCard: View {
     private let effortColor = Color(hex: "FFD60A")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.estimatedWorkoutEffortCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .estimatedWorkoutEffort,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.estimatedWorkoutEffortCard)
+        .accessibilityLabel("Estimated Workout Effort")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct EstimatedWorkoutEffortTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.estimatedWorkoutEffortBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#489).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct EstimatedWorkoutEffortTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.estimatedWorkoutEffortCard)
     }
 
     private var yDomain: ClosedRange<Double> {
