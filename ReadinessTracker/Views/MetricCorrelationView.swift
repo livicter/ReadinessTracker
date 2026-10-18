@@ -278,6 +278,7 @@ struct MetricCorrelationView: View {
         case .insulinDelivery: return data.insulinDeliveryIU
         case .alcoholicBeverages: return data.nutrition.alcoholicBeverages
         case .physicalEffort: return data.physicalEffortKcalPerHrKg
+        case .workoutEffort: return data.workoutEffortScore
         }
     }
 }

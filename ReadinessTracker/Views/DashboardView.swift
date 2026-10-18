@@ -2069,9 +2069,11 @@ struct DashboardView: View {
                     baseline: WorkoutEffortBaseline.average(
                         from: history,
                         fallback: data.workoutEffortScore ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.workoutEffortCard)
+                // Honest #488: NavigationLink hosts SurfaceID.workoutEffortCard (body.workoutEffort.md.nav)
 
 
                 EstimatedWorkoutEffortTonightBaselineCard(

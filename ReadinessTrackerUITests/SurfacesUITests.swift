@@ -10391,7 +10391,46 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-six-minute-walk-card-back.png")
     }
 
+    func testWorkoutEffortCardMetricDetailNavSurface() throws {
+        // Honest #488: WHOOP body.workoutEffort.md.nav → classic MetricDetailView (.workoutEffort).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Effort"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Effort")
+        let link = app.buttons["Workout Effort"].firstMatch
+        let card = app.descendants(matching: .any)["body.workoutEffort.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Workout Effort"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-workout-effort-metric-detail.png")
+        XCTAssertTrue(landed, "body.workoutEffort.md.nav → metric.detail")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        _ = card.waitForExistence(timeout: 6)
+        sleep(1)
+        saveShot("verify-workout-effort-card-back.png")
+    }
+
     func testPhysicalEffortCardMetricDetailNavSurface() throws {
+
         // Honest #487: WHOOP body.physicalEffort.md.nav → classic MetricDetailView (.physicalEffort).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         var n = 0
