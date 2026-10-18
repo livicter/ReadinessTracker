@@ -10533,6 +10533,41 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-fitbit-air-data-spark-metric.png")
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).tap()
         }
+        // Honest #506: air → classic MetricDetail (row under card header).
+        // Must re-anchor until title is HITTABLE — .exists stays true off-screen and
+        // title-relative taps then miss (land at dashboard top).
+        var reanchor = 0
+        while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 20 {
+            app.swipeDown()
+            reanchor += 1
+        }
+        if !(titleFitbit.isHittable || titleHealth.isHittable) {
+            reanchor = 0
+            while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 30 {
+                app.swipeUp()
+                reanchor += 1
+            }
+        }
+        XCTAssertTrue(titleFitbit.isHittable || titleHealth.isHittable, "Air title on-screen")
+        let airTitle = titleFitbit.isHittable ? titleFitbit.firstMatch : titleHealth.firstMatch
+        let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
+        XCTAssertTrue(chipNav.waitForExistence(timeout: 5), "fitbit.air.chip.md.nav")
+        let link = app.buttons["Steps metric detail"].firstMatch
+        if link.isHittable {
+            link.tap()
+        } else if chipNav.isHittable {
+            chipNav.tap()
+        } else {
+            // Detail row is immediately under the header captions.
+            airTitle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 3.5)).tap()
+        }
+        let landed = app.navigationBars["Steps"].waitForExistence(timeout: 10)
+            || app.navigationBars["Sleep"].waitForExistence(timeout: 4)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-fitbit-air-chip-metric-detail.png")
+        XCTAssertTrue(landed, "fitbit.air.chip.md.nav → metric.detail")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
     }
 
 func testPeakHeartRateCardMetricDetailNavSurface() throws {
