@@ -267,6 +267,7 @@ struct MetricCorrelationView: View {
         case .sixMinuteWalk: return data.sixMinuteWalkDistanceMeters
         case .runningSpeed: return data.runningSpeedMps
         case .runningPower: return data.runningPowerWatts
+        case .runningGCT: return data.runningGroundContactMs
         }
     }
 }
