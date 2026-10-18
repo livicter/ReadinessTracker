@@ -16,6 +16,8 @@ struct FitbitAirDataCard: View {
     @State private var sparkMetric: AirSparkMetric = .steps
     /// Honest #507: interactive spark scrub index.
     @State private var sparkScrubIndex: Int? = nil
+    /// Honest #509: which air gap pill is expanded.
+    @State private var focusedGapID: String? = nil
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -52,6 +54,7 @@ struct FitbitAirDataCard: View {
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
+                airGapsStrip
                 if sparkPoints.contains(where: { $0.value > 0 }) {
                     sparkBlock
                 }
@@ -146,6 +149,97 @@ struct FitbitAirDataCard: View {
             }
         }
         .accessibilityIdentifier(SurfaceID.fitbitAirDataChips)
+    }
+
+
+    /// Honest #509: empty Google Health / Fitbit air fields with fill guidance.
+    private var gapChips: [AirChip] { chips.filter { !$0.filled } }
+
+    private var airGapsStrip: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text(gapChips.isEmpty ? "Air gaps" : "Air gaps · \(gapChips.count)")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(source == .fitbit ? "Google Health" : "HealthKit")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(accent)
+            }
+            if gapChips.isEmpty {
+                Text("All air fields filled tonight")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 10)
+                    .background(accent.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(gapChips) { gap in
+                            Button {
+                                Haptic.selectionChanged()
+                                focusedGapID = focusedGapID == gap.id ? nil : gap.id
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: gap.icon)
+                                        .font(.caption2)
+                                    Text(gap.label)
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .foregroundStyle(focusedGapID == gap.id ? Color.white : accent)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 7)
+                                .background(focusedGapID == gap.id ? accent : accent.opacity(0.12))
+                                .clipShape(Capsule())
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Gap \(gap.label)")
+                        }
+                    }
+                }
+                Text(focusedGapHint)
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDataGaps)
+        .accessibilityLabel("Air gaps")
+    }
+
+    private var focusedGapHint: String {
+        guard let id = focusedGapID, let gap = gapChips.first(where: { $0.id == id }) else {
+            return source == .fitbit
+                ? "Tap a gap · wear Fitbit overnight, open Fitbit app, then pull-to-refresh Google Health."
+                : "Tap a gap · grant Health access or switch source to Fitbit for Google Health sync."
+        }
+        switch gap.id {
+        case "sleep":
+            return "Sleep empty · wear overnight and sync Fitbit sleep stages to Google Health."
+        case "hrv":
+            return "HRV empty · continuous wear ≥4h overnight fills RMSSD."
+        case "rhr":
+            return "RHR empty · resting samples need quiet wake window after sleep."
+        case "spo2":
+            return "SpO₂ empty · enable SpO₂ in Fitbit settings; sync before morning readiness."
+        case "resp":
+            return "Resp empty · respiratory rate lands with overnight sleep session."
+        case "skin":
+            return "Skin empty · Sense/Charge skin temp needs overnight wear."
+        case "steps":
+            return "Steps empty · walk with Fitbit or phone; refresh air strip."
+        case "kcal", "amin", "basal":
+            return "\(gap.label) empty · activity + basal energy sync after daytime wear."
+        case "dist":
+            return "Distance empty · outdoor walk/run with GPS or phone co-presence."
+        case "floors":
+            return "Floors empty · climb stairs with altimeter-capable Fitbit."
+        default:
+            return "\(gap.label) · \(gap.detail)"
+        }
     }
 
     /// Honest #506: steps-parity classic MetricDetail entry (defaults to Steps).
