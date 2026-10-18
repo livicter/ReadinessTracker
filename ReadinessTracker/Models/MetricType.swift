@@ -192,6 +192,7 @@ enum MetricType: String, CaseIterable {
     case peakExpiratoryFlow = "Peak Expiratory Flow"
     case forcedVitalCapacity = "Forced Vital Capacity"
     case forcedExpiratoryVolume1 = "Forced Expiratory Volume 1"
+    case inhalerUsage = "Inhaler Usage"
 
     var title: String { rawValue }
 
@@ -311,6 +312,7 @@ enum MetricType: String, CaseIterable {
         case .peakExpiratoryFlow: return "wind"
         case .forcedVitalCapacity: return "lungs"
         case .forcedExpiratoryVolume1: return "wind"
+        case .inhalerUsage: return "cross.case"
         }
     }
 
@@ -430,6 +432,7 @@ enum MetricType: String, CaseIterable {
         case .peakExpiratoryFlow: return "L/min"
         case .forcedVitalCapacity: return "L"
         case .forcedExpiratoryVolume1: return "L"
+        case .inhalerUsage: return "puffs"
         }
     }
 
@@ -549,13 +552,14 @@ enum MetricType: String, CaseIterable {
         case .peakExpiratoryFlow: return Color(hex: "30D158")
         case .forcedVitalCapacity: return Color(hex: "64D2FF")
         case .forcedExpiratoryVolume1: return Color(hex: "30B0C7")
+        case .inhalerUsage: return Color(hex: "FF9F0A")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride, .walkingSpeed, .walkingStepLength, .walkingSteadiness, .physicalEffort, .workoutEffort, .estimatedWorkoutEffort, .underwaterDepth, .waterTemperature, .peakExpiratoryFlow, .forcedVitalCapacity, .forcedExpiratoryVolume1: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery, .alcoholicBeverages: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery, .alcoholicBeverages, .inhalerUsage: return false
         }
     }
 
@@ -1130,6 +1134,11 @@ enum MetricType: String, CaseIterable {
             if value >= 2.8 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ≥3.5 L Forced Expiratory Volume 1 goal") }
             if value >= 2.0 { return MetricZone(label: "Fair", color: RTColor.caution, description: "Fair vs soft ≥3.5 L Forced Expiratory Volume 1 goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ≥3.5 L Forced Expiratory Volume 1 goal")
+        case .inhalerUsage:
+            if value <= 0 { return MetricZone(label: "None", color: RTColor.optimal, description: "None vs soft ≤0 puffs Inhaler Usage goal") }
+            if value <= 2 { return MetricZone(label: "Light", color: RTColor.good, description: "Light vs soft ≤0 puffs Inhaler Usage goal") }
+            if value <= 5 { return MetricZone(label: "Moderate", color: RTColor.caution, description: "Moderate vs soft ≤0 puffs Inhaler Usage goal") }
+            return MetricZone(label: "Heavy", color: RTColor.warning, description: "Heavy vs soft ≤0 puffs Inhaler Usage goal")
         }
     }
 }

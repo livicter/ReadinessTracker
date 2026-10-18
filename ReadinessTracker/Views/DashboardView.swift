@@ -2893,9 +2893,11 @@ struct DashboardView: View {
                     baseline: InhalerUsageBaseline.average(
                         from: history,
                         fallback: data.inhalerUsage ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
+                // Honest #495: NavigationLink hosts SurfaceID.inhalerUsageCard (body.inhaler.md.nav)
 
                 PeakExpiratoryFlowTonightBaselineCard(
                     lpm: data.peakExpiratoryFlowLpm,

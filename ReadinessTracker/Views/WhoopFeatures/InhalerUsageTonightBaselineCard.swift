@@ -8,6 +8,9 @@ struct InhalerUsageTonightBaselineCard: View {
     let count: Double?
     let history: [(date: Date, count: Double)]
     let baseline: Double
+    /// Honest #495: classic MetricDetailView(.inhalerUsage).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { count.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct InhalerUsageTonightBaselineCard: View {
     private let inhalerColor = Color(hex: "64D2FF")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .inhalerUsage,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
+        .accessibilityLabel("Inhaler Usage")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct InhalerUsageTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.inhalerUsageBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#495).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct InhalerUsageTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.inhalerUsageCard)
     }
 
     private var yDomain: ClosedRange<Double> {
