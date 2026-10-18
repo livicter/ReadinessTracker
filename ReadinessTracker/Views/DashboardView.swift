@@ -132,6 +132,14 @@ struct DashboardView: View {
                                 .slideIn(delay: 0.13)
                             recommendationsSection(scores: finalScores)
                                 .slideIn(delay: 0.16)
+                            // Honest #497: interactive load simulator + Fitbit air-data density
+                            ReadinessLoadSimulatorCard(
+                                data: data,
+                                history: history,
+                                scores: finalScores,
+                                source: selectedSource
+                            )
+                            .slideIn(delay: 0.18)
                             bodyActivitySection(data: data, history: history)
                                 .slideIn(delay: 0.2)
                             whoopSection(data: data, history: history, scores: finalScores)
