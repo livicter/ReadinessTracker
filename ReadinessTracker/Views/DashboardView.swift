@@ -2053,9 +2053,11 @@ struct DashboardView: View {
                     baseline: PhysicalEffortBaseline.average(
                         from: history,
                         fallback: data.physicalEffortKcalPerHrKg ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.physicalEffortCard)
+                // Honest #487: NavigationLink hosts SurfaceID.physicalEffortCard (body.physicalEffort.md.nav)
 
 
                 WorkoutEffortTonightBaselineCard(
