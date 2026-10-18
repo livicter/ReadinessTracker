@@ -2934,9 +2934,11 @@ struct DashboardView: View {
                     baseline: InsulinDeliveryBaseline.average(
                         from: history,
                         fallback: data.insulinDeliveryIU ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.insulinDeliveryCard)
+                // Honest #485: NavigationLink hosts SurfaceID.insulinDeliveryCard (body.insulin.md.nav)
 
 
                 // Honest #400: WHOOP body.glucose.card → classic MetricDetailView(.bloodGlucose)
