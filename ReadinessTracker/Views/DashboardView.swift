@@ -2921,9 +2921,11 @@ struct DashboardView: View {
                     baseline: ForcedVitalCapacityBaseline.average(
                         from: history,
                         fallback: data.forcedVitalCapacityLiters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.forcedVitalCapacityCard)
+                // Honest #493: NavigationLink hosts SurfaceID.forcedVitalCapacityCard (body.fvc.md.nav)
 
 
                 ForcedExpiratoryVolume1TonightBaselineCard(

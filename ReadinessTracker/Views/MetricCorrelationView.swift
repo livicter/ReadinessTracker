@@ -283,6 +283,7 @@ struct MetricCorrelationView: View {
         case .underwaterDepth: return data.underwaterDepthMeters
         case .waterTemperature: return data.waterTemperatureCelsius
         case .peakExpiratoryFlow: return data.peakExpiratoryFlowLpm
+        case .forcedVitalCapacity: return data.forcedVitalCapacityLiters
         }
     }
 }
