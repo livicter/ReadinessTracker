@@ -575,7 +575,7 @@ enum SurfaceID {
     static let runningStrideCard = "body.runningStride.md.nav"  // unique md.nav
     static let runningStrideBaselineCallout = "body.runningStride.baseline"
     static let runningStrideSpark = "body.runningStride.spark"
-    static let runningVOCard = "body.runningVO.card"
+    static let runningVOCard = "body.runningVO.md.nav"  // unique md.nav
     static let runningVOBaselineCallout = "body.runningVO.baseline"
     static let runningVOSpark = "body.runningVO.spark"
     static let appleExerciseTimeCard = "strain.exerciseTime.card"
