@@ -200,6 +200,8 @@ enum SurfaceID {
     static let interactiveRecoveryDial = "balance.dial"
     static let interactiveRecoveryDialKnob = "balance.dial.knob"
     static let interactiveRecoveryDialReset = "balance.dial.reset"
+    static let settingsFitbitAirStatus = "settings.fitbit.air"  // Honest #501
+    static let settingsFitbitAirChips = "settings.fitbit.air.chips"
     static let fitbitAirDataStrip = "fitbit.air.strip"
     static let fitbitAirDataCard = "fitbit.air.card"  // Honest #498 unique
     static let fitbitAirDataDensity = "fitbit.air.density"

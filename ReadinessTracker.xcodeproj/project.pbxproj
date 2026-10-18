@@ -114,6 +114,7 @@
 		C8D9E0F1021324354657687A /* ReadinessLoadSimulatorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8D9E0F10213243546576879 /* ReadinessLoadSimulatorCard.swift */; };
 		C8D9E0F1021324354657687C /* FitbitAirDataCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8D9E0F1021324354657687B /* FitbitAirDataCard.swift */; };
 		C8D9E0F1021324354657687E /* InteractiveRecoveryDialCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8D9E0F1021324354657687D /* InteractiveRecoveryDialCard.swift */; };
+		C8D9E0F10213243546576880 /* FitbitSettingsAirStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8D9E0F1021324354657687F /* FitbitSettingsAirStatus.swift */; };
 		BD8A01CD3E1F203142536476 /* VO2MaxTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8A01CD3E1F203142536475 /* VO2MaxTonightBaselineCard.swift */; };
 		BE9B12DE4F20314253647587 /* WalkingHRTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9B12DE4F20314253647586 /* WalkingHRTonightBaselineCard.swift */; };
 		J58K01M73I192031425R1 /* HeartRateRecoveryTonightBaselineCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = I58K01M73I192031425R0 /* HeartRateRecoveryTonightBaselineCard.swift */; };
@@ -482,6 +483,7 @@
 		C8D9E0F10213243546576879 /* ReadinessLoadSimulatorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReadinessLoadSimulatorCard.swift; path = ReadinessTracker/Views/WhoopFeatures/ReadinessLoadSimulatorCard.swift; sourceTree = SOURCE_ROOT; };
 		C8D9E0F1021324354657687B /* FitbitAirDataCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FitbitAirDataCard.swift; path = ReadinessTracker/Views/WhoopFeatures/FitbitAirDataCard.swift; sourceTree = SOURCE_ROOT; };
 		C8D9E0F1021324354657687D /* InteractiveRecoveryDialCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveRecoveryDialCard.swift; path = ReadinessTracker/Views/WhoopFeatures/InteractiveRecoveryDialCard.swift; sourceTree = SOURCE_ROOT; };
+		C8D9E0F1021324354657687F /* FitbitSettingsAirStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FitbitSettingsAirStatus.swift; path = ReadinessTracker/Views/WhoopFeatures/FitbitSettingsAirStatus.swift; sourceTree = SOURCE_ROOT; };
 		AD8A01CD3E1F203142536475 /* VO2MaxTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VO2MaxTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/VO2MaxTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		AE9B12DE4F20314253647586 /* WalkingHRTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WalkingHRTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/WalkingHRTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
 		I58K01M73I192031425R0 /* HeartRateRecoveryTonightBaselineCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HeartRateRecoveryTonightBaselineCard.swift; path = ReadinessTracker/Views/WhoopFeatures/HeartRateRecoveryTonightBaselineCard.swift; sourceTree = SOURCE_ROOT; };
@@ -881,6 +883,7 @@
 				C8D9E0F10213243546576879 /* ReadinessLoadSimulatorCard.swift */,
 				C8D9E0F1021324354657687B /* FitbitAirDataCard.swift */,
 				C8D9E0F1021324354657687D /* InteractiveRecoveryDialCard.swift */,
+				C8D9E0F1021324354657687F /* FitbitSettingsAirStatus.swift */,
 				AD8A01CD3E1F203142536475 /* VO2MaxTonightBaselineCard.swift */,
 				AE9B12DE4F20314253647586 /* WalkingHRTonightBaselineCard.swift */,
 				I58K01M73I192031425R0 /* HeartRateRecoveryTonightBaselineCard.swift */,
@@ -1526,6 +1529,7 @@
 				C8D9E0F1021324354657687A /* ReadinessLoadSimulatorCard.swift in Sources */,
 				C8D9E0F1021324354657687C /* FitbitAirDataCard.swift in Sources */,
 				C8D9E0F1021324354657687E /* InteractiveRecoveryDialCard.swift in Sources */,
+				C8D9E0F10213243546576880 /* FitbitSettingsAirStatus.swift in Sources */,
 				BD8A01CD3E1F203142536476 /* VO2MaxTonightBaselineCard.swift in Sources */,
 				BE9B12DE4F20314253647587 /* WalkingHRTonightBaselineCard.swift in Sources */,
 				J58K01M73I192031425R1 /* HeartRateRecoveryTonightBaselineCard.swift in Sources */,

@@ -346,10 +346,18 @@ struct SettingsView: View {
                             Spacer()
                             StatusBadge(isActive: fitbit.isAuthenticated)
                         }
+                        Text("Google Health API · air fields power Today Fitbit Air")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
                         if let message = fitbit.errorMessage, !fitbit.isAuthenticated {
                             Text(message)
                                 .font(.caption2)
                                 .foregroundStyle(RTColor.secondaryText)
+                        }
+                        if fitbit.isAuthenticated {
+                            FitbitSettingsAirStatus(
+                                data: DataStore.shared.latest(for: .fitbit)
+                            )
                         }
                         HStack {
                             Button(fitbit.isAuthenticated ? "Refresh" : "Connect") {
