@@ -1738,9 +1738,11 @@ struct DashboardView: View {
                     baseline: StairAscentSpeedBaseline.average(
                         from: history,
                         fallback: data.stairAscentSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.stairAscentSpeedCard)
+                // Honest #472: NavigationLink hosts SurfaceID.stairAscentSpeedCard (body.stairAscent.md.nav)
 
                 StairDescentSpeedTonightBaselineCard(
                     metersPerSecond: data.stairDescentSpeedMps,
