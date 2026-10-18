@@ -262,6 +262,7 @@ struct MetricCorrelationView: View {
         case .rowingDistance: return data.distanceRowingKm
         case .rowingSpeed: return data.rowingSpeedMps
         case .swimStrokes: return data.swimmingStrokeCount
+        case .stairAscentSpeed: return data.stairAscentSpeedMps
         }
     }
 }
