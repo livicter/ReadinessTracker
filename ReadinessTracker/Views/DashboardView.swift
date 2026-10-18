@@ -1732,9 +1732,11 @@ struct DashboardView: View {
                     baseline: WalkingSteadinessBaseline.average(
                         from: history,
                         fallback: data.walkingSteadinessPercent ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.walkingSteadinessCard)
+                // Honest #484: NavigationLink hosts SurfaceID.walkingSteadinessCard (body.steadiness.md.nav)
 
 
                 StairAscentSpeedTonightBaselineCard(
