@@ -1908,9 +1908,11 @@ struct DashboardView: View {
                     baseline: DownhillSnowSportsDistanceBaseline.average(
                         from: history,
                         fallback: data.distanceDownhillSnowSportsKm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.downhillSnowSportsDistanceCard)
+                // Honest #465: NavigationLink hosts SurfaceID.downhillSnowSportsDistanceCard (body.downhillSnowSportsDistance.md.nav)
 
                 CyclingCadenceTonightBaselineCard(
                     rpm: data.cyclingCadenceRpm,
