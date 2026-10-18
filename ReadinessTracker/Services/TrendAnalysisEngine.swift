@@ -252,6 +252,7 @@ struct TrendAnalysisEngine {
         case .walkingDoubleSupport: normalizedSlope = slope / 5 * 100
         case .walkingAsymmetry: normalizedSlope = slope / 2.5 * 100
         case .walkingSpeed: normalizedSlope = slope / 0.21666666666666667 * 100
+        case .walkingStepLength: normalizedSlope = slope / 0.125 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
