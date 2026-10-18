@@ -1822,9 +1822,11 @@ struct DashboardView: View {
                     baseline: RowingSpeedBaseline.average(
                         from: history,
                         fallback: data.rowingSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.rowingSpeedCard)
+                // Honest #470: NavigationLink hosts SurfaceID.rowingSpeedCard (body.rowingSpeed.md.nav)
 
 
                 PaddleSportsDistanceTonightBaselineCard(
