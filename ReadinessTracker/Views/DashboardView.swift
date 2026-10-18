@@ -2097,9 +2097,11 @@ struct DashboardView: View {
                     baseline: RunningSpeedBaseline.average(
                         from: history,
                         fallback: data.runningSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.runningSpeedCard)
+                // Honest #475: NavigationLink hosts SurfaceID.runningSpeedCard (body.runningSpeed.md.nav)
 
                 RunningGCTTonightBaselineCard(
                     milliseconds: data.runningGroundContactMs,

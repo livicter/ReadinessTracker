@@ -566,7 +566,7 @@ enum SurfaceID {
     static let runningPowerCard = "body.runningPower.card"
     static let runningPowerBaselineCallout = "body.runningPower.baseline"
     static let runningPowerSpark = "body.runningPower.spark"
-    static let runningSpeedCard = "body.runningSpeed.card"
+    static let runningSpeedCard = "body.runningSpeed.md.nav"  // unique md.nav
     static let runningSpeedBaselineCallout = "body.runningSpeed.baseline"
     static let runningSpeedSpark = "body.runningSpeed.spark"
     static let runningGCTCard = "body.runningGCT.card"
