@@ -174,6 +174,7 @@ enum MetricType: String, CaseIterable {
 
     case runningSpeed = "Running Speed"
     case runningPower = "Running Power"
+    case runningGCT = "Ground Contact"
 
     var title: String { rawValue }
 
@@ -275,6 +276,7 @@ enum MetricType: String, CaseIterable {
         case .sixMinuteWalk: return "figure.walk"
         case .runningSpeed: return "speedometer"
         case .runningPower: return "bolt.fill"
+        case .runningGCT: return "timer"
         }
     }
 
@@ -376,6 +378,7 @@ enum MetricType: String, CaseIterable {
         case .sixMinuteWalk: return "m"
         case .runningSpeed: return "m/s"
         case .runningPower: return "W"
+        case .runningGCT: return "ms"
         }
     }
 
@@ -477,13 +480,14 @@ enum MetricType: String, CaseIterable {
         case .sixMinuteWalk: return Color(hex: "30B0C7")
         case .runningSpeed: return Color(hex: "5E5CE6")
         case .runningPower: return Color(hex: "30D158")
+        case .runningGCT: return Color(hex: "64D2FF")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT: return false
         }
     }
 
@@ -967,6 +971,11 @@ enum MetricType: String, CaseIterable {
             if value >= 240 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ~300 W Running Power goal") }
             if value >= 180 { return MetricZone(label: "Easy", color: RTColor.caution, description: "Easy vs soft ~300 W Running Power goal") }
             return MetricZone(label: "Low", color: RTColor.warning, description: "Low vs soft ~300 W Running Power goal")
+        case .runningGCT:
+            if value <= 220 { return MetricZone(label: "Snappy", color: RTColor.optimal, description: "Snappy vs soft ≤220 ms Ground Contact goal") }
+            if value <= 260 { return MetricZone(label: "Solid", color: RTColor.good, description: "Solid vs soft ≤220 ms Ground Contact goal") }
+            if value <= 300 { return MetricZone(label: "Heavy", color: RTColor.caution, description: "Heavy vs soft ≤220 ms Ground Contact goal") }
+            return MetricZone(label: "Slow", color: RTColor.warning, description: "Slow vs soft ≤220 ms Ground Contact goal")
         }
     }
 }

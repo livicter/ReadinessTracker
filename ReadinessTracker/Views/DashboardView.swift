@@ -2114,9 +2114,11 @@ struct DashboardView: View {
                     baseline: RunningGCTBaseline.average(
                         from: history,
                         fallback: data.runningGroundContactMs ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.runningGCTCard)
+                // Honest #477: NavigationLink hosts SurfaceID.runningGCTCard (body.runningGCT.md.nav)
 
                 RunningStrideTonightBaselineCard(
                     meters: data.runningStrideLengthMeters,
