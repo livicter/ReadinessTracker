@@ -10413,9 +10413,19 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")
         saveShot("verify-readiness-load-simulator-tasks.png")
+        // Honest #499: checkable tasks + RHR/SpO2 levers.
+        let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
+        if row.exists { row.tap() }
+        let progress = app.descendants(matching: .any)["sim.load.tasks.progress"].firstMatch
+        XCTAssertTrue(progress.exists || tasks.exists, "sim.load.tasks.progress")
+        if controls.exists {
+            // Nudge lower slider region (RHR / SpO2 levers).
+            controls.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85)).tap()
+        }
+        saveShot("verify-readiness-load-simulator-tasks-check.png")
     }
 
-        func testFitbitAirDataCardSurface() throws {
+    func testFitbitAirDataCardSurface() throws {
         // Honest #498: Fitbit / Google Health air-data density card SurfaceIDs.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         var n = 0

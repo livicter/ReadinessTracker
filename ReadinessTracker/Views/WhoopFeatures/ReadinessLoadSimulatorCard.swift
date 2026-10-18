@@ -14,6 +14,10 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var sleepDelta: Double = 0      // hours
     @State private var hrvDelta: Double = 0        // ms
     @State private var strainDelta: Double = 0     // strain points 0…21
+    /// Honest #499: extra levers + checkable tasks.
+    @State private var rhrDelta: Double = 0        // bpm (lower is better)
+    @State private var spo2Delta: Double = 0       // percentage points
+    @State private var completedTaskIDs: Set<String> = []
 
     private var baseline: Int { scores.general }
 
@@ -22,7 +26,9 @@ struct ReadinessLoadSimulatorCard: View {
         let sleepAdj = sleepDelta * 4.0          // ~4 pts per hour around typical night
         let hrvAdj = hrvDelta * 0.25             // ~0.25 pts per ms RMSSD
         let strainAdj = -strainDelta * (100.0 / 21.0) * 0.15
-        return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj).rounded())))
+        let rhrAdj = -rhrDelta * 0.4             // lower RHR lifts READY
+        let spo2Adj = spo2Delta * 1.5            // SpO2 points matter near edge
+        return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj + rhrAdj + spo2Adj).rounded())))
     }
 
     private var deltaVsBaseline: Int { projected - baseline }
@@ -42,6 +48,8 @@ struct ReadinessLoadSimulatorCard: View {
             sleepDelta: sleepDelta,
             hrvDelta: hrvDelta,
             strainDelta: strainDelta,
+            rhrDelta: rhrDelta,
+            spo2Delta: spo2Delta,
             data: data,
             source: source
         )
@@ -175,6 +183,22 @@ struct ReadinessLoadSimulatorCard: View {
                 step: 0.5,
                 tint: RTColor.strain
             )
+            simulatorSlider(
+                title: "RHR",
+                unit: "bpm",
+                value: $rhrDelta,
+                range: -10...10,
+                step: 1,
+                tint: Color(hex: "FF375F")
+            )
+            simulatorSlider(
+                title: "SpO₂",
+                unit: "pp",
+                value: $spo2Delta,
+                range: -3...3,
+                step: 0.5,
+                tint: Color(hex: "64D2FF")
+            )
         }
         .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorControls)
     }
@@ -204,11 +228,11 @@ struct ReadinessLoadSimulatorCard: View {
 
     private var sparkProjection: some View {
         let points: [(label: String, value: Double)] = [
-            ("−2h", Double(project(sleep: -2, hrv: 0, strain: 0))),
+            ("−2h", Double(project(sleep: -2, hrv: 0, strain: 0, rhr: 0, spo2: 0))),
             ("Now", Double(baseline)),
-            ("+1h", Double(project(sleep: 1, hrv: 0, strain: 0))),
-            ("+HRV", Double(project(sleep: 0, hrv: 10, strain: 0))),
-            ("−Strain", Double(project(sleep: 0, hrv: 0, strain: -4))),
+            ("+1h", Double(project(sleep: 1, hrv: 0, strain: 0, rhr: 0, spo2: 0))),
+            ("+HRV", Double(project(sleep: 0, hrv: 10, strain: 0, rhr: 0, spo2: 0))),
+            ("−RHR", Double(project(sleep: 0, hrv: 0, strain: 0, rhr: -5, spo2: 0))),
             ("Scrub", Double(projected))
         ]
         return VStack(alignment: .leading, spacing: 6) {
@@ -273,47 +297,74 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private var tasksBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Today’s tasks")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+        let done = tasks.filter { completedTaskIDs.contains($0.id) }.count
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Today’s tasks")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(done)/\(tasks.count)")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
+            }
+            ProgressView(value: Double(done), total: Double(max(1, tasks.count)))
+                .tint(accent)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
             ForEach(tasks) { task in
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: task.icon)
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(accent)
-                        .frame(width: 22)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(task.title)
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(RTColor.primaryText)
-                        Text(task.detail)
-                            .font(.caption)
-                            .foregroundStyle(RTColor.secondaryText)
-                            .fixedSize(horizontal: false, vertical: true)
+                let isDone = completedTaskIDs.contains(task.id)
+                Button {
+                    Haptic.selectionChanged()
+                    if isDone { completedTaskIDs.remove(task.id) }
+                    else { completedTaskIDs.insert(task.id) }
+                } label: {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(isDone ? RTColor.optimal : accent)
+                            .frame(width: 22)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(task.title)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                                .strikethrough(isDone, color: RTColor.secondaryText)
+                            Text(task.detail)
+                                .font(.caption)
+                                .foregroundStyle(RTColor.secondaryText)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: task.icon)
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(accent.opacity(0.7))
                     }
-                    Spacer(minLength: 0)
+                    .padding(10)
+                    .background(RTColor.surfaceHighlight.opacity(isDone ? 0.35 : 0.65))
+                    .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
                 }
-                .padding(10)
-                .background(RTColor.surfaceHighlight.opacity(0.65))
-                .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRow)
+                .accessibilityLabel("\(task.title)\(isDone ? ", done" : "")")
             }
         }
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTasks)
     }
 
-    private func project(sleep: Double, hrv: Double, strain: Double) -> Int {
+    private func project(sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double) -> Int {
         let sleepAdj = sleep * 4.0
         let hrvAdj = hrv * 0.25
         let strainAdj = -strain * (100.0 / 21.0) * 0.15
-        return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj).rounded())))
+        let rhrAdj = -rhr * 0.4
+        let spo2Adj = spo2 * 1.5
+        return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj + rhrAdj + spo2Adj).rounded())))
     }
 }
 
 // MARK: - Tasks
 
 struct SimulatorTask: Identifiable {
-    let id = UUID()
+    let id: String
     let title: String
     let detail: String
     let icon: String
@@ -323,18 +374,22 @@ struct SimulatorTask: Identifiable {
         sleepDelta: Double,
         hrvDelta: Double,
         strainDelta: Double,
+        rhrDelta: Double,
+        spo2Delta: Double,
         data: DailyHealthData,
         source: DataSource
     ) -> [SimulatorTask] {
         var out: [SimulatorTask] = []
         if sleepDelta < 0.25 && data.sleepHours < 7 {
             out.append(.init(
+                id: "sleep-protect",
                 title: "Protect sleep window",
                 detail: "Add ~\(String(format: "%.1f", max(0.5, 7 - data.sleepHours)))h tonight to lift projected READY.",
                 icon: "moon.zzz.fill"
             ))
         } else if sleepDelta >= 0.5 {
             out.append(.init(
+                id: "sleep-lock",
                 title: "Lock the extra sleep",
                 detail: "Keep the +\(String(format: "%.1f", sleepDelta))h scrub — wind-down 45m earlier.",
                 icon: "bed.double.fill"
@@ -342,12 +397,14 @@ struct SimulatorTask: Identifiable {
         }
         if strainDelta > 1 {
             out.append(.init(
+                id: "strain-cap",
                 title: "Cap today’s load",
                 detail: "Scrubbed strain is up — bias to Zone 2 or cut a set.",
                 icon: "flame.fill"
             ))
         } else if projected >= 80 {
             out.append(.init(
+                id: "push-session",
                 title: "Push the key session",
                 detail: "Projected READY ≥80 — schedule the hard lift or intervals.",
                 icon: "figure.strengthtraining.traditional"
@@ -355,13 +412,31 @@ struct SimulatorTask: Identifiable {
         }
         if hrvDelta < -5 || data.hrv < 40 {
             out.append(.init(
+                id: "hrv-break",
                 title: "HRV coherence break",
                 detail: "2–5 min box breathing before noon to support HRV.",
                 icon: "wind"
             ))
         }
+        if rhrDelta > 3 || data.restingHeartRate > 65 {
+            out.append(.init(
+                id: "rhr-ease",
+                title: "Ease into the day",
+                detail: "RHR scrub is elevated — delay hard work until after a walk.",
+                icon: "heart.fill"
+            ))
+        }
+        if spo2Delta < -1 || (data.bloodOxygen ?? 100) < 95 {
+            out.append(.init(
+                id: "spo2-air",
+                title: "Check air / SpO₂",
+                detail: "SpO₂ scrub soft — open a window, nasal breathe, recheck.",
+                icon: "lungs.fill"
+            ))
+        }
         if source == .fitbit && out.count < 2 {
             out.append(.init(
+                id: "fitbit-sync",
                 title: "Confirm Fitbit sync",
                 detail: "Pull-to-refresh so Google Health air fields stay current.",
                 icon: "arrow.triangle.2.circlepath"
@@ -369,12 +444,13 @@ struct SimulatorTask: Identifiable {
         }
         if out.isEmpty {
             out.append(.init(
+                id: "hold-line",
                 title: "Hold the line",
                 detail: "Scrubs look balanced — keep today’s plan and recheck after lunch.",
                 icon: "checkmark.circle.fill"
             ))
         }
-        return Array(out.prefix(3))
+        return Array(out.prefix(4))
     }
 }
 
