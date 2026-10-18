@@ -8,6 +8,9 @@ struct SixMinuteWalkTonightBaselineCard: View {
     let meters: Double?
     let history: [(date: Date, meters: Double)]
     let baseline: Double
+    /// Honest #474: classic MetricDetailView(.sixMinuteWalk).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { meters.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct SixMinuteWalkTonightBaselineCard: View {
     private let walkColor = Color(hex: "30B0C7")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .sixMinuteWalk,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
+        .accessibilityLabel("Six-Minute Walk")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct SixMinuteWalkTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.sixMinuteWalkBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#474).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct SixMinuteWalkTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
     }
 
     private var yDomain: ClosedRange<Double> {

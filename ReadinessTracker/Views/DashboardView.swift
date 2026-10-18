@@ -1768,9 +1768,11 @@ struct DashboardView: View {
                     baseline: SixMinuteWalkBaseline.average(
                         from: history,
                         fallback: data.sixMinuteWalkDistanceMeters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.sixMinuteWalkCard)
+                // Honest #474: NavigationLink hosts SurfaceID.sixMinuteWalkCard (body.sixMinuteWalk.md.nav)
 
                 // Honest #411: WHOOP body.swimDistance.card → classic MetricDetailView(.swimDistance)
                 SwimDistanceTonightBaselineCard(

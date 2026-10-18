@@ -500,7 +500,7 @@ enum SurfaceID {
     static let stairDescentSpeedCard = "body.stairDescent.md.nav"  // unique md.nav
     static let stairDescentSpeedBaselineCallout = "body.stairDescent.baseline"
     static let stairDescentSpeedSpark = "body.stairDescent.spark"
-    static let sixMinuteWalkCard = "body.sixMinuteWalk.card"
+    static let sixMinuteWalkCard = "body.sixMinuteWalk.md.nav"  // unique md.nav
     static let sixMinuteWalkBaselineCallout = "body.sixMinuteWalk.baseline"
     static let sixMinuteWalkSpark = "body.sixMinuteWalk.spark"
     static let swimDistanceCard = "body.swimDistance.card"
