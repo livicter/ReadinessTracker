@@ -168,6 +168,7 @@ struct SmartInsightsView: View {
                 case .runningStride: normalizedSlope = slope / 0.2 * 100
                 case .runningVO: normalizedSlope = slope / 1.6666666666666667 * 100
                 case .walkingDoubleSupport: normalizedSlope = slope / 5 * 100
+                case .walkingAsymmetry: normalizedSlope = slope / 2.5 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
