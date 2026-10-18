@@ -364,7 +364,7 @@ enum SurfaceID {
     static let inhalerUsageCard = "body.inhaler.card"
     static let inhalerUsageBaselineCallout = "body.inhaler.baseline"
     static let inhalerUsageSpark = "body.inhaler.spark"
-    static let peakExpiratoryFlowCard = "body.pef.card"
+    static let peakExpiratoryFlowCard = "body.pef.md.nav"  // unique md.nav
     static let peakExpiratoryFlowBaselineCallout = "body.pef.baseline"
     static let peakExpiratoryFlowSpark = "body.pef.spark"
     static let forcedVitalCapacityCard = "body.fvc.card"

@@ -8,6 +8,9 @@ struct PeakExpiratoryFlowTonightBaselineCard: View {
     let lpm: Double?
     let history: [(date: Date, lpm: Double)]
     let baseline: Double
+    /// Honest #492: classic MetricDetailView(.peakExpiratoryFlow).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { lpm.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct PeakExpiratoryFlowTonightBaselineCard: View {
     private let pefColor = Color(hex: "30D158")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .peakExpiratoryFlow,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
+        .accessibilityLabel("Peak Expiratory Flow")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct PeakExpiratoryFlowTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#492).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct PeakExpiratoryFlowTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
     }
 
     private var yDomain: ClosedRange<Double> {
