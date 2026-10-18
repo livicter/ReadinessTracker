@@ -282,6 +282,7 @@ struct MetricCorrelationView: View {
         case .estimatedWorkoutEffort: return data.estimatedWorkoutEffortScore
         case .underwaterDepth: return data.underwaterDepthMeters
         case .waterTemperature: return data.waterTemperatureCelsius
+        case .peakExpiratoryFlow: return data.peakExpiratoryFlowLpm
         }
     }
 }

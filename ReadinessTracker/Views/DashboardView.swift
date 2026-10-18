@@ -2906,9 +2906,11 @@ struct DashboardView: View {
                     baseline: PeakExpiratoryFlowBaseline.average(
                         from: history,
                         fallback: data.peakExpiratoryFlowLpm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.peakExpiratoryFlowCard)
+                // Honest #492: NavigationLink hosts SurfaceID.peakExpiratoryFlowCard (body.pef.md.nav)
 
                 ForcedVitalCapacityTonightBaselineCard(
                     liters: data.forcedVitalCapacityLiters,

@@ -261,6 +261,7 @@ struct TrendAnalysisEngine {
         case .estimatedWorkoutEffort: normalizedSlope = slope / 1.6666666666666667 * 100
         case .underwaterDepth: normalizedSlope = slope / 5 * 100
         case .waterTemperature: normalizedSlope = slope / 4.666666666666667 * 100
+        case .peakExpiratoryFlow: normalizedSlope = slope / 75 * 100
         }
         
         // Only trust trend if r-squared > 0.3 (some correlation)
