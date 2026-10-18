@@ -264,6 +264,7 @@ struct MetricCorrelationView: View {
         case .swimStrokes: return data.swimmingStrokeCount
         case .stairAscentSpeed: return data.stairAscentSpeedMps
         case .stairDescentSpeed: return data.stairDescentSpeedMps
+        case .sixMinuteWalk: return data.sixMinuteWalkDistanceMeters
         }
     }
 }
