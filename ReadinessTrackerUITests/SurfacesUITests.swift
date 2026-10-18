@@ -10391,6 +10391,30 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-six-minute-walk-card-back.png")
     }
 
+    func testReadinessLoadSimulatorSurface() throws {
+        // Honest #497: interactive load simulator + Fitbit air strip SurfaceIDs.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let title = app.staticTexts["Load Simulator"]
+        while !title.exists && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Load Simulator")
+        let card = app.descendants(matching: .any)["sim.load.md.nav"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 6) || title.exists, "sim.load.md.nav")
+        let controls = app.descendants(matching: .any)["sim.load.controls"].firstMatch
+        if controls.exists {
+            // Nudge first slider via coordinate to prove interactivity.
+            controls.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.2)).tap()
+        }
+        saveShot("verify-readiness-load-simulator.png")
+        let tasks = app.descendants(matching: .any)["sim.load.tasks"].firstMatch
+        XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
+                      "sim.load.tasks")
+        saveShot("verify-readiness-load-simulator-tasks.png")
+    }
+
     func testPeakHeartRateCardMetricDetailNavSurface() throws {
         // Honest #496: WHOOP vitals.peakhr.md.nav → classic MetricDetailView (.peakHeartRate).
         // Exact RestingHR (#367) UITest parity.

@@ -188,6 +188,12 @@ enum SurfaceID {
     static let postStrainEventCount = "recovery.postStrain.events"
     static let recommendationsSection = "recommendations.section"
     static let coachingFeed = "coaching.feed"
+    static let readinessLoadSimulatorCard = "sim.load.md.nav"  // unique md.nav / interactive sim
+    static let readinessLoadSimulatorGauge = "sim.load.gauge"
+    static let readinessLoadSimulatorControls = "sim.load.controls"
+    static let readinessLoadSimulatorSpark = "sim.load.spark"
+    static let readinessSimulatorTasks = "sim.load.tasks"
+    static let fitbitAirDataStrip = "fitbit.air.strip"
     static let sleepPerformance = "sleep.performance"
     static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
     static let sleepHRVSpark = "sleep.hrv.spark"
