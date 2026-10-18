@@ -1702,9 +1702,11 @@ struct DashboardView: View {
                     baseline: WalkingSpeedBaseline.average(
                         from: history,
                         fallback: data.walkingSpeedMps ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.walkingSpeedCard)
+                // Honest #482: NavigationLink hosts SurfaceID.walkingSpeedCard (body.walkingSpeed.md.nav)
 
                 WalkingStepLengthTonightBaselineCard(
                     meters: data.walkingStepLengthMeters,
