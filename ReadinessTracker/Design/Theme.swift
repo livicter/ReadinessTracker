@@ -515,7 +515,7 @@ enum SurfaceID {
     static let rowingSpeedCard = "body.rowingSpeed.card"
     static let rowingSpeedBaselineCallout = "body.rowingSpeed.baseline"
     static let rowingSpeedSpark = "body.rowingSpeed.spark"
-    static let paddleSportsDistanceCard = "body.paddleSportsDistance.card"
+    static let paddleSportsDistanceCard = "body.paddleSportsDistance.md.nav"  // unique md.nav
     static let paddleSportsDistanceBaselineCallout = "body.paddleSportsDistance.baseline"
     static let paddleSportsDistanceSpark = "body.paddleSportsDistance.spark"
     static let paddleSportsSpeedCard = "body.paddleSportsSpeed.card"

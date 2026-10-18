@@ -256,6 +256,7 @@ struct MetricCorrelationView: View {
         case .crossCountrySkiingDistance: return data.distanceCrossCountrySkiingKm
         case .crossCountrySkiingSpeed: return data.crossCountrySkiingSpeedMps
         case .downhillSnowSportsDistance: return data.distanceDownhillSnowSportsKm
+        case .paddleSportsDistance: return data.distancePaddleSportsKm
         }
     }
 }

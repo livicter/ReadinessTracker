@@ -1834,9 +1834,11 @@ struct DashboardView: View {
                     baseline: PaddleSportsDistanceBaseline.average(
                         from: history,
                         fallback: data.distancePaddleSportsKm ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.paddleSportsDistanceCard)
+                // Honest #466: NavigationLink hosts SurfaceID.paddleSportsDistanceCard (body.paddleSportsDistance.md.nav)
 
 
                 PaddleSportsSpeedTonightBaselineCard(
