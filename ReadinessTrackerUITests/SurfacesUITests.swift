@@ -10391,7 +10391,46 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-six-minute-walk-card-back.png")
     }
 
+    func testWalkingSteadinessCardMetricDetailNavSurface() throws {
+        // Honest #484: WHOOP body.steadiness.md.nav → classic MetricDetailView (.walkingSteadiness).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Walk Steadiness"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Walk Steadiness")
+        let link = app.buttons["Walk Steadiness"].firstMatch
+        let card = app.descendants(matching: .any)["body.steadiness.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Walk Steadiness"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-walking-steadiness-metric-detail.png")
+        XCTAssertTrue(landed, "body.steadiness.md.nav → metric.detail")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        _ = card.waitForExistence(timeout: 6)
+        sleep(1)
+        saveShot("verify-walking-steadiness-card-back.png")
+    }
+
     func testWalkingStepLengthCardMetricDetailNavSurface() throws {
+
         // Honest #483: WHOOP body.stepLength.md.nav → classic MetricDetailView (.walkingStepLength).
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
         var n = 0

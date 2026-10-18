@@ -491,7 +491,7 @@ enum SurfaceID {
     static let walkingStepLengthCard = "body.stepLength.md.nav"  // unique md.nav
     static let walkingStepLengthBaselineCallout = "body.stepLength.baseline"
     static let walkingStepLengthSpark = "body.stepLength.spark"
-    static let walkingSteadinessCard = "body.steadiness.card"
+    static let walkingSteadinessCard = "body.steadiness.md.nav"  // unique md.nav
     static let walkingSteadinessBaselineCallout = "body.steadiness.baseline"
     static let walkingSteadinessSpark = "body.steadiness.spark"
     static let stairAscentSpeedCard = "body.stairAscent.md.nav"  // unique md.nav
