@@ -8,6 +8,9 @@ struct WalkingAsymmetryTonightBaselineCard: View {
     let percent: Double?
     let history: [(date: Date, percent: Double)]
     let baseline: Double
+    /// Honest #481: classic MetricDetailView(.walkingAsymmetry).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { percent.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct WalkingAsymmetryTonightBaselineCard: View {
     private let gaitColor = Color(hex: "FF375F")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.walkingAsymmetryCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .walkingAsymmetry,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.walkingAsymmetryCard)
+        .accessibilityLabel("Walking Asymmetry")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct WalkingAsymmetryTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.walkingAsymmetryBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#481).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -180,7 +196,6 @@ struct WalkingAsymmetryTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.walkingAsymmetryCard)
     }
 
     private var yDomain: ClosedRange<Double> {

@@ -482,7 +482,7 @@ enum SurfaceID {
     static let walkingDoubleSupportCard = "body.doubleSupport.md.nav"  // unique md.nav
     static let walkingDoubleSupportBaselineCallout = "body.doubleSupport.baseline"
     static let walkingDoubleSupportSpark = "body.doubleSupport.spark"
-    static let walkingAsymmetryCard = "body.asymmetry.card"
+    static let walkingAsymmetryCard = "body.asymmetry.md.nav"  // unique md.nav
     static let walkingAsymmetryBaselineCallout = "body.asymmetry.baseline"
     static let walkingAsymmetrySpark = "body.asymmetry.spark"
     static let walkingSpeedCard = "body.walkingSpeed.card"
