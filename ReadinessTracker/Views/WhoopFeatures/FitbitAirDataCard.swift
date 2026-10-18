@@ -12,6 +12,8 @@ struct FitbitAirDataCard: View {
     @State private var selectedChipID: String?
     /// Honest #503: interactive spark window.
     @State private var sparkPeriod: Int = 7
+    /// Honest #505: which air field the spark charts.
+    @State private var sparkMetric: AirSparkMetric = .steps
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -26,7 +28,9 @@ struct FitbitAirDataCard: View {
     }
 
     private var sparkPoints: [(date: Date, value: Double)] {
-        history.suffix(sparkPeriod).map { (date: $0.date, value: Double($0.steps)) }
+        history.suffix(sparkPeriod).map { day in
+            (date: day.date, value: sparkMetric.value(from: day))
+        }
     }
 
     private var selectedChip: AirChip? {
@@ -160,9 +164,9 @@ struct FitbitAirDataCard: View {
     }
 
     private var sparkBlock: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Steps · \(sparkPeriod)d")
+                Text("\(sparkMetric.title) · \(sparkPeriod)d")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -185,15 +189,33 @@ struct FitbitAirDataCard: View {
                 }
                 .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkPeriod)
             }
+            HStack(spacing: 6) {
+                ForEach(AirSparkMetric.allCases) { metric in
+                    Button {
+                        Haptic.selectionChanged()
+                        sparkMetric = metric
+                    } label: {
+                        Text(metric.title)
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(sparkMetric == metric ? Color.white : accent)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(sparkMetric == metric ? accent : accent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkMetric)
             Chart(sparkPoints, id: \.date) { pt in
                 AreaMark(
                     x: .value("Day", pt.date),
-                    y: .value("Steps", pt.value)
+                    y: .value(sparkMetric.title, pt.value)
                 )
                 .foregroundStyle(accent.opacity(0.25))
                 LineMark(
                     x: .value("Day", pt.date),
-                    y: .value("Steps", pt.value)
+                    y: .value(sparkMetric.title, pt.value)
                 )
                 .foregroundStyle(accent)
                 .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
@@ -202,7 +224,31 @@ struct FitbitAirDataCard: View {
             .chartYAxis(.hidden)
             .frame(height: 56)
             .animation(.easeInOut(duration: 0.25), value: sparkPeriod)
+            .animation(.easeInOut(duration: 0.25), value: sparkMetric)
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSpark)
+        }
+    }
+}
+
+// MARK: - Spark metric (Honest #505)
+
+enum AirSparkMetric: String, CaseIterable, Identifiable {
+    case steps, sleep, hrv, active
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .steps: return "Steps"
+        case .sleep: return "Sleep"
+        case .hrv: return "HRV"
+        case .active: return "Active"
+        }
+    }
+    func value(from day: DailyHealthData) -> Double {
+        switch self {
+        case .steps: return Double(day.steps)
+        case .sleep: return day.sleepHours
+        case .hrv: return day.hrv
+        case .active: return day.activeCalories
         }
     }
 }

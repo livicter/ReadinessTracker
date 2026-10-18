@@ -10526,6 +10526,13 @@ final class SurfacesUITests: XCTestCase {
             period.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-period.png")
         }
+        // Honest #505: spark metric Steps/Sleep/HRV/Active
+        let metric = app.descendants(matching: .any)["fitbit.air.spark.metric"].firstMatch
+        if metric.exists {
+            metric.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
+            saveShot("verify-fitbit-air-data-spark-metric.png")
+            metric.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).tap()
+        }
     }
 
 func testPeakHeartRateCardMetricDetailNavSurface() throws {
