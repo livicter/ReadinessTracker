@@ -183,6 +183,7 @@ enum MetricType: String, CaseIterable {
     case walkingStepLength = "Step Length"
     case walkingSteadiness = "Walk Steadiness"
     case insulinDelivery = "Insulin Delivery"
+    case alcoholicBeverages = "Alcoholic Beverages"
 
     var title: String { rawValue }
 
@@ -293,6 +294,7 @@ enum MetricType: String, CaseIterable {
         case .walkingStepLength: return "ruler"
         case .walkingSteadiness: return "figure.stand"
         case .insulinDelivery: return "syringe"
+        case .alcoholicBeverages: return "wineglass"
         }
     }
 
@@ -403,6 +405,7 @@ enum MetricType: String, CaseIterable {
         case .walkingStepLength: return "m"
         case .walkingSteadiness: return "%"
         case .insulinDelivery: return "IU"
+        case .alcoholicBeverages: return "drinks"
         }
     }
 
@@ -513,13 +516,14 @@ enum MetricType: String, CaseIterable {
         case .walkingStepLength: return Color(hex: "FF9F0A")
         case .walkingSteadiness: return Color(hex: "BF5AF2")
         case .insulinDelivery: return Color(hex: "5E5CE6")
+        case .alcoholicBeverages: return Color(hex: "BF5AF2")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride, .walkingSpeed, .walkingStepLength, .walkingSteadiness: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery, .alcoholicBeverages: return false
         }
     }
 
@@ -1049,6 +1053,11 @@ enum MetricType: String, CaseIterable {
             if value < 50 { return MetricZone(label: "Steady", color: RTColor.optimal, description: "Steady vs soft ~20–50 IU Insulin goal") }
             if value < 80 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated vs soft ~20–50 IU Insulin goal") }
             return MetricZone(label: "High", color: RTColor.warning, description: "High vs soft ~20–50 IU Insulin goal")
+        case .alcoholicBeverages:
+            if value <= 0 { return MetricZone(label: "None", color: RTColor.optimal, description: "None vs soft 0 drinks Alcoholic Beverages goal") }
+            if value <= 1 { return MetricZone(label: "One", color: RTColor.good, description: "One vs soft 0 drinks Alcoholic Beverages goal") }
+            if value <= 2 { return MetricZone(label: "Few", color: RTColor.caution, description: "Few vs soft 0 drinks Alcoholic Beverages goal") }
+            return MetricZone(label: "Many", color: RTColor.warning, description: "Many vs soft 0 drinks Alcoholic Beverages goal")
         }
     }
 }

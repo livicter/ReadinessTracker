@@ -2867,9 +2867,11 @@ struct DashboardView: View {
                     baseline: AlcoholicBeveragesBaseline.average(
                         from: history,
                         fallback: data.nutrition.alcoholicBeverages ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.alcoholicBeveragesCard)
+                // Honest #486: NavigationLink hosts SurfaceID.alcoholicBeveragesCard (body.alcohol.md.nav)
 
 
                 InhalerUsageTonightBaselineCard(

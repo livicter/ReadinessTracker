@@ -8,6 +8,9 @@ struct AlcoholicBeveragesTonightBaselineCard: View {
     let count: Double?
     let history: [(date: Date, count: Double)]
     let baseline: Double
+    /// Honest #486: classic MetricDetailView(.alcoholicBeverages).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double { max(0, count ?? 0) }
 
@@ -44,14 +47,29 @@ struct AlcoholicBeveragesTonightBaselineCard: View {
     private let alcoholColor = Color(hex: "BF5AF2")
 
     var body: some View {
-        Group {
-            if count != nil {
-                cardBody
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .alcoholicBeverages,
+                currentValue: tonight,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.alcoholicBeveragesCard)
+        .accessibilityLabel("Alcoholic Beverages")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -101,8 +119,7 @@ struct AlcoholicBeveragesTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.alcoholicBeveragesBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#486).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
