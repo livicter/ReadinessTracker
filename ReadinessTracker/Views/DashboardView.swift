@@ -2129,9 +2129,11 @@ struct DashboardView: View {
                     baseline: RunningStrideBaseline.average(
                         from: history,
                         fallback: data.runningStrideLengthMeters ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.runningStrideCard)
+                // Honest #478: NavigationLink hosts SurfaceID.runningStrideCard (body.runningStride.md.nav)
 
                 RunningVOTonightBaselineCard(
                     centimeters: data.runningVerticalOscillationCm,
