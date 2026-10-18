@@ -125,28 +125,43 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
+    /// Honest #511: gauge tints + shows focused ring (READY/Gym/Work/Sleep).
+    private var focusedRingValue: Int {
+        switch focusedRing {
+        case .ready: return projected
+        case .gym: return projectedGym
+        case .work: return projectedWork
+        case .sleep: return projectedSleep
+        }
+    }
+
     private var projectionHero: some View {
         HStack(alignment: .center, spacing: 16) {
             ZStack {
                 Circle()
                     .stroke(RTColor.divider, lineWidth: 10)
                 Circle()
-                    .trim(from: 0, to: CGFloat(projected) / 100)
-                    .stroke(zone.color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                    .trim(from: 0, to: CGFloat(focusedRingValue) / 100)
+                    .stroke(focusedRing.color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                    .animation(.easeInOut(duration: 0.25), value: projected)
+                    .animation(.easeInOut(duration: 0.25), value: focusedRingValue)
+                    .animation(.easeInOut(duration: 0.25), value: focusedRing)
                 VStack(spacing: 2) {
-                    Text("\(projected)")
+                    Text("\(focusedRingValue)")
                         .font(.system(size: 28, weight: .bold, design: .rounded).monospacedDigit())
                         .foregroundStyle(RTColor.primaryText)
                         .contentTransition(.numericText())
-                    Text("READY")
+                    Text(focusedRing.title.uppercased())
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(RTColor.secondaryText)
+                        .foregroundStyle(focusedRing.color)
                 }
+                // Keep legacy gauge SurfaceID while #511 tint id rides on the stack
+                Color.clear.frame(width: 1, height: 1)
+                    .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorGauge)
             }
             .frame(width: 96, height: 96)
-            .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorGauge)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorRingTint)
+            .accessibilityLabel("Projected \(focusedRing.title) \(focusedRingValue)")
 
             VStack(alignment: .leading, spacing: 8) {
                 labeledValue("Tonight", "\(baseline)", "baseline")
@@ -155,7 +170,9 @@ struct ReadinessLoadSimulatorCard: View {
                     deltaVsBaseline >= 0 ? "+\(deltaVsBaseline)" : "\(deltaVsBaseline)",
                     "vs baseline"
                 )
-                Text(ReadinessCalculator.recommendation(for: projected))
+                Text(focusedRing == .ready
+                     ? ReadinessCalculator.recommendation(for: projected)
+                     : focusedRing.caption(gym: projectedGym, work: projectedWork, sleep: projectedSleep, ready: projected))
                     .font(.caption)
                     .foregroundStyle(RTColor.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
