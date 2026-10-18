@@ -183,6 +183,7 @@ struct SmartInsightsView: View {
                 case .forcedVitalCapacity: normalizedSlope = slope / 0.75 * 100
                 case .forcedExpiratoryVolume1: normalizedSlope = slope / 0.5833333333333334 * 100
                 case .inhalerUsage: normalizedSlope = slope / 0.3333333333333333 * 100
+                case .peakHeartRate: normalizedSlope = slope / 25 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
