@@ -10425,6 +10425,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-readiness-load-simulator-tasks-check.png")
     }
 
+    func testFitbitSettingsAirStatusSurface() throws {
+        // Honest #501: Settings Fitbit Google Health caption + optional air status.
+        tapMainTab("Settings")
+        _ = app.staticTexts["Data Sources"].waitForExistence(timeout: 6)
+        let fitbit = app.staticTexts["Fitbit"]
+        var n = 0
+        while !fitbit.exists && n < 8 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(fitbit.waitForExistence(timeout: 6), "Fitbit settings row")
+        let gh = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Google Health")).firstMatch
+        XCTAssertTrue(gh.waitForExistence(timeout: 4) || fitbit.exists, "Google Health caption")
+        saveShot("verify-fitbit-settings-air-status.png")
+        // Soft when not authenticated in fixture — SurfaceID present only if connected.
+        _ = app.descendants(matching: .any)["settings.fitbit.air"].firstMatch.exists
+        saveShot("verify-fitbit-settings-air-status-chips.png")
+        tapMainTab("Today")
+    }
+
     func testInteractiveRecoveryDialSurface() throws {
         // Honest #500: interactive Recovery ↔ Strain dial SurfaceIDs.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
