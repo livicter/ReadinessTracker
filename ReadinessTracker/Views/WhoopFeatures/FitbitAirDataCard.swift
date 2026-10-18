@@ -14,6 +14,8 @@ struct FitbitAirDataCard: View {
     @State private var sparkPeriod: Int = 7
     /// Honest #505: which air field the spark charts.
     @State private var sparkMetric: AirSparkMetric = .steps
+    /// Honest #507: interactive spark scrub index.
+    @State private var sparkScrubIndex: Int? = nil
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -272,25 +274,119 @@ struct FitbitAirDataCard: View {
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkMetric)
-            Chart(sparkPoints, id: \.date) { pt in
-                AreaMark(
-                    x: .value("Day", pt.date),
-                    y: .value(sparkMetric.title, pt.value)
-                )
-                .foregroundStyle(accent.opacity(0.25))
-                LineMark(
-                    x: .value("Day", pt.date),
-                    y: .value(sparkMetric.title, pt.value)
-                )
-                .foregroundStyle(accent)
-                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+            let scrubIdx = sparkScrubIndex ?? (sparkPoints.isEmpty ? nil : sparkPoints.count - 1)
+            if let idx = scrubIdx, sparkPoints.indices.contains(idx) {
+                let pt = sparkPoints[idx]
+                HStack(spacing: 8) {
+                    Text(pt.date, format: .dateTime.month(.abbreviated).day())
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.secondaryText)
+                    Text(sparkScrubValueText(pt.value))
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(accent)
+                    Spacer()
+                    Text("scrub")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkScrub)
+                .accessibilityLabel("Spark scrub \(sparkScrubValueText(pt.value))")
+            }
+            // Day chips — UITest-reliable scrub affordance (drag still works on chart).
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(Array(sparkPoints.enumerated()), id: \.offset) { i, pt in
+                        Button {
+                            Haptic.selectionChanged()
+                            sparkScrubIndex = i
+                        } label: {
+                            Text(pt.date, format: .dateTime.day())
+                                .font(.caption2.weight(.bold).monospacedDigit())
+                                .foregroundStyle((sparkScrubIndex ?? sparkPoints.count - 1) == i ? Color.white : accent)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background((sparkScrubIndex ?? sparkPoints.count - 1) == i ? accent : accent.opacity(0.12))
+                                .clipShape(Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkScrub)
+                        .accessibilityLabel("Scrub day \(i + 1)")
+                    }
+                }
+            }
+            Chart {
+                ForEach(Array(sparkPoints.enumerated()), id: \.offset) { i, pt in
+                    AreaMark(
+                        x: .value("Day", pt.date),
+                        y: .value(sparkMetric.title, pt.value)
+                    )
+                    .foregroundStyle(accent.opacity(0.25))
+                    LineMark(
+                        x: .value("Day", pt.date),
+                        y: .value(sparkMetric.title, pt.value)
+                    )
+                    .foregroundStyle(accent)
+                    .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                    if (sparkScrubIndex ?? sparkPoints.count - 1) == i {
+                        PointMark(
+                            x: .value("Day", pt.date),
+                            y: .value(sparkMetric.title, pt.value)
+                        )
+                        .foregroundStyle(accent)
+                        .symbolSize(64)
+                    }
+                }
             }
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
-            .frame(height: 56)
+            .frame(height: 64)
+            .chartOverlay { proxy in
+                GeometryReader { geo in
+                    Rectangle()
+                        .fill(Color.clear)
+                        .contentShape(Rectangle())
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { value in
+                                    sparkSelect(at: value.location, proxy: proxy, geo: geo)
+                                }
+                                .onEnded { _ in
+                                    // Keep last scrub visible for a beat of richness; clear on next period/metric change.
+                                }
+                        )
+                }
+            }
             .animation(.easeInOut(duration: 0.25), value: sparkPeriod)
             .animation(.easeInOut(duration: 0.25), value: sparkMetric)
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSpark)
+            .onChange(of: sparkPeriod) { _ in sparkScrubIndex = nil }
+            .onChange(of: sparkMetric) { _ in sparkScrubIndex = nil }
+        }
+    }
+
+    private func sparkScrubValueText(_ value: Double) -> String {
+        switch sparkMetric {
+        case .steps: return "\(Int(value.rounded()))"
+        case .sleep: return String(format: "%.1fh", value)
+        case .hrv: return "\(Int(value.rounded())) ms"
+        case .active: return "\(Int(value.rounded())) kcal"
+        }
+    }
+
+    private func sparkSelect(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy) {
+        guard sparkPoints.count >= 1 else { return }
+        let width = max(geo.size.width, 1)
+        let frac = min(max(location.x / width, 0), 1)
+        let best: Int
+        if sparkPoints.count == 1 {
+            best = 0
+        } else {
+            best = min(sparkPoints.count - 1, max(0, Int((frac * CGFloat(sparkPoints.count - 1)).rounded())))
+        }
+        _ = proxy  // keep chartOverlay signature; fraction scrub is iOS-16-safe
+        if sparkScrubIndex != best {
+            sparkScrubIndex = best
+            Haptic.selectionChanged()
         }
     }
 }

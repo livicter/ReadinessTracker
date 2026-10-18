@@ -10533,33 +10533,49 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-fitbit-air-data-spark-metric.png")
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).tap()
         }
+        // Honest #507: spark scrub (while spark still on-screen)
+        let spark = app.descendants(matching: .any)["fitbit.air.spark"].firstMatch
+        if spark.exists {
+            let scrub = app.descendants(matching: .any)["fitbit.air.spark.scrub"].firstMatch
+            // Default callout seeds last day — assert visible; optionally nudge a day chip.
+            XCTAssertTrue(scrub.waitForExistence(timeout: 4), "fitbit.air.spark.scrub")
+            let day = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Scrub day")).element(boundBy: 0)
+            if day.exists, day.isHittable { day.tap() }
+            saveShot("verify-fitbit-air-data-spark-scrub.png")
+        }
         // Honest #506: air → classic MetricDetail (row under card header).
-        // Must re-anchor until title is HITTABLE — .exists stays true off-screen and
-        // title-relative taps then miss (land at dashboard top).
+        // Prefer small swipeUp first (we are usually just below the card after scrub).
         var reanchor = 0
-        while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 20 {
-            app.swipeDown()
+        while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 12 {
+            app.swipeUp()
             reanchor += 1
         }
         if !(titleFitbit.isHittable || titleHealth.isHittable) {
             reanchor = 0
-            while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 30 {
-                app.swipeUp()
+            while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 16 {
+                app.swipeDown()
                 reanchor += 1
             }
         }
         XCTAssertTrue(titleFitbit.isHittable || titleHealth.isHittable, "Air title on-screen")
-        let airTitle = titleFitbit.isHittable ? titleFitbit.firstMatch : titleHealth.firstMatch
         let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
         XCTAssertTrue(chipNav.waitForExistence(timeout: 5), "fitbit.air.chip.md.nav")
         let link = app.buttons["Steps metric detail"].firstMatch
+        let stepsLabel = app.staticTexts["Steps detail"].firstMatch
+        // One nudge so the nav row under the title enters the hit rect.
+        if !link.isHittable && !chipNav.isHittable && !stepsLabel.isHittable {
+            app.swipeUp()
+        }
         if link.isHittable {
             link.tap()
         } else if chipNav.isHittable {
             chipNav.tap()
-        } else {
-            // Detail row is immediately under the header captions.
-            airTitle.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 3.5)).tap()
+        } else if stepsLabel.isHittable {
+            stepsLabel.tap()
+        } else if stepsLabel.exists {
+            stepsLabel.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        } else if chipNav.exists {
+            chipNav.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         }
         let landed = app.navigationBars["Steps"].waitForExistence(timeout: 10)
             || app.navigationBars["Sleep"].waitForExistence(timeout: 4)
