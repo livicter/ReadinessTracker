@@ -1792,9 +1792,11 @@ struct DashboardView: View {
                     baseline: SwimStrokesBaseline.average(
                         from: history,
                         fallback: data.swimmingStrokeCount ?? 0
-                    )
+                    ),
+                    dailyHistory: history,
+                    source: selectedSource
                 )
-                .accessibilityIdentifier(SurfaceID.swimStrokesCard)
+                // Honest #471: NavigationLink hosts SurfaceID.swimStrokesCard (body.swimStrokes.md.nav)
 
 
                 RowingDistanceTonightBaselineCard(

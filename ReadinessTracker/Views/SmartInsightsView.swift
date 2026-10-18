@@ -158,6 +158,7 @@ struct SmartInsightsView: View {
                 case .skatingSportsDistance: normalizedSlope = slope / 1.6666666666666667 * 100
                 case .rowingDistance: normalizedSlope = slope / 1.6666666666666667 * 100
                 case .rowingSpeed: normalizedSlope = slope / 1.1666666666666667 * 100
+                case .swimStrokes: normalizedSlope = slope / 166.66666666666666 * 100
                 }
                 
                 let isImproving = (normalizedSlope > 0 && metric.higherIsBetter) || (normalizedSlope < 0 && !metric.higherIsBetter)
