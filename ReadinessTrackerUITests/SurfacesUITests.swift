@@ -10239,6 +10239,44 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-rowing-speed-card-back.png")
     }
 
+    func testSwimStrokesCardMetricDetailNavSurface() throws {
+        // Honest #471: WHOOP body.swimStrokes.md.nav → classic MetricDetailView (.swimStrokes).
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let spark = app.staticTexts["7-Day Swim Strokes"]
+        while !spark.exists && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(spark.waitForExistence(timeout: 8), "7-Day Swim Strokes")
+        let link = app.buttons["Swim Strokes"].firstMatch
+        let card = app.descendants(matching: .any)["body.swimStrokes.md.nav"].firstMatch
+        var guardSwipes = 0
+        while guardSwipes < 4 {
+            if (link.exists && link.isHittable) || (card.exists && card.isHittable) { break }
+            app.swipeUp()
+            guardSwipes += 1
+        }
+        if link.exists, link.isHittable {
+            link.tap()
+        } else if card.exists {
+            card.tap()
+        } else if link.exists {
+            link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.05)).tap()
+        } else {
+            spark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: -3.0)).tap()
+        }
+        let landed = app.navigationBars["Swim Strokes"].waitForExistence(timeout: 12)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        saveShot("verify-swim-strokes-metric-detail.png")
+        XCTAssertTrue(landed, "body.swimStrokes.md.nav → metric.detail")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+        _ = card.waitForExistence(timeout: 6)
+        sleep(1)
+        saveShot("verify-swim-strokes-card-back.png")
+    }
+
 
 
 

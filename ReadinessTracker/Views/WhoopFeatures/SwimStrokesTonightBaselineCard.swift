@@ -8,6 +8,9 @@ struct SwimStrokesTonightBaselineCard: View {
     let strokes: Double?
     let history: [(date: Date, strokes: Double)]
     let baseline: Double
+    /// Honest #471: classic MetricDetailView(.swimStrokes).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { strokes.map { max(0, $0) } }
 
@@ -48,15 +51,29 @@ struct SwimStrokesTonightBaselineCard: View {
     private let strokeColor = Color(hex: "5E5CE6")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.swimStrokesCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .swimStrokes,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.swimStrokesCard)
+        .accessibilityLabel("Swim Strokes")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -109,8 +126,7 @@ struct SwimStrokesTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.swimStrokesBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#471).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -178,7 +194,6 @@ struct SwimStrokesTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.swimStrokesCard)
     }
 
     private var yDomain: ClosedRange<Double> {
