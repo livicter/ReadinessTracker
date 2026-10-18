@@ -260,6 +260,7 @@ struct MetricCorrelationView: View {
         case .paddleSportsSpeed: return data.paddleSportsSpeedMps
         case .skatingSportsDistance: return data.distanceSkatingSportsKm
         case .rowingDistance: return data.distanceRowingKm
+        case .rowingSpeed: return data.rowingSpeedMps
         }
     }
 }
