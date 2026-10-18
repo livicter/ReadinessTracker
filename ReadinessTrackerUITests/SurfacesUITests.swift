@@ -10439,6 +10439,11 @@ final class SurfacesUITests: XCTestCase {
             rings.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.4)).tap()
         }
         saveShot("verify-readiness-load-simulator-rings.png")
+        // Honest #511: gauge tints to focused ring
+        let tint = app.descendants(matching: .any)["sim.load.ring.tint"].firstMatch
+        XCTAssertTrue(tint.waitForExistence(timeout: 5), "sim.load.ring.tint")
+        rings.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.4)).tap()
+        saveShot("verify-readiness-load-simulator-ring-tint.png")
     }
 
     func testRecommendationsCheckoffSurface() throws {
