@@ -10513,6 +10513,12 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
         saveShot("verify-fitbit-air-data-card-detail.png")
+        // Honest #503: spark period chips 7d/14d/30d
+        let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
+        if period.exists {
+            period.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
+            saveShot("verify-fitbit-air-data-spark-period.png")
+        }
     }
 
 func testPeakHeartRateCardMetricDetailNavSurface() throws {
