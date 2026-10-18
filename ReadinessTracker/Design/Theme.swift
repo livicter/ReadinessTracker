@@ -196,6 +196,10 @@ enum SurfaceID {
     static let readinessSimulatorTaskProgress = "sim.load.tasks.progress"  // Honest #499
     static let readinessSimulatorTaskProgressBar = "sim.load.tasks.bar"
     static let readinessSimulatorTaskRow = "sim.load.tasks.row"
+    static let interactiveRecoveryDialCard = "balance.dial.card"  // Honest #500
+    static let interactiveRecoveryDial = "balance.dial"
+    static let interactiveRecoveryDialKnob = "balance.dial.knob"
+    static let interactiveRecoveryDialReset = "balance.dial.reset"
     static let fitbitAirDataStrip = "fitbit.air.strip"
     static let fitbitAirDataCard = "fitbit.air.card"  // Honest #498 unique
     static let fitbitAirDataDensity = "fitbit.air.density"

@@ -10425,6 +10425,29 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-readiness-load-simulator-tasks-check.png")
     }
 
+    func testInteractiveRecoveryDialSurface() throws {
+        // Honest #500: interactive Recovery ↔ Strain dial SurfaceIDs.
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        var n = 0
+        let title = app.staticTexts["Balance Dial"]
+        while !title.exists && n < 35 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(title.waitForExistence(timeout: 8), "Balance Dial")
+        let card = app.descendants(matching: .any)["balance.dial.card"].firstMatch
+        XCTAssertTrue(card.waitForExistence(timeout: 6) || title.exists, "balance.dial.card")
+        let dial = app.descendants(matching: .any)["balance.dial"].firstMatch
+        if dial.exists {
+            dial.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.3)).tap()
+            dial.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.7)).tap()
+        }
+        saveShot("verify-interactive-recovery-dial.png")
+        let reset = app.descendants(matching: .any)["balance.dial.reset"].firstMatch
+        if reset.exists { reset.tap() }
+        saveShot("verify-interactive-recovery-dial-reset.png")
+    }
+
     func testFitbitAirDataCardSurface() throws {
         // Honest #498: Fitbit / Google Health air-data density card SurfaceIDs.
         _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)

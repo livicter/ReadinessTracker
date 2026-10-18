@@ -912,6 +912,12 @@ struct DashboardView: View {
             .accessibilityIdentifier(SurfaceID.strainRecoveryBalance)
             .accessibilityLabel("Strain recovery balance detail")
 
+            // Honest #500: interactive Recovery ↔ Strain dial
+            InteractiveRecoveryDialCard(
+                recovery: Int(recoveryScore.rounded()),
+                strain: strainValue
+            )
+
             WorkoutMinutesCard(
                 currentMinutes: data.workoutMinutes,
                 history: history.map { ($0.date, Double($0.workoutMinutes)) },
