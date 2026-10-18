@@ -428,24 +428,12 @@ struct DashboardView: View {
     // MARK: - Recommendations Section
     private func recommendationsSection(scores: DualReadinessScores) -> some View {
         // Apple Fitness–style actionable cards: training rules first, coaching fill to 1–3.
+        // Honest #502: checkable recommendation tasks with day-scoped progress.
         let cards = AIRecommendationEngine.shared.morningActionableCards(for: selectedSource, limit: 3)
 
         return Group {
             if !cards.isEmpty {
-                NativeCard {
-                    VStack(alignment: .leading, spacing: AppleTheme.cardPadding) {
-                        SectionHeader(title: "Recommendations")
-
-                        VStack(alignment: .leading, spacing: 14) {
-                            ForEach(cards) { card in
-                                RecommendationActionCard(card: card)
-                            }
-                        }
-                    }
-                }
-                .accessibilityElement(children: .contain)
-                .accessibilityLabel("Recommendations")
-                .accessibilityIdentifier(SurfaceID.recommendationsSection)
+                RecommendationsChecklistCard(cards: cards)
             }
         }
     }
@@ -3120,54 +3108,123 @@ struct DashboardView: View {
 // MARK: - Supporting Views
 
 /// Apple Fitness–style morning recommendation: title, reason, capsule action cue.
+/// Honest #502: tap to check off; day-scoped persistence via UserDefaults.
 struct RecommendationActionCard: View {
     let card: ActionableRecommendation
+    @Binding var isDone: Bool
 
     private var tint: Color { Color(hex: card.tintHex) }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: card.icon)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(tint)
-                    .frame(width: 32, height: 32)
-                    .background(tint.opacity(0.14))
-                    .clipShape(Circle())
+        Button {
+            Haptic.selectionChanged()
+            isDone.toggle()
+        } label: {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: isDone ? "checkmark.circle.fill" : card.icon)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(isDone ? RTColor.optimal : tint)
+                        .frame(width: 32, height: 32)
+                        .background((isDone ? RTColor.optimal : tint).opacity(0.14))
+                        .clipShape(Circle())
 
-                Text(card.title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(RTColor.primaryText)
+                    Text(card.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(RTColor.primaryText)
+                        .strikethrough(isDone, color: RTColor.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Text(card.reason)
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .multilineTextAlignment(.leading)
+
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: isDone ? "checkmark.circle.fill" : "arrow.right.circle.fill")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.optimal)
+
+                    Text(isDone ? "Done · \(card.action)" : card.action)
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(RTColor.primaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(RTColor.surfaceHighlight.opacity(isDone ? 0.45 : 1))
+                )
             }
-
-            Text(card.reason)
-                .font(.caption)
-                .foregroundStyle(RTColor.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.leading)
-
-            HStack(alignment: .top, spacing: 8) {
-                Image(systemName: "arrow.right.circle.fill")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(RTColor.optimal)
-
-                Text(card.action)
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(RTColor.primaryText)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(RTColor.surfaceHighlight)
-            )
         }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.recommendationTaskRow)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(card.title). \(card.reason). Action: \(card.action)")
+        .accessibilityLabel("\(card.title). \(card.reason). Action: \(card.action)\(isDone ? ", done" : "")")
+    }
+}
+
+/// Honest #502: Recommendations with checkable progress for today’s tasks.
+struct RecommendationsChecklistCard: View {
+    let cards: [ActionableRecommendation]
+    @State private var doneIDs: Set<String> = []
+
+    private var storageKey: String {
+        let day = Calendar.current.startOfDay(for: Date()).timeIntervalSince1970
+        return "rt.recs.done.\(Int(day))"
+    }
+
+    private var doneCount: Int { cards.filter { doneIDs.contains($0.id) }.count }
+
+    var body: some View {
+        NativeCard {
+            VStack(alignment: .leading, spacing: AppleTheme.cardPadding) {
+                HStack {
+                    SectionHeader(title: "Recommendations")
+                    Spacer()
+                    Text("\(doneCount)/\(cards.count)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.optimal)
+                        .accessibilityIdentifier(SurfaceID.recommendationsProgress)
+                }
+                ProgressView(value: Double(doneCount), total: Double(max(1, cards.count)))
+                    .tint(RTColor.optimal)
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(cards) { card in
+                        RecommendationActionCard(
+                            card: card,
+                            isDone: Binding(
+                                get: { doneIDs.contains(card.id) },
+                                set: { newValue in
+                                    if newValue { doneIDs.insert(card.id) }
+                                    else { doneIDs.remove(card.id) }
+                                    persist()
+                                }
+                            )
+                        )
+                    }
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Recommendations")
+        .accessibilityIdentifier(SurfaceID.recommendationsSection)
+        .onAppear { load() }
+    }
+
+    private func load() {
+        if let arr = UserDefaults.standard.array(forKey: storageKey) as? [String] {
+            doneIDs = Set(arr)
+        }
+    }
+
+    private func persist() {
+        UserDefaults.standard.set(Array(doneIDs), forKey: storageKey)
     }
 }
 
