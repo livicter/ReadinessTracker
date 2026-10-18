@@ -182,6 +182,7 @@ enum MetricType: String, CaseIterable {
     case walkingSpeed = "Walking Speed"
     case walkingStepLength = "Step Length"
     case walkingSteadiness = "Walk Steadiness"
+    case insulinDelivery = "Insulin Delivery"
 
     var title: String { rawValue }
 
@@ -291,6 +292,7 @@ enum MetricType: String, CaseIterable {
         case .walkingSpeed: return "figure.walk"
         case .walkingStepLength: return "ruler"
         case .walkingSteadiness: return "figure.stand"
+        case .insulinDelivery: return "syringe"
         }
     }
 
@@ -400,6 +402,7 @@ enum MetricType: String, CaseIterable {
         case .walkingSpeed: return "m/s"
         case .walkingStepLength: return "m"
         case .walkingSteadiness: return "%"
+        case .insulinDelivery: return "IU"
         }
     }
 
@@ -509,13 +512,14 @@ enum MetricType: String, CaseIterable {
         case .walkingSpeed: return Color(hex: "5E5CE6")
         case .walkingStepLength: return Color(hex: "FF9F0A")
         case .walkingSteadiness: return Color(hex: "BF5AF2")
+        case .insulinDelivery: return Color(hex: "5E5CE6")
         }
     }
 
     var higherIsBetter: Bool {
         switch self {
         case .sleep, .hrv, .activeCalories, .bloodOxygen, .steps, .flightsClimbed, .walkingDistance, .exerciseTime, .standHours, .standTime, .moveTime, .basalEnergy, .wheelchairDistance, .bodyMass, .leanBodyMass, .vo2Max, .mindfulMinutes, .timeInDaylight, .heartRateRecovery, .wheelchairPushes, .peripheralPerfusion, .swimDistance, .envSoundReduction, .protein, .dietaryEnergy, .hydration, .toothbrushing, .handwashing, .dietaryCarbs, .dietaryFat, .dietaryFiber, .dietaryPotassium, .dietaryVitaminC, .dietaryVitaminD, .dietaryVitaminB12, .dietaryIron, .dietaryCalcium, .dietaryMagnesium, .dietaryZinc, .dietaryFolate, .dietaryVitaminA, .dietaryVitaminE, .dietaryVitaminK, .dietaryVitaminB6, .dietaryThiamin, .dietaryRiboflavin, .dietaryNiacin, .dietaryPhosphorus, .dietarySelenium, .dietaryCopper, .dietaryManganese, .dietaryBiotin, .dietaryPantothenicAcid, .dietaryChloride, .dietaryChromium, .dietaryMolybdenum, .dietaryIodine, .dietaryMufa, .dietaryPufa, .cyclingDistance, .cyclingSpeed, .cyclingCadence, .cyclingPower, .cyclingFTP, .crossCountrySkiingDistance, .crossCountrySkiingSpeed, .downhillSnowSportsDistance, .paddleSportsDistance, .paddleSportsSpeed, .skatingSportsDistance, .rowingDistance, .rowingSpeed, .swimStrokes, .stairAscentSpeed, .stairDescentSpeed, .sixMinuteWalk, .runningSpeed, .runningPower, .runningStride, .walkingSpeed, .walkingStepLength, .walkingSteadiness: return true
-        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry: return false
+        case .restingHR, .respiratoryRate, .skinTemperature, .bodyFat, .waistCircumference, .bloodGlucose, .walkingHeartRate, .afBurden, .falls, .uvExposure, .environmentalAudio, .headphoneAudio, .caffeine, .dietarySugar, .dietarySodium, .dietaryCholesterol, .dietarySatFat, .bloodPressureSystolic, .runningGCT, .runningVO, .walkingDoubleSupport, .walkingAsymmetry, .insulinDelivery: return false
         }
     }
 
@@ -1039,6 +1043,12 @@ enum MetricType: String, CaseIterable {
             if value >= 50 { return MetricZone(label: "Fair", color: RTColor.good, description: "Fair vs soft ≥70% Walk Steadiness goal") }
             if value >= 30 { return MetricZone(label: "Low", color: RTColor.caution, description: "Low vs soft ≥70% Walk Steadiness goal") }
             return MetricZone(label: "Very Low", color: RTColor.warning, description: "Very Low vs soft ≥70% Walk Steadiness goal")
+        case .insulinDelivery:
+            if value <= 0 { return MetricZone(label: "None", color: RTColor.secondaryText, description: "No insulin logged vs soft Steady ~20–50 IU") }
+            if value < 20 { return MetricZone(label: "Light", color: RTColor.good, description: "Light vs soft Steady ~20–50 IU Insulin goal") }
+            if value < 50 { return MetricZone(label: "Steady", color: RTColor.optimal, description: "Steady vs soft ~20–50 IU Insulin goal") }
+            if value < 80 { return MetricZone(label: "Elevated", color: RTColor.caution, description: "Elevated vs soft ~20–50 IU Insulin goal") }
+            return MetricZone(label: "High", color: RTColor.warning, description: "High vs soft ~20–50 IU Insulin goal")
         }
     }
 }

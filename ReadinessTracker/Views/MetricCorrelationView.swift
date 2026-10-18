@@ -275,6 +275,7 @@ struct MetricCorrelationView: View {
         case .walkingSpeed: return data.walkingSpeedMps
         case .walkingStepLength: return data.walkingStepLengthMeters
         case .walkingSteadiness: return data.walkingSteadinessPercent
+        case .insulinDelivery: return data.insulinDeliveryIU
         }
     }
 }
