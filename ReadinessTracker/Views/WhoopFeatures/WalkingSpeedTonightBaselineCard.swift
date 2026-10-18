@@ -8,6 +8,9 @@ struct WalkingSpeedTonightBaselineCard: View {
     let metersPerSecond: Double?
     let history: [(date: Date, mps: Double)]
     let baseline: Double
+    /// Honest #482: classic MetricDetailView(.walkingSpeed).
+    let dailyHistory: [DailyHealthData]
+    let source: DataSource
 
     private var tonight: Double? { metersPerSecond.map { max(0, $0) } }
 
@@ -49,15 +52,29 @@ struct WalkingSpeedTonightBaselineCard: View {
     private let gaitColor = Color(hex: "5E5CE6")
 
     var body: some View {
-        Group {
-            if tonight != nil || !history.isEmpty {
-                cardBody
-                    .accessibilityIdentifier(SurfaceID.walkingSpeedCard)
-            }
-        }
+        navigableBody
     }
 
-    private var cardBody: some View {
+    @ViewBuilder
+    private var navigableBody: some View {
+        NavigationLink {
+            MetricDetailView(
+                metric: .walkingSpeed,
+                currentValue: tonight ?? 0,
+                history: dailyHistory,
+                source: source
+            )
+        } label: {
+            cardChrome
+        }
+        .buttonStyle(.plain)
+        .compositingGroup()
+        .contentShape(Rectangle())
+        .accessibilityIdentifier(SurfaceID.walkingSpeedCard)
+        .accessibilityLabel("Walking Speed")
+    }
+
+    private var cardChrome: some View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 HStack(alignment: .center) {
@@ -110,8 +127,7 @@ struct WalkingSpeedTonightBaselineCard: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                 }
-                .accessibilityElement(children: .contain)
-                .accessibilityIdentifier(SurfaceID.walkingSpeedBaselineCallout)
+                // No nested accessibilityElement / SurfaceID — nested ids steal NavigationLink taps (#482).
 
                 if sparklineValues.count >= 2 {
                     VStack(alignment: .leading, spacing: 4) {
@@ -179,7 +195,6 @@ struct WalkingSpeedTonightBaselineCard: View {
             }
             .padding(16)
         }
-        .accessibilityIdentifier(SurfaceID.walkingSpeedCard)
     }
 
     private var yDomain: ClosedRange<Double> {
