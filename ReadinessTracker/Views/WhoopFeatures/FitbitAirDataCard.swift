@@ -75,6 +75,7 @@ struct FitbitAirDataCard: View {
                 densityStreakBadge
                 densityHistorySpark
                 densityDistributionHist
+                densityCVMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1430,6 +1431,75 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityHist)
         .accessibilityLabel("Density histogram mean \(meanPP) percent")
     }
+
+
+    /// Honest #572: density CV meter — 14d coefficient of variation (Google Health graphics).
+    @ViewBuilder
+    private var densityCVMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityCVBody(days: days)
+        }
+    }
+
+    private func densityCVBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let mean = dens.reduce(0, +) / n
+        let variance = dens.map { ($0 - mean) * ($0 - mean) }.reduce(0, +) / n
+        let sd = variance.squareRoot()
+        let cv = mean > 1e-6 ? sd / mean : 0
+        let cvPP = Int((cv * 100).rounded())
+        let tone: Color = cvPP <= 15 ? RTColor.optimal : (cvPP <= 30 ? RTColor.good : RTColor.warning)
+        let stability = cvPP <= 15 ? "Stable" : (cvPP <= 30 ? "Mixed" : "Volatile")
+        let barFrac = min(1.0, cv / 0.5) // 50% CV = full bar
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density CV")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(stability) · \(cvPP)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(accent.opacity(0.14)).frame(height: 12)
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(8, geo.size.width * CGFloat(barFrac)), height: 12)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 16)
+            Text("σ/μ over last \(dens.count)d · lower is steadier air coverage")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityCV)
+        .accessibilityLabel("Density coefficient of variation \(cvPP) percent, \(stability)")
+    }
+
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
         guard count >= 1 else { return }
