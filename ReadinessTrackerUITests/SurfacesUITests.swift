@@ -10992,6 +10992,18 @@ final class SurfacesUITests: XCTestCase {
             else { residual.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-forecast-residual.png")
+
+        // Honest #566: forecast hit-rate meter
+        let hitRate = app.descendants(matching: .any)["fitbit.air.density.forecast.hitrate"].firstMatch
+        XCTAssertTrue(hitRate.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast.residual"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      "fitbit.air.density.forecast.hitrate")
+        if hitRate.exists {
+            if hitRate.isHittable { hitRate.tap() }
+            else { hitRate.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-forecast-hitrate.png")
         // Honest #538: density streak (≥70% consecutive)
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)
