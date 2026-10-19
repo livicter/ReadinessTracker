@@ -492,6 +492,8 @@ struct FitbitAirDataCard: View {
                     }
                     densityForecastBandRow(lo: fc.lo, hi: fc.hi)
                     densityForecastBandBar(lo: fc.lo, hi: fc.hi, tomorrow: fc.tomorrow)
+                    // Honest #560: forecast confidence from residual band width (Google Health graphics)
+                    densityForecastConfidenceMeter(lo: fc.lo, hi: fc.hi)
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -548,6 +550,62 @@ struct FitbitAirDataCard: View {
         .padding(.bottom, 8)
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBar)
         .accessibilityLabel("Tomorrow density band bar \(Int((loC * 100).rounded())) to \(Int((hiC * 100).rounded())) percent, marker \(Int((mid * 100).rounded()))")
+    }
+
+
+    /// Honest #560: confidence meter — narrower ±1σ band ⇒ higher confidence.
+    private func densityForecastConfidenceMeter(lo: Double, hi: Double) -> some View {
+        let span = max(0, min(1, hi - lo))
+        let conf = max(0, min(1, 1 - span))  // 0% span → 100% conf
+        let pct = Int((conf * 100).rounded())
+        let tone: Color = conf >= 0.75 ? RTColor.optimal
+            : (conf >= 0.45 ? RTColor.good : RTColor.warning)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "shield.lefthalf.filled")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(tone)
+                Text("Confidence")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(pct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.14))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(RTColor.tertiaryText.opacity(0.16))
+                        .frame(height: 10)
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [tone.opacity(0.55), tone],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(width: max(6, geo.size.width * CGFloat(conf)), height: 10)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 12)
+            Text(span < 0.15 ? "Tight band · high trust"
+                 : (span < 0.35 ? "Moderate residual spread" : "Wide band · low trust"))
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(tone.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(tone.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastConf)
+        .accessibilityLabel("Forecast confidence \(pct) percent")
     }
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.
