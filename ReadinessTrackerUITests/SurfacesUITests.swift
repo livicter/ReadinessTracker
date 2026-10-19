@@ -10499,6 +10499,13 @@ final class SurfacesUITests: XCTestCase {
             "sim.load.tasks.impact / READY lift"
         )
         saveShot("verify-readiness-load-simulator-task-impact.png")
+        // Honest #549: READY lift spark bars
+        let liftSpark = app.descendants(matching: .any)["sim.load.tasks.liftspark"].firstMatch
+        XCTAssertTrue(liftSpark.waitForExistence(timeout: 5)
+                      || impact.exists
+                      || liftLabel.exists,
+                      "sim.load.tasks.liftspark")
+        saveShot("verify-readiness-load-simulator-task-lift-spark.png")
         // Honest #523: air-gap tasks cue (optional when gaps exist in fixture)
         let airGaps = app.descendants(matching: .any)["sim.load.tasks.airgaps"].firstMatch
         if airGaps.waitForExistence(timeout: 3) {
