@@ -46,10 +46,12 @@ struct InteractiveRecoveryDialCard: View {
         NativeCard {
             VStack(alignment: .leading, spacing: 14) {
                 header
+                zoneChips
                 HStack(spacing: 18) {
                     dial
                     legend
                 }
+                liveDeltaChip
                 caption
             }
             .padding(16)
@@ -180,6 +182,58 @@ struct InteractiveRecoveryDialCard: View {
         }
     }
 
+    /// Honest #522: snap dial into Rest/Easy/Solid/Push coaching zones.
+    private var zoneChips: some View {
+        HStack(spacing: 8) {
+            ForEach(DialZonePreset.allCases) { preset in
+                Button {
+                    Haptic.selectionChanged()
+                    hasDragged = true
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        angle = preset.angle
+                    }
+                } label: {
+                    Text(preset.title)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(zone.label == preset.title ? Color.white : preset.color)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(zone.label == preset.title ? preset.color : preset.color.opacity(0.12))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Zone \(preset.title)")
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.interactiveRecoveryDialZones)
+        .accessibilityLabel("Balance dial zone presets")
+    }
+
+    private var liveDeltaChip: some View {
+        let live = Int((baseRecovery * 0.65 + (100 - (baseStrain / 21.0) * 100) * 0.35).rounded())
+        let d = previewBalance - live
+        return HStack(spacing: 8) {
+            Text("Live \(live)")
+                .font(.caption.weight(.semibold).monospacedDigit())
+                .foregroundStyle(RTColor.secondaryText)
+            Image(systemName: "arrow.right")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(accent)
+            Text("Preview \(previewBalance)")
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(accent)
+            Spacer()
+            Text(d == 0 ? "±0" : String(format: "%+d BAL", d))
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(d >= 0 ? RTColor.optimal : RTColor.warning)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background((d >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.14))
+                .clipShape(Capsule())
+        }
+        .accessibilityLabel("Preview balance versus live \(d)")
+    }
+
     private var caption: some View {
         Text(hasDragged
              ? "Preview only — Live Balance card above stays on today’s numbers."
@@ -187,5 +241,38 @@ struct InteractiveRecoveryDialCard: View {
             .font(.caption)
             .foregroundStyle(RTColor.tertiaryText)
             .fixedSize(horizontal: false, vertical: true)
+    }
+}
+
+
+// MARK: - Zone presets (Honest #522)
+
+enum DialZonePreset: String, CaseIterable, Identifiable {
+    case rest, easy, solid, push
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .rest: return "Rest"
+        case .easy: return "Easy"
+        case .solid: return "Solid"
+        case .push: return "Push"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .rest: return RTColor.warning
+        case .easy: return RTColor.caution
+        case .solid: return RTColor.good
+        case .push: return RTColor.optimal
+        }
+    }
+    /// Angle that tends to land the preview in this zone.
+    var angle: Double {
+        switch self {
+        case .rest: return 120
+        case .easy: return 40
+        case .solid: return -20
+        case .push: return -90
+        }
     }
 }
