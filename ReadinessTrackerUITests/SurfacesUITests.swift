@@ -10501,6 +10501,18 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Save A"].tap()
         }
         saveShot("verify-readiness-load-simulator-ab-snapshot.png")
+        // Honest #530: Save B snapshot row
+        let snapB = app.descendants(matching: .any)["sim.load.ab.snapb"].firstMatch
+        XCTAssertTrue(snapB.waitForExistence(timeout: 5)
+                      || app.staticTexts["Save B"].waitForExistence(timeout: 3)
+                      || app.staticTexts["Update B"].exists,
+                      "sim.load.ab.snapb")
+        if snapB.exists {
+            snapB.coordinate(withNormalizedOffset: CGVector(dx: 0.25, dy: 0.4)).tap()
+        } else if app.staticTexts["Save B"].exists {
+            app.staticTexts["Save B"].tap()
+        }
+        saveShot("verify-readiness-load-simulator-snap-b.png")
         // Honest #508: projected Gym/Work/Sleep ring chips
         let rings = app.descendants(matching: .any)["sim.load.rings"].firstMatch
         XCTAssertTrue(rings.waitForExistence(timeout: 5), "sim.load.rings")

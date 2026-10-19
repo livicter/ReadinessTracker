@@ -26,6 +26,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var airSeededSummary: String? = nil
     /// Honest #520: saved A snapshot of levers for A/B compare.
     @State private var snapA: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
+    /// Honest #530: saved B snapshot (frozen) for A−B delta.
+    @State private var snapB: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
 
     private var baseline: Int { scores.general }
 
@@ -453,6 +455,7 @@ struct ReadinessLoadSimulatorCard: View {
                 Button {
                     Haptic.selectionChanged()
                     snapA = nil
+                    snapB = nil
                 } label: {
                     Text("Clear")
                         .font(.caption.weight(.bold))
@@ -465,8 +468,51 @@ struct ReadinessLoadSimulatorCard: View {
                 .buttonStyle(.plain)
             }
 
+            // Honest #530: freeze live as Snap B
+            HStack(spacing: 8) {
+                Button {
+                    Haptic.selectionChanged()
+                    snapB = (sleepDelta, hrvDelta, strainDelta, rhrDelta, spo2Delta, projectedCoupled)
+                } label: {
+                    Text(snapB == nil ? "Save B" : "Update B")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(RTColor.optimal.opacity(0.9))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    Haptic.selectionChanged()
+                    guard let b = snapB else { return }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        sleepDelta = b.sleep
+                        hrvDelta = b.hrv
+                        strainDelta = b.strain
+                        rhrDelta = b.rhr
+                        spo2Delta = b.spo2
+                    }
+                } label: {
+                    Text("Recall B")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(snapB == nil ? RTColor.tertiaryText : RTColor.optimal)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(RTColor.optimal.opacity(snapB == nil ? 0.08 : 0.14))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(snapB == nil)
+            }
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorSnapB)
+            .accessibilityLabel("Simulator save snapshot B")
+
             if let a = snapA {
-                let d = projected - a.ready
+                let bReady = snapB?.ready ?? projectedCoupled
+                let d = bReady - a.ready
+                let bLabel = snapB == nil ? "Live" : "B"
                 HStack(spacing: 8) {
                     Text("A \(a.ready)")
                         .font(.caption.weight(.bold).monospacedDigit())
@@ -474,7 +520,7 @@ struct ReadinessLoadSimulatorCard: View {
                     Image(systemName: "arrow.right")
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(accent)
-                    Text("B \(projected)")
+                    Text("\(bLabel) \(bReady)")
                         .font(.caption.weight(.bold).monospacedDigit())
                         .foregroundStyle(accent)
                     Spacer()
@@ -487,7 +533,7 @@ struct ReadinessLoadSimulatorCard: View {
                         .clipShape(Capsule())
                 }
             } else {
-                Text("Save A, scrub levers, compare B")
+                Text("Save A + B, scrub levers, compare Δ")
                     .font(.caption)
                     .foregroundStyle(RTColor.tertiaryText)
             }
