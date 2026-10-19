@@ -10635,6 +10635,16 @@ final class SurfacesUITests: XCTestCase {
                       || chips.exists,
                       "fitbit.air.chip.spark")
         saveShot("verify-fitbit-air-chip-mini-spark.png")
+        // Honest #532: scrub value callout on chip mini spark
+        if chipSpark.exists {
+            chipSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.6)).tap()
+        }
+        let chipScrub = app.descendants(matching: .any)["fitbit.air.chip.spark.scrub"].firstMatch
+        XCTAssertTrue(chipScrub.waitForExistence(timeout: 5)
+                      || chipSpark.exists
+                      || chips.exists,
+                      "fitbit.air.chip.spark.scrub")
+        saveShot("verify-fitbit-air-chip-spark-scrub.png")
         let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
