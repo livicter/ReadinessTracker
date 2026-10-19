@@ -220,6 +220,7 @@ enum SurfaceID {
     static let readinessSimulatorSeedAir = "sim.load.seed.air"  // Honest #518
     static let fitbitAirDataSparkDelta = "fitbit.air.spark.delta"  // Honest #519
     static let readinessSimulatorABSnapshot = "sim.load.ab.snap"  // Honest #520
+    static let fitbitAirDensityRingCycle = "fitbit.air.density.cycle"  // Honest #521
     static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513
     static let fitbitAirDataDensitySpark = "fitbit.air.density.spark"  // Honest #514
     static let fitbitAirDataStrip = "fitbit.air.strip"

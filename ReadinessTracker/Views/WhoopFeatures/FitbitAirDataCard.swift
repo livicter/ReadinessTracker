@@ -121,7 +121,31 @@ struct FitbitAirDataCard: View {
         }
         .frame(width: 84, height: 84)
         .animation(.easeInOut(duration: 0.25), value: focusedLegend)
-        .accessibilityLabel("Air density \(Int((density * 100).rounded())) percent")
+        .contentShape(Circle())
+        .onTapGesture { cycleDensityLegendFocus() }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityRingCycle)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel("Air density \(Int((density * 100).rounded())) percent, tap to cycle category")
+        .accessibilityHint("Cycles Sleep, Vitals, Activity focus")
+    }
+
+    /// Honest #521: tap density ring to cycle legend focus + spark link.
+    private func cycleDensityLegendFocus() {
+        Haptic.selectionChanged()
+        let order = AirDensityCategory.allCases
+        if let cur = focusedLegend, let idx = order.firstIndex(of: cur) {
+            let next = idx + 1
+            focusedLegend = next < order.count ? order[next] : nil
+        } else {
+            focusedLegend = order.first
+        }
+        if let focus = focusedLegend {
+            let ids = focus.chipIDs
+            selectedChipID = chips.first(where: { ids.contains($0.id) && $0.filled })?.id
+                ?? chips.first(where: { ids.contains($0.id) })?.id
+            sparkMetric = focus.sparkMetric
+            sparkScrubIndex = nil
+        }
     }
 
 
