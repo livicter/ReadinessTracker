@@ -116,6 +116,7 @@ struct ReadinessLoadSimulatorCard: View {
                 sparkProjection
                 readyPathSpark
                 readyCompositionStack
+                readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -1007,6 +1008,123 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyStack)
         .accessibilityLabel("READY stack \(projectedCoupled) of 100")
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #565: READY task waterfall — cumulative lift per task toward ceiling (Google Health graphics).
+    @ViewBuilder
+    private var readyTaskWaterfall: some View {
+        let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
+        if ordered.isEmpty {
+            EmptyView()
+        } else {
+            taskWaterfallBody(ordered: ordered)
+        }
+    }
+
+    private func taskWaterfallBody(ordered: [SimulatorTask]) -> some View {
+        struct Step: Identifiable {
+            let id: Int
+            let label: String
+            let ready: Int
+            let done: Bool
+        }
+        var steps: [Step] = [Step(id: 0, label: "Now", ready: projected, done: true)]
+        var cum = 0
+        for (i, task) in ordered.enumerated() {
+            cum += task.readyDelta
+            steps.append(Step(
+                id: i + 1,
+                label: String(task.title.prefix(6)),
+                ready: min(100, projected + cum),
+                done: completedTaskIDs.contains(task.id)
+            ))
+        }
+        let ceiling = steps.last?.ready ?? projected
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis.ascending")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Task waterfall")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(projected)→\(ceiling)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.optimal)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(RTColor.optimal.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(steps) { step in
+                    AreaMark(
+                        x: .value("Step", step.label),
+                        y: .value("READY", step.ready)
+                    )
+                    .foregroundStyle(accent.opacity(0.18))
+                    .interpolationMethod(.stepEnd)
+                    LineMark(
+                        x: .value("Step", step.label),
+                        y: .value("READY", step.ready)
+                    )
+                    .foregroundStyle(accent)
+                    .interpolationMethod(.stepEnd)
+                    .lineStyle(StrokeStyle(lineWidth: 2))
+                    PointMark(
+                        x: .value("Step", step.label),
+                        y: .value("READY", step.ready)
+                    )
+                    .foregroundStyle(step.done ? RTColor.optimal : accent)
+                    .symbolSize(step.id == 0 ? 48 : 36)
+                }
+                RuleMark(y: .value("Now", projected))
+                    .foregroundStyle(RTColor.tertiaryText.opacity(0.4))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .chartYScale(domain: 0...100)
+            .chartYAxis {
+                AxisMarks(values: [0, 50, 100]) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 100)
+            .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+            HStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Circle().fill(RTColor.optimal).frame(width: 7, height: 7)
+                    Text("Checked")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                HStack(spacing: 4) {
+                    Circle().fill(accent).frame(width: 7, height: 7)
+                    Text("Queued")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                Spacer()
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskWaterfall)
+        .accessibilityLabel("Task waterfall READY \(projected) to \(ceiling)")
     }
 
     private var fitbitAirStrip: some View {
