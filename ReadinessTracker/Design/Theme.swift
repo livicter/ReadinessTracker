@@ -254,6 +254,7 @@ enum SurfaceID {
     static let fitbitAirDensitySparkMean = "fitbit.air.density.spark.mean"  // Honest #556
     static let readinessSimulatorTasksNextPreview = "sim.load.tasks.nextpreview"  // Honest #557
     static let fitbitAirDensityForecastVsMean = "fitbit.air.density.forecast.vsmean"  // Honest #558
+    static let readinessSimulatorTasksCeiling = "sim.load.tasks.ceiling"  // Honest #559
     static let fitbitAirChipSparkRange = "fitbit.air.chip.spark.range"  // Honest #544
     static let fitbitAirChipMiniSpark = "fitbit.air.chip.spark"  // Honest #531
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532

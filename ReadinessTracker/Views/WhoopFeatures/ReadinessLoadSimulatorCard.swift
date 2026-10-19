@@ -1160,6 +1160,77 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksNextPreview)
                 .accessibilityLabel("Next task \(next.title), +\(next.readyDelta) READY")
             }
+            // Honest #559: projected READY ceiling if all remaining tasks checked
+            let ceilingReady = min(100, projected + totalLift)
+            let nowReady = projectedCoupled
+            let ceilFrac = ceilingReady > 0 ? Double(nowReady) / Double(ceilingReady) : 0
+            Button {
+                Haptic.selectionChanged()
+                // Check all remaining (ceiling path)
+                for t in ordered where !completedTaskIDs.contains(t.id) {
+                    completedTaskIDs.insert(t.id)
+                }
+            } label: {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.up.to.line.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(accent)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Ceiling · READY \(ceilingReady)")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(accent)
+                            Text(remain == 0
+                                 ? "All tasks folded · at ceiling"
+                                 : "Now \(nowReady) · +\(remain) left to ceiling")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 0)
+                        Text(remain == 0 ? "Done" : "Fill")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(remain == 0 ? RTColor.optimal : accent)
+                            .clipShape(Capsule())
+                    }
+                    // Dual-rail: now (filled) vs ceiling (track)
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(accent.opacity(0.14))
+                                .frame(height: 12)
+                            Capsule()
+                                .fill(LinearGradient(
+                                    colors: [RTColor.optimal, accent],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ))
+                                .frame(width: max(8, geo.size.width * CGFloat(min(1, ceilFrac))), height: 12)
+                            // ceiling tick
+                            Capsule()
+                                .fill(RTColor.primaryText.opacity(0.55))
+                                .frame(width: 2, height: 16)
+                                .offset(x: max(0, geo.size.width - 2))
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 16)
+                }
+                .padding(10)
+                .background(accent.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(accent.opacity(0.3), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCeiling)
+            .accessibilityLabel("READY ceiling \(ceilingReady), now \(nowReady), remain +\(remain)")
+
             // Honest #549: cumulative READY lift spark (bars tint when checked)
             if !ordered.isEmpty {
                 Chart {

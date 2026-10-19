@@ -10509,6 +10509,16 @@ final class SurfacesUITests: XCTestCase {
             else { nextPrev.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-next-preview.png")
+        // Honest #559: projected READY ceiling dual-rail
+        let ceiling = app.descendants(matching: .any)["sim.load.tasks.ceiling"].firstMatch
+        XCTAssertTrue(ceiling.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks"].firstMatch.exists,
+                      "sim.load.tasks.ceiling")
+        if ceiling.exists {
+            if ceiling.isHittable { ceiling.tap() }
+            else { ceiling.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-tasks-ceiling.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
