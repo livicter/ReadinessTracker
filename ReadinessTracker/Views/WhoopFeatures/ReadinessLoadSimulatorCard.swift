@@ -1027,6 +1027,30 @@ struct ReadinessLoadSimulatorCard: View {
                     .accessibilityLabel("READY lift +\(lift)")
             }
             .accessibilityElement(children: .contain)
+            // Honest #549: cumulative READY lift spark (bars tint when checked)
+            if !ordered.isEmpty {
+                Chart {
+                    ForEach(Array(ordered.enumerated()), id: \.element.id) { _, task in
+                        BarMark(
+                            x: .value("Task", String(task.title.prefix(8))),
+                            y: .value("Lift", task.readyDelta)
+                        )
+                        .foregroundStyle(completedTaskIDs.contains(task.id) ? RTColor.optimal : accent.opacity(0.28))
+                        .cornerRadius(3)
+                    }
+                }
+                .chartYAxis(.hidden)
+                .chartXAxis {
+                    AxisMarks { _ in
+                        AxisValueLabel()
+                            .foregroundStyle(RTColor.tertiaryText)
+                            .font(.caption2)
+                    }
+                }
+                .frame(height: 56)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLiftSpark)
+                .accessibilityLabel("READY lift spark, +\(lift) checked")
+            }
             ProgressView(value: Double(done), total: Double(max(1, tasks.count)))
                 .tint(accent)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
