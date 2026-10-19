@@ -1119,6 +1119,47 @@ struct ReadinessLoadSimulatorCard: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksRemainLift)
             .accessibilityLabel("READY lift progress +\(lift) of +\(totalLift), remain +\(remain)")
+            // Honest #557: next READY-impact task preview chip
+            if let next = ordered.filter({ !completedTaskIDs.contains($0.id) })
+                .sorted(by: { $0.readyDelta > $1.readyDelta }).first {
+                Button {
+                    Haptic.selectionChanged()
+                    completedTaskIDs.insert(next.id)
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "arrow.forward.circle.fill")
+                            .font(.title3)
+                            .foregroundStyle(accent)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Next · +\(next.readyDelta) READY")
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(accent)
+                            Text(next.title)
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                                .lineLimit(1)
+                        }
+                        Spacer(minLength: 0)
+                        Text("Check")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(Color.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(accent)
+                            .clipShape(Capsule())
+                    }
+                    .padding(10)
+                    .background(accent.opacity(0.10))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(accent.opacity(0.35), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksNextPreview)
+                .accessibilityLabel("Next task \(next.title), +\(next.readyDelta) READY")
+            }
             // Honest #549: cumulative READY lift spark (bars tint when checked)
             if !ordered.isEmpty {
                 Chart {
