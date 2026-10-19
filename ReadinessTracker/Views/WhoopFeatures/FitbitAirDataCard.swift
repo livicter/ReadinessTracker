@@ -500,6 +500,8 @@ struct FitbitAirDataCard: View {
                     densityForecastResidualSpark()
                     // Honest #566: forecast hit-rate — actuals inside residual band (Google Health)
                     densityForecastHitRate()
+                    // Honest #568: residual bias — signed mean residual over/under (Google Health)
+                    densityForecastResidualBias()
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -900,6 +902,110 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHitRate)
         .accessibilityLabel("Forecast hit rate \(ratePP) percent, \(hits) of \(total)")
     }
+
+
+    /// Honest #568: residual bias — signed mean residual (over/under predict) (Google Health graphics).
+    @ViewBuilder
+    private func densityForecastResidualBias() -> some View {
+        let days = Array(history.suffix(7))
+        if days.count < 4 {
+            EmptyView()
+        } else {
+            residualBiasBody(days: days)
+        }
+    }
+
+    private func residualBiasBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let xs = dens.indices.map { Double($0) }
+        let sumX = xs.reduce(0, +)
+        let sumY = dens.reduce(0, +)
+        let sumXY = zip(xs, dens).map(*).reduce(0, +)
+        let sumXX = xs.map { $0 * $0 }.reduce(0, +)
+        let denom = n * sumXX - sumX * sumX
+        let slope: Double
+        let intercept: Double
+        if abs(denom) > 1e-9 {
+            slope = (n * sumXY - sumX * sumY) / denom
+            intercept = (sumY - slope * sumX) / n
+        } else {
+            slope = 0
+            intercept = dens.last ?? 0
+        }
+        let signed = zip(dens.indices, dens).map { i, a in a - (intercept + slope * Double(i)) }
+        let bias = signed.reduce(0, +) / Double(max(1, signed.count))
+        let biasPP = Int((bias * 100).rounded())
+        let absPP = abs(biasPP)
+        let tone: Color = absPP <= 3 ? RTColor.optimal : (absPP <= 8 ? RTColor.good : RTColor.warning)
+        let verb = biasPP > 0 ? "Under" : (biasPP < 0 ? "Over" : "Neutral")
+        // bias>0 ⇒ actual > predicted ⇒ model under-predicted
+        let needle = max(-1.0, min(1.0, bias / 0.15)) // ±15pp full scale
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Residual bias")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(biasPP >= 0 ? "+" : "")\(biasPP)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let mid = geo.size.width / 2
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [Color(hex: "FF375F").opacity(0.35), accent.opacity(0.12), RTColor.optimal.opacity(0.35)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    // center tick
+                    Capsule()
+                        .fill(RTColor.primaryText.opacity(0.55))
+                        .frame(width: 2, height: 16)
+                        .offset(x: mid - 1)
+                    // needle
+                    Circle()
+                        .fill(tone)
+                        .frame(width: 14, height: 14)
+                        .offset(x: mid + CGFloat(needle) * (mid - 10) - 7)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("Over-predict")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Under-predict")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBias)
+        .accessibilityLabel("Residual bias \(verb) \(biasPP) percentage points")
+    }
+
 
 
 
