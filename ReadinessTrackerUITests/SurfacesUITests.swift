@@ -10644,6 +10644,13 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "linked")).count > 0,
                       "fitbit.air.legend.spark")
         saveShot("verify-fitbit-air-legend-spark-link.png")
+        // Honest #529: density category stacked bar
+        let stack = app.descendants(matching: .any)["fitbit.air.density.stack"].firstMatch
+        XCTAssertTrue(stack.waitForExistence(timeout: 5)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "stack")).count > 0,
+                      "fitbit.air.density.stack")
+        if stack.exists { stack.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap() }
+        saveShot("verify-fitbit-air-density-stack.png")
         // Honest #525: 7-day density heatmap
         let heat = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
         XCTAssertTrue(heat.waitForExistence(timeout: 5)
