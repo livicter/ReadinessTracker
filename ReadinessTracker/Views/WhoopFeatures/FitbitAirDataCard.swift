@@ -735,6 +735,48 @@ struct FitbitAirDataCard: View {
                         .foregroundStyle(accent)
                 }
             }
+            // Honest #548: density spark min–max range strip
+            if let densMin = points.map(\.density).min(),
+               let densMax = points.map(\.density).max(),
+               densMax > 0 {
+                let scrubD: Double = {
+                    if let idx = sparkScrubIndex ?? (points.isEmpty ? nil : points.count - 1),
+                       points.indices.contains(idx) {
+                        return points[idx].density
+                    }
+                    return densMax
+                }()
+                HStack(spacing: 8) {
+                    Text("\(Int((densMin * 100).rounded()))–\(Int((densMax * 100).rounded()))%")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(RTColor.secondaryText)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(RTColor.secondaryText.opacity(0.10))
+                        .clipShape(Capsule())
+                        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySparkRange)
+                        .accessibilityLabel("Density spark range")
+                    GeometryReader { geo in
+                        let span = max(densMax - densMin, 0.0001)
+                        let scrubFrac = CGFloat((scrubD - densMin) / span)
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(accent.opacity(0.18))
+                                .frame(height: 6)
+                            Capsule()
+                                .fill(accent)
+                                .frame(width: max(6, geo.size.width * 0.08), height: 6)
+                                .offset(x: max(0, min(geo.size.width - 6, geo.size.width * scrubFrac - 3)))
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 14)
+                    Text("range")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                .accessibilityElement(children: .contain)
+            }
             if points.contains(where: { $0.density > 0 }) {
                 Chart {
                     ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
