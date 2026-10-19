@@ -10567,6 +10567,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-radial.png")
 
+        // Honest #575: ring delta bars
+        let ringDeltas = app.descendants(matching: .any)["sim.load.ring.deltas"].firstMatch
+        XCTAssertTrue(ringDeltas.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks.radial"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ring.deltas")
+        if ringDeltas.exists {
+            if ringDeltas.isHittable { ringDeltas.tap() }
+            else { ringDeltas.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-ring-deltas.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
