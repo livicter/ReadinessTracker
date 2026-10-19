@@ -10946,6 +10946,17 @@ final class SurfacesUITests: XCTestCase {
             else { conf.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-forecast-conf.png")
+
+        // Honest #562: 3-day forecast horizon bars
+        let horizon = app.descendants(matching: .any)["fitbit.air.density.forecast.horizon"].firstMatch
+        XCTAssertTrue(horizon.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      "fitbit.air.density.forecast.horizon")
+        if horizon.exists {
+            if horizon.isHittable { horizon.tap() }
+            else { horizon.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-forecast-horizon.png")
         // Honest #538: density streak (≥70% consecutive)
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)

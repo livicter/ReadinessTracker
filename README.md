@@ -4,7 +4,7 @@ iOS readiness app. Bright Apple Health UI.
 
 **Sources.** Apple Health (HealthKit) by default. Optional **Fitbit** via Google Health API (`DataSource.fitbit`; secrets in gitignored `Secrets.xcconfig`). WHOOP metrics appear when shared into Apple Health — no unofficial WHOOP OAuth.
 
-**Today.** Gym / Work / Sleep rings + READY; check-in; recommendations. **Load Simulator** (seed from air, A/B snapshots, lever deltas, checkable air-gap tasks, lift progress + next preview + READY ceiling + path spark). **Fitbit/Health Air** (density legend + ring cycle, spark scrub/Δ vs avg + forecast vs mean + confidence, gaps + category fill gauges). **Balance Dial** zone snaps. Body tiles + Recovery / Strain / sleep stack. Tonight | Baseline cards open classic **`MetricDetailView`** (Steps-parity `*.md.nav`).
+**Today.** Gym / Work / Sleep rings + READY; check-in; recommendations. **Load Simulator** (seed from air, A/B snapshots, lever deltas, checkable air-gap tasks, lift progress + next preview + READY ceiling + path spark). **Fitbit/Health Air** (density legend + ring cycle, spark scrub/Δ vs avg + forecast vs mean + confidence + 3-day horizon, gaps + category fill gauges). **Balance Dial** zone snaps. Body tiles + Recovery / Strain / sleep stack. Tonight | Baseline cards open classic **`MetricDetailView`** (Steps-parity `*.md.nav`).
 
 **Elsewhere.** History, Check-in, Settings. Home + Lock widgets. Watch app and complications.
 
