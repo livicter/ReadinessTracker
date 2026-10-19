@@ -10569,12 +10569,20 @@ final class SurfacesUITests: XCTestCase {
         // Honest #513: density legend (Sleep / Vitals / Move) — assert early before scrub/gaps re-anchor.
         let legend = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
         XCTAssertTrue(legend.waitForExistence(timeout: 5), "fitbit.air.density.legend")
-        if legend.isHittable {
-            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        // Honest #517: tap Sleep pill (stable id) so spark link cue appears
+        let sleepPill = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
+        if sleepPill.waitForExistence(timeout: 3) {
+            sleepPill.tap()
         } else if legend.exists {
-            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
         }
         saveShot("verify-fitbit-air-data-density-legend.png")
+        let legendSpark = app.descendants(matching: .any)["fitbit.air.legend.spark"].firstMatch
+        XCTAssertTrue(legendSpark.waitForExistence(timeout: 5)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Spark")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "linked")).count > 0,
+                      "fitbit.air.legend.spark")
+        saveShot("verify-fitbit-air-legend-spark-link.png")
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")

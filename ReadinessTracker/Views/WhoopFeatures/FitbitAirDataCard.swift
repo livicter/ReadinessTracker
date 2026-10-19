@@ -146,6 +146,9 @@ struct FitbitAirDataCard: View {
                 let ids = focus.chipIDs
                 selectedChipID = chips.first(where: { ids.contains($0.id) && $0.filled })?.id
                     ?? chips.first(where: { ids.contains($0.id) })?.id
+                // Honest #517: legend → spark metric link
+                sparkMetric = focus.sparkMetric
+                sparkScrubIndex = nil
             }
         } label: {
             VStack(spacing: 3) {
@@ -173,16 +176,38 @@ struct FitbitAirDataCard: View {
             )
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("fitbit.air.legend.\(cat.rawValue)")
         .accessibilityLabel("\(cat.title) density \(filled) of \(total)")
     }
 
     /// Honest #513: interactive Sleep / Vitals / Activity density legend.
     private var densityLegend: some View {
-        HStack(spacing: 8) {
-            ForEach(AirDensityCategory.allCases) { cat in
-                densityLegendPill(cat)
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                ForEach(AirDensityCategory.allCases) { cat in
+                    densityLegendPill(cat)
+                }
+            }
+            if let focusedLegend {
+                HStack(spacing: 6) {
+                    Image(systemName: "chart.xyaxis.line")
+                        .font(.caption2)
+                    Text("Spark → \(focusedLegend.sparkMetric.title)")
+                        .font(.caption.weight(.semibold))
+                    Spacer()
+                    Text("linked")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(focusedLegend.color.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(focusedLegend.color)
+                .accessibilityIdentifier(SurfaceID.fitbitAirLegendSparkLink)
+                .accessibilityLabel("Spark linked to \(focusedLegend.sparkMetric.title)")
             }
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
         .accessibilityLabel("Air density legend")
     }
@@ -726,6 +751,14 @@ enum AirDensityCategory: String, CaseIterable, Identifiable {
         case .sleep: return ["sleep"]
         case .vitals: return ["hrv", "rhr", "spo2", "resp", "skin"]
         case .activity: return ["steps", "kcal", "dist", "floors", "amin", "basal"]
+        }
+    }
+    /// Honest #517: primary spark metric when legend focuses this category.
+    var sparkMetric: AirSparkMetric {
+        switch self {
+        case .sleep: return .sleep
+        case .vitals: return .hrv
+        case .activity: return .steps
         }
     }
     func filledCount(in chips: [AirChip]) -> Int {
