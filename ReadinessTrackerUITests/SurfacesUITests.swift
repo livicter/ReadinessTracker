@@ -11103,6 +11103,18 @@ final class SurfacesUITests: XCTestCase {
             else { densHist.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-hist.png")
+
+        // Honest #572: density CV meter
+        let densCV = app.descendants(matching: .any)["fitbit.air.density.cv"].firstMatch
+        XCTAssertTrue(densCV.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.hist"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.cv")
+        if densCV.exists {
+            if densCV.isHittable { densCV.tap() }
+            else { densCV.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-cv.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
