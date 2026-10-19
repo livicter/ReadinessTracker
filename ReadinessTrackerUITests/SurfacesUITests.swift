@@ -10589,6 +10589,13 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
         saveShot("verify-fitbit-air-data-card-detail.png")
+        // Honest #521: density ring tap cycles Sleep/Vitals/Activity focus
+        let ringCycle = app.descendants(matching: .any)["fitbit.air.density.cycle"].firstMatch
+        XCTAssertTrue(ringCycle.waitForExistence(timeout: 5)
+                      || density.exists,
+                      "fitbit.air.density.cycle")
+        if ringCycle.exists { ringCycle.tap() }
+        saveShot("verify-fitbit-air-density-ring-cycle.png")
         // Honest #513: density legend (Sleep / Vitals / Move) — assert early before scrub/gaps re-anchor.
         let legend = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
         XCTAssertTrue(legend.waitForExistence(timeout: 5), "fitbit.air.density.legend")
