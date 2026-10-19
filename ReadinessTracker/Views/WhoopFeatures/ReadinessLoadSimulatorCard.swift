@@ -41,6 +41,15 @@ struct ReadinessLoadSimulatorCard: View {
 
     private var deltaVsBaseline: Int { projected - baseline }
 
+    /// Honest #528: checked-task READY lift folded into projection hero.
+    private var taskReadyLift: Int {
+        tasks.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+    }
+    private var projectedCoupled: Int {
+        min(100, max(0, projected + taskReadyLift))
+    }
+    private var deltaCoupledVsBaseline: Int { projectedCoupled - baseline }
+
     private var zone: (label: String, color: Color) {
         switch projected {
         case 80...100: return ("Push", RTColor.optimal)
@@ -137,7 +146,7 @@ struct ReadinessLoadSimulatorCard: View {
     /// Honest #511: gauge tints + shows focused ring (READY/Gym/Work/Sleep).
     private var focusedRingValue: Int {
         switch focusedRing {
-        case .ready: return projected
+        case .ready: return projectedCoupled
         case .gym: return projectedGym
         case .work: return projectedWork
         case .sleep: return projectedSleep
@@ -176,12 +185,31 @@ struct ReadinessLoadSimulatorCard: View {
                 labeledValue("Tonight", "\(baseline)", "baseline")
                 labeledValue(
                     "Projected",
-                    deltaVsBaseline >= 0 ? "+\(deltaVsBaseline)" : "\(deltaVsBaseline)",
+                    deltaCoupledVsBaseline >= 0 ? "+\(deltaCoupledVsBaseline)" : "\(deltaCoupledVsBaseline)",
                     "vs baseline"
                 )
+                HStack(spacing: 6) {
+                    Image(systemName: "checklist")
+                        .font(.caption2.weight(.bold))
+                    Text(taskReadyLift > 0 ? "Tasks +\(taskReadyLift)" : "Tasks → gauge")
+                        .font(.caption2.weight(.bold).monospacedDigit())
+                    Text("coupled")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                .foregroundStyle(taskReadyLift > 0 ? RTColor.optimal : accent)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background((taskReadyLift > 0 ? RTColor.optimal : accent).opacity(0.12))
+                .clipShape(Capsule())
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskCoupled)
+                .accessibilityLabel(taskReadyLift > 0
+                                    ? "Tasks plus \(taskReadyLift) in gauge"
+                                    : "Tasks coupled into gauge")
+                .animation(.easeInOut(duration: 0.2), value: taskReadyLift)
                 Text(focusedRing == .ready
-                     ? ReadinessCalculator.recommendation(for: projected)
-                     : focusedRing.caption(gym: projectedGym, work: projectedWork, sleep: projectedSleep, ready: projected))
+                     ? ReadinessCalculator.recommendation(for: projectedCoupled)
+                     : focusedRing.caption(gym: projectedGym, work: projectedWork, sleep: projectedSleep, ready: projectedCoupled))
                     .font(.caption)
                     .foregroundStyle(RTColor.secondaryText)
                     .fixedSize(horizontal: false, vertical: true)
