@@ -54,6 +54,7 @@ struct FitbitAirDataCard: View {
                     chipGrid
                 }
                 densityLegend
+                densityHistorySpark
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -184,6 +185,96 @@ struct FitbitAirDataCard: View {
         }
         .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
         .accessibilityLabel("Air density legend")
+    }
+
+    /// Honest #514: history density% spark (same window as field spark).
+    private var densityHistoryPoints: [(date: Date, density: Double)] {
+        history.suffix(sparkPeriod).map { day in
+            let dayChips = AirChip.all(from: day)
+            let filled = dayChips.filter(\.filled).count
+            let dens = dayChips.isEmpty ? 0.0 : Double(filled) / Double(dayChips.count)
+            return (date: day.date, density: dens)
+        }
+    }
+
+    private var densityHistorySpark: some View {
+        let points = densityHistoryPoints
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Density · \(sparkPeriod)d")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                if let idx = sparkScrubIndex ?? (points.isEmpty ? nil : points.count - 1),
+                   points.indices.contains(idx) {
+                    Text("\(Int((points[idx].density * 100).rounded()))%")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(accent)
+                }
+            }
+            if points.contains(where: { $0.density > 0 }) {
+                Chart {
+                    ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
+                        AreaMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(accent.opacity(0.18))
+                        LineMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(accent)
+                        .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                        if (sparkScrubIndex ?? points.count - 1) == i {
+                            PointMark(
+                                x: .value("Day", pt.date),
+                                y: .value("Density", pt.density)
+                            )
+                            .foregroundStyle(accent)
+                            .symbolSize(56)
+                        }
+                    }
+                }
+                .chartXAxis(.hidden)
+                .chartYAxis(.hidden)
+                .chartYScale(domain: 0...1)
+                .frame(height: 44)
+                .chartOverlay { proxy in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        sparkSelectDensity(at: value.location, proxy: proxy, geo: geo, count: points.count)
+                                    }
+                            )
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: sparkPeriod)
+                .animation(.easeInOut(duration: 0.2), value: sparkScrubIndex)
+            } else {
+                Text("No density history in window")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDataDensitySpark)
+        .accessibilityLabel("Air density history spark")
+    }
+
+    private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
+        guard count >= 1 else { return }
+        let width = max(geo.size.width, 1)
+        let frac = min(max(location.x / width, 0), 1)
+        let best = count == 1 ? 0 : min(count - 1, max(0, Int((frac * CGFloat(count - 1)).rounded())))
+        _ = proxy
+        if sparkScrubIndex != best {
+            sparkScrubIndex = best
+            Haptic.selectionChanged()
+        }
     }
 
     private var chipGrid: some View {
