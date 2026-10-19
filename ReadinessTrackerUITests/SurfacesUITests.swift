@@ -10425,6 +10425,19 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Check all"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-check-all.png")
+        // Honest #541: sort tasks by READY impact
+        let sortImpact = app.descendants(matching: .any)["sim.load.tasks.sort"].firstMatch
+        XCTAssertTrue(sortImpact.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Sort"].waitForExistence(timeout: 3)
+                      || app.staticTexts["Impact ↓"].waitForExistence(timeout: 2),
+                      "sim.load.tasks.sort")
+        if sortImpact.exists {
+            sortImpact.tap()
+        } else if app.staticTexts["Sort"].exists {
+            app.staticTexts["Sort"].tap()
+        }
+        saveShot("verify-readiness-load-simulator-tasks-sort.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
