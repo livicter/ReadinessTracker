@@ -10542,6 +10542,18 @@ final class SurfacesUITests: XCTestCase {
             else { readyStack.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-ready-stack.png")
+
+        // Honest #565: READY task waterfall
+        let waterfall = app.descendants(matching: .any)["sim.load.tasks.waterfall"].firstMatch
+        XCTAssertTrue(waterfall.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.waterfall")
+        if waterfall.exists {
+            if waterfall.isHittable { waterfall.tap() }
+            else { waterfall.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-task-waterfall.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
