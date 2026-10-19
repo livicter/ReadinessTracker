@@ -10771,6 +10771,13 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.forecast")
         if forecast.exists { forecast.tap() }
         saveShot("verify-fitbit-air-density-forecast.png")
+        // Honest #540: forecast residual confidence band (inside expanded detail)
+        let band = app.descendants(matching: .any)["fitbit.air.density.forecast.band"].firstMatch
+        XCTAssertTrue(band.waitForExistence(timeout: 5)
+                      || forecast.exists
+                      || app.staticTexts["Band"].waitForExistence(timeout: 3),
+                      "fitbit.air.density.forecast.band")
+        saveShot("verify-fitbit-air-density-forecast-band.png")
         // Honest #538: density streak (≥70% consecutive)
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)

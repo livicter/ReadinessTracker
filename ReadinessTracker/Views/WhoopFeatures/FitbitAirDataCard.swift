@@ -389,7 +389,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #534: linear density forecast for tomorrow from last 7d trend.
-    private var densityForecast: (tomorrow: Double, slopePP: Double, today: Double)? {
+    private var densityForecast: (tomorrow: Double, slopePP: Double, today: Double, lo: Double, hi: Double)? {
         let days = Array(history.suffix(7))
         guard days.count >= 4 else { return nil }
         let dens: [Double] = days.map { day in
@@ -409,7 +409,17 @@ struct FitbitAirDataCard: View {
         let intercept = (sumY - slope * sumX) / n
         let tomorrow = min(1, max(0, intercept + slope * n))
         let today = dens.last ?? 0
-        return (tomorrow, slope * 100, today)
+        // Honest #540: ±1σ residual band around tomorrow
+        var sse: Double = 0
+        for (x, y) in zip(xs, dens) {
+            let err = y - (intercept + slope * x)
+            sse += err * err
+        }
+        let dof = Double(max(1, dens.count - 2))
+        let rmse: Double = Darwin.sqrt(sse / dof)
+        let lo = min(1.0, max(0.0, tomorrow - rmse))
+        let hi = min(1.0, max(0.0, tomorrow + rmse))
+        return (tomorrow, slope * 100, today, lo, hi)
     }
 
     @ViewBuilder
@@ -455,12 +465,35 @@ struct FitbitAirDataCard: View {
                         wowStat(title: "Slope/d", value: String(format: "%+.1fpp", fc.slopePP))
                         wowStat(title: "Tomorrow", value: "\(Int((fc.tomorrow * 100).rounded()))%")
                     }
+                    densityForecastBandRow(lo: fc.lo, hi: fc.hi)
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
             .accessibilityLabel("Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent")
             .accessibilityAddTraits(.isButton)
         }
+    }
+
+    /// Honest #540: ±1σ residual band row (split out for type-checker).
+    private func densityForecastBandRow(lo: Double, hi: Double) -> some View {
+        let loPct = Int((lo * 100).rounded())
+        let hiPct = Int((hi * 100).rounded())
+        return HStack(spacing: 8) {
+            Image(systemName: "chart.line.uptrend.xyaxis")
+                .font(.caption2.weight(.semibold))
+            Text("Band")
+                .font(.caption2.weight(.semibold))
+            Spacer()
+            Text("\(loPct)–\(hiPct)%")
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(accent)
+        }
+        .foregroundStyle(RTColor.secondaryText)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBand)
+        .accessibilityLabel("Tomorrow density band \(loPct) to \(hiPct) percent")
     }
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.
