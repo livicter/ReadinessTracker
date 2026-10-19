@@ -933,6 +933,8 @@ struct FitbitAirDataCard: View {
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(accent)
             }
+            // Honest #554: Sleep / Vitals / Move fill gauges (Google Health gap graphics)
+            gapsCategoryGauges
             if gapChips.isEmpty {
                 Text("All air fields filled tonight")
                     .font(.caption)
@@ -977,7 +979,76 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Air gaps")
     }
 
+
+    /// Honest #554: interactive category fill gauges under air gaps (Google Health / Fitbit parity).
+    private var gapsCategoryGauges: some View {
+        HStack(spacing: 8) {
+            ForEach(AirDensityCategory.allCases) { cat in
+                let filled = cat.filledCount(in: chips)
+                let total = cat.chipIDs.count
+                let ratio = cat.fillRatio(in: chips)
+                let gapsInCat = gapChips.filter { cat.chipIDs.contains($0.id) }
+                Button {
+                    Haptic.selectionChanged()
+                    if focusedLegend == cat {
+                        focusedLegend = nil
+                    } else {
+                        focusedLegend = cat
+                        sparkMetric = cat.sparkMetric
+                        sparkScrubIndex = nil
+                        focusedGapID = gapsInCat.first?.id
+                        selectedChipID = chips.first(where: { cat.chipIDs.contains($0.id) && $0.filled })?.id
+                            ?? chips.first(where: { cat.chipIDs.contains($0.id) })?.id
+                    }
+                } label: {
+                    VStack(alignment: .leading, spacing: 5) {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(cat.color)
+                                .frame(width: 6, height: 6)
+                            Text(cat.shortTitle)
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(focusedLegend == cat ? Color.white : RTColor.primaryText)
+                            Spacer(minLength: 0)
+                            Text("\(filled)/\(total)")
+                                .font(.caption2.weight(.bold).monospacedDigit())
+                                .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.95) : cat.color)
+                        }
+                        GeometryReader { geo in
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(cat.color.opacity(focusedLegend == cat ? 0.35 : 0.18))
+                                    .frame(height: 7)
+                                Capsule()
+                                    .fill(focusedLegend == cat ? Color.white : cat.color)
+                                    .frame(width: max(7, geo.size.width * CGFloat(ratio)), height: 7)
+                            }
+                            .frame(maxHeight: .infinity, alignment: .center)
+                        }
+                        .frame(height: 10)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(focusedLegend == cat ? cat.color : cat.color.opacity(0.10))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(focusedLegend == cat ? cat.color.opacity(0.85) : Color.clear, lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(cat.title) air fill \(filled) of \(total)")
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirGapsCategories)
+        .accessibilityLabel("Air gaps category fill")
+    }
+
     private var focusedGapHint: String {
+
         guard let id = focusedGapID, let gap = gapChips.first(where: { $0.id == id }) else {
             return source == .fitbit
                 ? "Tap a gap · wear Fitbit overnight, open Fitbit app, then pull-to-refresh Google Health."
