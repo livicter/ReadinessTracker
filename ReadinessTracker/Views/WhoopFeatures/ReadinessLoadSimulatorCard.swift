@@ -24,6 +24,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var focusedLever: SimLeverKind? = nil
     /// Honest #518: banner after seeding levers from today air vs 7d mean.
     @State private var airSeededSummary: String? = nil
+    /// Honest #520: saved A snapshot of levers for A/B compare.
+    @State private var snapA: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
 
     private var baseline: Int { scores.general }
 
@@ -91,6 +93,7 @@ struct ReadinessLoadSimulatorCard: View {
                 header
                 simulatorPresets
                 seedAirBlock
+                abSnapshotBlock
                 projectionHero
                 leverDeltaChips
                 projectedRingChips
@@ -289,6 +292,7 @@ struct ReadinessLoadSimulatorCard: View {
             if preset == .reset {
                 completedTaskIDs.removeAll()
                 airSeededSummary = nil
+                snapA = nil
             }
         }
     }
@@ -376,6 +380,93 @@ struct ReadinessLoadSimulatorCard: View {
             ]
             airSeededSummary = "Seeded from air · " + bits.joined(separator: " · ")
         }
+    }
+
+    /// Honest #520: richer simulation — save A, compare live B READY delta.
+    private var abSnapshotBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Button {
+                    Haptic.selectionChanged()
+                    snapA = (sleepDelta, hrvDelta, strainDelta, rhrDelta, spo2Delta, projected)
+                } label: {
+                    Text(snapA == nil ? "Save A" : "Update A")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(accent)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    Haptic.selectionChanged()
+                    guard let a = snapA else { return }
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        sleepDelta = a.sleep
+                        hrvDelta = a.hrv
+                        strainDelta = a.strain
+                        rhrDelta = a.rhr
+                        spo2Delta = a.spo2
+                    }
+                } label: {
+                    Text("Recall A")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(snapA == nil ? RTColor.tertiaryText : accent)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(accent.opacity(snapA == nil ? 0.08 : 0.14))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .disabled(snapA == nil)
+
+                Button {
+                    Haptic.selectionChanged()
+                    snapA = nil
+                } label: {
+                    Text("Clear")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(RTColor.secondaryText)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 9)
+                        .background(RTColor.surfaceHighlight)
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let a = snapA {
+                let d = projected - a.ready
+                HStack(spacing: 8) {
+                    Text("A \(a.ready)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.secondaryText)
+                    Image(systemName: "arrow.right")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(accent)
+                    Text("B \(projected)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(accent)
+                    Spacer()
+                    Text(d == 0 ? "±0" : String(format: "%+d READY", d))
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(d >= 0 ? RTColor.optimal : RTColor.warning)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background((d >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.14))
+                        .clipShape(Capsule())
+                }
+            } else {
+                Text("Save A, scrub levers, compare B")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorABSnapshot)
+        .accessibilityLabel("Simulator A B snapshot compare")
     }
 
     private var projectedRingChips: some View {
