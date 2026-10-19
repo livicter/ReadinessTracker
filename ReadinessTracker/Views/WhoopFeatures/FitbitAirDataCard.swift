@@ -466,6 +466,7 @@ struct FitbitAirDataCard: View {
                         wowStat(title: "Tomorrow", value: "\(Int((fc.tomorrow * 100).rounded()))%")
                     }
                     densityForecastBandRow(lo: fc.lo, hi: fc.hi)
+                    densityForecastBandBar(lo: fc.lo, hi: fc.hi, tomorrow: fc.tomorrow)
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -494,6 +495,34 @@ struct FitbitAirDataCard: View {
         .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBand)
         .accessibilityLabel("Tomorrow density band \(loPct) to \(hiPct) percent")
+    }
+
+
+    /// Honest #542: visual 0–100% track with ±1σ band fill + tomorrow marker.
+    private func densityForecastBandBar(lo: Double, hi: Double, tomorrow: Double) -> some View {
+        let loC = min(1, max(0, lo))
+        let hiC = min(1, max(0, hi))
+        let mid = min(1, max(0, tomorrow))
+        return GeometryReader { geo in
+            let w = geo.size.width
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(RTColor.tertiaryText.opacity(0.18))
+                Capsule()
+                    .fill(accent.opacity(0.28))
+                    .frame(width: max(4, (hiC - loC) * w))
+                    .offset(x: loC * w)
+                Circle()
+                    .fill(accent)
+                    .frame(width: 10, height: 10)
+                    .offset(x: max(0, mid * w - 5))
+            }
+        }
+        .frame(height: 10)
+        .padding(.horizontal, 10)
+        .padding(.bottom, 8)
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBar)
+        .accessibilityLabel("Tomorrow density band bar \(Int((loC * 100).rounded())) to \(Int((hiC * 100).rounded())) percent, marker \(Int((mid * 100).rounded()))")
     }
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.

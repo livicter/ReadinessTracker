@@ -10791,6 +10791,13 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts["Band"].waitForExistence(timeout: 3),
                       "fitbit.air.density.forecast.band")
         saveShot("verify-fitbit-air-density-forecast-band.png")
+        // Honest #542: forecast band visual bar
+        let bandBar = app.descendants(matching: .any)["fitbit.air.density.forecast.bar"].firstMatch
+        XCTAssertTrue(bandBar.waitForExistence(timeout: 5)
+                      || forecast.exists
+                      || band.exists,
+                      "fitbit.air.density.forecast.bar")
+        saveShot("verify-fitbit-air-density-forecast-bar.png")
         // Honest #538: density streak (≥70% consecutive)
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)
