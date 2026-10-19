@@ -808,6 +808,28 @@ struct ReadinessLoadSimulatorCard: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                // Honest #539: one-tap check / clear all tasks
+                Button {
+                    Haptic.selectionChanged()
+                    if done == tasks.count && !tasks.isEmpty {
+                        completedTaskIDs.removeAll()
+                    } else {
+                        completedTaskIDs = Set(tasks.map(\.id))
+                    }
+                } label: {
+                    Text(done == tasks.count && !tasks.isEmpty ? "Clear" : "Check all")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(accent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(accent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckAll)
+                .accessibilityLabel(done == tasks.count && !tasks.isEmpty
+                                    ? "Clear all simulator tasks"
+                                    : "Check all simulator tasks")
                 Text("\(done)/\(tasks.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)
