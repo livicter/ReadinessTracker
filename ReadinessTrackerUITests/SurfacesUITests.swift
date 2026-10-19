@@ -10579,6 +10579,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ring-deltas.png")
 
+        // Honest #577: ring parity meters
+        let ringParity = app.descendants(matching: .any)["sim.load.ring.parity"].firstMatch
+        XCTAssertTrue(ringParity.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ring.deltas"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ring.parity")
+        if ringParity.exists {
+            if ringParity.isHittable { ringParity.tap() }
+            else { ringParity.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-ring-parity.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)

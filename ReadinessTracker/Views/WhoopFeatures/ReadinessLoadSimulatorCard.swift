@@ -120,6 +120,7 @@ struct ReadinessLoadSimulatorCard: View {
                 seedLiveDeltaRail
                 taskCompletionRadial
                 ringDeltaBars
+                ringParityMeters
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1342,6 +1343,76 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorRingDeltas)
         .accessibilityLabel("Ring deltas versus tonight baseline")
+    }
+
+    /// Honest #577: ring parity meters — baseline ghost + live fill per ring (Google Health graphics).
+    private var ringParityMeters: some View {
+        struct Row: Identifiable {
+            let id: String
+            let title: String
+            let base: Int
+            let live: Int
+            let color: Color
+        }
+        let rows: [Row] = [
+            .init(id: "ready", title: "READY", base: baseline, live: projectedCoupled, color: accent),
+            .init(id: "gym", title: "Gym", base: scores.gym, live: projectedGym, color: Color(red: 255/255, green: 59/255, blue: 48/255)),
+            .init(id: "work", title: "Work", base: scores.cognitive, live: projectedWork, color: Color(red: 52/255, green: 199/255, blue: 89/255)),
+            .init(id: "sleep", title: "Sleep", base: scores.breakdown.sleepScore, live: projectedSleep, color: Color(hex: "5E5CE6"))
+        ]
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "align.horizontal.left.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Ring parity")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("base · live")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            ForEach(rows) { row in
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(row.title)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(row.color)
+                        Spacer()
+                        Text("\(row.base) → \(row.live)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let baseW = CGFloat(min(100, max(0, row.base))) / 100 * w
+                        let liveW = CGFloat(min(100, max(0, row.live))) / 100 * w
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.divider.opacity(0.55)).frame(height: 10)
+                            Capsule().fill(row.color.opacity(0.22)).frame(width: max(4, baseW), height: 10)
+                            Capsule().fill(row.color).frame(width: max(3, liveW), height: 6)
+                                .offset(y: 0)
+                            // baseline tick
+                            Capsule().fill(RTColor.primaryText.opacity(0.7))
+                                .frame(width: 2, height: 14)
+                                .offset(x: max(0, baseW - 1))
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 14)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorRingParity)
+        .accessibilityLabel("Ring parity baseline versus live")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
 
