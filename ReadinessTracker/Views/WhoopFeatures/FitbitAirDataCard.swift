@@ -722,17 +722,41 @@ struct FitbitAirDataCard: View {
 
     private var densityHistorySpark: some View {
         let points = densityHistoryPoints
+        let densMean: Double = {
+            let vals = points.map(\.density).filter { $0 > 0 }
+            guard !vals.isEmpty else { return 0 }
+            return vals.reduce(0, +) / Double(vals.count)
+        }()
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Density · \(sparkPeriod)d")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                if densMean > 0 {
+                    Text("avg \(Int((densMean * 100).rounded()))%")
+                        .font(.caption2.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.secondaryText)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(RTColor.secondaryText.opacity(0.10))
+                        .clipShape(Capsule())
+                        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySparkMean)
+                        .accessibilityLabel("Density spark mean \(Int((densMean * 100).rounded())) percent")
+                }
                 if let idx = sparkScrubIndex ?? (points.isEmpty ? nil : points.count - 1),
                    points.indices.contains(idx) {
-                    Text("\(Int((points[idx].density * 100).rounded()))%")
+                    let scrub = points[idx].density
+                    Text("\(Int((scrub * 100).rounded()))%")
                         .font(.caption.weight(.bold).monospacedDigit())
                         .foregroundStyle(accent)
+                    if densMean > 0 {
+                        let dpp = (scrub - densMean) * 100
+                        let sign = dpp >= 0 ? "+" : ""
+                        Text("\(sign)\(Int(dpp.rounded()))pp")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(abs(dpp) < 3 ? RTColor.secondaryText : (dpp >= 0 ? RTColor.optimal : RTColor.warning))
+                    }
                 }
             }
             // Honest #548: density spark min–max range strip
@@ -799,6 +823,12 @@ struct FitbitAirDataCard: View {
                             .foregroundStyle(accent)
                             .symbolSize(56)
                         }
+                    }
+                    // Honest #556: mean density rule across spark window
+                    if densMean > 0 {
+                        RuleMark(y: .value("Mean", densMean))
+                            .foregroundStyle(RTColor.secondaryText.opacity(0.55))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                     }
                 }
                 .chartXAxis(.hidden)
