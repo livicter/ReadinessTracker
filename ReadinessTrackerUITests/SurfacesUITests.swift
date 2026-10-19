@@ -10632,6 +10632,13 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "linked")).count > 0,
                       "fitbit.air.legend.spark")
         saveShot("verify-fitbit-air-legend-spark-link.png")
+        // Honest #525: 7-day density heatmap
+        let heat = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
+        XCTAssertTrue(heat.waitForExistence(timeout: 5)
+                      || app.staticTexts["7-day density"].waitForExistence(timeout: 3),
+                      "fitbit.air.density.heat")
+        if heat.exists { heat.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.4)).tap() }
+        saveShot("verify-fitbit-air-density-heatmap.png")
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")

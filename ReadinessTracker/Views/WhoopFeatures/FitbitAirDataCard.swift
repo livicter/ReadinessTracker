@@ -56,6 +56,7 @@ struct FitbitAirDataCard: View {
                     chipGrid
                 }
                 densityLegend
+                densityHeatmap
                 densityHistorySpark
                 if let selectedChip {
                     selectedDetail(selectedChip)
@@ -236,6 +237,59 @@ struct FitbitAirDataCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
         .accessibilityLabel("Air density legend")
+    }
+
+    /// Honest #525: interactive 7-day density heatmap (tap day → scrub spark).
+    private var densityHeatmap: some View {
+        let days = Array(history.suffix(7))
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("7-day density")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(RTColor.secondaryText)
+            HStack(spacing: 6) {
+                ForEach(Array(days.enumerated()), id: \.offset) { i, day in
+                    let dayChips = AirChip.all(from: day)
+                    let filled = dayChips.filter(\.filled).count
+                    let dens = dayChips.isEmpty ? 0.0 : Double(filled) / Double(dayChips.count)
+                    Button {
+                        Haptic.selectionChanged()
+                        // Map heatmap day onto spark scrub when spark window covers it.
+                        let sparkDays = sparkPoints
+                        if let match = sparkDays.firstIndex(where: {
+                            Calendar.current.isDate($0.date, inSameDayAs: day.date)
+                        }) {
+                            sparkScrubIndex = match
+                        }
+                    } label: {
+                        VStack(spacing: 4) {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(heatmapColor(dens))
+                                .frame(height: 36)
+                                .overlay(
+                                    Text("\(Int((dens * 100).rounded()))")
+                                        .font(.caption2.weight(.bold).monospacedDigit())
+                                        .foregroundStyle(dens > 0.55 ? Color.white : RTColor.primaryText)
+                                )
+                            Text(day.date, format: .dateTime.weekday(.narrow))
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(RTColor.tertiaryText)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Density day \(i + 1) \(Int((dens * 100).rounded())) percent")
+                }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHeatmap)
+        .accessibilityLabel("Seven day air density heatmap")
+    }
+
+    private func heatmapColor(_ dens: Double) -> Color {
+        if dens <= 0 { return RTColor.surfaceHighlight }
+        if dens < 0.4 { return accent.opacity(0.25) }
+        if dens < 0.7 { return accent.opacity(0.55) }
+        return accent.opacity(0.9)
     }
 
     /// Honest #514: history density% spark (same window as field spark).
