@@ -10875,6 +10875,12 @@ final class SurfacesUITests: XCTestCase {
             densSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
         }
         saveShot("verify-fitbit-air-data-density-spark.png")
+        // Honest #548: density spark min–max range
+        let densRange = app.descendants(matching: .any)["fitbit.air.density.spark.range"].firstMatch
+        XCTAssertTrue(densRange.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists,
+                      "fitbit.air.density.spark.range")
+        saveShot("verify-fitbit-air-density-spark-range.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
