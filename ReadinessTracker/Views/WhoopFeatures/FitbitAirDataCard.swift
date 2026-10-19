@@ -899,6 +899,13 @@ struct FitbitAirDataCard: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                // Honest #552: filled/total progress (parity with Simulator tasks progress)
+                let filledCount = chips.count - gapChips.count
+                Text("\(filledCount)/\(chips.count)")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                    .accessibilityIdentifier(SurfaceID.fitbitAirGapsProgress)
+                    .accessibilityLabel("Air gaps filled \(filledCount) of \(chips.count)")
                 if !gapChips.isEmpty {
                     // Honest #550: cycle focus to next unfilled air field
                     Button {
