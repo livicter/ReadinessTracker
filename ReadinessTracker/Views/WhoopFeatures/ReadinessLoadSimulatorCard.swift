@@ -876,6 +876,27 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityLabel(done == ordered.count && !ordered.isEmpty
                                     ? "Clear all simulator tasks"
                                     : "Check all simulator tasks")
+                // Honest #545: check top-3 READY-impact tasks (richer sim)
+                Button {
+                    Haptic.selectionChanged()
+                    let top = Array(ordered.sorted { $0.readyDelta > $1.readyDelta }.prefix(3))
+                    if !top.isEmpty && top.allSatisfy({ completedTaskIDs.contains($0.id) }) {
+                        for t in top { completedTaskIDs.remove(t.id) }
+                    } else {
+                        for t in top { completedTaskIDs.insert(t.id) }
+                    }
+                } label: {
+                    Text("Top 3")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(accent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(accent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksTop3)
+                .accessibilityLabel("Check top three READY impact tasks")
                 Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)

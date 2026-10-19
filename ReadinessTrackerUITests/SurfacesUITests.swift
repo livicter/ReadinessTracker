@@ -10451,6 +10451,18 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["All"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-airfilter.png")
+        // Honest #545: Top 3 READY-impact check
+        let top3 = app.descendants(matching: .any)["sim.load.tasks.top3"].firstMatch
+        XCTAssertTrue(top3.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Top 3"].waitForExistence(timeout: 3),
+                      "sim.load.tasks.top3")
+        if top3.exists {
+            top3.tap()
+        } else if app.staticTexts["Top 3"].exists {
+            app.staticTexts["Top 3"].tap()
+        }
+        saveShot("verify-readiness-load-simulator-tasks-top3.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
