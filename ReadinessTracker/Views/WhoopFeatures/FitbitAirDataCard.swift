@@ -899,6 +899,29 @@ struct FitbitAirDataCard: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                if !gapChips.isEmpty {
+                    // Honest #550: cycle focus to next unfilled air field
+                    Button {
+                        Haptic.selectionChanged()
+                        let ids = gapChips.map(\.id)
+                        if let cur = focusedGapID, let idx = ids.firstIndex(of: cur) {
+                            focusedGapID = ids[(idx + 1) % ids.count]
+                        } else {
+                            focusedGapID = ids.first
+                        }
+                    } label: {
+                        Text("Fill next")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(Color.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(accent)
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(SurfaceID.fitbitAirGapsFill)
+                    .accessibilityLabel("Fill next air gap")
+                }
                 Text(source == .fitbit ? "Google Health" : "HealthKit")
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(accent)
