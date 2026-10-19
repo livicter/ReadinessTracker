@@ -10413,6 +10413,18 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")
         saveShot("verify-readiness-load-simulator-tasks.png")
+        // Honest #539: Check all / Clear tasks control
+        let checkAll = app.descendants(matching: .any)["sim.load.tasks.checkall"].firstMatch
+        XCTAssertTrue(checkAll.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Check all"].waitForExistence(timeout: 3),
+                      "sim.load.tasks.checkall")
+        if checkAll.exists {
+            checkAll.tap()
+        } else if app.staticTexts["Check all"].exists {
+            app.staticTexts["Check all"].tap()
+        }
+        saveShot("verify-readiness-load-simulator-tasks-check-all.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
