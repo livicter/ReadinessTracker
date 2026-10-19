@@ -10418,6 +10418,18 @@ final class SurfacesUITests: XCTestCase {
         if row.exists { row.tap() }
         let progress = app.descendants(matching: .any)["sim.load.tasks.progress"].firstMatch
         XCTAssertTrue(progress.exists || tasks.exists, "sim.load.tasks.progress")
+        // Honest #528: checked-task lift couples into projection gauge
+        var coupledN = 0
+        let coupled = app.descendants(matching: .any)["sim.load.tasks.coupled"].firstMatch
+        while !coupled.exists && coupledN < 6 {
+            app.swipeDown()
+            coupledN += 1
+        }
+        XCTAssertTrue(coupled.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "coupled")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Tasks")).count > 0,
+                      "sim.load.tasks.coupled")
+        saveShot("verify-readiness-load-simulator-task-coupled.png")
         if controls.exists {
             // Nudge lower slider region (RHR / SpO2 levers).
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85)).tap()
