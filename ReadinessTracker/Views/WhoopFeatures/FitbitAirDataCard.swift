@@ -496,6 +496,8 @@ struct FitbitAirDataCard: View {
                     densityForecastConfidenceMeter(lo: fc.lo, hi: fc.hi)
                     // Honest #562: 3-day forecast horizon bars (Google Health graphics)
                     densityForecastHorizon(fc: fc)
+                    // Honest #564: residual spark — actual vs predicted density (Google Health)
+                    densityForecastResidualSpark()
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -679,6 +681,133 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHorizon)
         .accessibilityLabel("Density forecast horizon three day")
     }
+
+    /// Honest #564: residual spark — last-7 actual density vs linear prediction (Google Health graphics).
+    @ViewBuilder
+    private func densityForecastResidualSpark() -> some View {
+        let days = Array(history.suffix(7))
+        if days.count < 4 {
+            EmptyView()
+        } else {
+            residualSparkBody(days: days)
+        }
+    }
+
+    private func residualSparkBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let xs = dens.indices.map { Double($0) }
+        let sumX = xs.reduce(0, +)
+        let sumY = dens.reduce(0, +)
+        let sumXY = zip(xs, dens).map(*).reduce(0, +)
+        let sumXX = xs.map { $0 * $0 }.reduce(0, +)
+        let denom = n * sumXX - sumX * sumX
+        let slope: Double
+        let intercept: Double
+        if abs(denom) > 1e-9 {
+            slope = (n * sumXY - sumX * sumY) / denom
+            intercept = (sumY - slope * sumX) / n
+        } else {
+            slope = 0
+            intercept = dens.last ?? 0
+        }
+        struct Pt: Identifiable {
+            let id: Int
+            let label: String
+            let actual: Double
+            let predicted: Double
+        }
+        let points: [Pt] = dens.enumerated().map { i, a in
+            Pt(id: i, label: "D-\(dens.count - 1 - i)", actual: a, predicted: intercept + slope * Double(i))
+        }
+        let mae = points.map { abs($0.actual - $0.predicted) }.reduce(0, +) / Double(max(1, points.count))
+        let maePP = Int((mae * 100).rounded())
+        let maeTone: Color = maePP <= 8 ? RTColor.optimal : (maePP <= 15 ? RTColor.good : RTColor.warning)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path.ecg")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Residual")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("MAE \(maePP)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(maeTone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(maeTone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(points) { pt in
+                    LineMark(
+                        x: .value("Day", pt.label),
+                        y: .value("Actual", pt.actual * 100)
+                    )
+                    .foregroundStyle(accent)
+                    .interpolationMethod(.catmullRom)
+                    .symbol(Circle())
+                    .symbolSize(36)
+                    LineMark(
+                        x: .value("Day", pt.label),
+                        y: .value("Predicted", pt.predicted * 100)
+                    )
+                    .foregroundStyle(RTColor.secondaryText.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .interpolationMethod(.linear)
+                }
+            }
+            .chartYScale(domain: 0...100)
+            .chartYAxis {
+                AxisMarks(values: [0, 50, 100]) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 88)
+            HStack(spacing: 12) {
+                HStack(spacing: 4) {
+                    Capsule().fill(accent).frame(width: 12, height: 3)
+                    Text("Actual")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                HStack(spacing: 4) {
+                    Capsule()
+                        .stroke(RTColor.secondaryText.opacity(0.7), style: StrokeStyle(lineWidth: 1.5, dash: [3, 2]))
+                        .frame(width: 12, height: 3)
+                    Text("Predicted")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                Spacer()
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastResidual)
+        .accessibilityLabel("Forecast residual spark mean absolute error \(maePP) percentage points")
+    }
+
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.
     private var densityStreak: (current: Int, best: Int, threshold: Double)? {
