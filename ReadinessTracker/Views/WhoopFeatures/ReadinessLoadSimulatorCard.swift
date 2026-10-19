@@ -675,6 +675,26 @@ struct ReadinessLoadSimulatorCard: View {
                     .foregroundStyle(accent)
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
             }
+            // Honest #523: air-gap task cue
+            let airGapCount = tasks.filter { $0.id.hasPrefix("air-") || $0.id.contains("air") }.count
+            if airGapCount > 0 {
+                HStack(spacing: 6) {
+                    Image(systemName: "wind")
+                        .font(.caption2.weight(.bold))
+                    Text("\(airGapCount) air gap task\(airGapCount == 1 ? "" : "s")")
+                        .font(.caption.weight(.semibold))
+                    Spacer()
+                    Text(source == .fitbit ? "Fitbit" : "Health")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(accent.opacity(0.14))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(accent)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorAirGapTasks)
+                .accessibilityLabel("\(airGapCount) air gap tasks")
+            }
             // Honest #515: cumulative READY impact from checked tasks
             HStack(spacing: 8) {
                 Text("READY lift")
@@ -954,34 +974,21 @@ struct SimulatorTask: Identifiable {
                     readyDelta: 2
             ))
         }
-        if source == .fitbit {
-            if data.hrv <= 0 {
-                out.append(.init(
-                    id: "fitbit-hrv-air",
-                    title: "Fill HRV air gap",
-                    detail: "Google Health has no HRV yet — wear overnight and sync Fitbit.",
-                    icon: "waveform.path.ecg",
-                        readyDelta: 3
-                ))
+        // Honest #523: denser Fitbit/Health air-gap tasks (always consider gaps).
+        let airGaps = airGapTasks(data: data, source: source)
+        for gap in airGaps where out.count < 5 {
+            if !out.contains(where: { $0.id == gap.id }) {
+                out.append(gap)
             }
-            if data.sleepHours <= 0 {
-                out.append(.init(
-                    id: "fitbit-sleep-air",
-                    title: "Fill sleep air gap",
-                    detail: "No sleep hours in tonight’s Fitbit air — open Fitbit app, then refresh.",
-                    icon: "moon.zzz.fill",
-                        readyDelta: 4
-                ))
-            }
-            if out.count < 2 {
-                out.append(.init(
-                    id: "fitbit-sync",
-                    title: "Confirm Fitbit sync",
-                    detail: "Pull-to-refresh so Google Health air fields stay current.",
-                    icon: "arrow.triangle.2.circlepath",
-                        readyDelta: 1
-                ))
-            }
+        }
+        if source == .fitbit && out.count < 2 {
+            out.append(.init(
+                id: "fitbit-sync",
+                title: "Confirm Fitbit sync",
+                detail: "Pull-to-refresh so Google Health air fields stay current.",
+                icon: "arrow.triangle.2.circlepath",
+                readyDelta: 1
+            ))
         }
         if out.isEmpty {
             out.append(.init(
@@ -989,10 +996,53 @@ struct SimulatorTask: Identifiable {
                 title: "Hold the line",
                 detail: "Scrubs look balanced — keep today’s plan and recheck after lunch.",
                 icon: "checkmark.circle.fill",
-                    readyDelta: 1
+                readyDelta: 1
             ))
         }
-        return Array(out.prefix(4))
+        return Array(out.prefix(5))
+    }
+
+    /// Honest #523: tasks that fill missing Fitbit/Health air fields.
+    static func airGapTasks(data: DailyHealthData, source: DataSource) -> [SimulatorTask] {
+        var gaps: [SimulatorTask] = []
+        let via = source == .fitbit ? "Fitbit / Google Health" : "HealthKit"
+        if data.hrv <= 0 {
+            gaps.append(.init(
+                id: "air-hrv",
+                title: "Fill HRV air gap",
+                detail: "No HRV in tonight’s \(via) air — wear overnight, then sync.",
+                icon: "waveform.path.ecg",
+                readyDelta: 3
+            ))
+        }
+        if data.sleepHours <= 0 {
+            gaps.append(.init(
+                id: "air-sleep",
+                title: "Fill sleep air gap",
+                detail: "Sleep hours missing from \(via) — open the source app and refresh.",
+                icon: "moon.zzz.fill",
+                readyDelta: 4
+            ))
+        }
+        if data.restingHeartRate <= 0 {
+            gaps.append(.init(
+                id: "air-rhr",
+                title: "Fill RHR air gap",
+                detail: "Resting HR empty in \(via) air — quiet wake window helps.",
+                icon: "heart.fill",
+                readyDelta: 2
+            ))
+        }
+        if (data.bloodOxygen ?? 0) <= 0 {
+            gaps.append(.init(
+                id: "air-spo2",
+                title: "Fill SpO₂ air gap",
+                detail: "SpO₂ missing from \(via) — enable overnight oximetry if available.",
+                icon: "lungs.fill",
+                readyDelta: 2
+            ))
+        }
+        return gaps
     }
 }
 
