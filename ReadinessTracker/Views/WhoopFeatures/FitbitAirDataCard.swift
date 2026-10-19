@@ -78,6 +78,7 @@ struct FitbitAirDataCard: View {
                 densityCVMeter
                 densitySkewMeter
                 densityIQRMeter
+                densityPercentileMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1685,6 +1686,97 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityIQR)
         .accessibilityLabel("Density IQR \(verb) \(iqrPP) points, median \(medPP) percent")
+    }
+
+
+
+    /// Honest #578: density percentile rank — tonight dens vs last-14 (Google Health graphics).
+    @ViewBuilder
+    private var densityPercentileMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityPercentileBody(days: days)
+        }
+    }
+
+    private func densityPercentileBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let today = dens.last ?? density
+        let sorted = dens.sorted()
+        let below = sorted.filter { $0 < today }.count
+        let equal = sorted.filter { $0 == today }.count
+        // Mid-rank percentile
+        let pct = (Double(below) + 0.5 * Double(equal)) / Double(sorted.count)
+        let pctPP = Int((pct * 100).rounded())
+        let todayPP = Int((today * 100).rounded())
+        let tone: Color = pctPP >= 70 ? RTColor.optimal : (pctPP >= 40 ? RTColor.good : RTColor.warning)
+        let verb = pctPP >= 70 ? "High" : (pctPP >= 40 ? "Mid" : "Low")
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "percent")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density percentile")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) P\(pctPP)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let x = CGFloat(pct) * w
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [Color(hex: "FF375F").opacity(0.35), RTColor.good.opacity(0.45), RTColor.optimal.opacity(0.55)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    // tonight marker
+                    Circle()
+                        .fill(tone)
+                        .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
+                        .frame(width: 16, height: 16)
+                        .offset(x: max(0, min(w - 16, x - 8)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("P0")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Tonight \(todayPP)% · P\(pctPP) of \(sorted.count)d")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("P100")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityPercentile)
+        .accessibilityLabel("Density percentile \(verb) P\(pctPP), tonight \(todayPP) percent")
     }
 
 
