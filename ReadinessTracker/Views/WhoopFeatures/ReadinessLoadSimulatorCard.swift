@@ -114,6 +114,7 @@ struct ReadinessLoadSimulatorCard: View {
                 projectedRingChips
                 interactiveControls
                 sparkProjection
+                readyPathSpark
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -861,6 +862,83 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorSpark)
             .accessibilityLabel("Readiness projection map")
         }
+    }
+
+
+    /// Honest #561: READY path spark — baseline → projected → coupled → ceiling (richer sim graphics).
+    private var readyPathSpark: some View {
+        let totalLift = tasks.map(\.readyDelta).reduce(0, +)
+        let ceiling = min(100, projected + totalLift)
+        let points: [(label: String, value: Int)] = [
+            ("Base", baseline),
+            ("Scrub", projected),
+            ("Tasks", projectedCoupled),
+            ("Ceil", ceiling)
+        ]
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "point.topleft.down.to.point.bottomright.curvepath.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY path")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(baseline)→\(ceiling)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.optimal)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(RTColor.optimal.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                    LineMark(
+                        x: .value("Step", pt.label),
+                        y: .value("READY", pt.value)
+                    )
+                    .foregroundStyle(accent)
+                    .interpolationMethod(.catmullRom)
+                    PointMark(
+                        x: .value("Step", pt.label),
+                        y: .value("READY", pt.value)
+                    )
+                    .foregroundStyle(pt.label == "Ceil" ? RTColor.optimal : accent)
+                    .symbolSize(64)
+                }
+                RuleMark(y: .value("Base", baseline))
+                    .foregroundStyle(RTColor.tertiaryText.opacity(0.45))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .chartYScale(domain: 0...100)
+            .chartYAxis {
+                AxisMarks(values: [0, 50, 100]) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 96)
+            .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+            .animation(.easeInOut(duration: 0.25), value: ceiling)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
+        .accessibilityLabel("READY path \(baseline) to \(ceiling)")
     }
 
     private var fitbitAirStrip: some View {
