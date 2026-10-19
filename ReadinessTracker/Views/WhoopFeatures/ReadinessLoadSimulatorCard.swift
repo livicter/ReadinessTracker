@@ -121,6 +121,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskCompletionRadial
                 ringDeltaBars
                 ringParityMeters
+                leverPolarityStrip
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1413,6 +1414,74 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorRingParity)
         .accessibilityLabel("Ring parity baseline versus live")
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #579: lever polarity strip — signed horizontal READY contributions (Google Health graphics).
+    private var leverPolarityStrip: some View {
+        let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
+            (lever, lever.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta))
+        }
+        let maxAbs = max(1.0, rows.map { abs($0.1) }.max() ?? 1)
+        let push = rows.filter { $0.1 > 0 }.map(\.1).reduce(0, +)
+        let pull = rows.filter { $0.1 < 0 }.map(\.1).reduce(0, +)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.arrow.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Lever polarity")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(String(format: "+%.1f / %.1f", push, pull))
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            ForEach(rows, id: \.0.id) { lever, value in
+                HStack(spacing: 8) {
+                    Text(lever.title)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(lever.color)
+                        .frame(width: 44, alignment: .leading)
+                    GeometryReader { geo in
+                        let mid = geo.size.width / 2
+                        let mag = CGFloat(abs(value) / maxAbs) * (mid - 4)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.divider.opacity(0.45)).frame(height: 8)
+                            Capsule().fill(RTColor.primaryText.opacity(0.45)).frame(width: 2, height: 12).offset(x: mid - 1)
+                            if value >= 0 {
+                                Capsule().fill(lever.color)
+                                    .frame(width: max(3, mag), height: 8)
+                                    .offset(x: mid)
+                            } else {
+                                Capsule().fill(lever.color.opacity(0.7))
+                                    .frame(width: max(3, mag), height: 8)
+                                    .offset(x: mid - max(3, mag))
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 12)
+                    Text(value >= 0 ? String(format: "+%.1f", value) : String(format: "%.1f", value))
+                        .font(.caption2.weight(.bold).monospacedDigit())
+                        .foregroundStyle(value >= 0 ? RTColor.optimal : Color(hex: "FF375F"))
+                        .frame(width: 40, alignment: .trailing)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverPolarity)
+        .accessibilityLabel("Lever polarity push \(String(format: "%.1f", push)) pull \(String(format: "%.1f", pull))")
+        .animation(.easeInOut(duration: 0.25), value: sleepDelta)
+        .animation(.easeInOut(duration: 0.25), value: hrvDelta)
+        .animation(.easeInOut(duration: 0.25), value: strainDelta)
+        .animation(.easeInOut(duration: 0.25), value: rhrDelta)
+        .animation(.easeInOut(duration: 0.25), value: spo2Delta)
     }
 
 
