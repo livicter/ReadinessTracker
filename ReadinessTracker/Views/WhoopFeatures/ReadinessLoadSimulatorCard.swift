@@ -111,6 +111,7 @@ struct ReadinessLoadSimulatorCard: View {
                 abSnapshotBlock
                 projectionHero
                 leverDeltaChips
+                leverSensitivityBars
                 projectedRingChips
                 interactiveControls
                 sparkProjection
@@ -295,6 +296,78 @@ struct ReadinessLoadSimulatorCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(lever.title) \(label)")
+    }
+
+    /// Honest #567: lever sensitivity bars — per-lever READY contribution Chart (Google Health graphics).
+    private var leverSensitivityBars: some View {
+        let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
+            (lever, lever.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta))
+        }
+        let sum = rows.map(\.1).reduce(0, +)
+        let sumLabel = sum >= 0 ? String(format: "Σ +%.1f", sum) : String(format: "Σ %.1f", sum)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Lever sensitivity")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(sumLabel)
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(sum >= 0 ? RTColor.optimal : Color(hex: "FF375F"))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background((sum >= 0 ? RTColor.optimal : Color(hex: "FF375F")).opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(rows, id: \.0.id) { lever, value in
+                    BarMark(
+                        x: .value("Lever", lever.title),
+                        y: .value("READY", value)
+                    )
+                    .foregroundStyle(value >= 0 ? lever.color : lever.color.opacity(0.55))
+                    .cornerRadius(4)
+                }
+                RuleMark(y: .value("Zero", 0))
+                    .foregroundStyle(RTColor.tertiaryText.opacity(0.45))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 110)
+            .animation(.easeInOut(duration: 0.25), value: sleepDelta)
+            .animation(.easeInOut(duration: 0.25), value: hrvDelta)
+            .animation(.easeInOut(duration: 0.25), value: strainDelta)
+            .animation(.easeInOut(duration: 0.25), value: rhrDelta)
+            .animation(.easeInOut(duration: 0.25), value: spo2Delta)
+            Text("READY points per scrub · tap chips above to focus a lever")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverSensitivity)
+        .accessibilityLabel("Lever sensitivity \(sumLabel)")
     }
 
     /// Honest #504: scenario presets + reset for richer simulation.

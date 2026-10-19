@@ -10554,6 +10554,18 @@ final class SurfacesUITests: XCTestCase {
             else { waterfall.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-task-waterfall.png")
+
+        // Honest #567: lever sensitivity bars
+        let leverSens = app.descendants(matching: .any)["sim.load.lever.sensitivity"].firstMatch
+        XCTAssertTrue(leverSens.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.delta.levers"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.lever.sensitivity")
+        if leverSens.exists {
+            if leverSens.isHittable { leverSens.tap() }
+            else { leverSens.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-lever-sensitivity.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
