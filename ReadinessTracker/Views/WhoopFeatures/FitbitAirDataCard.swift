@@ -494,6 +494,8 @@ struct FitbitAirDataCard: View {
                     densityForecastBandBar(lo: fc.lo, hi: fc.hi, tomorrow: fc.tomorrow)
                     // Honest #560: forecast confidence from residual band width (Google Health graphics)
                     densityForecastConfidenceMeter(lo: fc.lo, hi: fc.hi)
+                    // Honest #562: 3-day forecast horizon bars (Google Health graphics)
+                    densityForecastHorizon(fc: fc)
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -606,6 +608,76 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastConf)
         .accessibilityLabel("Forecast confidence \(pct) percent")
+    }
+
+
+    /// Honest #562: 3-day ahead density horizon bars with tapering confidence (Google Health).
+    private func densityForecastHorizon(fc: (tomorrow: Double, slopePP: Double, today: Double, lo: Double, hi: Double)) -> some View {
+        let slope = fc.slopePP / 100.0  // per-day density fraction
+        let days: [(label: String, value: Double, conf: Double)] = (1...3).map { d in
+            let v = min(1, max(0, fc.today + slope * Double(d)))
+            // confidence tapers with horizon; also shrinks when residual band is wide
+            let span = max(0, min(1, fc.hi - fc.lo))
+            let baseConf = max(0, min(1, 1 - span))
+            let taper = max(0.25, 1.0 - 0.22 * Double(d - 1))
+            return ("D+\(d)", v, baseConf * taper)
+        }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "calendar.badge.clock")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Horizon")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("3-day")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(accent.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .bottom, spacing: 10) {
+                ForEach(Array(days.enumerated()), id: \.offset) { _, day in
+                    VStack(spacing: 6) {
+                        Text("\(Int((day.value * 100).rounded()))%")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent.opacity(0.55 + 0.45 * day.conf))
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [accent.opacity(0.35 * day.conf), accent.opacity(0.85 * day.conf + 0.15)],
+                                    startPoint: .bottom,
+                                    endPoint: .top
+                                )
+                            )
+                            .frame(height: max(8, 72 * day.value))
+                            .frame(maxWidth: .infinity)
+                        Text(day.label)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Text("\(Int((day.conf * 100).rounded()))% conf")
+                            .font(.system(size: 9, weight: .medium).monospacedDigit())
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .frame(height: 110, alignment: .bottom)
+            Text("Slope \(String(format: "%+.1f", fc.slopePP))pp/d · confidence tapers with horizon")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHorizon)
+        .accessibilityLabel("Density forecast horizon three day")
     }
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.
