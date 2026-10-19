@@ -498,6 +498,8 @@ struct FitbitAirDataCard: View {
                     densityForecastHorizon(fc: fc)
                     // Honest #564: residual spark — actual vs predicted density (Google Health)
                     densityForecastResidualSpark()
+                    // Honest #566: forecast hit-rate — actuals inside residual band (Google Health)
+                    densityForecastHitRate()
                 }
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
@@ -807,6 +809,98 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastResidual)
         .accessibilityLabel("Forecast residual spark mean absolute error \(maePP) percentage points")
     }
+
+
+    /// Honest #566: forecast hit-rate — share of last-7 actuals inside residual band (Google Health graphics).
+    @ViewBuilder
+    private func densityForecastHitRate() -> some View {
+        let days = Array(history.suffix(7))
+        if days.count < 4 {
+            EmptyView()
+        } else {
+            hitRateBody(days: days)
+        }
+    }
+
+    private func hitRateBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let xs = dens.indices.map { Double($0) }
+        let sumX = xs.reduce(0, +)
+        let sumY = dens.reduce(0, +)
+        let sumXY = zip(xs, dens).map(*).reduce(0, +)
+        let sumXX = xs.map { $0 * $0 }.reduce(0, +)
+        let denom = n * sumXX - sumX * sumX
+        let slope: Double
+        let intercept: Double
+        if abs(denom) > 1e-9 {
+            slope = (n * sumXY - sumX * sumY) / denom
+            intercept = (sumY - slope * sumX) / n
+        } else {
+            slope = 0
+            intercept = dens.last ?? 0
+        }
+        let preds = dens.indices.map { intercept + slope * Double($0) }
+        let residuals = zip(dens, preds).map { abs($0 - $1) }
+        let mae = residuals.reduce(0, +) / Double(max(1, residuals.count))
+        // ±1σ ≈ 1.25 * MAE for Laplace-ish residuals; floor at 5pp
+        let half = max(0.05, mae * 1.25)
+        let hits = zip(dens, preds).filter { abs($0 - $1) <= half }.count
+        let total = dens.count
+        let rate = total > 0 ? Double(hits) / Double(total) : 0
+        let ratePP = Int((rate * 100).rounded())
+        let tone: Color = ratePP >= 70 ? RTColor.optimal : (ratePP >= 50 ? RTColor.good : RTColor.warning)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "scope")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Hit rate")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(hits)/\(total) · \(ratePP)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(accent.opacity(0.14))
+                        .frame(height: 12)
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [accent, tone],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(width: max(8, geo.size.width * CGFloat(rate)), height: 12)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 16)
+            Text("Actuals inside ±\(Int((half * 100).rounded()))pp band")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHitRate)
+        .accessibilityLabel("Forecast hit rate \(ratePP) percent, \(hits) of \(total)")
+    }
+
 
 
     /// Honest #538: consecutive days ending today with density ≥ 70%.
