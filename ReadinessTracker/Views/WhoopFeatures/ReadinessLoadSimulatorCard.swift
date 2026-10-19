@@ -22,6 +22,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var focusedRing: SimRingKind = .ready
     /// Honest #516: which lever contribution chip is focused.
     @State private var focusedLever: SimLeverKind? = nil
+    /// Honest #518: banner after seeding levers from today air vs 7d mean.
+    @State private var airSeededSummary: String? = nil
 
     private var baseline: Int { scores.general }
 
@@ -88,6 +90,7 @@ struct ReadinessLoadSimulatorCard: View {
             VStack(alignment: .leading, spacing: 16) {
                 header
                 simulatorPresets
+                seedAirBlock
                 projectionHero
                 leverDeltaChips
                 projectedRingChips
@@ -283,7 +286,95 @@ struct ReadinessLoadSimulatorCard: View {
             strainDelta = preset.strain
             rhrDelta = preset.rhr
             spo2Delta = preset.spo2
-            if preset == .reset { completedTaskIDs.removeAll() }
+            if preset == .reset {
+                completedTaskIDs.removeAll()
+                airSeededSummary = nil
+            }
+        }
+    }
+
+    /// Honest #518: denser Fitbit/Health air → simulator integration.
+    private var seedAirBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Button {
+                Haptic.selectionChanged()
+                seedFromAir()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "wind")
+                        .font(.caption.weight(.bold))
+                    Text(source == .fitbit ? "Seed from Fitbit air" : "Seed from Health air")
+                        .font(.caption.weight(.bold))
+                    Spacer()
+                    Text("7d Δ")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.white.opacity(0.2))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(Color.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(
+                    LinearGradient(
+                        colors: [accent, Color(hex: "64D2FF")],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedAir)
+            .accessibilityLabel("Seed simulator from air data")
+
+            if let airSeededSummary {
+                HStack(spacing: 6) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.optimal)
+                    Text(airSeededSummary)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.secondaryText)
+                        .lineLimit(2)
+                }
+                .accessibilityLabel(airSeededSummary)
+            }
+        }
+    }
+
+    private func seedFromAir() {
+        let window = Array(history.suffix(7))
+        func mean(_ values: [Double]) -> Double {
+            guard !values.isEmpty else { return 0 }
+            return values.reduce(0, +) / Double(values.count)
+        }
+        let avgSleep = mean(window.map(\.sleepHours))
+        let avgHrv = mean(window.map(\.hrv))
+        let avgRhr = mean(window.map(\.restingHeartRate))
+        let spo2Vals = window.compactMap { $0.bloodOxygen }.filter { $0 > 0 }
+        let avgSpo2 = mean(spo2Vals)
+        let avgWO = mean(window.map { Double($0.workoutMinutes) })
+        let spo2Now = data.bloodOxygen ?? avgSpo2
+
+        func clamp(_ v: Double, _ r: ClosedRange<Double>) -> Double {
+            min(r.upperBound, max(r.lowerBound, v))
+        }
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            sleepDelta = clamp(data.sleepHours - avgSleep, -2...2)
+            hrvDelta = clamp(data.hrv - avgHrv, -20...20)
+            strainDelta = clamp((Double(data.workoutMinutes) - avgWO) / 20.0, -6...6)
+            rhrDelta = clamp(data.restingHeartRate - avgRhr, -10...10)
+            spo2Delta = clamp(spo2Now - (avgSpo2 == 0 ? spo2Now : avgSpo2), -3...3)
+            focusedLever = nil
+            let bits = [
+                String(format: "Sleep %+.1fh", sleepDelta),
+                String(format: "HRV %+.0f", hrvDelta),
+                String(format: "RHR %+.0f", rhrDelta)
+            ]
+            airSeededSummary = "Seeded from air · " + bits.joined(separator: " · ")
         }
     }
 
