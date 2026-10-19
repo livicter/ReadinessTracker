@@ -20,6 +20,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var completedTaskIDs: Set<String> = []
     /// Honest #508: which projected ring chip is focused.
     @State private var focusedRing: SimRingKind = .ready
+    /// Honest #516: which lever contribution chip is focused.
+    @State private var focusedLever: SimLeverKind? = nil
 
     private var baseline: Int { scores.general }
 
@@ -87,6 +89,7 @@ struct ReadinessLoadSimulatorCard: View {
                 header
                 simulatorPresets
                 projectionHero
+                leverDeltaChips
                 projectedRingChips
                 interactiveControls
                 sparkProjection
@@ -193,6 +196,62 @@ struct ReadinessLoadSimulatorCard: View {
                 .font(.caption2)
                 .foregroundStyle(RTColor.tertiaryText)
         }
+    }
+
+    /// Honest #516: per-lever READY contribution chips (interactive).
+    private var leverDeltaChips: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Lever deltas")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(deltaVsBaseline >= 0 ? "Σ +\(deltaVsBaseline)" : "Σ \(deltaVsBaseline)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(deltaVsBaseline >= 0 ? RTColor.optimal : Color(hex: "FF375F"))
+            }
+            HStack(spacing: 8) {
+                ForEach(SimLeverKind.allCases) { lever in
+                    leverDeltaChip(lever)
+                }
+            }
+            if let focusedLever {
+                Text(focusedLever.hint)
+                    .font(.caption)
+                    .foregroundStyle(RTColor.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverDeltas)
+        .accessibilityLabel("Lever deltas")
+    }
+
+    private func leverDeltaChip(_ lever: SimLeverKind) -> some View {
+        let value = lever.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta)
+        let active = focusedLever == lever
+        let label = value >= 0 ? String(format: "+%.1f", value) : String(format: "%.1f", value)
+        return Button {
+            Haptic.selectionChanged()
+            focusedLever = focusedLever == lever ? nil : lever
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: lever.icon)
+                    .font(.caption2.weight(.bold))
+                Text(lever.title)
+                    .font(.caption2.weight(.bold))
+                Text(label)
+                    .font(.caption.weight(.bold).monospacedDigit())
+            }
+            .foregroundStyle(active ? Color.white : lever.color)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(active ? lever.color : lever.color.opacity(0.12))
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(lever.title) \(label)")
     }
 
     /// Honest #504: scenario presets + reset for richer simulation.
@@ -513,6 +572,59 @@ struct ReadinessLoadSimulatorCard: View {
         let rhrAdj = -rhr * 0.4
         let spo2Adj = spo2 * 1.5
         return min(100, max(0, Int((Double(baseline) + sleepAdj + hrvAdj + strainAdj + rhrAdj + spo2Adj).rounded())))
+    }
+}
+
+
+// MARK: - Lever kinds (Honest #516)
+
+enum SimLeverKind: String, CaseIterable, Identifiable {
+    case sleep, hrv, strain, rhr, spo2
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .sleep: return "Sleep"
+        case .hrv: return "HRV"
+        case .strain: return "Strain"
+        case .rhr: return "RHR"
+        case .spo2: return "SpO₂"
+        }
+    }
+    var icon: String {
+        switch self {
+        case .sleep: return "moon.zzz.fill"
+        case .hrv: return "waveform.path.ecg"
+        case .strain: return "flame.fill"
+        case .rhr: return "heart.fill"
+        case .spo2: return "lungs.fill"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .sleep: return Color(hex: "5E5CE6")
+        case .hrv: return Color(hex: "30D158")
+        case .strain: return Color(hex: "FF9F0A")
+        case .rhr: return Color(hex: "FF375F")
+        case .spo2: return Color(hex: "64D2FF")
+        }
+    }
+    var hint: String {
+        switch self {
+        case .sleep: return "Sleep scrub · ~4 READY per hour."
+        case .hrv: return "HRV scrub · ~0.25 READY per ms."
+        case .strain: return "Strain scrub · load tax on READY."
+        case .rhr: return "RHR scrub · elevated resting rate softens READY."
+        case .spo2: return "SpO₂ scrub · saturation support for READY."
+        }
+    }
+    func contribution(sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double) -> Double {
+        switch self {
+        case .sleep: return sleep * 4.0
+        case .hrv: return hrv * 0.25
+        case .strain: return -strain * (100.0 / 21.0) * 0.15
+        case .rhr: return -rhr * 0.4
+        case .spo2: return spo2 * 1.5
+        }
     }
 }
 
