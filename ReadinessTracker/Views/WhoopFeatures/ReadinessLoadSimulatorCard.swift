@@ -985,6 +985,27 @@ struct ReadinessLoadSimulatorCard: View {
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksTop3)
                 .accessibilityLabel("Check top three READY impact tasks")
+                // Honest #551: check next highest READY-impact unchecked task
+                if ordered.contains(where: { !completedTaskIDs.contains($0.id) }) {
+                    Button {
+                        Haptic.selectionChanged()
+                        let unchecked = ordered.filter { !completedTaskIDs.contains($0.id) }
+                        if let next = unchecked.sorted(by: { $0.readyDelta > $1.readyDelta }).first {
+                            completedTaskIDs.insert(next.id)
+                        }
+                    } label: {
+                        Text("Check next")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(accent)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(accent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckNext)
+                    .accessibilityLabel("Check next READY-impact task")
+                }
                 Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)
