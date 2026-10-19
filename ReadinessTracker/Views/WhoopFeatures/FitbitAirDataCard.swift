@@ -866,6 +866,12 @@ struct FitbitAirDataCard: View {
             let scrub = sparkScrubIndex ?? (points.count - 1)
             let scrubClamped = min(max(0, scrub), max(0, points.count - 1))
             let scrubPt = points.indices.contains(scrubClamped) ? points[scrubClamped] : nil
+            let positive = points.map(\.value).filter { $0 > 0 }
+            let mean7 = positive.isEmpty ? 0.0 : positive.reduce(0, +) / Double(positive.count)
+            let deltaVsMean: Double? = {
+                guard let scrubPt, mean7 > 0 else { return nil }
+                return scrubPt.value - mean7
+            }()
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text("\(chip.label) · 7d")
@@ -878,6 +884,20 @@ struct FitbitAirDataCard: View {
                             .foregroundStyle(accent)
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkScrub)
                             .accessibilityLabel("\(chip.label) scrub \(chipSparkValueText(chip, scrubPt.value))")
+                    }
+                    if let d = deltaVsMean {
+                        let sign = d >= 0 ? "+" : ""
+                        let tone: Color = abs(d / mean7) < 0.05 ? RTColor.secondaryText
+                            : (d >= 0 ? RTColor.optimal : RTColor.warning)
+                        Text("\(sign)\(chipSparkValueText(chip, abs(d)))")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(tone.opacity(0.12))
+                            .clipShape(Capsule())
+                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkDelta)
+                            .accessibilityLabel("\(chip.label) delta versus seven day mean")
                     }
                 }
                 Chart {
