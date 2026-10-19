@@ -117,6 +117,7 @@ struct ReadinessLoadSimulatorCard: View {
                 sparkProjection
                 readyPathSpark
                 readyZoneStrip
+                seedLiveDeltaRail
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1085,8 +1086,102 @@ struct ReadinessLoadSimulatorCard: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(accent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyZones)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyZones)
         .accessibilityLabel("READY zones \(active.label) \(score)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #571: seed vs live delta rail — tonight baseline vs scrubbed READY (Fitbit Air / Google Health graphics).
+    private var seedLiveDeltaRail: some View {
+        let seed = baseline
+        let live = projectedCoupled
+        let delta = live - seed
+        let tone: Color = delta >= 0 ? RTColor.optimal : Color(hex: "FF375F")
+        let deltaLabel = delta >= 0 ? "+\(delta)" : "\(delta)"
+        // Optional air density context (Fitbit / Google Health parity)
+        let airChips = FitbitAirChip.chips(from: data)
+        let airDens: Int? = {
+            guard !airChips.isEmpty else { return nil }
+            let f = airChips.filter(\.filled).count
+            return Int((Double(f) / Double(airChips.count) * 100).rounded())
+        }()
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.arrow.right.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Seed vs live")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(deltaLabel)
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Seed")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                    Text("\(seed)")
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.secondaryText)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                Image(systemName: "arrow.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(accent)
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("Live")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                    Text("\(live)")
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(accent)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            GeometryReader { geo in
+                let w = geo.size.width
+                ZStack(alignment: .leading) {
+                    Capsule().fill(accent.opacity(0.14)).frame(height: 12)
+                    // seed tick
+                    Capsule()
+                        .fill(RTColor.secondaryText.opacity(0.7))
+                        .frame(width: 2, height: 16)
+                        .offset(x: max(0, min(w - 2, w * CGFloat(seed) / 100.0 - 1)))
+                    // live fill
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.5), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(8, w * CGFloat(live) / 100.0), height: 12)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 16)
+            if let airDens {
+                HStack(spacing: 6) {
+                    Image(systemName: "wind")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color(hex: "00B0B9"))
+                    Text("Air density \(airDens)% · Fitbit / Google Health")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                    Spacer()
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedDelta)
+        .accessibilityLabel("Seed \(seed) versus live \(live), delta \(deltaLabel)")
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
