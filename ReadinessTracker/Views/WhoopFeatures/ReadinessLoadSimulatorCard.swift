@@ -116,6 +116,7 @@ struct ReadinessLoadSimulatorCard: View {
                 interactiveControls
                 sparkProjection
                 readyPathSpark
+                readyZoneStrip
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1012,8 +1013,81 @@ struct ReadinessLoadSimulatorCard: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(accent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
         .accessibilityLabel("READY path \(baseline) to \(ceiling)")
+    }
+
+    /// Honest #569: READY zone strip — Poor/Fair/Good/Optimal band + live marker (Google Health graphics).
+    private var readyZoneStrip: some View {
+        let score = projectedCoupled
+        let zones: [(label: String, lo: Int, hi: Int, color: Color)] = [
+            ("Poor", 0, 49, Color(hex: "FF375F")),
+            ("Fair", 50, 69, RTColor.warning),
+            ("Good", 70, 84, RTColor.good),
+            ("Optimal", 85, 100, RTColor.optimal)
+        ]
+        let active = zones.first { score >= $0.lo && score <= $0.hi } ?? zones[0]
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.doc.horizontal")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY zones")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(active.label) · \(score)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(active.color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(active.color.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = geo.size.width
+                ZStack(alignment: .leading) {
+                    HStack(spacing: 2) {
+                        ForEach(Array(zones.enumerated()), id: \.offset) { _, z in
+                            let frac = CGFloat(z.hi - z.lo + 1) / 101.0
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(z.color.opacity(0.55))
+                                .frame(width: max(8, w * frac - 2))
+                        }
+                    }
+                    // marker
+                    let x = CGFloat(score) / 100.0 * w
+                    Capsule()
+                        .fill(RTColor.primaryText)
+                        .frame(width: 3, height: 22)
+                        .offset(x: max(0, min(w - 3, x - 1.5)))
+                    Circle()
+                        .fill(active.color)
+                        .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+                        .frame(width: 12, height: 12)
+                        .offset(x: max(0, min(w - 12, x - 6)), y: 0)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 22)
+            HStack {
+                ForEach(Array(zones.enumerated()), id: \.offset) { _, z in
+                    Text(z.label)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(z.label == active.label ? z.color : RTColor.tertiaryText)
+                    if z.label != "Optimal" { Spacer(minLength: 0) }
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyZones)
+        .accessibilityLabel("READY zones \(active.label) \(score)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
 
