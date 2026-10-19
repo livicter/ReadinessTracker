@@ -118,6 +118,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyPathSpark
                 readyZoneStrip
                 seedLiveDeltaRail
+                taskCompletionRadial
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1180,9 +1181,87 @@ struct ReadinessLoadSimulatorCard: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(accent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedDelta)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedDelta)
         .accessibilityLabel("Seed \(seed) versus live \(live), delta \(deltaLabel)")
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #573: task completion radial — donut of checked vs remaining READY lift (Google Health graphics).
+    private var taskCompletionRadial: some View {
+        let ordered = tasks
+        let totalLift = max(1, ordered.map(\.readyDelta).reduce(0, +))
+        let doneLift = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        let remainLift = max(0, totalLift - doneLift)
+        let frac = Double(doneLift) / Double(totalLift)
+        let doneN = ordered.filter { completedTaskIDs.contains($0.id) }.count
+        let totalN = max(1, ordered.count)
+        return HStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(accent.opacity(0.18), lineWidth: 10)
+                    .frame(width: 72, height: 72)
+                Circle()
+                    .trim(from: 0, to: CGFloat(frac))
+                    .stroke(
+                        AngularGradient(colors: [accent, RTColor.optimal], center: .center),
+                        style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 72, height: 72)
+                    .animation(.easeInOut(duration: 0.25), value: doneLift)
+                VStack(spacing: 0) {
+                    Text("\(Int((frac * 100).rounded()))%")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(accent)
+                    Text("lift")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 8) {
+                    Image(systemName: "circle.circle")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(accent)
+                    Text("Task radial")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(accent)
+                    Spacer()
+                    Text("\(doneN)/\(totalN)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.optimal)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(RTColor.optimal.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                HStack(spacing: 10) {
+                    HStack(spacing: 4) {
+                        Circle().fill(RTColor.optimal).frame(width: 7, height: 7)
+                        Text("Done +\(doneLift)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    HStack(spacing: 4) {
+                        Circle().fill(accent.opacity(0.35)).frame(width: 7, height: 7)
+                        Text("Left +\(remainLift)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                }
+                Text("READY lift folded into projection")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRadial)
+        .accessibilityLabel("Task radial \(doneN) of \(totalN), lift \(Int((frac * 100).rounded())) percent")
     }
 
 
