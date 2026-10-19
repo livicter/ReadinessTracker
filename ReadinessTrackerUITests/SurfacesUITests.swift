@@ -10932,6 +10932,15 @@ final class SurfacesUITests: XCTestCase {
             gaps.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
         }
         saveShot("verify-fitbit-air-data-gaps.png")
+        // Honest #550: Fill next gap CTA
+        let gapFill = app.descendants(matching: .any)["fitbit.air.gaps.fill"].firstMatch
+        XCTAssertTrue(gapFill.waitForExistence(timeout: 5)
+                      || gaps.exists
+                      || app.staticTexts["Fill next"].exists
+                      || app.staticTexts["All air fields filled tonight"].exists,
+                      "fitbit.air.gaps.fill")
+        if gapFill.exists { gapFill.tap() }
+        saveShot("verify-fitbit-air-gaps-fill.png")
         // Honest #506: air → classic MetricDetail (row under card header).
         // Card grew (#513 legend + #514 density spark) — swipeDown toward header first.
         let airCard = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
