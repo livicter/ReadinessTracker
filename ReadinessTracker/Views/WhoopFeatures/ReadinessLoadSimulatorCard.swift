@@ -115,6 +115,7 @@ struct ReadinessLoadSimulatorCard: View {
                 interactiveControls
                 sparkProjection
                 readyPathSpark
+                readyCompositionStack
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -939,6 +940,73 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
         .accessibilityLabel("READY path \(baseline) to \(ceiling)")
+    }
+
+
+    /// Honest #563: READY composition stack — baseline + lever Δ + task lift + headroom (richer sim graphics).
+    private var readyCompositionStack: some View {
+        let leverLift = projected - baseline
+        let taskLift = projectedCoupled - projected
+        let headroom = max(0, 100 - projectedCoupled)
+        let segments: [(label: String, value: Int, color: Color)] = [
+            ("Base", max(0, baseline), accent),
+            ("Levers", max(0, leverLift), RTColor.good),
+            ("Tasks", max(0, taskLift), RTColor.optimal),
+            ("Room", headroom, RTColor.tertiaryText.opacity(0.55))
+        ]
+        let total = max(1, segments.map(\.value).reduce(0, +))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.split.3x1.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY stack")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(projectedCoupled)/100")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.optimal)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(RTColor.optimal.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                HStack(spacing: 2) {
+                    ForEach(Array(segments.enumerated()), id: \.offset) { _, seg in
+                        if seg.value > 0 {
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(seg.color)
+                                .frame(width: max(4, geo.size.width * CGFloat(seg.value) / CGFloat(total)))
+                        }
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 14)
+            .background(RTColor.tertiaryText.opacity(0.12), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            HStack(spacing: 10) {
+                ForEach(Array(segments.enumerated()), id: \.offset) { _, seg in
+                    HStack(spacing: 4) {
+                        Circle().fill(seg.color).frame(width: 7, height: 7)
+                        Text("\(seg.label) \(seg.value)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyStack)
+        .accessibilityLabel("READY stack \(projectedCoupled) of 100")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
     private var fitbitAirStrip: some View {
