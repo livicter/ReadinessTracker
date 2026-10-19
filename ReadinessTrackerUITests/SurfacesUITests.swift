@@ -10437,6 +10437,19 @@ final class SurfacesUITests: XCTestCase {
             "sim.load.tasks.impact / READY lift"
         )
         saveShot("verify-readiness-load-simulator-task-impact.png")
+        // Honest #516: lever delta contribution chips
+        let levers = app.descendants(matching: .any)["sim.load.delta.levers"].firstMatch
+        var leverN = 0
+        while !levers.exists && leverN < 8 {
+            app.swipeDown()
+            leverN += 1
+        }
+        XCTAssertTrue(levers.waitForExistence(timeout: 6) || app.staticTexts["Lever deltas"].waitForExistence(timeout: 3),
+                      "sim.load.delta.levers")
+        if levers.exists {
+            levers.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+        }
+        saveShot("verify-readiness-load-simulator-lever-deltas.png")
         // Honest #504: scenario presets Rest/Easy/Push/Reset
         let presets = app.descendants(matching: .any)["sim.load.presets"].firstMatch
         if presets.exists {
