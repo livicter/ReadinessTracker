@@ -10519,6 +10519,17 @@ final class SurfacesUITests: XCTestCase {
             else { ceiling.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-tasks-ceiling.png")
+        // Honest #561: READY path spark
+        let pathSpark = app.descendants(matching: .any)["sim.load.path.spark"].firstMatch
+        XCTAssertTrue(pathSpark.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.path.spark")
+        if pathSpark.exists {
+            if pathSpark.isHittable { pathSpark.tap() }
+            else { pathSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-path-spark.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
