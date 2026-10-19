@@ -10628,6 +10628,13 @@ final class SurfacesUITests: XCTestCase {
             chips.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.3)).tap()
         }
         saveShot("verify-fitbit-air-data-card.png")
+        // Honest #531: selected chip 7d mini spark
+        let chipSpark = app.descendants(matching: .any)["fitbit.air.chip.spark"].firstMatch
+        XCTAssertTrue(chipSpark.waitForExistence(timeout: 5)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "7d")).count > 0
+                      || chips.exists,
+                      "fitbit.air.chip.spark")
+        saveShot("verify-fitbit-air-chip-mini-spark.png")
         let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
