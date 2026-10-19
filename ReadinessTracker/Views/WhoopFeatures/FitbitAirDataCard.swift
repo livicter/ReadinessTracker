@@ -28,6 +28,8 @@ struct FitbitAirDataCard: View {
     /// Honest #534: expand density forecast detail.
     @State private var showDensityForecastDetail: Bool = false
     @State private var showDensityWowDetail: Bool = false
+    /// Honest #538: expand density streak detail.
+    @State private var showDensityStreakDetail: Bool = false
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -66,6 +68,7 @@ struct FitbitAirDataCard: View {
                 densityHeatmap
                 densityWowBadge
                 densityForecastBadge
+                densityStreakBadge
                 densityHistorySpark
                 if let selectedChip {
                     selectedDetail(selectedChip)
@@ -456,6 +459,80 @@ struct FitbitAirDataCard: View {
             }
             .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
             .accessibilityLabel("Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent")
+            .accessibilityAddTraits(.isButton)
+        }
+    }
+
+    /// Honest #538: consecutive days ending today with density ≥ 70%.
+    private var densityStreak: (current: Int, best: Int, threshold: Double)? {
+        let days = history.isEmpty ? [] : Array(history.suffix(30))
+        guard !days.isEmpty else { return nil }
+        let threshold = 0.70
+        func dens(_ day: DailyHealthData) -> Double {
+            let c = AirChip.all(from: day)
+            guard !c.isEmpty else { return 0 }
+            return Double(c.filter(\.filled).count) / Double(c.count)
+        }
+        var current = 0
+        for day in days.reversed() {
+            if dens(day) >= threshold { current += 1 } else { break }
+        }
+        var best = 0
+        var run = 0
+        for day in days {
+            if dens(day) >= threshold {
+                run += 1
+                best = max(best, run)
+            } else {
+                run = 0
+            }
+        }
+        guard current > 0 || best > 0 else { return nil }
+        return (current, best, threshold)
+    }
+
+    @ViewBuilder
+    private var densityStreakBadge: some View {
+        if let streak = densityStreak {
+            let tone: Color = streak.current >= 3 ? RTColor.optimal
+                : (streak.current > 0 ? accent : RTColor.secondaryText)
+            VStack(alignment: .leading, spacing: 8) {
+                Button {
+                    Haptic.selectionChanged()
+                    showDensityStreakDetail.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "flame.fill")
+                            .font(.caption.weight(.semibold))
+                        Text("Density streak")
+                            .font(.caption.weight(.semibold))
+                        Spacer()
+                        Text("\(streak.current)d")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(tone.opacity(0.12))
+                            .clipShape(Capsule())
+                        Image(systemName: showDensityStreakDetail ? "chevron.up" : "chevron.down")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .foregroundStyle(accent)
+                    .padding(10)
+                    .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                if showDensityStreakDetail {
+                    HStack(spacing: 12) {
+                        wowStat(title: "Now", value: "\(streak.current)d")
+                        wowStat(title: "Best 30d", value: "\(streak.best)d")
+                        wowStat(title: "Bar", value: "\(Int((streak.threshold * 100).rounded()))%")
+                    }
+                }
+            }
+            .accessibilityIdentifier(SurfaceID.fitbitAirDensityStreak)
+            .accessibilityLabel("Density streak \(streak.current) days")
             .accessibilityAddTraits(.isButton)
         }
     }

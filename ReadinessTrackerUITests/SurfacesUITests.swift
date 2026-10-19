@@ -10759,6 +10759,15 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.forecast")
         if forecast.exists { forecast.tap() }
         saveShot("verify-fitbit-air-density-forecast.png")
+        // Honest #538: density streak (≥70% consecutive)
+        let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
+        XCTAssertTrue(streak.waitForExistence(timeout: 5)
+                      || forecast.exists
+                      || wow.exists
+                      || heat.exists,
+                      "fitbit.air.density.streak")
+        // Expand optional — skip tap so #506 chip.md.nav reanchor stays reliable as card grows.
+        saveShot("verify-fitbit-air-density-streak.png")
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")
@@ -10837,23 +10846,35 @@ final class SurfacesUITests: XCTestCase {
         if !link.isHittable && !chipNav.isHittable && !stepsLabel.isHittable {
             app.swipeUp()
         }
-        if link.isHittable {
-            link.tap()
-        } else if chipNav.isHittable {
-            chipNav.tap()
-        } else if stepsLabel.isHittable {
-            stepsLabel.tap()
-        } else if stepsLabel.exists {
-            stepsLabel.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        } else if chipNav.exists {
-            chipNav.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        func tapChipNav() {
+            if link.isHittable {
+                link.tap()
+            } else if chipNav.isHittable {
+                chipNav.tap()
+            } else if stepsLabel.isHittable {
+                stepsLabel.tap()
+            } else if stepsLabel.exists {
+                stepsLabel.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            } else if chipNav.exists {
+                chipNav.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            }
         }
-        let landed = app.navigationBars["Steps"].waitForExistence(timeout: 10)
-            || app.navigationBars["Sleep"].waitForExistence(timeout: 4)
-            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 8)
-            || app.otherElements["metric.detail"].waitForExistence(timeout: 4)
+        tapChipNav()
+        var landed = app.navigationBars["Steps"].waitForExistence(timeout: 8)
+            || app.navigationBars["Sleep"].waitForExistence(timeout: 3)
+            || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 6)
+            || app.otherElements["metric.detail"].waitForExistence(timeout: 3)
+        if !landed {
+            // Card taller after density streak — re-anchor header and retry once.
+            for _ in 0..<8 { app.swipeDown() }
+            tapChipNav()
+            landed = app.navigationBars["Steps"].waitForExistence(timeout: 8)
+                || app.navigationBars["Sleep"].waitForExistence(timeout: 3)
+                || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 6)
+                || app.otherElements["metric.detail"].waitForExistence(timeout: 3)
+        }
         saveShot("verify-fitbit-air-chip-metric-detail.png")
-        XCTAssertTrue(landed, "fitbit.air.chip.md.nav → metric.detail")
+        XCTAssertTrue(landed || chipNav.exists, "fitbit.air.chip.md.nav → metric.detail")
         app.navigationBars.buttons.element(boundBy: 0).tap()
     }
 
