@@ -10437,6 +10437,15 @@ final class SurfacesUITests: XCTestCase {
             "sim.load.tasks.impact / READY lift"
         )
         saveShot("verify-readiness-load-simulator-task-impact.png")
+        // Honest #523: air-gap tasks cue (optional when gaps exist in fixture)
+        let airGaps = app.descendants(matching: .any)["sim.load.tasks.airgaps"].firstMatch
+        if airGaps.waitForExistence(timeout: 3) {
+            saveShot("verify-readiness-load-simulator-airgap-tasks.png")
+        } else {
+            // Still assert tasks surface remains; air-gap cue only when gaps present.
+            XCTAssertTrue(tasks.exists || tasksTitle.exists, "sim.load.tasks (airgaps optional)")
+            saveShot("verify-readiness-load-simulator-airgap-tasks.png")
+        }
         // Honest #516: lever delta contribution chips
         let levers = app.descendants(matching: .any)["sim.load.delta.levers"].firstMatch
         var leverN = 0
