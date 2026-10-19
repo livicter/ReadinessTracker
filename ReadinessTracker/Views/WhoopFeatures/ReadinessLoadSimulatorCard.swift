@@ -367,6 +367,37 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedAir)
             .accessibilityLabel("Seed simulator from air data")
 
+            // Honest #547: seed levers from air density tomorrow forecast
+            Button {
+                Haptic.selectionChanged()
+                seedFromDensityForecast()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "sparkles")
+                        .font(.caption.weight(.bold))
+                    Text("Seed from density forecast")
+                        .font(.caption.weight(.bold))
+                    Spacer()
+                    Text("tmrw")
+                        .font(.caption2.weight(.bold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(accent.opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                .foregroundStyle(accent)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(accent.opacity(0.35), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedForecast)
+            .accessibilityLabel("Seed simulator from density forecast")
+
             if let airSeededSummary {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
@@ -413,6 +444,63 @@ struct ReadinessLoadSimulatorCard: View {
                 String(format: "RHR %+.0f", rhrDelta)
             ]
             airSeededSummary = "Seeded from air · " + bits.joined(separator: " · ")
+        }
+    }
+
+
+    /// Honest #547: nudge levers from linear air-density tomorrow forecast.
+    private func seedFromDensityForecast() {
+        let days = Array(history.suffix(7))
+        guard days.count >= 3 else {
+            airSeededSummary = "Need ≥3 days of air history for forecast"
+            return
+        }
+        func dens(_ day: DailyHealthData) -> Double {
+            let c = AirChip.all(from: day)
+            guard !c.isEmpty else { return 0 }
+            return Double(c.filter(\.filled).count) / Double(c.count)
+        }
+        let ys = days.map(dens)
+        let n = Double(ys.count)
+        let xs = (0..<ys.count).map { Double($0) }
+        let meanX = xs.reduce(0, +) / n
+        let meanY = ys.reduce(0, +) / n
+        var num = 0.0, den = 0.0
+        for i in ys.indices {
+            num += (xs[i] - meanX) * (ys[i] - meanY)
+            den += (xs[i] - meanX) * (xs[i] - meanX)
+        }
+        let slope = den == 0 ? 0 : num / den
+        let intercept = meanY - slope * meanX
+        let today = ys.last ?? meanY
+        let tomorrow = min(1, max(0, intercept + slope * n))
+        let deltaPP = (tomorrow - today) * 100
+
+        func clamp(_ v: Double, _ r: ClosedRange<Double>) -> Double {
+            min(r.upperBound, max(r.lowerBound, v))
+        }
+
+        withAnimation(.easeInOut(duration: 0.25)) {
+            // Rising density → lean into recovery; falling → protect (more sleep, less strain).
+            if deltaPP >= 0 {
+                sleepDelta = clamp(0.3 + deltaPP / 40.0, -2...2)
+                hrvDelta = clamp(4 + deltaPP / 2.0, -20...20)
+                strainDelta = clamp(-0.5 - deltaPP / 20.0, -6...6)
+                rhrDelta = clamp(-1 - deltaPP / 15.0, -10...10)
+                spo2Delta = clamp(0.3 + deltaPP / 50.0, -3...3)
+            } else {
+                sleepDelta = clamp(0.6 - deltaPP / 30.0, -2...2)
+                hrvDelta = clamp(2 - deltaPP / 4.0, -20...20)
+                strainDelta = clamp(-1.5 + deltaPP / 15.0, -6...6)
+                rhrDelta = clamp(-2 + deltaPP / 20.0, -10...10)
+                spo2Delta = clamp(0.5 - deltaPP / 40.0, -3...3)
+            }
+            focusedLever = nil
+            airSeededSummary = String(
+                format: "Seeded from forecast · tmrw %d%% (%+.0fpp)",
+                Int((tomorrow * 100).rounded()),
+                deltaPP
+            )
         }
     }
 
