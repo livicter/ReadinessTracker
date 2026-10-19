@@ -532,6 +532,8 @@ struct ReadinessLoadSimulatorCard: View {
                         .background((d >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.14))
                         .clipShape(Capsule())
                 }
+                // Honest #533: per-lever A−B (or A−Live) deltas
+                abLeverDiffRow(a: a, b: snapB)
             } else {
                 Text("Save A + B, scrub levers, compare Δ")
                     .font(.caption)
@@ -543,7 +545,69 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Simulator A B snapshot compare")
     }
 
+
+    /// Honest #533: interactive A−B lever delta chips (tap focuses lever).
+    @ViewBuilder
+    private func abLeverDiffRow(
+        a: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int),
+        b: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)?
+    ) -> some View {
+        let live = (sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta, ready: projectedCoupled)
+        let rhs = b ?? live
+        let pairs: [(SimLeverKind, Double)] = [
+            (.sleep, rhs.sleep - a.sleep),
+            (.hrv, rhs.hrv - a.hrv),
+            (.strain, rhs.strain - a.strain),
+            (.rhr, rhs.rhr - a.rhr),
+            (.spo2, rhs.spo2 - a.spo2)
+        ]
+        VStack(alignment: .leading, spacing: 6) {
+            Text(b == nil ? "A → Live levers" : "A → B levers")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(RTColor.tertiaryText)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(pairs, id: \.0.id) { kind, delta in
+                        Button {
+                            Haptic.selectionChanged()
+                            focusedLever = kind
+                        } label: {
+                            VStack(spacing: 2) {
+                                Image(systemName: kind.icon)
+                                    .font(.caption2.weight(.bold))
+                                Text(kind.title)
+                                    .font(.caption2.weight(.semibold))
+                                Text(abLeverDeltaText(kind, delta))
+                                    .font(.caption2.weight(.bold).monospacedDigit())
+                            }
+                            .foregroundStyle(focusedLever == kind ? Color.white : kind.color)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(focusedLever == kind ? kind.color : kind.color.opacity(0.12))
+                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("\(kind.title) delta \(abLeverDeltaText(kind, delta))")
+                    }
+                }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorABLeverDiff)
+        .accessibilityLabel("Simulator A B lever deltas")
+    }
+
+    private func abLeverDeltaText(_ kind: SimLeverKind, _ delta: Double) -> String {
+        switch kind {
+        case .sleep: return String(format: "%+.1fh", delta)
+        case .hrv: return String(format: "%+.0f", delta)
+        case .strain: return String(format: "%+.1f", delta)
+        case .rhr: return String(format: "%+.0f", delta)
+        case .spo2: return String(format: "%+.1f", delta)
+        }
+    }
+
     private var projectedRingChips: some View {
+
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 ForEach(SimRingKind.allCases) { kind in
