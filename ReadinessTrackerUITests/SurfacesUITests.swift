@@ -10724,6 +10724,14 @@ final class SurfacesUITests: XCTestCase {
                           "fitbit.air.density.wow")
             saveShot("verify-fitbit-air-density-wow.png")
         }
+        // Honest #534: tomorrow density forecast
+        let forecast = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        XCTAssertTrue(forecast.waitForExistence(timeout: 5)
+                      || app.staticTexts["Tomorrow density"].waitForExistence(timeout: 3)
+                      || app.staticTexts["7-day density"].exists,
+                      "fitbit.air.density.forecast")
+        if forecast.exists { forecast.tap() }
+        saveShot("verify-fitbit-air-density-forecast.png")
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")

@@ -25,6 +25,8 @@ struct FitbitAirDataCard: View {
     /// Honest #526: which heatmap day is selected (index into last 7).
     @State private var selectedHeatDayOffset: Int? = nil
     /// Honest #527: expand week-over-week density detail.
+    /// Honest #534: expand density forecast detail.
+    @State private var showDensityForecastDetail: Bool = false
     @State private var showDensityWowDetail: Bool = false
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
@@ -63,6 +65,7 @@ struct FitbitAirDataCard: View {
                 densityStackedBar
                 densityHeatmap
                 densityWowBadge
+                densityForecastBadge
                 densityHistorySpark
                 if let selectedChip {
                     selectedDetail(selectedChip)
@@ -379,6 +382,82 @@ struct FitbitAirDataCard: View {
         if dens < 0.4 { return accent.opacity(0.25) }
         if dens < 0.7 { return accent.opacity(0.55) }
         return accent.opacity(0.9)
+    }
+
+
+    /// Honest #534: linear density forecast for tomorrow from last 7d trend.
+    private var densityForecast: (tomorrow: Double, slopePP: Double, today: Double)? {
+        let days = Array(history.suffix(7))
+        guard days.count >= 4 else { return nil }
+        let dens: [Double] = days.map { day in
+            let c = AirChip.all(from: day)
+            guard !c.isEmpty else { return 0 }
+            return Double(c.filter(\.filled).count) / Double(c.count)
+        }
+        let n = Double(dens.count)
+        let xs = dens.indices.map { Double($0) }
+        let sumX = xs.reduce(0, +)
+        let sumY = dens.reduce(0, +)
+        let sumXY = zip(xs, dens).map(*).reduce(0, +)
+        let sumXX = xs.map { $0 * $0 }.reduce(0, +)
+        let denom = n * sumXX - sumX * sumX
+        guard abs(denom) > 1e-9 else { return nil }
+        let slope = (n * sumXY - sumX * sumY) / denom
+        let intercept = (sumY - slope * sumX) / n
+        let tomorrow = min(1, max(0, intercept + slope * n))
+        let today = dens.last ?? 0
+        return (tomorrow, slope * 100, today)
+    }
+
+    @ViewBuilder
+    private var densityForecastBadge: some View {
+        if let fc = densityForecast {
+            let deltaPP = (fc.tomorrow - fc.today) * 100
+            let sign = deltaPP >= 0 ? "+" : ""
+            let tone: Color = abs(deltaPP) < 0.5 ? RTColor.secondaryText
+                : (deltaPP > 0 ? RTColor.optimal : RTColor.warning)
+            VStack(alignment: .leading, spacing: 8) {
+                Button {
+                    Haptic.selectionChanged()
+                    showDensityForecastDetail.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "sparkles")
+                            .font(.caption.weight(.semibold))
+                        Text("Tomorrow density")
+                            .font(.caption.weight(.semibold))
+                        Spacer()
+                        Text("\(Int((fc.tomorrow * 100).rounded()))%")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("\(sign)\(Int(deltaPP.rounded()))pp")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(tone.opacity(0.12))
+                            .clipShape(Capsule())
+                        Image(systemName: showDensityForecastDetail ? "chevron.up" : "chevron.down")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .foregroundStyle(accent)
+                    .padding(10)
+                    .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                if showDensityForecastDetail {
+                    HStack(spacing: 12) {
+                        wowStat(title: "Today", value: "\(Int((fc.today * 100).rounded()))%")
+                        wowStat(title: "Slope/d", value: String(format: "%+.1fpp", fc.slopePP))
+                        wowStat(title: "Tomorrow", value: "\(Int((fc.tomorrow * 100).rounded()))%")
+                    }
+                }
+            }
+            .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
+            .accessibilityLabel("Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent")
+            .accessibilityAddTraits(.isButton)
+        }
     }
 
     /// Honest #527: last-7d mean density vs prior-7d.
