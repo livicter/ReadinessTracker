@@ -10555,6 +10555,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-seed-delta.png")
 
+        // Honest #573: task completion radial
+        let taskRadial = app.descendants(matching: .any)["sim.load.tasks.radial"].firstMatch
+        XCTAssertTrue(taskRadial.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.radial")
+        if taskRadial.exists {
+            if taskRadial.isHittable { taskRadial.tap() }
+            else { taskRadial.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-task-radial.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
