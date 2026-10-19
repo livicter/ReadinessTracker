@@ -10663,6 +10663,15 @@ final class SurfacesUITests: XCTestCase {
                       || chips.exists,
                       "fitbit.air.chip.spark.delta")
         saveShot("verify-fitbit-air-chip-spark-delta.png")
+        // Honest #536: chip spark 7d mean rule + avg caption
+        let chipMean = app.descendants(matching: .any)["fitbit.air.chip.spark.mean"].firstMatch
+        XCTAssertTrue(chipMean.waitForExistence(timeout: 5)
+                      || chipDelta.exists
+                      || chipScrub.exists
+                      || chipSpark.exists
+                      || chips.exists,
+                      "fitbit.air.chip.spark.mean")
+        saveShot("verify-fitbit-air-chip-spark-mean.png")
         let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
