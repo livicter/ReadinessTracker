@@ -217,6 +217,7 @@ enum SurfaceID {
     static let readinessSimulatorTaskImpact = "sim.load.tasks.impact"  // Honest #515
     static let readinessSimulatorLeverDeltas = "sim.load.delta.levers"  // Honest #516
     static let fitbitAirLegendSparkLink = "fitbit.air.legend.spark"  // Honest #517
+    static let readinessSimulatorSeedAir = "sim.load.seed.air"  // Honest #518
     static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513
     static let fitbitAirDataDensitySpark = "fitbit.air.density.spark"  // Honest #514
     static let fitbitAirDataStrip = "fitbit.air.strip"

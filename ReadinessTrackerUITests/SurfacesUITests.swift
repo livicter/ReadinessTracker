@@ -10457,6 +10457,18 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-readiness-load-simulator-presets.png")
             presets.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         }
+        // Honest #518: seed levers from Fitbit/Health air vs 7d mean
+        let seedAir = app.descendants(matching: .any)["sim.load.seed.air"].firstMatch
+        var seedN = 0
+        while !seedAir.exists && seedN < 8 {
+            app.swipeDown()
+            seedN += 1
+        }
+        XCTAssertTrue(seedAir.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Seed from")).count > 0,
+                      "sim.load.seed.air")
+        if seedAir.exists { seedAir.tap() }
+        saveShot("verify-readiness-load-simulator-seed-air.png")
         // Honest #508: projected Gym/Work/Sleep ring chips
         let rings = app.descendants(matching: .any)["sim.load.rings"].firstMatch
         XCTAssertTrue(rings.waitForExistence(timeout: 5), "sim.load.rings")
