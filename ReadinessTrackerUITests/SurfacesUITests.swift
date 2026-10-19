@@ -10531,6 +10531,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-path-spark.png")
 
+        // Honest #569: READY zone strip
+        let zones = app.descendants(matching: .any)["sim.load.ready.zones"].firstMatch
+        XCTAssertTrue(zones.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.zones")
+        if zones.exists {
+            if zones.isHittable { zones.tap() }
+            else { zones.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-ready-zones.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
