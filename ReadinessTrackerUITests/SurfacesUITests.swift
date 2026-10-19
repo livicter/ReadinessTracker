@@ -10498,6 +10498,17 @@ final class SurfacesUITests: XCTestCase {
             else { remainLift.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-remain-lift.png")
+        // Honest #557: next READY-impact task preview
+        let nextPrev = app.descendants(matching: .any)["sim.load.tasks.nextpreview"].firstMatch
+        XCTAssertTrue(nextPrev.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Lift progress"].exists,
+                      "sim.load.tasks.nextpreview")
+        if nextPrev.exists {
+            if nextPrev.isHittable { nextPrev.tap() }
+            else { nextPrev.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-next-preview.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
