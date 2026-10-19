@@ -589,6 +589,8 @@ struct FitbitAirDataCard: View {
                     .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                // Honest #546: 14d calendar dots (≥ threshold = filled)
+                densityStreakCalendar(threshold: streak.threshold)
                 if showDensityStreakDetail {
                     HStack(spacing: 12) {
                         wowStat(title: "Now", value: "\(streak.current)d")
@@ -601,6 +603,30 @@ struct FitbitAirDataCard: View {
             .accessibilityLabel("Density streak \(streak.current) days")
             .accessibilityAddTraits(.isButton)
         }
+    }
+
+
+    /// Honest #546: 14-day streak calendar dots (filled = density ≥ threshold).
+    private func densityStreakCalendar(threshold: Double) -> some View {
+        let days = Array(history.suffix(14))
+        return HStack(spacing: 4) {
+            ForEach(Array(days.enumerated()), id: \.offset) { _, day in
+                let chips = AirChip.all(from: day)
+                let dens = chips.isEmpty ? 0.0 : Double(chips.filter(\.filled).count) / Double(chips.count)
+                let hit = dens >= threshold
+                Circle()
+                    .fill(hit ? RTColor.optimal.opacity(0.9) : RTColor.divider)
+                    .frame(width: 10, height: 10)
+                    .overlay(
+                        Circle().stroke(hit ? RTColor.optimal : RTColor.tertiaryText.opacity(0.35), lineWidth: 0.5)
+                    )
+                    .accessibilityLabel(hit ? "Above bar" : "Below bar")
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 4)
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityStreakCal)
+        .accessibilityLabel("Density streak calendar, last \(days.count) days")
     }
 
     /// Honest #527: last-7d mean density vs prior-7d.
