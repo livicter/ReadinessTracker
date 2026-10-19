@@ -10423,6 +10423,20 @@ final class SurfacesUITests: XCTestCase {
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85)).tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-check.png")
+        // Honest #515: READY lift impact strip (scroll tasks into view if needed)
+        var impactN = 0
+        let impact = app.descendants(matching: .any)["sim.load.tasks.impact"].firstMatch
+        let liftLabel = app.staticTexts["READY lift"]
+        let tasksTitle = app.staticTexts["Today’s tasks"]
+        while !(impact.exists || liftLabel.exists) && impactN < 10 {
+            app.swipeUp()
+            impactN += 1
+        }
+        XCTAssertTrue(
+            impact.waitForExistence(timeout: 6) || liftLabel.waitForExistence(timeout: 3),
+            "sim.load.tasks.impact / READY lift"
+        )
+        saveShot("verify-readiness-load-simulator-task-impact.png")
         // Honest #504: scenario presets Rest/Easy/Push/Reset
         let presets = app.descendants(matching: .any)["sim.load.presets"].firstMatch
         if presets.exists {

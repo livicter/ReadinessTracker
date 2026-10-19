@@ -422,6 +422,7 @@ struct ReadinessLoadSimulatorCard: View {
 
     private var tasksBlock: some View {
         let done = tasks.filter { completedTaskIDs.contains($0.id) }.count
+        let lift = tasks.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Today’s tasks")
@@ -433,46 +434,76 @@ struct ReadinessLoadSimulatorCard: View {
                     .foregroundStyle(accent)
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
             }
+            // Honest #515: cumulative READY impact from checked tasks
+            HStack(spacing: 8) {
+                Text("READY lift")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(lift == 0 ? "Tap tasks" : "+\(lift)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(lift > 0 ? RTColor.optimal : accent)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background((lift > 0 ? RTColor.optimal : accent).opacity(0.12))
+                    .clipShape(Capsule())
+                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskImpact)
+                    .accessibilityLabel("READY lift +\(lift)")
+            }
+            .accessibilityElement(children: .contain)
             ProgressView(value: Double(done), total: Double(max(1, tasks.count)))
                 .tint(accent)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
             ForEach(tasks) { task in
-                let isDone = completedTaskIDs.contains(task.id)
-                Button {
-                    Haptic.selectionChanged()
-                    if isDone { completedTaskIDs.remove(task.id) }
-                    else { completedTaskIDs.insert(task.id) }
-                } label: {
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(isDone ? RTColor.optimal : accent)
-                            .frame(width: 22)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(task.title)
-                                .font(.subheadline.weight(.semibold))
-                                .foregroundStyle(RTColor.primaryText)
-                                .strikethrough(isDone, color: RTColor.secondaryText)
-                            Text(task.detail)
-                                .font(.caption)
-                                .foregroundStyle(RTColor.secondaryText)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        Spacer(minLength: 0)
-                        Image(systemName: task.icon)
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(accent.opacity(0.7))
-                    }
-                    .padding(10)
-                    .background(RTColor.surfaceHighlight.opacity(isDone ? 0.35 : 0.65))
-                    .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRow)
-                .accessibilityLabel("\(task.title)\(isDone ? ", done" : "")")
+                taskImpactRow(task)
             }
         }
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTasks)
+    }
+
+    private func taskImpactRow(_ task: SimulatorTask) -> some View {
+        let isDone = completedTaskIDs.contains(task.id)
+        return Button {
+            Haptic.selectionChanged()
+            if isDone { completedTaskIDs.remove(task.id) }
+            else { completedTaskIDs.insert(task.id) }
+        } label: {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(isDone ? RTColor.optimal : accent)
+                    .frame(width: 22)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(task.title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(RTColor.primaryText)
+                        .strikethrough(isDone, color: RTColor.secondaryText)
+                    Text(task.detail)
+                        .font(.caption)
+                        .foregroundStyle(RTColor.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                VStack(spacing: 4) {
+                    Text("+\(task.readyDelta)")
+                        .font(.caption2.weight(.bold).monospacedDigit())
+                        .foregroundStyle(isDone ? Color.white : accent)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(isDone ? RTColor.optimal : accent.opacity(0.12))
+                        .clipShape(Capsule())
+                    Image(systemName: task.icon)
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(accent.opacity(0.7))
+                }
+            }
+            .padding(10)
+            .background(RTColor.surfaceHighlight.opacity(isDone ? 0.35 : 0.65))
+            .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRow)
+        .accessibilityLabel("\(task.title), +\(task.readyDelta) READY\(isDone ? ", done" : "")")
     }
 
     private func project(sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double) -> Int {
@@ -554,6 +585,8 @@ struct SimulatorTask: Identifiable {
     let title: String
     let detail: String
     let icon: String
+    /// Honest #515: estimated READY lift when checked.
+    let readyDelta: Int
 
     static func generate(
         projected: Int,
@@ -571,14 +604,16 @@ struct SimulatorTask: Identifiable {
                 id: "sleep-protect",
                 title: "Protect sleep window",
                 detail: "Add ~\(String(format: "%.1f", max(0.5, 7 - data.sleepHours)))h tonight to lift projected READY.",
-                icon: "moon.zzz.fill"
+                icon: "moon.zzz.fill",
+                    readyDelta: 4
             ))
         } else if sleepDelta >= 0.5 {
             out.append(.init(
                 id: "sleep-lock",
                 title: "Lock the extra sleep",
                 detail: "Keep the +\(String(format: "%.1f", sleepDelta))h scrub — wind-down 45m earlier.",
-                icon: "bed.double.fill"
+                icon: "bed.double.fill",
+                    readyDelta: 2
             ))
         }
         if strainDelta > 1 {
@@ -586,14 +621,16 @@ struct SimulatorTask: Identifiable {
                 id: "strain-cap",
                 title: "Cap today’s load",
                 detail: "Scrubbed strain is up — bias to Zone 2 or cut a set.",
-                icon: "flame.fill"
+                icon: "flame.fill",
+                    readyDelta: 3
             ))
         } else if projected >= 80 {
             out.append(.init(
                 id: "push-session",
                 title: "Push the key session",
                 detail: "Projected READY ≥80 — schedule the hard lift or intervals.",
-                icon: "figure.strengthtraining.traditional"
+                icon: "figure.strengthtraining.traditional",
+                    readyDelta: 2
             ))
         }
         if hrvDelta < -5 || data.hrv < 40 {
@@ -601,7 +638,8 @@ struct SimulatorTask: Identifiable {
                 id: "hrv-break",
                 title: "HRV coherence break",
                 detail: "2–5 min box breathing before noon to support HRV.",
-                icon: "wind"
+                icon: "wind",
+                    readyDelta: 3
             ))
         }
         if rhrDelta > 3 || data.restingHeartRate > 65 {
@@ -609,7 +647,8 @@ struct SimulatorTask: Identifiable {
                 id: "rhr-ease",
                 title: "Ease into the day",
                 detail: "RHR scrub is elevated — delay hard work until after a walk.",
-                icon: "heart.fill"
+                icon: "heart.fill",
+                    readyDelta: 2
             ))
         }
         if spo2Delta < -1 || (data.bloodOxygen ?? 100) < 95 {
@@ -617,7 +656,8 @@ struct SimulatorTask: Identifiable {
                 id: "spo2-air",
                 title: "Check air / SpO₂",
                 detail: "SpO₂ scrub soft — open a window, nasal breathe, recheck.",
-                icon: "lungs.fill"
+                icon: "lungs.fill",
+                    readyDelta: 2
             ))
         }
         if source == .fitbit {
@@ -626,7 +666,8 @@ struct SimulatorTask: Identifiable {
                     id: "fitbit-hrv-air",
                     title: "Fill HRV air gap",
                     detail: "Google Health has no HRV yet — wear overnight and sync Fitbit.",
-                    icon: "waveform.path.ecg"
+                    icon: "waveform.path.ecg",
+                        readyDelta: 3
                 ))
             }
             if data.sleepHours <= 0 {
@@ -634,7 +675,8 @@ struct SimulatorTask: Identifiable {
                     id: "fitbit-sleep-air",
                     title: "Fill sleep air gap",
                     detail: "No sleep hours in tonight’s Fitbit air — open Fitbit app, then refresh.",
-                    icon: "moon.zzz.fill"
+                    icon: "moon.zzz.fill",
+                        readyDelta: 4
                 ))
             }
             if out.count < 2 {
@@ -642,7 +684,8 @@ struct SimulatorTask: Identifiable {
                     id: "fitbit-sync",
                     title: "Confirm Fitbit sync",
                     detail: "Pull-to-refresh so Google Health air fields stay current.",
-                    icon: "arrow.triangle.2.circlepath"
+                    icon: "arrow.triangle.2.circlepath",
+                        readyDelta: 1
                 ))
             }
         }
@@ -651,7 +694,8 @@ struct SimulatorTask: Identifiable {
                 id: "hold-line",
                 title: "Hold the line",
                 detail: "Scrubs look balanced — keep today’s plan and recheck after lunch.",
-                icon: "checkmark.circle.fill"
+                icon: "checkmark.circle.fill",
+                    readyDelta: 1
             ))
         }
         return Array(out.prefix(4))
