@@ -10925,6 +10925,16 @@ final class SurfacesUITests: XCTestCase {
                       || band.exists,
                       "fitbit.air.density.forecast.bar")
         saveShot("verify-fitbit-air-density-forecast-bar.png")
+        // Honest #560: forecast confidence meter
+        let conf = app.descendants(matching: .any)["fitbit.air.density.forecast.conf"].firstMatch
+        XCTAssertTrue(conf.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      "fitbit.air.density.forecast.conf")
+        if conf.exists {
+            if conf.isHittable { conf.tap() }
+            else { conf.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-forecast-conf.png")
         // Honest #538: density streak (≥70% consecutive)
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)
