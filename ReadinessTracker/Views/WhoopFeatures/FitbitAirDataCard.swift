@@ -775,7 +775,7 @@ struct FitbitAirDataCard: View {
         }
     }
 
-    /// Honest #531: 7-day mini spark for the selected air chip.
+    /// Honest #531/#532: 7-day mini spark for the selected air chip; scrub syncs main spark.
     @ViewBuilder
     private func chipMiniSpark(_ chip: AirChip) -> some View {
         let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
@@ -784,12 +784,25 @@ struct FitbitAirDataCard: View {
             return (date: day.date, value: v)
         }
         if points.contains(where: { $0.value > 0 }) {
+            let scrub = sparkScrubIndex ?? (points.count - 1)
+            let scrubClamped = min(max(0, scrub), max(0, points.count - 1))
+            let scrubPt = points.indices.contains(scrubClamped) ? points[scrubClamped] : nil
             VStack(alignment: .leading, spacing: 4) {
-                Text("\(chip.label) · 7d")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(RTColor.tertiaryText)
+                HStack(spacing: 6) {
+                    Text("\(chip.label) · 7d")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(RTColor.tertiaryText)
+                    Spacer(minLength: 0)
+                    if let scrubPt {
+                        Text(chipSparkValueText(chip, scrubPt.value))
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkScrub)
+                            .accessibilityLabel("\(chip.label) scrub \(chipSparkValueText(chip, scrubPt.value))")
+                    }
+                }
                 Chart {
-                    ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                    ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
                         AreaMark(
                             x: .value("Day", pt.date),
                             y: .value(chip.label, pt.value)
@@ -801,17 +814,91 @@ struct FitbitAirDataCard: View {
                         )
                         .foregroundStyle(accent)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, lineCap: .round))
+                        if scrubClamped == i {
+                            PointMark(
+                                x: .value("Day", pt.date),
+                                y: .value(chip.label, pt.value)
+                            )
+                            .foregroundStyle(accent)
+                            .symbolSize(48)
+                        }
                     }
                 }
                 .chartXAxis(.hidden)
                 .chartYAxis(.hidden)
                 .frame(height: 36)
+                .chartOverlay { proxy in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        chipSparkSelect(
+                                            chip,
+                                            at: value.location,
+                                            proxy: proxy,
+                                            geo: geo,
+                                            count: points.count
+                                        )
+                                    }
+                            )
+                    }
+                }
+                .animation(.easeInOut(duration: 0.15), value: sparkScrubIndex)
             }
             .padding(8)
             .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             .accessibilityIdentifier(SurfaceID.fitbitAirChipMiniSpark)
             .accessibilityLabel("\(chip.label) seven day spark")
+            .accessibilityHint("Drag to scrub and sync the main air spark")
         }
+    }
+
+    private func chipSparkValueText(_ chip: AirChip, _ value: Double) -> String {
+        switch chip.id {
+        case "sleep": return String(format: "%.1fh", value)
+        case "hrv": return "\(Int(value)) ms"
+        case "rhr": return "\(Int(value))"
+        case "spo2": return String(format: "%.0f%%", value)
+        case "steps": return "\(Int(value))"
+        case "kcal", "basal": return "\(Int(value))"
+        case "dist": return String(format: "%.1f km", value)
+        case "floors": return "\(Int(value))"
+        case "amin": return "\(Int(value))m"
+        case "resp": return String(format: "%.1f", value)
+        case "skin": return String(format: "%+.1f°", value)
+        default: return String(format: "%.1f", value)
+        }
+    }
+
+    private func chipSparkSelect(
+        _ chip: AirChip,
+        at location: CGPoint,
+        proxy: ChartProxy,
+        geo: GeometryProxy,
+        count: Int
+    ) {
+        guard count > 0 else { return }
+        let x = max(0, min(location.x, geo.size.width))
+        let frac = geo.size.width > 0 ? x / geo.size.width : 0
+        let best = min(count - 1, max(0, Int((frac * CGFloat(count)).rounded(.down))))
+        let metricChanging = chip.airSparkMetric.map { $0 != sparkMetric } ?? false
+        if let mapped = chip.airSparkMetric, metricChanging {
+            sparkMetric = mapped
+            // onChange(sparkMetric) clears scrub — restore after that runs.
+            DispatchQueue.main.async {
+                if sparkScrubIndex != best {
+                    sparkScrubIndex = best
+                    Haptic.selectionChanged()
+                }
+            }
+        } else if sparkScrubIndex != best {
+            sparkScrubIndex = best
+            Haptic.selectionChanged()
+        }
+        _ = proxy
     }
 
     /// Honest #519: period mean for current spark metric.
@@ -1146,6 +1233,19 @@ struct AirChip: Identifiable {
     let filled: Bool
     /// Honest #506: classic MetricDetail destination when set.
     let metric: MetricType?
+
+    /// Honest #532: map chip → main air spark metric when one exists.
+    var airSparkMetric: AirSparkMetric? {
+        switch id {
+        case "sleep": return .sleep
+        case "hrv": return .hrv
+        case "rhr": return .rhr
+        case "spo2": return .spo2
+        case "steps": return .steps
+        case "kcal": return .active
+        default: return nil
+        }
+    }
 
     static func all(from data: DailyHealthData) -> [AirChip] {
         let spo2 = data.bloodOxygen
