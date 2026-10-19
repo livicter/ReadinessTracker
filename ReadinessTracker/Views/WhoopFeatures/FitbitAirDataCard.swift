@@ -24,6 +24,8 @@ struct FitbitAirDataCard: View {
     @State private var focusedLegend: AirDensityCategory? = nil
     /// Honest #526: which heatmap day is selected (index into last 7).
     @State private var selectedHeatDayOffset: Int? = nil
+    /// Honest #527: expand week-over-week density detail.
+    @State private var showDensityWowDetail: Bool = false
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -59,6 +61,7 @@ struct FitbitAirDataCard: View {
                 }
                 densityLegend
                 densityHeatmap
+                densityWowBadge
                 densityHistorySpark
                 if let selectedChip {
                     selectedDetail(selectedChip)
@@ -330,6 +333,87 @@ struct FitbitAirDataCard: View {
         if dens < 0.4 { return accent.opacity(0.25) }
         if dens < 0.7 { return accent.opacity(0.55) }
         return accent.opacity(0.9)
+    }
+
+    /// Honest #527: last-7d mean density vs prior-7d.
+    private var densityWow: (current: Double, prior: Double, deltaPP: Double)? {
+        guard history.count >= 8 else { return nil }
+        let currentDays = Array(history.suffix(7))
+        let priorDays = Array(history.dropLast(min(7, history.count)).suffix(7))
+        guard priorDays.count >= 3 else { return nil }
+        func meanDensity(_ days: [DailyHealthData]) -> Double {
+            let vals = days.map { day -> Double in
+                let c = AirChip.all(from: day)
+                guard !c.isEmpty else { return 0 }
+                return Double(c.filter(\.filled).count) / Double(c.count)
+            }
+            guard !vals.isEmpty else { return 0 }
+            return vals.reduce(0, +) / Double(vals.count)
+        }
+        let cur = meanDensity(currentDays)
+        let prior = meanDensity(priorDays)
+        return (cur, prior, (cur - prior) * 100)
+    }
+
+    @ViewBuilder
+    private var densityWowBadge: some View {
+        if let wow = densityWow {
+            let sign = wow.deltaPP >= 0 ? "+" : ""
+            let tone: Color = abs(wow.deltaPP) < 0.5 ? RTColor.secondaryText
+                : (wow.deltaPP > 0 ? RTColor.optimal : RTColor.warning)
+            VStack(alignment: .leading, spacing: 8) {
+                Button {
+                    Haptic.selectionChanged()
+                    showDensityWowDetail.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.left.arrow.right.circle.fill")
+                            .font(.caption.weight(.semibold))
+                        Text("WoW density")
+                            .font(.caption.weight(.semibold))
+                        Spacer()
+                        Text("\(sign)\(Int(wow.deltaPP.rounded()))pp")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(tone.opacity(0.12))
+                            .clipShape(Capsule())
+                        Image(systemName: showDensityWowDetail ? "chevron.up" : "chevron.down")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .foregroundStyle(accent)
+                    .padding(10)
+                    .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                if showDensityWowDetail {
+                    HStack(spacing: 12) {
+                        wowStat(title: "This 7d", value: "\(Int((wow.current * 100).rounded()))%")
+                        wowStat(title: "Prior 7d", value: "\(Int((wow.prior * 100).rounded()))%")
+                        wowStat(title: "Δ", value: "\(sign)\(String(format: "%.1f", wow.deltaPP))pp")
+                    }
+                }
+            }
+            .accessibilityIdentifier(SurfaceID.fitbitAirDensityWow)
+            .accessibilityLabel("Week over week density \(sign)\(Int(wow.deltaPP.rounded())) percentage points")
+            .accessibilityAddTraits(.isButton)
+        }
+    }
+
+    private func wowStat(title: String, value: String) -> some View {
+        VStack(spacing: 2) {
+            Text(title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(RTColor.tertiaryText)
+            Text(value)
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(RTColor.primaryText)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .background(RTColor.surfaceHighlight.opacity(0.7), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 
     /// Honest #514: history density% spark (same window as field spark).
