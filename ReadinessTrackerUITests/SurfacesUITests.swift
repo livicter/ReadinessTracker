@@ -10438,6 +10438,19 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Sort"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-sort.png")
+        // Honest #543: air-gap task filter All/Air
+        let airFilter = app.descendants(matching: .any)["sim.load.tasks.airfilter"].firstMatch
+        XCTAssertTrue(airFilter.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["All"].waitForExistence(timeout: 3)
+                      || app.staticTexts["Air"].waitForExistence(timeout: 2),
+                      "sim.load.tasks.airfilter")
+        if airFilter.exists {
+            airFilter.tap()
+        } else if app.staticTexts["All"].exists {
+            app.staticTexts["All"].tap()
+        }
+        saveShot("verify-readiness-load-simulator-tasks-airfilter.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }

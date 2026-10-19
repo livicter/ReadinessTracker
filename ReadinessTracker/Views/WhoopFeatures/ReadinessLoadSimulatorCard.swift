@@ -30,6 +30,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var snapB: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
     /// Honest #541: sort Today’s tasks by READY impact (high→low).
     @State private var sortTasksByImpact = false
+    /// Honest #543: show only air-gap tasks vs all.
+    @State private var showAirGapTasksOnly = false
 
     private var baseline: Int { scores.general }
 
@@ -802,9 +804,12 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private var tasksBlock: some View {
-        let ordered = sortTasksByImpact
-            ? tasks.sorted { $0.readyDelta > $1.readyDelta }
+        let base = showAirGapTasksOnly
+            ? tasks.filter { $0.id.hasPrefix("air-") || $0.id.contains("air") }
             : tasks
+        let ordered = sortTasksByImpact
+            ? base.sorted { $0.readyDelta > $1.readyDelta }
+            : base
         let done = ordered.filter { completedTaskIDs.contains($0.id) }.count
         let lift = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
         return VStack(alignment: .leading, spacing: 8) {
@@ -813,6 +818,24 @@ struct ReadinessLoadSimulatorCard: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                // Honest #543: air-gap-only filter (Fitbit/Health integration)
+                Button {
+                    Haptic.selectionChanged()
+                    showAirGapTasksOnly.toggle()
+                } label: {
+                    Text(showAirGapTasksOnly ? "Air" : "All")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(showAirGapTasksOnly ? Color.white : accent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(showAirGapTasksOnly ? accent : accent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksAirFilter)
+                .accessibilityLabel(showAirGapTasksOnly
+                                    ? "Showing air gap tasks only, tap for all"
+                                    : "Show all tasks, tap for air gaps only")
                 // Honest #541: sort by READY impact
                 Button {
                     Haptic.selectionChanged()
