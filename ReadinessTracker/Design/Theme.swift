@@ -248,6 +248,7 @@ enum SurfaceID {
     static let fitbitAirGapsFill = "fitbit.air.gaps.fill"  // Honest #550
     static let fitbitAirGapsProgress = "fitbit.air.gaps.progress"  // Honest #552
     static let readinessSimulatorTasksCheckNext = "sim.load.tasks.checknext"  // Honest #551
+    static let readinessSimulatorTasksUndoLast = "sim.load.tasks.undolast"  // Honest #553
     static let fitbitAirChipSparkRange = "fitbit.air.chip.spark.range"  // Honest #544
     static let fitbitAirChipMiniSpark = "fitbit.air.chip.spark"  // Honest #531
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532

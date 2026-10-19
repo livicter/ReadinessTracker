@@ -1006,6 +1006,27 @@ struct ReadinessLoadSimulatorCard: View {
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckNext)
                     .accessibilityLabel("Check next READY-impact task")
                 }
+                // Honest #553: undo last — uncheck highest READY-impact checked task
+                if ordered.contains(where: { completedTaskIDs.contains($0.id) }) {
+                    Button {
+                        Haptic.selectionChanged()
+                        let checked = ordered.filter { completedTaskIDs.contains($0.id) }
+                        if let last = checked.sorted(by: { $0.readyDelta > $1.readyDelta }).first {
+                            completedTaskIDs.remove(last.id)
+                        }
+                    } label: {
+                        Text("Undo last")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(accent)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(accent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksUndoLast)
+                    .accessibilityLabel("Undo last checked READY-impact task")
+                }
                 Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)

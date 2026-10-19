@@ -10475,6 +10475,18 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Check next"].tap()
         }
         saveShot("verify-simulator-check-next.png")
+        // Honest #553: Undo last READY-impact checked task
+        let undoLast = app.descendants(matching: .any)["sim.load.tasks.undolast"].firstMatch
+        XCTAssertTrue(undoLast.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Undo last"].waitForExistence(timeout: 3),
+                      "sim.load.tasks.undolast")
+        if undoLast.exists {
+            undoLast.tap()
+        } else if app.staticTexts["Undo last"].exists {
+            app.staticTexts["Undo last"].tap()
+        }
+        saveShot("verify-simulator-undo-last.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
