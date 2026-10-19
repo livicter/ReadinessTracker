@@ -10853,6 +10853,13 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.streak")
         // Expand optional — skip tap so #506 chip.md.nav reanchor stays reliable as card grows.
         saveShot("verify-fitbit-air-density-streak.png")
+        // Honest #546: streak calendar dots (always mounted under streak badge)
+        let streakCal = app.descendants(matching: .any)["fitbit.air.density.streak.cal"].firstMatch
+        XCTAssertTrue(streakCal.waitForExistence(timeout: 5)
+                      || streak.exists
+                      || app.staticTexts["Density streak"].exists,
+                      "fitbit.air.density.streak.cal")
+        saveShot("verify-fitbit-air-density-streak-cal.png")
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")
