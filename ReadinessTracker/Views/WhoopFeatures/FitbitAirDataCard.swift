@@ -16,6 +16,8 @@ struct FitbitAirDataCard: View {
     @State private var sparkMetric: AirSparkMetric = .steps
     /// Honest #507: interactive spark scrub index.
     @State private var sparkScrubIndex: Int? = nil
+    /// Honest #519: show spark delta as percent vs absolute.
+    @State private var sparkDeltaAsPercent: Bool = false
     /// Honest #509: which air gap pill is expanded.
     @State private var focusedGapID: String? = nil
     /// Honest #513: density legend category focus (Sleep / Vitals / Activity).
@@ -521,6 +523,21 @@ struct FitbitAirDataCard: View {
     }
 
 
+    /// Honest #519: period mean for current spark metric.
+    private var sparkPeriodMean: Double {
+        let vals = sparkPoints.map(\.value).filter { $0 > 0 }
+        guard !vals.isEmpty else { return 0 }
+        return vals.reduce(0, +) / Double(vals.count)
+    }
+
+    private var sparkDeltaValue: Double? {
+        let idx = sparkScrubIndex ?? (sparkPoints.isEmpty ? nil : sparkPoints.count - 1)
+        guard let idx, sparkPoints.indices.contains(idx) else { return nil }
+        let mean = sparkPeriodMean
+        guard mean > 0 else { return nil }
+        return sparkPoints[idx].value - mean
+    }
+
     private var sparkBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -591,6 +608,48 @@ struct FitbitAirDataCard: View {
                 .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkScrub)
                 .accessibilityLabel("Spark scrub \(sparkScrubValueText(pt.value))")
             }
+            // Honest #519: vs period mean delta (tap toggles abs / %)
+            if let delta = sparkDeltaValue, sparkPeriodMean > 0 {
+                Button {
+                    Haptic.selectionChanged()
+                    sparkDeltaAsPercent.toggle()
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: delta >= 0 ? "arrow.up.right" : "arrow.down.right")
+                            .font(.caption2.weight(.bold))
+                        Text("vs \(sparkPeriod)d avg")
+                            .font(.caption.weight(.semibold))
+                        Spacer()
+                        Text(sparkDeltaAsPercent
+                             ? String(format: "%+.0f%%", delta / sparkPeriodMean * 100)
+                             : sparkDeltaText(delta))
+                            .font(.caption.weight(.bold).monospacedDigit())
+                        Text(sparkDeltaAsPercent ? "pct" : "abs")
+                            .font(.caption2.weight(.bold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(Color.white.opacity(0.18))
+                            .clipShape(Capsule())
+                    }
+                    .foregroundStyle(Color.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                (delta >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.95),
+                                accent.opacity(0.85)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkDelta)
+                .accessibilityLabel("Spark delta versus average")
+            }
             // Day chips — UITest-reliable scrub affordance (drag still works on chart).
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
@@ -635,6 +694,11 @@ struct FitbitAirDataCard: View {
                         .symbolSize(64)
                     }
                 }
+                if sparkPeriodMean > 0 {
+                    RuleMark(y: .value("Avg", sparkPeriodMean))
+                        .foregroundStyle(RTColor.secondaryText.opacity(0.55))
+                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                }
             }
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
@@ -660,6 +724,16 @@ struct FitbitAirDataCard: View {
             .accessibilityIdentifier(SurfaceID.fitbitAirDataSpark)
             .onChange(of: sparkPeriod) { _ in sparkScrubIndex = nil }
             .onChange(of: sparkMetric) { _ in sparkScrubIndex = nil }
+        }
+    }
+
+    private func sparkDeltaText(_ delta: Double) -> String {
+        let sign = delta >= 0 ? "+" : ""
+        switch sparkMetric {
+        case .steps, .active: return "\(sign)\(Int(delta.rounded()))"
+        case .sleep: return String(format: "%+.1fh", delta)
+        case .hrv, .rhr: return "\(sign)\(Int(delta.rounded()))"
+        case .spo2: return String(format: "%+.1f", delta)
         }
     }
 

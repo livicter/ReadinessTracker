@@ -10630,6 +10630,13 @@ final class SurfacesUITests: XCTestCase {
             if day.exists, day.isHittable { day.tap() }
             saveShot("verify-fitbit-air-data-spark-scrub.png")
         }
+        // Honest #519: spark vs period-avg delta strip
+        let sparkDelta = app.descendants(matching: .any)["fitbit.air.spark.delta"].firstMatch
+        XCTAssertTrue(sparkDelta.waitForExistence(timeout: 5)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "vs")).count > 0,
+                      "fitbit.air.spark.delta")
+        if sparkDelta.exists { sparkDelta.tap() }
+        saveShot("verify-fitbit-air-data-spark-delta.png")
         // Honest #509: air gaps strip (empty Google Health / Fitbit fields)
         let gaps = app.descendants(matching: .any)["fitbit.air.gaps"].firstMatch
         XCTAssertTrue(gaps.waitForExistence(timeout: 5), "fitbit.air.gaps")
