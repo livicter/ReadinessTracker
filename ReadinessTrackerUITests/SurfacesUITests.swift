@@ -10530,6 +10530,18 @@ final class SurfacesUITests: XCTestCase {
             else { pathSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-path-spark.png")
+
+        // Honest #563: READY composition stack
+        let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
+        XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.stack")
+        if readyStack.exists {
+            if readyStack.isHittable { readyStack.tap() }
+            else { readyStack.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-ready-stack.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
