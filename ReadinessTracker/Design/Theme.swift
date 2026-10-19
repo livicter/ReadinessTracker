@@ -223,6 +223,7 @@ enum SurfaceID {
     static let fitbitAirDensityRingCycle = "fitbit.air.density.cycle"  // Honest #521
     static let fitbitAirDensityHeatmap = "fitbit.air.density.heat"  // Honest #525
     static let fitbitAirDensityHeatDay = "fitbit.air.density.heat.day"  // Honest #526
+    static let fitbitAirDensityWow = "fitbit.air.density.wow"  // Honest #527
     static let interactiveRecoveryDialZones = "balance.dial.zones"  // Honest #522
     static let readinessSimulatorAirGapTasks = "sim.load.tasks.airgaps"  // Honest #523
     static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513

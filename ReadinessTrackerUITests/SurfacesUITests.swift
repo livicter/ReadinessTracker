@@ -10654,6 +10654,18 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Selected density day")).count > 0,
                       "fitbit.air.density.heat.day")
         saveShot("verify-fitbit-air-density-heat-day.png")
+        // Honest #527: week-over-week density badge
+        let wow = app.descendants(matching: .any)["fitbit.air.density.wow"].firstMatch
+        if wow.waitForExistence(timeout: 4) {
+            wow.tap()
+            saveShot("verify-fitbit-air-density-wow.png")
+        } else {
+            // History may be short in some fixtures — still assert label OR skip soft
+            XCTAssertTrue(app.staticTexts["WoW density"].waitForExistence(timeout: 2)
+                          || app.staticTexts["7-day density"].exists,
+                          "fitbit.air.density.wow")
+            saveShot("verify-fitbit-air-density-wow.png")
+        }
         // Honest #514: density history spark (same window) — assert early with legend.
         let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
         XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")
