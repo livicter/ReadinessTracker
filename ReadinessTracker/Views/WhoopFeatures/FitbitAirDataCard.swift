@@ -60,6 +60,7 @@ struct FitbitAirDataCard: View {
                     chipGrid
                 }
                 densityLegend
+                densityStackedBar
                 densityHeatmap
                 densityWowBadge
                 densityHistorySpark
@@ -242,6 +243,51 @@ struct FitbitAirDataCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
         .accessibilityLabel("Air density legend")
+    }
+
+    /// Honest #529: interactive Sleep/Vitals/Activity stacked density bar.
+    private var densityStackedBar: some View {
+        GeometryReader { geo in
+            let totalW = max(geo.size.width, 1)
+            let weights = AirDensityCategory.allCases.map { max(0.08, $0.fillRatio(in: chips)) }
+            let sum = weights.reduce(0, +)
+            HStack(spacing: 3) {
+                ForEach(Array(AirDensityCategory.allCases.enumerated()), id: \.element.id) { idx, cat in
+                    let w = totalW * (weights[idx] / max(sum, 0.01))
+                    Button {
+                        Haptic.selectionChanged()
+                        focusedLegend = focusedLegend == cat ? nil : cat
+                        if let focus = focusedLegend {
+                            let ids = focus.chipIDs
+                            selectedChipID = chips.first(where: { ids.contains($0.id) && $0.filled })?.id
+                                ?? chips.first(where: { ids.contains($0.id) })?.id
+                            sparkMetric = focus.sparkMetric
+                            sparkScrubIndex = nil
+                        }
+                    } label: {
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(cat.color.opacity(focusedLegend == nil || focusedLegend == cat ? 0.85 : 0.35))
+                            Text(cat.shortTitle)
+                                .font(.caption2.weight(.bold))
+                                .foregroundStyle(Color.white)
+                                .padding(.horizontal, 6)
+                        }
+                        .frame(width: max(28, w - 3), height: 28)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(focusedLegend == cat ? Color.white.opacity(0.9) : Color.clear, lineWidth: 2)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(cat.title) stack \(Int((cat.fillRatio(in: chips) * 100).rounded())) percent")
+                }
+            }
+        }
+        .frame(height: 28)
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityStack)
+        .accessibilityLabel("Air density category stack")
+        .accessibilityElement(children: .contain)
     }
 
     /// Honest #525/#526: interactive 7-day density heatmap; tap selects day + scrub spark.
