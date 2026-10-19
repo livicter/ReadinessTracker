@@ -1069,6 +1069,56 @@ struct ReadinessLoadSimulatorCard: View {
                     .accessibilityLabel("READY lift +\(lift)")
             }
             .accessibilityElement(children: .contain)
+            // Honest #555: remaining READY-lift gauge (richer sim graphics)
+            let totalLift = ordered.map(\.readyDelta).reduce(0, +)
+            let remain = max(0, totalLift - lift)
+            let frac = totalLift > 0 ? Double(lift) / Double(totalLift) : 0
+            Button {
+                Haptic.selectionChanged()
+                let unchecked = ordered.filter { !completedTaskIDs.contains($0.id) }
+                if let next = unchecked.sorted(by: { $0.readyDelta > $1.readyDelta }).first {
+                    completedTaskIDs.insert(next.id)
+                }
+            } label: {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(spacing: 8) {
+                        Text("Lift progress")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer(minLength: 0)
+                        Text("+\(lift)/+\(totalLift)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text(remain == 0 ? "done" : "remain +\(remain)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(remain == 0 ? RTColor.optimal : RTColor.secondaryText)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background((remain == 0 ? RTColor.optimal : accent).opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule()
+                                .fill(accent.opacity(0.16))
+                                .frame(height: 10)
+                            Capsule()
+                                .fill(LinearGradient(
+                                    colors: [accent, RTColor.optimal],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ))
+                                .frame(width: max(10, geo.size.width * CGFloat(frac)), height: 10)
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 14)
+                }
+                .padding(.vertical, 4)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksRemainLift)
+            .accessibilityLabel("READY lift progress +\(lift) of +\(totalLift), remain +\(remain)")
             // Honest #549: cumulative READY lift spark (bars tint when checked)
             if !ordered.isEmpty {
                 Chart {

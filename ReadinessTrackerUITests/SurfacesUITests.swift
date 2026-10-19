@@ -10487,6 +10487,17 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Undo last"].tap()
         }
         saveShot("verify-simulator-undo-last.png")
+        // Honest #555: remaining READY-lift gauge
+        let remainLift = app.descendants(matching: .any)["sim.load.tasks.remainlift"].firstMatch
+        XCTAssertTrue(remainLift.waitForExistence(timeout: 5)
+                      || tasks.exists
+                      || app.staticTexts["Lift progress"].exists,
+                      "sim.load.tasks.remainlift")
+        if remainLift.exists {
+            if remainLift.isHittable { remainLift.tap() }
+            else { remainLift.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-remain-lift.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         if row.exists { row.tap() }
