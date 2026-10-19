@@ -433,6 +433,13 @@ struct FitbitAirDataCard: View {
             let sign = deltaPP >= 0 ? "+" : ""
             let tone: Color = abs(deltaPP) < 0.5 ? RTColor.secondaryText
                 : (deltaPP > 0 ? RTColor.optimal : RTColor.warning)
+            // Honest #558: forecast vs window mean density (Google Health air graphics)
+            let meanVals = densityHistoryPoints.map(\.density).filter { $0 > 0 }
+            let winMean = meanVals.isEmpty ? 0.0 : meanVals.reduce(0, +) / Double(meanVals.count)
+            let vsMeanPP = winMean > 0 ? (fc.tomorrow - winMean) * 100 : 0
+            let vsSign = vsMeanPP >= 0 ? "+" : ""
+            let vsTone: Color = abs(vsMeanPP) < 3 ? RTColor.secondaryText
+                : (vsMeanPP >= 0 ? RTColor.optimal : RTColor.warning)
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -454,6 +461,17 @@ struct FitbitAirDataCard: View {
                             .padding(.vertical, 3)
                             .background(tone.opacity(0.12))
                             .clipShape(Capsule())
+                        if winMean > 0 {
+                            Text("vs avg \(vsSign)\(Int(vsMeanPP.rounded()))pp")
+                                .font(.caption2.weight(.bold).monospacedDigit())
+                                .foregroundStyle(vsTone)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(vsTone.opacity(0.12))
+                                .clipShape(Capsule())
+                                .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastVsMean)
+                                .accessibilityLabel("Forecast versus mean \(vsSign)\(Int(vsMeanPP.rounded())) percentage points")
+                        }
                         Image(systemName: showDensityForecastDetail ? "chevron.up" : "chevron.down")
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(RTColor.tertiaryText)
@@ -468,6 +486,9 @@ struct FitbitAirDataCard: View {
                         wowStat(title: "Today", value: "\(Int((fc.today * 100).rounded()))%")
                         wowStat(title: "Slope/d", value: String(format: "%+.1fpp", fc.slopePP))
                         wowStat(title: "Tomorrow", value: "\(Int((fc.tomorrow * 100).rounded()))%")
+                        if winMean > 0 {
+                            wowStat(title: "vs mean", value: "\(vsSign)\(Int(vsMeanPP.rounded()))pp")
+                        }
                     }
                     densityForecastBandRow(lo: fc.lo, hi: fc.hi)
                     densityForecastBandBar(lo: fc.lo, hi: fc.hi, tomorrow: fc.tomorrow)

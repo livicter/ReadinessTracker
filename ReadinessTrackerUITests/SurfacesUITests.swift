@@ -10891,6 +10891,16 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.forecast")
         if forecast.exists { forecast.tap() }
         saveShot("verify-fitbit-air-density-forecast.png")
+        // Honest #558: forecast vs window mean density
+        let vsMean = app.descendants(matching: .any)["fitbit.air.density.forecast.vsmean"].firstMatch
+        XCTAssertTrue(vsMean.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      "fitbit.air.density.forecast.vsmean")
+        if vsMean.exists {
+            if vsMean.isHittable { vsMean.tap() }
+            else { vsMean.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-forecast-vsmean.png")
         // Honest #540: forecast residual confidence band (inside expanded detail)
         let band = app.descendants(matching: .any)["fitbit.air.density.forecast.band"].firstMatch
         XCTAssertTrue(band.waitForExistence(timeout: 5)
