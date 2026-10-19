@@ -119,6 +119,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyZoneStrip
                 seedLiveDeltaRail
                 taskCompletionRadial
+                ringDeltaBars
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1260,8 +1261,87 @@ struct ReadinessLoadSimulatorCard: View {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(accent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRadial)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRadial)
         .accessibilityLabel("Task radial \(doneN) of \(totalN), lift \(Int((frac * 100).rounded())) percent")
+    }
+
+    /// Honest #575: ring delta bars — Gym/Work/Sleep/READY vs tonight baseline (Google Health graphics).
+    private var ringDeltaBars: some View {
+        struct Row: Identifiable {
+            let id: String
+            let title: String
+            let base: Int
+            let live: Int
+            let color: Color
+            var delta: Int { live - base }
+        }
+        let rows: [Row] = [
+            .init(id: "ready", title: "READY", base: baseline, live: projectedCoupled, color: accent),
+            .init(id: "gym", title: "Gym", base: scores.gym, live: projectedGym, color: Color(red: 255/255, green: 59/255, blue: 48/255)),
+            .init(id: "work", title: "Work", base: scores.cognitive, live: projectedWork, color: Color(red: 52/255, green: 199/255, blue: 89/255)),
+            .init(id: "sleep", title: "Sleep", base: scores.breakdown.sleepScore, live: projectedSleep, color: Color(hex: "5E5CE6"))
+        ]
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.doc.horizontal.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Ring deltas")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("vs tonight")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            Chart {
+                ForEach(rows) { row in
+                    BarMark(
+                        x: .value("Ring", row.title),
+                        y: .value("Δ", row.delta)
+                    )
+                    .foregroundStyle(row.delta >= 0 ? row.color : row.color.opacity(0.55))
+                    .cornerRadius(4)
+                }
+                RuleMark(y: .value("Zero", 0))
+                    .foregroundStyle(RTColor.tertiaryText.opacity(0.45))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .chartYAxis {
+                AxisMarks(position: .leading) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 100)
+            .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+            HStack(spacing: 8) {
+                ForEach(rows) { row in
+                    let d = row.delta
+                    Text("\(row.title) \(d >= 0 ? "+\(d)" : "\(d)")")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(d >= 0 ? RTColor.optimal : Color(hex: "FF375F"))
+                }
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorRingDeltas)
+        .accessibilityLabel("Ring deltas versus tonight baseline")
     }
 
 
