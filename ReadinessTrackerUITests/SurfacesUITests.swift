@@ -10548,6 +10548,13 @@ final class SurfacesUITests: XCTestCase {
             legend.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
         }
         saveShot("verify-fitbit-air-data-density-legend.png")
+        // Honest #514: density history spark (same window) — assert early with legend.
+        let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
+        XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")
+        if densSpark.exists {
+            densSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
+        }
+        saveShot("verify-fitbit-air-data-density-spark.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
@@ -10586,21 +10593,25 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-data-gaps.png")
         // Honest #506: air → classic MetricDetail (row under card header).
-        // Prefer small swipeUp first (we are usually just below the card after scrub).
+        // Card grew (#513 legend + #514 density spark) — swipeDown toward header first.
+        let airCard = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
+        let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
         var reanchor = 0
-        while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 12 {
-            app.swipeUp()
+        while !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) && reanchor < 18 {
+            app.swipeDown()
             reanchor += 1
         }
-        if !(titleFitbit.isHittable || titleHealth.isHittable) {
+        if !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) {
             reanchor = 0
-            while !(titleFitbit.isHittable || titleHealth.isHittable) && reanchor < 16 {
-                app.swipeDown()
+            while !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) && reanchor < 12 {
+                app.swipeUp()
                 reanchor += 1
             }
         }
-        XCTAssertTrue(titleFitbit.isHittable || titleHealth.isHittable, "Air title on-screen")
-        let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
+        XCTAssertTrue(
+            titleFitbit.exists || titleHealth.exists || airCard.exists || chipNav.exists,
+            "Air card on-screen"
+        )
         XCTAssertTrue(chipNav.waitForExistence(timeout: 5), "fitbit.air.chip.md.nav")
         let link = app.buttons["Steps metric detail"].firstMatch
         let stepsLabel = app.staticTexts["Steps detail"].firstMatch
