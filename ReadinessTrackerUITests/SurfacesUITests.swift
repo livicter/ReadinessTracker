@@ -10923,6 +10923,16 @@ final class SurfacesUITests: XCTestCase {
                       || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists,
                       "fitbit.air.density.spark.range")
         saveShot("verify-fitbit-air-density-spark-range.png")
+        // Honest #556: density spark mean rule
+        let densMean = app.descendants(matching: .any)["fitbit.air.density.spark.mean"].firstMatch
+        XCTAssertTrue(densMean.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists,
+                      "fitbit.air.density.spark.mean")
+        if densMean.exists {
+            if densMean.isHittable { densMean.tap() }
+            else { densMean.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-fitbit-air-density-spark-mean.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
