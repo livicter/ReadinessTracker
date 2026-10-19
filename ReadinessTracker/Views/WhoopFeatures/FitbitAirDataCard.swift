@@ -872,6 +872,12 @@ struct FitbitAirDataCard: View {
                 guard let scrubPt, mean7 > 0 else { return nil }
                 return scrubPt.value - mean7
             }()
+            // Honest #537: peak day in the 7d window
+            let peakIndex: Int? = {
+                guard let maxV = points.map(\.value).max(), maxV > 0 else { return nil }
+                return points.firstIndex(where: { $0.value == maxV })
+            }()
+            let peakPt: (date: Date, value: Double)? = peakIndex.flatMap { points.indices.contains($0) ? points[$0] : nil }
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text("\(chip.label) · 7d")
@@ -906,6 +912,17 @@ struct FitbitAirDataCard: View {
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkMean)
                             .accessibilityLabel("\(chip.label) seven day mean")
                     }
+                    if let peakPt {
+                        Text("peak \(chipSparkValueText(chip, peakPt.value))")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(accent)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(accent.opacity(0.12))
+                            .clipShape(Capsule())
+                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkPeak)
+                            .accessibilityLabel("\(chip.label) seven day peak")
+                    }
                 }
                 Chart {
                     ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
@@ -927,6 +944,15 @@ struct FitbitAirDataCard: View {
                             )
                             .foregroundStyle(accent)
                             .symbolSize(48)
+                        }
+                        if peakIndex == i {
+                            PointMark(
+                                x: .value("Day", pt.date),
+                                y: .value(chip.label, pt.value)
+                            )
+                            .foregroundStyle(accent.opacity(scrubClamped == i ? 0.0 : 1.0))
+                            .symbolSize(scrubClamped == i ? 0 : 36)
+                            .symbol(Circle())
                         }
                     }
                     // Honest #536: 7d mean reference (pairs with Δ capsule)
