@@ -10539,6 +10539,15 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
         saveShot("verify-fitbit-air-data-card-detail.png")
+        // Honest #513: density legend (Sleep / Vitals / Move) — assert early before scrub/gaps re-anchor.
+        let legend = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
+        XCTAssertTrue(legend.waitForExistence(timeout: 5), "fitbit.air.density.legend")
+        if legend.isHittable {
+            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        } else if legend.exists {
+            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        }
+        saveShot("verify-fitbit-air-data-density-legend.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {

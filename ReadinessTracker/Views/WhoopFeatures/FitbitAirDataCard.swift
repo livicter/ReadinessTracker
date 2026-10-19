@@ -18,6 +18,8 @@ struct FitbitAirDataCard: View {
     @State private var sparkScrubIndex: Int? = nil
     /// Honest #509: which air gap pill is expanded.
     @State private var focusedGapID: String? = nil
+    /// Honest #513: density legend category focus (Sleep / Vitals / Activity).
+    @State private var focusedLegend: AirDensityCategory? = nil
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -51,6 +53,7 @@ struct FitbitAirDataCard: View {
                     densityRing
                     chipGrid
                 }
+                densityLegend
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -94,22 +97,93 @@ struct FitbitAirDataCard: View {
         ZStack {
             Circle()
                 .stroke(RTColor.divider, lineWidth: 8)
+            // Honest #513: category arcs (Sleep / Vitals / Activity) + overall trim
+            ForEach(Array(AirDensityCategory.allCases.enumerated()), id: \.element.id) { idx, cat in
+                densityCategoryArc(cat, index: idx)
+            }
             Circle()
                 .trim(from: 0, to: CGFloat(density))
-                .stroke(accent, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .stroke(accent.opacity(focusedLegend == nil ? 0.35 : 0.12),
+                        style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.3), value: density)
             VStack(spacing: 2) {
                 Text("\(Int((density * 100).rounded()))%")
                     .font(.system(size: 20, weight: .bold, design: .rounded).monospacedDigit())
                     .foregroundStyle(RTColor.primaryText)
-                Text("AIR")
+                Text(focusedLegend?.shortTitle ?? "AIR")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(RTColor.secondaryText)
+                    .foregroundStyle(focusedLegend?.color ?? RTColor.secondaryText)
             }
         }
         .frame(width: 84, height: 84)
+        .animation(.easeInOut(duration: 0.25), value: focusedLegend)
         .accessibilityLabel("Air density \(Int((density * 100).rounded())) percent")
+    }
+
+
+    private func densityCategoryArc(_ cat: AirDensityCategory, index: Int) -> some View {
+        let span = 1.0 / Double(AirDensityCategory.allCases.count)
+        let start = Double(index) * span
+        let end = start + span * cat.fillRatio(in: chips)
+        let dimmed = focusedLegend != nil && focusedLegend != cat
+        return Circle()
+            .trim(from: CGFloat(start), to: CGFloat(max(start, end)))
+            .stroke(cat.color.opacity(dimmed ? 0.25 : 0.95),
+                    style: StrokeStyle(lineWidth: focusedLegend == cat ? 10 : 8, lineCap: .round))
+            .rotationEffect(.degrees(-90))
+    }
+
+
+    private func densityLegendPill(_ cat: AirDensityCategory) -> some View {
+        let filled = cat.filledCount(in: chips)
+        let total = cat.chipIDs.count
+        return Button {
+            Haptic.selectionChanged()
+            focusedLegend = focusedLegend == cat ? nil : cat
+            if let focus = focusedLegend {
+                let ids = focus.chipIDs
+                selectedChipID = chips.first(where: { ids.contains($0.id) && $0.filled })?.id
+                    ?? chips.first(where: { ids.contains($0.id) })?.id
+            }
+        } label: {
+            VStack(spacing: 3) {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(cat.color)
+                        .frame(width: 7, height: 7)
+                    Text(cat.title)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(focusedLegend == cat ? Color.white : RTColor.primaryText)
+                }
+                Text("\(filled)/\(total)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.9) : cat.color)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(focusedLegend == cat ? cat.color : cat.color.opacity(0.10))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(focusedLegend == cat ? cat.color.opacity(0.8) : Color.clear, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(cat.title) density \(filled) of \(total)")
+    }
+
+    /// Honest #513: interactive Sleep / Vitals / Activity density legend.
+    private var densityLegend: some View {
+        HStack(spacing: 8) {
+            ForEach(AirDensityCategory.allCases) { cat in
+                densityLegendPill(cat)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
+        .accessibilityLabel("Air density legend")
     }
 
     private var chipGrid: some View {
@@ -133,6 +207,7 @@ struct FitbitAirDataCard: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 4)
+                    .opacity(chipOpacity(chip))
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .fill(selectedChipID == chip.id
@@ -151,6 +226,12 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDataChips)
     }
 
+
+
+    private func chipOpacity(_ chip: AirChip) -> Double {
+        guard let focus = focusedLegend else { return 1 }
+        return focus.chipIDs.contains(chip.id) ? 1 : 0.35
+    }
 
     /// Honest #509: empty Google Health / Fitbit air fields with fill guidance.
     private var gapChips: [AirChip] { chips.filter { !$0.filled } }
@@ -519,6 +600,49 @@ enum AirSparkMetric: String, CaseIterable, Identifiable {
         case .rhr: return Double(day.restingHeartRate)
         case .spo2: return day.bloodOxygen ?? 0
         }
+    }
+}
+
+
+// MARK: - Density legend categories (Honest #513)
+
+enum AirDensityCategory: String, CaseIterable, Identifiable {
+    case sleep, vitals, activity
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .sleep: return "Sleep"
+        case .vitals: return "Vitals"
+        case .activity: return "Move"
+        }
+    }
+    var shortTitle: String {
+        switch self {
+        case .sleep: return "SLP"
+        case .vitals: return "VIT"
+        case .activity: return "MOV"
+        }
+    }
+    var color: Color {
+        switch self {
+        case .sleep: return Color(hex: "5E5CE6")
+        case .vitals: return Color(hex: "FF375F")
+        case .activity: return Color(hex: "00B0B9")
+        }
+    }
+    var chipIDs: [String] {
+        switch self {
+        case .sleep: return ["sleep"]
+        case .vitals: return ["hrv", "rhr", "spo2", "resp", "skin"]
+        case .activity: return ["steps", "kcal", "dist", "floors", "amin", "basal"]
+        }
+    }
+    func filledCount(in chips: [AirChip]) -> Int {
+        chips.filter { chipIDs.contains($0.id) && $0.filled }.count
+    }
+    func fillRatio(in chips: [AirChip]) -> Double {
+        guard !chipIDs.isEmpty else { return 0 }
+        return Double(filledCount(in: chips)) / Double(chipIDs.count)
     }
 }
 
