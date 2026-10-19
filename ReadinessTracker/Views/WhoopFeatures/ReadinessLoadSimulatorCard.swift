@@ -28,6 +28,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var snapA: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
     /// Honest #530: saved B snapshot (frozen) for A−B delta.
     @State private var snapB: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int)? = nil
+    /// Honest #541: sort Today’s tasks by READY impact (high→low).
+    @State private var sortTasksByImpact = false
 
     private var baseline: Int { scores.general }
 
@@ -800,24 +802,45 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private var tasksBlock: some View {
-        let done = tasks.filter { completedTaskIDs.contains($0.id) }.count
-        let lift = tasks.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        let ordered = sortTasksByImpact
+            ? tasks.sorted { $0.readyDelta > $1.readyDelta }
+            : tasks
+        let done = ordered.filter { completedTaskIDs.contains($0.id) }.count
+        let lift = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Today’s tasks")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
+                // Honest #541: sort by READY impact
+                Button {
+                    Haptic.selectionChanged()
+                    sortTasksByImpact.toggle()
+                } label: {
+                    Text(sortTasksByImpact ? "Impact ↓" : "Sort")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(sortTasksByImpact ? Color.white : accent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(sortTasksByImpact ? accent : accent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksSort)
+                .accessibilityLabel(sortTasksByImpact
+                                    ? "Task sort by impact on, tap for default order"
+                                    : "Sort tasks by READY impact")
                 // Honest #539: one-tap check / clear all tasks
                 Button {
                     Haptic.selectionChanged()
-                    if done == tasks.count && !tasks.isEmpty {
+                    if done == ordered.count && !ordered.isEmpty {
                         completedTaskIDs.removeAll()
                     } else {
-                        completedTaskIDs = Set(tasks.map(\.id))
+                        completedTaskIDs = Set(ordered.map(\.id))
                     }
                 } label: {
-                    Text(done == tasks.count && !tasks.isEmpty ? "Clear" : "Check all")
+                    Text(done == ordered.count && !ordered.isEmpty ? "Clear" : "Check all")
                         .font(.caption2.weight(.bold))
                         .foregroundStyle(accent)
                         .padding(.horizontal, 8)
@@ -827,10 +850,10 @@ struct ReadinessLoadSimulatorCard: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckAll)
-                .accessibilityLabel(done == tasks.count && !tasks.isEmpty
+                .accessibilityLabel(done == ordered.count && !ordered.isEmpty
                                     ? "Clear all simulator tasks"
                                     : "Check all simulator tasks")
-                Text("\(done)/\(tasks.count)")
+                Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
@@ -875,7 +898,7 @@ struct ReadinessLoadSimulatorCard: View {
             ProgressView(value: Double(done), total: Double(max(1, tasks.count)))
                 .tint(accent)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
-            ForEach(tasks) { task in
+            ForEach(ordered) { task in
                 taskImpactRow(task)
             }
         }
