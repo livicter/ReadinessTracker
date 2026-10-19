@@ -50,7 +50,11 @@ struct FitbitAirDataCard: View {
     }
 
     private var selectedChip: AirChip? {
-        chips.first { $0.id == selectedChipID }
+        if let id = selectedChipID, let match = chips.first(where: { $0.id == id }) {
+            return match
+        }
+        // Honest #544: default to first filled metric chip so mini-spark + range mount without a tap
+        return chips.first { $0.filled && $0.metric != nil }
     }
 
     var body: some View {
@@ -1017,6 +1021,9 @@ struct FitbitAirDataCard: View {
                 return points.firstIndex(where: { $0.value == maxV })
             }()
             let peakPt: (date: Date, value: Double)? = peakIndex.flatMap { points.indices.contains($0) ? points[$0] : nil }
+            // Honest #544: 7d min–max range (own row — avoids scrub-cluster crowding)
+            let min7 = positive.min() ?? 0
+            let max7 = positive.max() ?? 0
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text("\(chip.label) · 7d")
@@ -1062,6 +1069,42 @@ struct FitbitAirDataCard: View {
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkPeak)
                             .accessibilityLabel("\(chip.label) seven day peak")
                     }
+                }
+                // Honest #544: dedicated min–max range strip (richer + always hittable)
+                if max7 > 0 {
+                    HStack(spacing: 8) {
+                        Text("\(chipSparkValueText(chip, min7))–\(chipSparkValueText(chip, max7))")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(RTColor.secondaryText.opacity(0.10))
+                            .clipShape(Capsule())
+                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkRange)
+                            .accessibilityLabel("\(chip.label) seven day range")
+                        GeometryReader { geo in
+                            let span = max(max7 - min7, 0.0001)
+                            let scrubFrac: CGFloat = {
+                                guard let scrubPt else { return 0.5 }
+                                return CGFloat((scrubPt.value - min7) / span)
+                            }()
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(accent.opacity(0.18))
+                                    .frame(height: 6)
+                                Capsule()
+                                    .fill(accent)
+                                    .frame(width: max(6, geo.size.width * 0.08), height: 6)
+                                    .offset(x: max(0, min(geo.size.width - 6, geo.size.width * scrubFrac - 3)))
+                            }
+                            .frame(maxHeight: .infinity, alignment: .center)
+                        }
+                        .frame(height: 14)
+                        Text("range")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                    .accessibilityElement(children: .contain)
                 }
                 Chart {
                     ForEach(Array(points.enumerated()), id: \.offset) { i, pt in

@@ -10672,16 +10672,25 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(card.waitForExistence(timeout: 6) || titleHealth.exists || titleFitbit.exists,
                       "fitbit.air.card")
         let chips = app.descendants(matching: .any)["fitbit.air.chips"].firstMatch
-        if chips.exists {
-            chips.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.3)).tap()
+        XCTAssertTrue(chips.waitForExistence(timeout: 6), "fitbit.air.chips")
+        // Prefer labeled Steps chip (fixture always fills steps) so selectedDetail + mini-spark mount.
+        let stepsChip = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "Steps")
+        ).firstMatch
+        if stepsChip.waitForExistence(timeout: 4) {
+            if !stepsChip.isHittable {
+                app.swipeUp()
+            }
+            stepsChip.tap()
+        } else if chips.exists {
+            chips.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.75)).tap()
         }
         saveShot("verify-fitbit-air-data-card.png")
-        // Honest #531: selected chip 7d mini spark
+        // Honest #531: selected chip 7d mini spark (hard — needed for #544 range)
         let chipSpark = app.descendants(matching: .any)["fitbit.air.chip.spark"].firstMatch
-        XCTAssertTrue(chipSpark.waitForExistence(timeout: 5)
-                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "7d")).count > 0
-                      || chips.exists,
-                      "fitbit.air.chip.spark")
+        XCTAssertTrue(chipSpark.waitForExistence(timeout: 10)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "7d")).count > 0,
+                      "fitbit.air.chip.spark after Steps select")
         saveShot("verify-fitbit-air-chip-mini-spark.png")
         // Honest #532: scrub value callout on chip mini spark
         if chipSpark.exists {
@@ -10720,6 +10729,18 @@ final class SurfacesUITests: XCTestCase {
                       || chips.exists,
                       "fitbit.air.chip.spark.peak")
         saveShot("verify-fitbit-air-chip-spark-peak.png")
+        // Honest #544: chip mini-spark 7d min–max range strip (hard SurfaceID)
+        if !chipSpark.exists {
+            let stepsAgain = app.descendants(matching: .any).matching(
+                NSPredicate(format: "label BEGINSWITH[c] %@", "Steps")
+            ).firstMatch
+            if stepsAgain.exists { stepsAgain.tap() }
+            _ = chipSpark.waitForExistence(timeout: 6)
+        }
+        let chipRange = app.descendants(matching: .any)["fitbit.air.chip.spark.range"].firstMatch
+        XCTAssertTrue(chipRange.waitForExistence(timeout: 10),
+                      "fitbit.air.chip.spark.range")
+        saveShot("verify-fitbit-air-chip-spark-range.png")
         let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
         XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
