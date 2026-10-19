@@ -76,6 +76,7 @@ struct FitbitAirDataCard: View {
                 densityHistorySpark
                 densityDistributionHist
                 densityCVMeter
+                densitySkewMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1499,6 +1500,90 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityCV)
         .accessibilityLabel("Density coefficient of variation \(cvPP) percent, \(stability)")
     }
+
+
+    /// Honest #574: density skew meter — Pearson moment skewness of last-14 dens (Google Health graphics).
+    @ViewBuilder
+    private var densitySkewMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densitySkewBody(days: days)
+        }
+    }
+
+    private func densitySkewBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let mean = dens.reduce(0, +) / n
+        let m2 = dens.map { let d = $0 - mean; return d * d }.reduce(0, +) / n
+        let m3 = dens.map { let d = $0 - mean; return d * d * d }.reduce(0, +) / n
+        let sd = m2.squareRoot()
+        let skew = sd > 1e-9 ? m3 / (sd * sd * sd) : 0
+        let skewPP = Int((skew * 100).rounded()) // ×100 for display
+        let absS = abs(skew)
+        let tone: Color = absS <= 0.5 ? RTColor.optimal : (absS <= 1.0 ? RTColor.good : RTColor.warning)
+        let verb = skew > 0.15 ? "Right" : (skew < -0.15 ? "Left" : "Sym")
+        let needle = max(-1.0, min(1.0, skew / 2.0))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "triangle.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density skew")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(skew >= 0 ? "+" : "")\(String(format: "%.2f", skew))")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let mid = geo.size.width / 2
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [Color(hex: "FF375F").opacity(0.3), accent.opacity(0.12), RTColor.optimal.opacity(0.35)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    Capsule().fill(RTColor.primaryText.opacity(0.55)).frame(width: 2, height: 16).offset(x: mid - 1)
+                    Circle().fill(tone).frame(width: 14, height: 14)
+                        .offset(x: mid + CGFloat(needle) * (mid - 10) - 7)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("Left tail")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Right tail")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySkew)
+        .accessibilityLabel("Density skew \(verb) \(String(format: "%.2f", skew))")
+    }
+
 
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
