@@ -899,6 +899,13 @@ struct FitbitAirDataCard: View {
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkDelta)
                             .accessibilityLabel("\(chip.label) delta versus seven day mean")
                     }
+                    if mean7 > 0 {
+                        Text("avg \(chipSparkValueText(chip, mean7))")
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(RTColor.tertiaryText)
+                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkMean)
+                            .accessibilityLabel("\(chip.label) seven day mean")
+                    }
                 }
                 Chart {
                     ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
@@ -921,6 +928,12 @@ struct FitbitAirDataCard: View {
                             .foregroundStyle(accent)
                             .symbolSize(48)
                         }
+                    }
+                    // Honest #536: 7d mean reference (pairs with Δ capsule)
+                    if mean7 > 0 {
+                        RuleMark(y: .value("Avg", mean7))
+                            .foregroundStyle(RTColor.secondaryText.opacity(0.55))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
                     }
                 }
                 .chartXAxis(.hidden)
