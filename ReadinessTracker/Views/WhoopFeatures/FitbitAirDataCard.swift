@@ -77,6 +77,7 @@ struct FitbitAirDataCard: View {
                 densityDistributionHist
                 densityCVMeter
                 densitySkewMeter
+                densityIQRMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1584,6 +1585,107 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Density skew \(verb) \(String(format: "%.2f", skew))")
     }
 
+
+
+
+    /// Honest #576: density IQR band — Q1–Q3 + median of last-14 dens (Google Health graphics).
+    @ViewBuilder
+    private var densityIQRMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityIQRBody(days: days)
+        }
+    }
+
+    private func densityIQRBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }.sorted()
+        let n = dens.count
+        func pct(_ p: Double) -> Double {
+            let i = p * Double(n - 1)
+            let lo = Int(i.rounded(.down))
+            let hi = min(n - 1, lo + 1)
+            let f = i - Double(lo)
+            return dens[lo] * (1 - f) + dens[hi] * f
+        }
+        let q1 = pct(0.25)
+        let med = pct(0.50)
+        let q3 = pct(0.75)
+        let iqr = q3 - q1
+        let iqrPP = Int((iqr * 100).rounded())
+        let medPP = Int((med * 100).rounded())
+        let tone: Color = iqrPP <= 12 ? RTColor.optimal : (iqrPP <= 22 ? RTColor.good : RTColor.warning)
+        let verb = iqrPP <= 12 ? "Tight" : (iqrPP <= 22 ? "Steady" : "Wide")
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.split.3x1.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density IQR")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(iqrPP)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let x1 = CGFloat(q1) * w
+                let x3 = CGFloat(q3) * w
+                let xm = CGFloat(med) * w
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(accent.opacity(0.12))
+                        .frame(height: 12)
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [tone.opacity(0.35), tone.opacity(0.7)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(width: max(4, x3 - x1), height: 12)
+                        .offset(x: x1)
+                    Capsule()
+                        .fill(RTColor.primaryText.opacity(0.85))
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, xm - 1.5))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("Q1 \(Int((q1 * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Med \(medPP)%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("Q3 \(Int((q3 * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityIQR)
+        .accessibilityLabel("Density IQR \(verb) \(iqrPP) points, median \(medPP) percent")
+    }
 
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
