@@ -22,6 +22,8 @@ struct FitbitAirDataCard: View {
     @State private var focusedGapID: String? = nil
     /// Honest #513: density legend category focus (Sleep / Vitals / Activity).
     @State private var focusedLegend: AirDensityCategory? = nil
+    /// Honest #526: which heatmap day is selected (index into last 7).
+    @State private var selectedHeatDayOffset: Int? = nil
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -239,7 +241,7 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Air density legend")
     }
 
-    /// Honest #525: interactive 7-day density heatmap (tap day → scrub spark).
+    /// Honest #525/#526: interactive 7-day density heatmap; tap selects day + scrub spark.
     private var densityHeatmap: some View {
         let days = Array(history.suffix(7))
         return VStack(alignment: .leading, spacing: 8) {
@@ -251,9 +253,10 @@ struct FitbitAirDataCard: View {
                     let dayChips = AirChip.all(from: day)
                     let filled = dayChips.filter(\.filled).count
                     let dens = dayChips.isEmpty ? 0.0 : Double(filled) / Double(dayChips.count)
+                    let selected = selectedHeatDayOffset == i
                     Button {
                         Haptic.selectionChanged()
-                        // Map heatmap day onto spark scrub when spark window covers it.
+                        selectedHeatDayOffset = selectedHeatDayOffset == i ? nil : i
                         let sparkDays = sparkPoints
                         if let match = sparkDays.firstIndex(where: {
                             Calendar.current.isDate($0.date, inSameDayAs: day.date)
@@ -270,9 +273,13 @@ struct FitbitAirDataCard: View {
                                         .font(.caption2.weight(.bold).monospacedDigit())
                                         .foregroundStyle(dens > 0.55 ? Color.white : RTColor.primaryText)
                                 )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                        .stroke(selected ? accent : Color.clear, lineWidth: 2)
+                                )
                             Text(day.date, format: .dateTime.weekday(.narrow))
                                 .font(.caption2.weight(.semibold))
-                                .foregroundStyle(RTColor.tertiaryText)
+                                .foregroundStyle(selected ? accent : RTColor.tertiaryText)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -280,9 +287,42 @@ struct FitbitAirDataCard: View {
                     .accessibilityLabel("Density day \(i + 1) \(Int((dens * 100).rounded())) percent")
                 }
             }
+            if let idx = selectedHeatDayOffset, days.indices.contains(idx) {
+                heatmapDayStrip(days[idx])
+            }
         }
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityHeatmap)
         .accessibilityLabel("Seven day air density heatmap")
+    }
+
+    /// Honest #526: selected heatmap day chip-dot strip.
+    private func heatmapDayStrip(_ day: DailyHealthData) -> some View {
+        let dayChips = AirChip.all(from: day)
+        let filled = dayChips.filter(\.filled).count
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text(day.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(filled)/\(dayChips.count) fields")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+            }
+            HStack(spacing: 4) {
+                ForEach(dayChips) { chip in
+                    Circle()
+                        .fill(chip.filled ? accent : RTColor.surfaceHighlight)
+                        .frame(width: 8, height: 8)
+                        .accessibilityLabel("\(chip.label) \(chip.filled ? "filled" : "gap")")
+                }
+            }
+        }
+        .padding(10)
+        .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHeatDay)
+        .accessibilityLabel("Selected density day field strip")
     }
 
     private func heatmapColor(_ dens: Double) -> Color {
