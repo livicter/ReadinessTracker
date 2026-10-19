@@ -338,25 +338,36 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
+    /// Honest #512: projection map bars tint to focused ring.
     private var sparkProjection: some View {
+        let scrubValue = Double(focusedRingValue)
         let points: [(label: String, value: Double)] = [
             ("−2h", Double(project(sleep: -2, hrv: 0, strain: 0, rhr: 0, spo2: 0))),
             ("Now", Double(baseline)),
             ("+1h", Double(project(sleep: 1, hrv: 0, strain: 0, rhr: 0, spo2: 0))),
             ("+HRV", Double(project(sleep: 0, hrv: 10, strain: 0, rhr: 0, spo2: 0))),
             ("−RHR", Double(project(sleep: 0, hrv: 0, strain: 0, rhr: -5, spo2: 0))),
-            ("Scrub", Double(projected))
+            ("Scrub", scrubValue)
         ]
         return VStack(alignment: .leading, spacing: 6) {
-            Text("Projection map")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(RTColor.secondaryText)
+            HStack {
+                Text("Projection map · \(focusedRing.title)")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Circle()
+                    .fill(focusedRing.color)
+                    .frame(width: 8, height: 8)
+                    .accessibilityHidden(true)
+            }
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorSparkTint)
+            .accessibilityLabel("Projection map tint \(focusedRing.title)")
             Chart(points, id: \.label) { pt in
                 BarMark(
                     x: .value("Scenario", pt.label),
-                    y: .value("Ready", pt.value)
+                    y: .value(focusedRing.title, pt.value)
                 )
-                .foregroundStyle(pt.label == "Scrub" ? accent : RTColor.surfaceHighlight)
+                .foregroundStyle(pt.label == "Scrub" ? focusedRing.color : focusedRing.color.opacity(0.28))
                 .cornerRadius(4)
             }
             .chartYScale(domain: 0...100)
@@ -375,6 +386,7 @@ struct ReadinessLoadSimulatorCard: View {
                 }
             }
             .frame(height: 110)
+            .animation(.easeInOut(duration: 0.25), value: focusedRing)
             .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorSpark)
             .accessibilityLabel("Readiness projection map")
         }

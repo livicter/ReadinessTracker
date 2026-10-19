@@ -10444,6 +10444,11 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(tint.waitForExistence(timeout: 5), "sim.load.ring.tint")
         rings.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.4)).tap()
         saveShot("verify-readiness-load-simulator-ring-tint.png")
+        // Honest #512: projection map tint follows focused ring
+        let sparkTint = app.descendants(matching: .any)["sim.load.spark.tint"].firstMatch
+        XCTAssertTrue(sparkTint.waitForExistence(timeout: 5), "sim.load.spark.tint")
+        rings.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.4)).tap()
+        saveShot("verify-readiness-load-simulator-spark-tint.png")
     }
 
     func testRecommendationsCheckoffSurface() throws {
