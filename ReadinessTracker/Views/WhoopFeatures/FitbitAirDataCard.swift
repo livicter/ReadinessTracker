@@ -74,6 +74,7 @@ struct FitbitAirDataCard: View {
                 densityForecastBadge
                 densityStreakBadge
                 densityHistorySpark
+                densityDistributionHist
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1338,6 +1339,96 @@ struct FitbitAirDataCard: View {
         }
         .accessibilityIdentifier(SurfaceID.fitbitAirDataDensitySpark)
         .accessibilityLabel("Air density history spark")
+    }
+
+
+    /// Honest #570: density distribution histogram — last-14 day density bins (Google Health graphics).
+    @ViewBuilder
+    private var densityDistributionHist: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityHistBody(days: days)
+        }
+    }
+
+    private func densityHistBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        struct Bin: Identifiable {
+            let id: Int
+            let label: String
+            let count: Int
+        }
+        let edges = [0.0, 0.25, 0.5, 0.75, 1.01]
+        let labels = ["0–24", "25–49", "50–74", "75–100"]
+        var bins: [Bin] = []
+        for i in 0..<4 {
+            let cnt = dens.filter { $0 >= edges[i] && $0 < edges[i + 1] }.count
+            bins.append(Bin(id: i, label: labels[i], count: cnt))
+        }
+        let peak = bins.map(\.count).max() ?? 0
+        let meanPP = Int(((dens.reduce(0, +) / Double(max(1, dens.count))) * 100).rounded())
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density hist")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("μ \(meanPP)% · \(dens.count)d")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(accent.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(bins) { bin in
+                    BarMark(
+                        x: .value("Bin", bin.label),
+                        y: .value("Days", bin.count)
+                    )
+                    .foregroundStyle(accent.opacity(0.35 + 0.2 * Double(bin.id)))
+                    .cornerRadius(4)
+                }
+            }
+            .chartYScale(domain: 0...(max(1, peak)))
+            .chartYAxis {
+                AxisMarks(values: .automatic(desiredCount: 3)) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.secondaryText)
+                        .font(.caption2)
+                }
+            }
+            .frame(height: 88)
+            Text("Days in each density band · last \(dens.count)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHist)
+        .accessibilityLabel("Density histogram mean \(meanPP) percent")
     }
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
