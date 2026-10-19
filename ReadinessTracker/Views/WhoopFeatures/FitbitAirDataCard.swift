@@ -753,23 +753,66 @@ struct FitbitAirDataCard: View {
         .background(accent.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
-        if let metric = chip.metric {
-            let value = QuickTrendCard.metricValue(data, metric: metric) ?? 0
-            NavigationLink(destination: MetricDetailView(
-                metric: metric,
-                currentValue: value,
-                history: history,
-                source: source
-            )) {
+        let spark = chipMiniSpark(chip)
+
+        VStack(alignment: .leading, spacing: 8) {
+            if let metric = chip.metric {
+                let value = QuickTrendCard.metricValue(data, metric: metric) ?? 0
+                NavigationLink(destination: MetricDetailView(
+                    metric: metric,
+                    currentValue: value,
+                    history: history,
+                    source: source
+                )) {
+                    row
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(chip.label) metric detail")
+            } else {
                 row
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("\(chip.label) metric detail")
-        } else {
-            row
+            spark
         }
     }
 
+    /// Honest #531: 7-day mini spark for the selected air chip.
+    @ViewBuilder
+    private func chipMiniSpark(_ chip: AirChip) -> some View {
+        let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
+            guard let metric = chip.metric else { return nil }
+            let v = QuickTrendCard.metricValue(day, metric: metric) ?? 0
+            return (date: day.date, value: v)
+        }
+        if points.contains(where: { $0.value > 0 }) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("\(chip.label) · 7d")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.tertiaryText)
+                Chart {
+                    ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                        AreaMark(
+                            x: .value("Day", pt.date),
+                            y: .value(chip.label, pt.value)
+                        )
+                        .foregroundStyle(accent.opacity(0.2))
+                        LineMark(
+                            x: .value("Day", pt.date),
+                            y: .value(chip.label, pt.value)
+                        )
+                        .foregroundStyle(accent)
+                        .lineStyle(StrokeStyle(lineWidth: 1.5, lineCap: .round))
+                    }
+                }
+                .chartXAxis(.hidden)
+                .chartYAxis(.hidden)
+                .frame(height: 36)
+            }
+            .padding(8)
+            .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .accessibilityIdentifier(SurfaceID.fitbitAirChipMiniSpark)
+            .accessibilityLabel("\(chip.label) seven day spark")
+        }
+    }
 
     /// Honest #519: period mean for current spark metric.
     private var sparkPeriodMean: Double {
