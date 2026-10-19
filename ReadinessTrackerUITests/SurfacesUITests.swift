@@ -10591,6 +10591,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ring-parity.png")
 
+        // Honest #579: lever polarity strip
+        let leverPol = app.descendants(matching: .any)["sim.load.lever.polarity"].firstMatch
+        XCTAssertTrue(leverPol.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ring.parity"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.lever.polarity")
+        if leverPol.exists {
+            if leverPol.isHittable { leverPol.tap() }
+            else { leverPol.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-lever-polarity.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
