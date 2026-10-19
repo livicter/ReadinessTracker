@@ -10560,6 +10560,16 @@ final class SurfacesUITests: XCTestCase {
             dial.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.7)).tap()
         }
         saveShot("verify-interactive-recovery-dial.png")
+        // Honest #522: zone preset chips Rest/Easy/Solid/Push
+        let zones = app.descendants(matching: .any)["balance.dial.zones"].firstMatch
+        XCTAssertTrue(zones.waitForExistence(timeout: 5)
+                      || app.staticTexts["Rest"].exists,
+                      "balance.dial.zones")
+        if zones.exists {
+            zones.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+            zones.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.5)).tap()
+        }
+        saveShot("verify-interactive-recovery-dial-zones.png")
         let reset = app.descendants(matching: .any)["balance.dial.reset"].firstMatch
         if reset.exists { reset.tap() }
         saveShot("verify-interactive-recovery-dial-reset.png")
