@@ -142,6 +142,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyMomentumGauge
                 readyZoneBuffer
                 taskEfficiencyDial
+                readyClimbForecast
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -3166,6 +3167,60 @@ struct ReadinessLoadSimulatorCard: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(accent)
                 Text("Task efficiency")
+    /// Honest #613: READY climb forecast — cumulative lift path from unchecked tasks (Fitbit/GH richer sim).
+    @ViewBuilder
+    private var readyClimbForecast: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbBody(pending: pending)
+        }
+    }
+
+    private func readyClimbBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        var path: [(label: String, score: Int, delta: Int)] = [(label: "Now", score: start, delta: 0)]
+        var run = start
+        for t in pending.prefix(4) {
+            run = min(100, run + t.readyDelta)
+            path.append((label: t.title, score: run, delta: t.readyDelta))
+        }
+        let end = path.last?.score ?? start
+        let gain = end - start
+        let bands: [(String, Int, Int, Color)] = [
+            ("Poor", 0, 49, Color(hex: "FF375F")),
+            ("Fair", 50, 69, RTColor.warning),
+            ("Good", 70, 84, RTColor.good),
+            ("Optimal", 85, 100, RTColor.optimal)
+        ]
+        func zone(for score: Int) -> (String, Color) {
+            let b = bands.first { score >= $0.1 && score <= $0.2 } ?? bands[0]
+            return (b.0, b.3)
+        }
+        let startZ = zone(for: start)
+        let endZ = zone(for: end)
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if endZ.0 != startZ.0 && end > start {
+            verb = "Zone↑"; tone = endZ.1
+        } else if gain >= 6 {
+            verb = "Climb"; tone = RTColor.optimal
+        } else if gain >= 3 {
+            verb = "Step"; tone = RTColor.good
+        } else {
+            verb = "Nudge"; tone = accent
+        }
+        let lo = max(0, min(start, end) - 5)
+        let hi = min(100, max(start, end) + 5)
+        let span = max(1, hi - lo)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.line.uptrend.xyaxis.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY climb")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(accent)
                 Spacer()
@@ -3275,6 +3330,84 @@ struct ReadinessLoadSimulatorCard: View {
             }
             .frame(height: 52)
             Text("high-impact first · outer checks · inner lift · \(sourceLabel)")
+            // Path spark with zone-colored segments
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                // zone band backgrounds
+                ForEach(Array(bands.enumerated()), id: \.offset) { _, b in
+                    let yTop = h * (1.0 - Double(min(hi, b.2) - lo) / Double(span))
+                    let yBot = h * (1.0 - Double(max(lo, b.1) - lo) / Double(span))
+                    if yBot > yTop {
+                        Rectangle()
+                            .fill(b.3.opacity(0.06))
+                            .frame(width: w, height: yBot - yTop)
+                            .offset(y: yTop)
+                    }
+                }
+                Path { pathP in
+                    for (i, pt) in path.enumerated() {
+                        let x = w * Double(i) / Double(max(1, path.count - 1))
+                        let y = h * (1.0 - Double(pt.score - lo) / Double(span))
+                        if i == 0 { pathP.move(to: CGPoint(x: x, y: y)) }
+                        else { pathP.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [startZ.1, endZ.1], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                )
+                ForEach(Array(path.enumerated()), id: \.offset) { i, pt in
+                    let x = w * Double(i) / Double(max(1, path.count - 1))
+                    let y = h * (1.0 - Double(pt.score - lo) / Double(span))
+                    let zc = zone(for: pt.score).1
+                    Circle()
+                        .fill(zc)
+                        .frame(width: i == 0 ? 8 : 7, height: i == 0 ? 8 : 7)
+                        .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1))
+                        .position(x: x, y: y)
+                }
+            }
+            .frame(height: 56)
+            HStack {
+                Text("\(start)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(startZ.1)
+                Text(startZ.0)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Image(systemName: "arrow.right")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(accent)
+                Text("\(end)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(endZ.1)
+                Text(endZ.0)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(gain >= 0 ? "+\(gain) pts" : "\(gain) pts")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+            }
+            // Step chips
+            HStack(spacing: 6) {
+                ForEach(Array(pending.prefix(4).enumerated()), id: \.offset) { i, t in
+                    VStack(spacing: 2) {
+                        Text("+\(t.readyDelta)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text(t.title.split(separator: " ").prefix(2).joined(separator: " "))
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                    .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                }
+            }
+            Text("unchecked high→low · \(sourceLabel) air tasks")
                 .font(.caption2)
                 .foregroundStyle(RTColor.tertiaryText)
         }
@@ -3287,6 +3420,10 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskEfficiency)
         .accessibilityLabel("Task efficiency \(verb) \(effDisp)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyClimb)
+        .accessibilityLabel("READY climb \(verb) \(start) to \(end)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
