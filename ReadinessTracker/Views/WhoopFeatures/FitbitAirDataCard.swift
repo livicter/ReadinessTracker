@@ -97,6 +97,7 @@ struct FitbitAirDataCard: View {
                 densitySharpeMeter
                 densitySortinoMeter
                 densityCalmarMeter
+                densityOmegaMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -3781,6 +3782,136 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityCalmar)
         .accessibilityLabel("Density Calmar \(verb) \(disp)")
     }
+
+    /// Honest #616: density Omega — gains above 55% / losses below (Fitbit/GH graphics).
+    @ViewBuilder
+    private var densityOmegaMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityOmegaBody(days: days)
+        }
+    }
+
+    private func densityOmegaBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let target = 0.55
+        let gains = dens.map { max(0, $0 - target) }.reduce(0, +)
+        let losses = dens.map { max(0, target - $0) }.reduce(0, +)
+        let omega = losses > 1e-6 ? gains / losses : (gains > 0 ? 8.0 : 1.0)
+        let clamped = max(0.0, min(4.0, omega))
+        let verb: String
+        let tone: Color
+        if omega >= 2.0 {
+            verb = "Abundant"; tone = RTColor.optimal
+        } else if omega >= 1.0 {
+            verb = "Favorable"; tone = RTColor.good
+        } else if omega >= 0.5 {
+            verb = "Even"; tone = RTColor.caution
+        } else {
+            verb = "Scarce"; tone = RTColor.warning
+        }
+        let disp = String(format: "%.2f", omega)
+        let gainPct = Int((gains / Double(max(1, dens.count)) * 100).rounded())
+        let lossPct = Int((losses / Double(max(1, dens.count)) * 100).rounded())
+        let lo = dens.min() ?? 0
+        let hi = max(dens.max() ?? 1, lo + 1e-9)
+        let span = hi - lo
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "scalemass.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Omega")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(disp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            // Omega bar 0…4 (1.0 = parity marked)
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let frac = CGFloat(clamped / 4.0)
+                let parityX = w * 0.25 // omega=1
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(3, w * frac))
+                    Rectangle()
+                        .fill(RTColor.tertiaryText.opacity(0.45))
+                        .frame(width: 1.5, height: 12)
+                        .offset(x: parityX)
+                }
+            }
+            .frame(height: 12)
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                let yT = h * (1.0 - (target - lo) / span)
+                // target rule
+                Path { p in
+                    p.move(to: CGPoint(x: 0, y: yT))
+                    p.addLine(to: CGPoint(x: w, y: yT))
+                }
+                .stroke(RTColor.tertiaryText.opacity(0.45), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                // gain/loss fills vs target
+                ForEach(Array(dens.enumerated()), id: \.offset) { i, d in
+                    let x0 = w * Double(i) / Double(max(1, dens.count))
+                    let bw = w / Double(max(1, dens.count)) * 0.7
+                    let yD = h * (1.0 - (d - lo) / span)
+                    let yTop = min(yD, yT)
+                    let yBot = max(yD, yT)
+                    Rectangle()
+                        .fill(d >= target ? RTColor.optimal.opacity(0.28) : RTColor.warning.opacity(0.28))
+                        .frame(width: bw, height: max(1, yBot - yTop))
+                        .position(x: x0 + bw / 2, y: (yTop + yBot) / 2)
+                }
+                Path { path in
+                    for (i, d) in dens.enumerated() {
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let y = h * (1.0 - (d - lo) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+            }
+            .frame(height: 44)
+            HStack {
+                Text("gain/day \(gainPct)pp · loss/day \(lossPct)pp · thr 55% · \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("scarce ←1→ abundant")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityOmega)
+        .accessibilityLabel("Density Omega \(verb) \(disp)")
+    }
+
 
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
