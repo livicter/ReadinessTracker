@@ -138,6 +138,7 @@ struct ReadinessLoadSimulatorCard: View {
                 ghTriadBalance
                 taskRingMix
                 taskBatchLiftPreview
+                seedConfidenceDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2701,6 +2702,122 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorBatchLift)
         .accessibilityLabel("Batch lift plus \(lift) to \(after)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+
+    /// Honest #605: air-seed confidence dial — today fill vs 7d mean (Fitbit/GH + richer sim graphics).
+    @ViewBuilder
+    private var seedConfidenceDial: some View {
+        let chips = AirChip.all(from: data)
+        if chips.isEmpty {
+            EmptyView()
+        } else {
+            seedConfidenceBody(chips: chips)
+        }
+    }
+
+    private func seedConfidenceBody(chips: [AirChip]) -> some View {
+        let today = Double(chips.filter(\.filled).count) / Double(max(1, chips.count))
+        let histDays = Array(history.suffix(7))
+        let histDens: [Double] = histDays.map { day in
+            let c = AirChip.all(from: day)
+            guard !c.isEmpty else { return 0 }
+            return Double(c.filter(\.filled).count) / Double(c.count)
+        }
+        let mean7 = histDens.isEmpty ? today : histDens.reduce(0, +) / Double(histDens.count)
+        // confidence: high fill + near mean → trust seed
+        let fillScore = today
+        let stability = 1.0 - min(1.0, abs(today - mean7) / 0.35)
+        let conf = max(0, min(1, 0.55 * fillScore + 0.45 * stability))
+        let pct = Int((conf * 100).rounded())
+        let verb: String
+        let tone: Color
+        if conf >= 0.72 {
+            verb = "High"; tone = RTColor.optimal
+        } else if conf >= 0.45 {
+            verb = "OK"; tone = RTColor.good
+        } else {
+            verb = "Low"; tone = RTColor.warning
+        }
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "checkmark.shield.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Seed confidence")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb) \(pct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 10)
+                        .frame(width: 64, height: 64)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(conf))
+                        .stroke(
+                            AngularGradient(colors: [accent.opacity(0.5), tone], center: .center),
+                            style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .frame(width: 64, height: 64)
+                    Text("\(pct)")
+                        .font(.title3.weight(.bold).monospacedDigit())
+                        .foregroundStyle(tone)
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Today fill")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(Int((today * 100).rounded()))%")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.primaryText)
+                    }
+                    HStack {
+                        Text("7d mean")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(Int((mean7 * 100).rounded()))%")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                            Capsule()
+                                .fill(LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing))
+                                .frame(width: w * CGFloat(conf))
+                        }
+                    }
+                    .frame(height: 8)
+                    Text(airSeededSummary == nil ? "Seed when confident" : "Seeded · trust \(verb.lowercased())")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedConfidence)
+        .accessibilityLabel("Seed confidence \(verb) \(pct) percent")
     }
 
 
