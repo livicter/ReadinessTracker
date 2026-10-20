@@ -11473,6 +11473,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-kurtosis.png")
 
 
+        // Honest #596: density span meter
+        let densSpan = app.descendants(matching: .any)["fitbit.air.density.span"].firstMatch
+        XCTAssertTrue(densSpan.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.kurtosis"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.span")
+        if densSpan.exists {
+            if densSpan.isHittable { densSpan.tap() }
+            else {
+                app.swipeUp()
+                if densSpan.waitForExistence(timeout: 2), densSpan.isHittable {
+                    densSpan.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-span.png")
+
+
+
+
 
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
