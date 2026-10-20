@@ -141,6 +141,7 @@ struct ReadinessLoadSimulatorCard: View {
                 seedConfidenceDial
                 readyMomentumGauge
                 readyZoneBuffer
+                taskEfficiencyDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -3114,6 +3115,179 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
+
+
+
+    /// Honest #611: task efficiency dial — lift captured vs checks (Fitbit/GH richer sim graphics).
+    @ViewBuilder
+    private var taskEfficiencyDial: some View {
+        if tasks.isEmpty {
+            EmptyView()
+        } else {
+            taskEfficiencyBody
+        }
+    }
+
+    private var taskEfficiencyBody: some View {
+        let totalLift = max(1, tasks.map(\.readyDelta).reduce(0, +))
+        let gotLift = tasks.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        let checked = tasks.filter { completedTaskIDs.contains($0.id) }.count
+        let n = max(1, tasks.count)
+        let liftFrac = Double(gotLift) / Double(totalLift)
+        let checkFrac = Double(checked) / Double(n)
+        // Efficiency: lift share relative to check share (1.0 = proportional; >1 = high-impact first)
+        let eff: Double
+        if checked == 0 {
+            eff = 1.0
+        } else if checkFrac < 1e-9 {
+            eff = 1.0
+        } else {
+            eff = min(2.0, liftFrac / max(checkFrac, 1e-9))
+        }
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if checked == 0 {
+            verb = "Ready"; tone = accent
+        } else if eff >= 1.25 {
+            verb = "Sharp"; tone = RTColor.optimal
+        } else if eff >= 0.9 {
+            verb = "On track"; tone = RTColor.good
+        } else if eff >= 0.6 {
+            verb = "Diffuse"; tone = RTColor.caution
+        } else {
+            verb = "Low yield"; tone = RTColor.warning
+        }
+        let effDisp = String(format: "%.2f×", eff)
+        let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "gauge.with.dots.needle.67percent")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Task efficiency")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                // Dual-arc: outer = check frac, inner = lift frac
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(checkFrac))
+                        .stroke(accent.opacity(0.55), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.12), lineWidth: 5)
+                        .frame(width: 52, height: 52)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(liftFrac))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                        )
+                        .frame(width: 52, height: 52)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(effDisp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("eff")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Lift")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("+\(gotLift)/+\(totalLift)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.primaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                            Capsule()
+                                .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                .frame(width: w * liftFrac)
+                        }
+                    }
+                    .frame(height: 8)
+                    HStack {
+                        Text("Checks")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(checked)/\(n)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.primaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                            Capsule()
+                                .fill(accent.opacity(0.7))
+                                .frame(width: w * checkFrac)
+                        }
+                    }
+                    .frame(height: 8)
+                }
+            }
+            // Ranked lift bars — checked glow
+            HStack(alignment: .bottom, spacing: 4) {
+                ForEach(ordered) { t in
+                    let on = completedTaskIDs.contains(t.id)
+                    let h = max(6, CGFloat(t.readyDelta) / CGFloat(max(1, ordered.first?.readyDelta ?? 1)) * 36)
+                    VStack(spacing: 2) {
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(on
+                                  ? LinearGradient(colors: [tone, accent], startPoint: .bottom, endPoint: .top)
+                                  : LinearGradient(colors: [RTColor.tertiaryText.opacity(0.25), RTColor.tertiaryText.opacity(0.4)], startPoint: .bottom, endPoint: .top))
+                            .frame(height: h)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 3, style: .continuous)
+                                    .stroke(on ? tone.opacity(0.8) : Color.clear, lineWidth: 1)
+                            )
+                        Text("+\(t.readyDelta)")
+                            .font(.system(size: 8, weight: .bold).monospacedDigit())
+                            .foregroundStyle(on ? tone : RTColor.tertiaryText)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .accessibilityLabel("\(t.title) plus \(t.readyDelta)\(on ? " checked" : "")")
+                }
+            }
+            .frame(height: 52)
+            Text("high-impact first · outer checks · inner lift · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskEfficiency)
+        .accessibilityLabel("Task efficiency \(verb) \(effDisp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
     @ViewBuilder
