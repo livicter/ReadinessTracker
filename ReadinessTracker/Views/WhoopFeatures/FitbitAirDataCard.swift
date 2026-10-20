@@ -93,6 +93,7 @@ struct FitbitAirDataCard: View {
                 densityOutlierMeter
                 densityHHIMeter
                 densityDrawdownMeter
+                densityReboundMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -3236,6 +3237,141 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityDrawdown)
         .accessibilityLabel("Density drawdown \(verb) \(ddPct) percent")
+    }
+
+
+
+    /// Honest #608: density rebound — recovery from max-drawdown trough toward prior peak (Fitbit/GH graphics).
+    @ViewBuilder
+    private var densityReboundMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityReboundBody(days: days)
+        }
+    }
+
+    private func densityReboundBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        // Find peak→trough max drawdown trough index, then rebound to end.
+        var peak = dens[0]
+        var maxDD = 0.0
+        var troughIdx = 0
+        var troughVal = dens[0]
+        for (i, d) in dens.enumerated() {
+            if d >= peak {
+                peak = d
+            }
+            let dd = peak > 1e-9 ? (peak - d) / peak : 0
+            if dd >= maxDD {
+                maxDD = dd
+                troughIdx = i
+                troughVal = d
+            }
+        }
+        let peakAtTrough = dens[0...troughIdx].max() ?? peak
+        let last = dens.last ?? troughVal
+        let room = peakAtTrough - troughVal
+        let rebound: Double
+        if room <= 1e-9 || maxDD < 0.04 {
+            rebound = maxDD < 0.04 ? 1.0 : 0.0
+        } else {
+            rebound = min(1.0, max(0.0, (last - troughVal) / room))
+        }
+        let verb: String
+        let tone: Color
+        if maxDD < 0.04 {
+            verb = "Stable"; tone = RTColor.optimal
+        } else if rebound >= 0.70 {
+            verb = "Fast"; tone = RTColor.optimal
+        } else if rebound >= 0.40 {
+            verb = "Steady"; tone = RTColor.good
+        } else {
+            verb = "Slow"; tone = RTColor.warning
+        }
+        let reboundPct = Int((rebound * 100).rounded())
+        let postSeries = Array(dens[troughIdx...])
+        let seriesMax = max(postSeries.max() ?? 1, peakAtTrough, 1e-9)
+        let seriesMin = min(postSeries.min() ?? 0, troughVal)
+        let span = max(seriesMax - seriesMin, 1e-9)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.uturn.up")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density rebound")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(reboundPct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            // Fill rail
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(accent.opacity(0.12))
+                    Capsule()
+                        .fill(
+                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing)
+                        )
+                        .frame(width: w * rebound)
+                }
+            }
+            .frame(height: 8)
+            // Post-trough spark toward peak
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                // peak rule
+                Path { path in
+                    let y = h * (1.0 - (peakAtTrough - seriesMin) / span)
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: w, y: y))
+                }
+                .stroke(tone.opacity(0.45), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                Path { path in
+                    for (i, d) in postSeries.enumerated() {
+                        let x = w * Double(i) / Double(max(1, postSeries.count - 1))
+                        let y = h * (1.0 - (d - seriesMin) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+            }
+            .frame(height: 44)
+            HStack {
+                Text("trough→now · \(postSeries.count)d of \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("slow ← → fast")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityRebound)
+        .accessibilityLabel("Density rebound \(verb) \(reboundPct) percent")
     }
 
 
