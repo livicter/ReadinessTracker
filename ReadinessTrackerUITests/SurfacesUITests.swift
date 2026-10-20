@@ -10573,6 +10573,26 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-ladder.png")
 
+
+        // Honest #587: READY path zone bands
+        let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
+        XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.path.zones")
+        if pathZones.exists {
+            if pathZones.isHittable { pathZones.tap() }
+            else {
+                app.swipeUp()
+                if pathZones.waitForExistence(timeout: 2), pathZones.isHittable {
+                    pathZones.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-path-zone-bands.png")
+
+
+
         // Honest #571: seed vs live delta rail
         let seedDelta = app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch
         XCTAssertTrue(seedDelta.waitForExistence(timeout: 5)

@@ -116,6 +116,7 @@ struct ReadinessLoadSimulatorCard: View {
                 interactiveControls
                 sparkProjection
                 readyPathSpark
+                readyPathZoneBands
                 readyZoneStrip
                 zoneJumpRail
                 seedLiveDeltaRail
@@ -1025,6 +1026,94 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("READY path \(baseline) to \(ceiling)")
     }
 
+    /// Honest #587: READY path zone bands — Base→Scrub→Tasks→Ceil ticks on zone rail (Google Health graphics).
+    private var readyPathZoneBands: some View {
+        let totalLift = tasks.map(\.readyDelta).reduce(0, +)
+        let ceiling = min(100, projected + totalLift)
+        let points: [(label: String, value: Int, color: Color)] = [
+            ("Base", baseline, RTColor.secondaryText),
+            ("Scrub", projected, accent),
+            ("Tasks", projectedCoupled, RTColor.good),
+            ("Ceil", ceiling, RTColor.optimal)
+        ]
+        let zones: [(label: String, lo: Int, hi: Int, color: Color)] = [
+            ("Poor", 0, 49, Color(hex: "FF375F")),
+            ("Fair", 50, 69, RTColor.warning),
+            ("Good", 70, 84, RTColor.good),
+            ("Optimal", 85, 100, RTColor.optimal)
+        ]
+        func zone(for score: Int) -> Color {
+            zones.first { score >= $0.lo && score <= $0.hi }?.color ?? zones[0].color
+        }
+        let endZone = zones.first { ceiling >= $0.lo && ceiling <= $0.hi } ?? zones[0]
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.xyaxis.line")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Path zones")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("→ \(endZone.label)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(endZone.color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(endZone.color.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    HStack(spacing: 2) {
+                        ForEach(Array(zones.enumerated()), id: \.offset) { _, z in
+                            let frac = CGFloat(z.hi - z.lo + 1) / 101.0
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(z.color.opacity(0.40))
+                                .frame(width: max(8, w * frac - 2))
+                        }
+                    }
+                    // path span Base→Ceil
+                    let aX = CGFloat(baseline) / 100.0 * w
+                    let bX = CGFloat(ceiling) / 100.0 * w
+                    Capsule()
+                        .fill(accent.opacity(0.35))
+                        .frame(width: max(4, abs(bX - aX)), height: 6)
+                        .offset(x: min(aX, bX))
+                    ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                        let x = CGFloat(pt.value) / 100.0 * w
+                        Capsule()
+                            .fill(pt.color)
+                            .frame(width: 3, height: 18)
+                            .offset(x: max(0, min(w - 3, x - 1.5)))
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 22)
+            HStack {
+                ForEach(Array(points.enumerated()), id: \.offset) { _, pt in
+                    Text("\(pt.label) \(pt.value)")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(zone(for: pt.value))
+                    if pt.label != "Ceil" { Spacer(minLength: 0) }
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorPathZoneBands)
+        .accessibilityLabel("Path zones to \(endZone.label), ceiling \(ceiling)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+        .animation(.easeInOut(duration: 0.25), value: ceiling)
+    }
+
+
     /// Honest #569: READY zone strip — Poor/Fair/Good/Optimal band + live marker (Google Health graphics).
     private var readyZoneStrip: some View {
         let score = projectedCoupled
@@ -1926,7 +2015,6 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Impact ladder \(remain) READY points remaining")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
-
 
     private var fitbitAirStrip: some View {
         VStack(alignment: .leading, spacing: 8) {
