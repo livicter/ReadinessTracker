@@ -90,6 +90,7 @@ struct FitbitAirDataCard: View {
                 densitySpanMeter
                 densityGiniMeter
                 densityVolatilityMeter
+                densityOutlierMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2944,6 +2945,103 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityVolatility)
         .accessibilityLabel("Density volatility \(verb) \(sDisp) percentage points")
+    }
+
+
+
+    /// Honest #602: density outlier days — count beyond Tukey fences (Fitbit/Google Health graphics).
+    @ViewBuilder
+    private var densityOutlierMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 6 {
+            EmptyView()
+        } else {
+            densityOutlierBody(days: days)
+        }
+    }
+
+    private func densityOutlierBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let sorted = dens.sorted()
+        let n = sorted.count
+        let q1 = sorted[max(0, n / 4)]
+        let q3 = sorted[min(n - 1, (3 * n) / 4)]
+        let iqr = max(q3 - q1, 1e-9)
+        let lo = q1 - 1.5 * iqr
+        let hi = q3 + 1.5 * iqr
+        let flags = dens.map { $0 < lo || $0 > hi }
+        let count = flags.filter { $0 }.count
+        let verb: String
+        let tone: Color
+        if count == 0 {
+            verb = "Clean"; tone = RTColor.optimal
+        } else if count <= 2 {
+            verb = "Few"; tone = RTColor.good
+        } else {
+            verb = "Many"; tone = RTColor.warning
+        }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density outliers")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(count)/\(n)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                let step = w / CGFloat(max(1, dens.count))
+                ZStack(alignment: .bottomLeading) {
+                    // fence band
+                    let yLo = h * (1 - CGFloat(max(0, min(1, lo))))
+                    let yHi = h * (1 - CGFloat(max(0, min(1, hi))))
+                    Rectangle()
+                        .fill(accent.opacity(0.08))
+                        .frame(height: max(2, yLo - yHi))
+                        .offset(y: yHi)
+                    ForEach(Array(dens.enumerated()), id: \.offset) { i, d in
+                        let x = step * CGFloat(i) + step * 0.25
+                        let y = h * (1 - CGFloat(max(0, min(1, d))))
+                        Circle()
+                            .fill(flags[i] ? tone : accent.opacity(0.55))
+                            .frame(width: flags[i] ? 10 : 7, height: flags[i] ? 10 : 7)
+                            .position(x: x + 3.5, y: y)
+                    }
+                }
+            }
+            .frame(height: 48)
+            HStack {
+                Text(String(format: "fences %.0f–%.0f%% · Tukey 1.5×IQR", lo * 100, hi * 100))
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("last \(n)d")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityOutliers)
+        .accessibilityLabel("Density outliers \(verb) \(count) of \(n)")
     }
 
 
