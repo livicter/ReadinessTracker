@@ -89,6 +89,7 @@ struct FitbitAirDataCard: View {
                 densityKurtosisMeter
                 densitySpanMeter
                 densityGiniMeter
+                densityVolatilityMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2840,6 +2841,109 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityGini)
         .accessibilityLabel("Density Gini \(verb) \(gDisp)")
+    }
+
+
+
+    /// Honest #600: density volatility meter — σ of day-to-day air-fill diffs (Fitbit/Google Health graphics).
+    @ViewBuilder
+    private var densityVolatilityMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 6 {
+            EmptyView()
+        } else {
+            densityVolatilityBody(days: days)
+        }
+    }
+
+    private func densityVolatilityBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        var diffs: [Double] = []
+        for i in 1..<dens.count {
+            diffs.append(dens[i] - dens[i - 1])
+        }
+        let n = Double(diffs.count)
+        let mean = diffs.reduce(0, +) / n
+        let variance = diffs.map { pow($0 - mean, 2) }.reduce(0, +) / n
+        let sigma = sqrt(variance)
+        let verb: String
+        let tone: Color
+        if sigma <= 0.06 {
+            verb = "Calm"; tone = RTColor.optimal
+        } else if sigma <= 0.14 {
+            verb = "Choppy"; tone = RTColor.good
+        } else {
+            verb = "Volatile"; tone = RTColor.warning
+        }
+        let sDisp = String(format: "%.0f", sigma * 100)
+        let maxAbs = max(diffs.map { abs($0) }.max() ?? 0.01, 0.01)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path.ecg")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density volatility")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) σ=\(sDisp)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                let midY = h / 2
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: midY))
+                    path.addLine(to: CGPoint(x: w, y: midY))
+                }
+                .stroke(RTColor.tertiaryText.opacity(0.35), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                Path { path in
+                    for (i, d) in diffs.enumerated() {
+                        let x = w * (Double(i) + 0.5) / Double(diffs.count)
+                        let y = midY - CGFloat(d / maxAbs) * (h * 0.42)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+                // σ band
+                Capsule()
+                    .fill(tone.opacity(0.18))
+                    .frame(height: max(4, h * CGFloat(min(1, sigma / maxAbs)) * 0.84))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 44)
+            HStack {
+                Text("Δ dens · last \(diffs.count) steps")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("calm ← → volatile")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityVolatility)
+        .accessibilityLabel("Density volatility \(verb) \(sDisp) percentage points")
     }
 
 
