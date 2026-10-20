@@ -83,6 +83,7 @@ struct FitbitAirDataCard: View {
                 densityMADMeter
                 densityTukeyFences
                 densitySlopeMeter
+                densityZScoreStrip
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2210,6 +2211,111 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensitySlope)
         .accessibilityLabel("Density slope \(verb) \(String(format: "%.1f", slopePP7)) points per week")
+    }
+
+
+    /// Honest #588: density z-score strip — tonight dens vs last-14 μ/σ (Google Health graphics).
+    @ViewBuilder
+    private var densityZScoreStrip: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityZScoreBody(days: days)
+        }
+    }
+
+    private func densityZScoreBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let mean = dens.reduce(0, +) / n
+        let var_ = dens.map { let d = $0 - mean; return d * d }.reduce(0, +) / max(n - 1, 1)
+        let sd = max(var_.squareRoot(), 0.0001)
+        let tonight = dens.last ?? mean
+        let z = (tonight - mean) / sd
+        let zClamped = max(-3.0, min(3.0, z))
+        let zDisp = String(format: "%+.1fσ", z)
+        let tone: Color = abs(z) < 0.75 ? RTColor.optimal : (abs(z) < 1.5 ? RTColor.good : RTColor.warning)
+        let verb: String = {
+            if z >= 1.5 { return "Hot" }
+            if z >= 0.75 { return "High" }
+            if z <= -1.5 { return "Cold" }
+            if z <= -0.75 { return "Low" }
+            return "Typical"
+        }()
+        let needle = (zClamped + 3.0) / 6.0
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "gauge.with.dots.needle.67percent")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density z-score")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(zDisp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [
+                                Color(hex: "FF375F").opacity(0.35),
+                                RTColor.good.opacity(0.35),
+                                RTColor.optimal.opacity(0.45),
+                                RTColor.good.opacity(0.35),
+                                Color(hex: "FF375F").opacity(0.35)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    // mean tick at center
+                    Capsule().fill(RTColor.primaryText.opacity(0.55))
+                        .frame(width: 2, height: 16)
+                        .offset(x: w * 0.5 - 1)
+                    Circle()
+                        .fill(tone)
+                        .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+                        .frame(width: 14, height: 14)
+                        .offset(x: max(0, min(w - 14, CGFloat(needle) * w - 7)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("−3σ")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("μ \(Int((mean * 100).rounded()))%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("+3σ")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityZScore)
+        .accessibilityLabel("Density z-score \(verb) \(zDisp)")
     }
 
 
