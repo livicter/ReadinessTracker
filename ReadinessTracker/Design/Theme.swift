@@ -304,6 +304,7 @@ enum SurfaceID {
     static let readinessSimulatorBatchLift = "sim.load.tasks.batch.lift"  // Honest #603
     static let readinessSimulatorSeedConfidence = "sim.load.seed.confidence"  // Honest #605
     static let readinessSimulatorReadyMomentum = "sim.load.ready.momentum"  // Honest #607
+    static let readinessSimulatorReadyBuffer = "sim.load.ready.buffer"  // Honest #609
     static let fitbitAirChipSparkRange = "fitbit.air.chip.spark.range"  // Honest #544
     static let fitbitAirChipMiniSpark = "fitbit.air.chip.spark"  // Honest #531
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532

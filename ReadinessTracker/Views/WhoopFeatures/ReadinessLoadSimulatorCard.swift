@@ -140,6 +140,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskBatchLiftPreview
                 seedConfidenceDial
                 readyMomentumGauge
+                readyZoneBuffer
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2960,6 +2961,157 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
+
+
+
+
+    /// Honest #609: READY zone buffer — pts to next zone up/down (Fitbit/GH graphics).
+    @ViewBuilder
+    private var readyZoneBuffer: some View {
+        let score = projectedCoupled
+        let bands: [(String, Int, Int, Color)] = [
+            ("Poor", 0, 49, Color(hex: "FF375F")),
+            ("Fair", 50, 69, RTColor.warning),
+            ("Good", 70, 84, RTColor.good),
+            ("Optimal", 85, 100, RTColor.optimal)
+        ]
+        let cur = bands.first { score >= $0.1 && score <= $0.2 } ?? bands[0]
+        let idx = bands.firstIndex { $0.0 == cur.0 } ?? 0
+        let upBand = idx + 1 < bands.count ? bands[idx + 1] : nil
+        let downBand = idx > 0 ? bands[idx - 1] : nil
+        let upNeed = upBand.map { max(0, $0.1 - score) } ?? 0
+        let downNeed = downBand.map { max(0, score - $0.2) } ?? 0
+        // headroom inside current band toward upper edge
+        let insideUp = max(0, cur.2 - score)
+        let insideSpan = max(1, cur.2 - cur.1)
+        let insideFrac = min(1.0, Double(score - cur.1) / Double(insideSpan))
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if upBand == nil {
+            verb = "Capped"; tone = RTColor.optimal
+        } else if upNeed <= 3 {
+            verb = "Near"; tone = RTColor.optimal
+        } else if upNeed <= 8 {
+            verb = "Climb"; tone = RTColor.good
+        } else {
+            verb = "Hold"; tone = cur.3
+        }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.to.line.compact")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY zone buffer")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            // Current band fill
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(cur.0)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(cur.3)
+                    Text("\(score)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.primaryText)
+                    Spacer()
+                    Text("\(cur.1)–\(cur.2)")
+                        .font(.caption2.monospacedDigit())
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                GeometryReader { geo in
+                    let w = max(geo.size.width, 1)
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(cur.3.opacity(0.15))
+                        Capsule()
+                            .fill(
+                                LinearGradient(colors: [cur.3.opacity(0.55), cur.3], startPoint: .leading, endPoint: .trailing)
+                            )
+                            .frame(width: w * insideFrac)
+                    }
+                }
+                .frame(height: 10)
+            }
+            HStack(spacing: 10) {
+                // Up buffer
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(upBand?.3 ?? RTColor.tertiaryText)
+                        Text(upBand.map { "→ \($0.0)" } ?? "Top")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text(upBand == nil ? "—" : "+\(upNeed)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(upBand?.3 ?? RTColor.tertiaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let frac = upBand == nil ? 1.0 : min(1.0, Double(max(0, 12 - upNeed)) / 12.0)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                            Capsule()
+                                .fill((upBand?.3 ?? RTColor.optimal).opacity(0.85))
+                                .frame(width: w * frac)
+                        }
+                    }
+                    .frame(height: 7)
+                }
+                .frame(maxWidth: .infinity)
+                // Down buffer
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.down")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundStyle(downBand?.3 ?? RTColor.tertiaryText)
+                        Text(downBand.map { "← \($0.0)" } ?? "Floor")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text(downBand == nil ? "—" : "−\(downNeed)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(downBand?.3 ?? RTColor.tertiaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        // fuller bar = more cushion before drop
+                        let cushion = downBand == nil ? 1.0 : min(1.0, Double(downNeed) / 12.0)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                            Capsule()
+                                .fill((downBand?.3 ?? RTColor.warning).opacity(0.75))
+                                .frame(width: w * cushion)
+                        }
+                    }
+                    .frame(height: 7)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            Text("coupled READY · +\(insideUp) inside band")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyBuffer)
+        .accessibilityLabel("READY zone buffer \(verb) \(cur.0) \(score)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
 
 
 
