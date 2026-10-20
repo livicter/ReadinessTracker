@@ -86,6 +86,7 @@ struct FitbitAirDataCard: View {
                 densityZScoreStrip
                 densityACFMeter
                 densityEntropyMeter
+                densityKurtosisMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2517,6 +2518,101 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityEntropy)
         .accessibilityLabel("Density entropy \(verb) \(hDisp)")
+    }
+
+
+
+    /// Honest #594: density kurtosis meter — excess kurtosis of dens series (Google Health graphics).
+    @ViewBuilder
+    private var densityKurtosisMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityKurtosisBody(days: days)
+        }
+    }
+
+    private func densityKurtosisBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let mean = dens.reduce(0, +) / n
+        let m2 = dens.map { pow($0 - mean, 2) }.reduce(0, +) / n
+        let m4 = dens.map { pow($0 - mean, 4) }.reduce(0, +) / n
+        let kurt = m2 > 1e-9 ? (m4 / (m2 * m2)) - 3.0 : 0.0  // excess kurtosis
+        let verb: String
+        let tone: Color
+        if kurt >= 1.0 {
+            verb = "Spiky"; tone = RTColor.warning
+        } else if kurt <= -0.5 {
+            verb = "Flat"; tone = RTColor.good
+        } else {
+            verb = "Normal"; tone = RTColor.optimal
+        }
+        let kDisp = String(format: "%+.2f", kurt)
+        // needle mapped: clamp kurt into [-2, 3] → 0…1
+        let needle = min(1.0, max(0.0, (kurt + 2.0) / 5.0))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density kurtosis")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) κ=\(kDisp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [RTColor.good.opacity(0.35), RTColor.optimal.opacity(0.35), RTColor.warning.opacity(0.45)],
+                            startPoint: .leading, endPoint: .trailing))
+                        .frame(height: 10)
+                    // zero marker at (-0 relative) → (2/5)
+                    Capsule()
+                        .fill(RTColor.primaryText.opacity(0.35))
+                        .frame(width: 2, height: 14)
+                        .offset(x: w * (2.0 / 5.0) - 1)
+                    Circle()
+                        .fill(tone)
+                        .frame(width: 14, height: 14)
+                        .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
+                        .offset(x: w * needle - 7)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("excess κ · last \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("flat ← → spiky")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityKurtosis)
+        .accessibilityLabel("Density kurtosis \(verb) \(kDisp)")
     }
 
 
