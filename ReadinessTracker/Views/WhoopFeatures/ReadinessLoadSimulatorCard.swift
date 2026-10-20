@@ -133,6 +133,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyPaceMeter
                 taskImpactShareStack
                 airCoverageRadar
+                readyHeadroomDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2175,6 +2176,105 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
+
+
+
+    /// Honest #595: READY headroom dial — ceiling − coupled remaining lift (richer sim / Google Health graphics).
+    @ViewBuilder
+    private var readyHeadroomDial: some View {
+        let totalLift = tasks.map(\.readyDelta).reduce(0, +)
+        let ceiling = min(100, projected + totalLift)
+        let coupled = projectedCoupled
+        let headroom = max(0, ceiling - coupled)
+        let secured = max(0, coupled - projected)
+        let tone: Color = headroom <= 2 ? RTColor.optimal : (headroom <= 6 ? RTColor.good : accent)
+        let verb = headroom <= 2 ? "Tight" : (headroom <= 6 ? "Open" : "Wide")
+        let frac = ceiling > projected ? Double(secured) / Double(max(1, ceiling - projected)) : 1.0
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "gauge.with.dots.needle.67percent")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY headroom")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(verb) +\(headroom)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 10)
+                        .frame(width: 64, height: 64)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(min(1, frac)))
+                        .stroke(
+                            AngularGradient(colors: [accent.opacity(0.55), tone], center: .center),
+                            style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(-90))
+                        .frame(width: 64, height: 64)
+                        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                    VStack(spacing: 0) {
+                        Text("+\(headroom)")
+                            .font(.callout.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("left")
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Coupled")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(coupled)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.primaryText)
+                    }
+                    HStack {
+                        Text("Ceiling")
+                            .font(.caption2)
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(ceiling)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.optimal)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                            Capsule()
+                                .fill(LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing))
+                                .frame(width: w * CGFloat(min(1, frac)))
+                        }
+                    }
+                    .frame(height: 8)
+                    Text("secured +\(secured) of +\(max(0, ceiling - projected)) task lift")
+                        .font(.caption2.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyHeadroom)
+        .accessibilityLabel("READY headroom \(verb), \(headroom) points left")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
 
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
