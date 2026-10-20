@@ -10629,6 +10629,27 @@ final class SurfacesUITests: XCTestCase {
 
 
 
+
+
+        // Honest #595: READY headroom dial
+        let headroom = app.descendants(matching: .any)["sim.load.ready.headroom"].firstMatch
+        XCTAssertTrue(headroom.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.air.radar"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.headroom")
+        if headroom.exists {
+            if headroom.isHittable { headroom.tap() }
+            else {
+                app.swipeUp()
+                if headroom.waitForExistence(timeout: 2), headroom.isHittable {
+                    headroom.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-headroom.png")
+
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
