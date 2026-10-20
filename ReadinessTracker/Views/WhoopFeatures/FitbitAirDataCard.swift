@@ -82,6 +82,7 @@ struct FitbitAirDataCard: View {
                 densityEnvelopeChart
                 densityMADMeter
                 densityTukeyFences
+                densitySlopeMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2101,8 +2102,115 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Density Tukey fences \(verb), median \(Int((med * 100).rounded())) percent")
     }
 
+    /// Honest #586: density slope meter — 14d dens trend line + rising/stable/falling (Google Health graphics).
+    @ViewBuilder
+    private var densitySlopeMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densitySlopeBody(days: days)
+        }
+    }
 
-
+    private func densitySlopeBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = dens.count
+        let xs = (0..<n).map { Double($0) }
+        let meanX = xs.reduce(0, +) / Double(n)
+        let meanY = dens.reduce(0, +) / Double(n)
+        var num = 0.0, den = 0.0
+        for i in 0..<n {
+            let dx = xs[i] - meanX
+            num += dx * (dens[i] - meanY)
+            den += dx * dx
+        }
+        let slope = den > 0 ? num / den : 0 // dens units per day
+        let slopePP = slope * 100 // percentage points / day
+        let slopePP7 = slopePP * 7 // weekly
+        let absPP = abs(slopePP)
+        let verb: String
+        let tone: Color
+        if absPP < 0.4 {
+            verb = "Stable"
+            tone = RTColor.optimal
+        } else if slopePP > 0 {
+            verb = "Rising"
+            tone = RTColor.good
+        } else {
+            verb = "Falling"
+            tone = Color(hex: "FF375F")
+        }
+        let endY = meanY + slope * (Double(n - 1) - meanX)
+        let startY = meanY + slope * (0 - meanX)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density slope")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(slopePP7 >= 0 ? "+" : "")\(String(format: "%.1f", slopePP7))pp/wk")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                let minV = min(dens.min() ?? 0, min(startY, endY))
+                let maxV = max(dens.max() ?? 1, max(startY, endY))
+                let span = max(0.05, maxV - minV)
+                ZStack {
+                    // dens spark
+                    Path { path in
+                        for (i, v) in dens.enumerated() {
+                            let x = CGFloat(i) / CGFloat(max(1, n - 1)) * w
+                            let y = h - CGFloat((v - minV) / span) * h
+                            if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                            else { path.addLine(to: CGPoint(x: x, y: y)) }
+                        }
+                    }
+                    .stroke(accent.opacity(0.55), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                    // trend line
+                    Path { path in
+                        let y0 = h - CGFloat((startY - minV) / span) * h
+                        let y1 = h - CGFloat((endY - minV) / span) * h
+                        path.move(to: CGPoint(x: 0, y: y0))
+                        path.addLine(to: CGPoint(x: w, y: y1))
+                    }
+                    .stroke(tone, style: StrokeStyle(lineWidth: 2, dash: [4, 3]))
+                }
+            }
+            .frame(height: 36)
+            HStack {
+                Text("n=\(n)d")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text(String(format: "%+.2f pp/d", slopePP))
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(tone)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySlope)
+        .accessibilityLabel("Density slope \(verb) \(String(format: "%.1f", slopePP7)) points per week")
+    }
 
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {

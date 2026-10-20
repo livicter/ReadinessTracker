@@ -11284,6 +11284,26 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-fitbit-air-density-tukey.png")
+
+
+        // Honest #586: density slope meter
+        let densSlope = app.descendants(matching: .any)["fitbit.air.density.slope"].firstMatch
+        XCTAssertTrue(densSlope.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.tukey"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.slope")
+        if densSlope.exists {
+            if densSlope.isHittable { densSlope.tap() }
+            else {
+                app.swipeUp()
+                if densSlope.waitForExistence(timeout: 2), densSlope.isHittable {
+                    densSlope.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-slope.png")
+
+
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
