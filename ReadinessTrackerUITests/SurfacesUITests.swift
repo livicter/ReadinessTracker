@@ -11354,6 +11354,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-zscore.png")
 
 
+        // Honest #590: density ACF meter
+        let densACF = app.descendants(matching: .any)["fitbit.air.density.acf"].firstMatch
+        XCTAssertTrue(densACF.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.zscore"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.acf")
+        if densACF.exists {
+            if densACF.isHittable { densACF.tap() }
+            else {
+                app.swipeUp()
+                if densACF.waitForExistence(timeout: 2), densACF.isHittable {
+                    densACF.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-acf.png")
+
+
+
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {
