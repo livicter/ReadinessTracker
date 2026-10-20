@@ -10791,6 +10791,22 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-simulator-task-efficiency.png")
+        // Honest #613: READY climb forecast
+        let readyClimb = app.descendants(matching: .any)["sim.load.ready.climb"].firstMatch
+        XCTAssertTrue(readyClimb.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb")
+        if readyClimb.exists {
+            if readyClimb.isHittable { readyClimb.tap() }
+            else {
+                app.swipeUp()
+                if readyClimb.waitForExistence(timeout: 2), readyClimb.isHittable {
+                    readyClimb.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-climb.png")
 
 
 
