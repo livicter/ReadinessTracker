@@ -87,6 +87,7 @@ struct FitbitAirDataCard: View {
                 densityACFMeter
                 densityEntropyMeter
                 densityKurtosisMeter
+                densitySpanMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2613,6 +2614,116 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityKurtosis)
         .accessibilityLabel("Density kurtosis \(verb) \(kDisp)")
+    }
+
+
+
+
+    /// Honest #596: density span meter — max−min air-fill over window (Fitbit/Google Health graphics).
+    @ViewBuilder
+    private var densitySpanMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densitySpanBody(days: days)
+        }
+    }
+
+    private func densitySpanBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let lo = dens.min() ?? 0
+        let hi = dens.max() ?? 0
+        let span = hi - lo
+        let mean = dens.reduce(0, +) / Double(dens.count)
+        let verb: String
+        let tone: Color
+        if span <= 0.12 {
+            verb = "Steady"; tone = RTColor.optimal
+        } else if span <= 0.28 {
+            verb = "Mixed"; tone = RTColor.good
+        } else {
+            verb = "Swingy"; tone = RTColor.warning
+        }
+        let spanPct = Int((span * 100).rounded())
+        let loPct = Int((lo * 100).rounded())
+        let hiPct = Int((hi * 100).rounded())
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.and.right")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density span")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) Δ\(spanPct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(RTColor.tertiaryText.opacity(0.12))
+                        .frame(height: 10)
+                    // filled band from lo…hi
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [accent.opacity(0.45), tone],
+                            startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(4, w * span), height: 10)
+                        .offset(x: w * lo)
+                    // mean tick
+                    Capsule()
+                        .fill(RTColor.primaryText.opacity(0.55))
+                        .frame(width: 2, height: 16)
+                        .offset(x: w * mean - 1)
+                    // lo / hi dots
+                    Circle()
+                        .fill(accent)
+                        .frame(width: 12, height: 12)
+                        .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
+                        .offset(x: w * lo - 6)
+                    Circle()
+                        .fill(tone)
+                        .frame(width: 12, height: 12)
+                        .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
+                        .offset(x: w * hi - 6)
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("lo \(loPct)%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("mean \(Int((mean * 100).rounded()))% · last \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("hi \(hiPct)%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySpan)
+        .accessibilityLabel("Density span \(verb) \(spanPct) percent")
     }
 
 
