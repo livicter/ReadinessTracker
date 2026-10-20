@@ -128,6 +128,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyCompositionStack
                 readyTaskWaterfall
                 taskImpactLadder
+                readyPaceMeter
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2015,6 +2016,81 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Impact ladder \(remain) READY points remaining")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
+
+    /// Honest #589: READY pace meter — points gained per checked task (richer sim / Google Health graphics).
+    @ViewBuilder
+    private var readyPaceMeter: some View {
+        let done = tasks.filter { completedTaskIDs.contains($0.id) }
+        let gained = done.reduce(0) { $0 + $1.readyDelta }
+        let n = done.count
+        let pace = n == 0 ? 0.0 : Double(gained) / Double(n)
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }
+        let remainPts = pending.reduce(0) { $0 + $1.readyDelta }
+        let etaTasks = pace > 0.05 ? Int((Double(remainPts) / pace).rounded(.up)) : pending.count
+        let tone: Color = pace >= 3 ? RTColor.optimal : (pace >= 2 ? RTColor.good : (n == 0 ? RTColor.secondaryText : RTColor.warning))
+        let verb = n == 0 ? "Start" : (pace >= 3 ? "Brisk" : (pace >= 2 ? "Steady" : "Light"))
+        let needle = min(1.0, pace / 5.0)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "speedometer")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY pace")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(n == 0 ? "No checks yet" : "\(verb) \(String(format: "%.1f", pace))/task")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [RTColor.warning.opacity(0.35), RTColor.good.opacity(0.4), RTColor.optimal.opacity(0.5)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    Circle()
+                        .fill(tone)
+                        .frame(width: 14, height: 14)
+                        .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
+                        .offset(x: max(0, min(w - 14, CGFloat(needle) * w - 7)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("Gained +\(gained)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(n == 0 ? "Check a task" : "~\(etaTasks) left to clear")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("\(n)/\(tasks.count) done")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyPace)
+        .accessibilityLabel("READY pace \(verb), \(String(format: "%.1f", pace)) per task")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
 
     private var fitbitAirStrip: some View {
         VStack(alignment: .leading, spacing: 8) {

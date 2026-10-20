@@ -10573,6 +10573,21 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-ladder.png")
 
+        // Honest #589: READY pace meter
+        let readyPace = app.descendants(matching: .any)["sim.load.ready.pace"].firstMatch
+        XCTAssertTrue(readyPace.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks.ladder"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.pace")
+        if readyPace.exists {
+            if readyPace.isHittable { readyPace.tap() }
+            else {
+                app.swipeUp()
+                if readyPace.waitForExistence(timeout: 2), readyPace.isHittable { readyPace.tap() }
+            }
+        }
+        saveShot("verify-simulator-ready-pace.png")
+
 
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
