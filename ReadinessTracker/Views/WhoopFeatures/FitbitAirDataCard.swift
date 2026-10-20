@@ -96,6 +96,7 @@ struct FitbitAirDataCard: View {
                 densityReboundMeter
                 densitySharpeMeter
                 densitySortinoMeter
+                densityCalmarMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -3641,6 +3642,144 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensitySortino)
         .accessibilityLabel("Density Sortino \(verb) \(disp)")
+    }
+
+
+
+    /// Honest #614: density Calmar — (μ−55%) / max drawdown (Fitbit/GH graphics).
+    @ViewBuilder
+    private var densityCalmarMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityCalmarBody(days: days)
+        }
+    }
+
+    private func densityCalmarBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = Double(dens.count)
+        let mean = dens.reduce(0, +) / n
+        let target = 0.55
+        var peak = dens[0]
+        var maxDD = 0.0
+        var troughAt = 0
+        var peakAt = 0
+        var curPeakIdx = 0
+        for (i, d) in dens.enumerated() {
+            if d >= peak { peak = d; curPeakIdx = i }
+            let dd = peak - d
+            if dd > maxDD { maxDD = dd; troughAt = i; peakAt = curPeakIdx }
+        }
+        let excess = mean - target
+        let calmar = maxDD > 1e-6 ? excess / maxDD : (excess >= 0 ? 3.0 : -3.0)
+        let clamped = max(-2.0, min(2.0, calmar))
+        let verb: String
+        let tone: Color
+        if calmar >= 1.0 {
+            verb = "Resilient"; tone = RTColor.optimal
+        } else if calmar >= 0.35 {
+            verb = "Stable"; tone = RTColor.good
+        } else if calmar >= 0 {
+            verb = "Soft"; tone = RTColor.caution
+        } else {
+            verb = "Brittle"; tone = RTColor.warning
+        }
+        let disp = String(format: "%+.2f", calmar)
+        let meanPct = Int((mean * 100).rounded())
+        let ddPct = Int((maxDD * 100).rounded())
+        let lo = dens.min() ?? 0
+        let hi = max(dens.max() ?? 1, lo + 1e-9)
+        let span = hi - lo
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "mountain.2.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Calmar")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(disp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let mid = w / 2
+                let frac = CGFloat(abs(clamped) / 2.0)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(3, mid * frac))
+                        .offset(x: clamped >= 0 ? mid : mid - mid * frac)
+                    Rectangle()
+                        .fill(RTColor.tertiaryText.opacity(0.4))
+                        .frame(width: 1.5, height: 12)
+                        .offset(x: mid)
+                }
+            }
+            .frame(height: 12)
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                // drawdown band peak→trough
+                if maxDD > 0, peakAt <= troughAt, dens.count > 1 {
+                    let x0 = w * Double(peakAt) / Double(dens.count - 1)
+                    let x1 = w * Double(troughAt) / Double(dens.count - 1)
+                    let yPeak = h * (1.0 - (dens[peakAt] - lo) / span)
+                    let yTrough = h * (1.0 - (dens[troughAt] - lo) / span)
+                    Path { p in
+                        p.move(to: CGPoint(x: x0, y: yPeak))
+                        p.addLine(to: CGPoint(x: x1, y: yPeak))
+                        p.addLine(to: CGPoint(x: x1, y: yTrough))
+                        p.addLine(to: CGPoint(x: x0, y: yTrough))
+                        p.closeSubpath()
+                    }
+                    .fill(RTColor.warning.opacity(0.14))
+                }
+                Path { path in
+                    for (i, d) in dens.enumerated() {
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let y = h * (1.0 - (d - lo) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+            }
+            .frame(height: 44)
+            HStack {
+                Text("μ \(meanPct)% · maxDD \(ddPct)pp · vs 55% · \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("brittle ← → resilient")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityCalmar)
+        .accessibilityLabel("Density Calmar \(verb) \(disp)")
     }
 
 

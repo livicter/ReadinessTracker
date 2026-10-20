@@ -11811,6 +11811,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-sortino.png")
 
 
+        // Honest #614: density Calmar
+        let densCa = app.descendants(matching: .any)["fitbit.air.density.calmar"].firstMatch
+        XCTAssertTrue(densCa.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.sortino"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.calmar")
+        if densCa.exists {
+            if densCa.isHittable { densCa.tap() }
+            else {
+                app.swipeUp()
+                if densCa.waitForExistence(timeout: 2), densCa.isHittable {
+                    densCa.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-calmar.png")
+
+
+
+
 
 
 
