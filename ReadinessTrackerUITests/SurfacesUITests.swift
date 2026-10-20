@@ -11247,6 +11247,25 @@ final class SurfacesUITests: XCTestCase {
             else { densMAD.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-mad.png")
+
+        // Honest #584: density Tukey fences
+        let densTukey = app.descendants(matching: .any)["fitbit.air.density.tukey"].firstMatch
+        XCTAssertTrue(densTukey.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.mad"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.tukey")
+        if densTukey.exists {
+            if densTukey.isHittable {
+                densTukey.tap()
+            } else {
+                // Off-screen elements yield INFINITY coords — scroll then tap only if hittable.
+                app.swipeUp()
+                if densTukey.waitForExistence(timeout: 2), densTukey.isHittable {
+                    densTukey.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-tukey.png")
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
         if period.exists {

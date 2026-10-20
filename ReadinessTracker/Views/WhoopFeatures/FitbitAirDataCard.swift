@@ -81,6 +81,7 @@ struct FitbitAirDataCard: View {
                 densityPercentileMeter
                 densityEnvelopeChart
                 densityMADMeter
+                densityTukeyFences
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1977,6 +1978,129 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityMAD)
         .accessibilityLabel("Density MAD \(verb) \(madPP) points")
     }
+
+    /// Honest #584: density Tukey fences — box + 1.5×IQR whiskers + outlier ticks (Google Health graphics).
+    @ViewBuilder
+    private var densityTukeyFences: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityTukeyBody(days: days)
+        }
+    }
+
+    private func densityTukeyBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let sorted = dens.sorted()
+        let n = sorted.count
+        func pct(_ p: Double) -> Double {
+            let i = p * Double(n - 1)
+            let lo = Int(i.rounded(.down))
+            let hi = min(n - 1, lo + 1)
+            let f = i - Double(lo)
+            return sorted[lo] * (1 - f) + sorted[hi] * f
+        }
+        let q1 = pct(0.25)
+        let med = pct(0.50)
+        let q3 = pct(0.75)
+        let iqr = max(q3 - q1, 0.0001)
+        let loFence = max(0.0, q1 - 1.5 * iqr)
+        let hiFence = min(1.0, q3 + 1.5 * iqr)
+        let outliers = dens.filter { $0 < loFence || $0 > hiFence }
+        let outN = outliers.count
+        let tone: Color = outN == 0 ? RTColor.optimal : (outN <= 2 ? RTColor.good : RTColor.warning)
+        let verb = outN == 0 ? "Clean" : (outN == 1 ? "1 outlier" : "\(outN) outliers")
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.boxplot.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density fences")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text(verb)
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let xLo = CGFloat(loFence) * w
+                let xHi = CGFloat(hiFence) * w
+                let x1 = CGFloat(q1) * w
+                let x3 = CGFloat(q3) * w
+                let xm = CGFloat(med) * w
+                ZStack(alignment: .leading) {
+                    // track
+                    Capsule()
+                        .fill(accent.opacity(0.10))
+                        .frame(height: 10)
+                    // whisker span
+                    Capsule()
+                        .fill(tone.opacity(0.28))
+                        .frame(width: max(4, xHi - xLo), height: 4)
+                        .offset(x: xLo, y: 0)
+                    // fence end caps
+                    Capsule().fill(tone.opacity(0.7)).frame(width: 2, height: 14).offset(x: max(0, xLo - 1))
+                    Capsule().fill(tone.opacity(0.7)).frame(width: 2, height: 14).offset(x: max(0, min(w - 2, xHi - 1)))
+                    // IQR box
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(LinearGradient(
+                            colors: [tone.opacity(0.35), tone.opacity(0.65)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(width: max(6, x3 - x1), height: 14)
+                        .offset(x: x1)
+                    // median
+                    Capsule()
+                        .fill(RTColor.primaryText.opacity(0.9))
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, xm - 1.5))
+                    // outlier ticks
+                    ForEach(Array(outliers.enumerated()), id: \.offset) { _, v in
+                        Circle()
+                            .fill(Color(hex: "FF375F"))
+                            .frame(width: 7, height: 7)
+                            .offset(x: max(0, min(w - 7, CGFloat(v) * w - 3.5)))
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 20)
+            HStack {
+                Text("Lo \(Int((loFence * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Med \(Int((med * 100).rounded()))%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("Hi \(Int((hiFence * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityTukey)
+        .accessibilityLabel("Density Tukey fences \(verb), median \(Int((med * 100).rounded())) percent")
+    }
+
 
 
 
