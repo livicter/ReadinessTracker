@@ -92,6 +92,7 @@ struct FitbitAirDataCard: View {
                 densityVolatilityMeter
                 densityOutlierMeter
                 densityHHIMeter
+                densityDrawdownMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -3136,6 +3137,105 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityHHI)
         .accessibilityLabel("Density HHI \(verb) \(hDisp)")
+    }
+
+
+
+    /// Honest #606: density max drawdown — peak→trough air-fill drop over window (Fitbit/GH graphics).
+    @ViewBuilder
+    private var densityDrawdownMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityDrawdownBody(days: days)
+        }
+    }
+
+    private func densityDrawdownBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        var peak = dens[0]
+        var maxDD = 0.0
+        var ddSeries: [Double] = []
+        for d in dens {
+            peak = max(peak, d)
+            let dd = peak > 1e-9 ? (peak - d) / peak : 0
+            maxDD = max(maxDD, dd)
+            ddSeries.append(dd)
+        }
+        let verb: String
+        let tone: Color
+        if maxDD <= 0.12 {
+            verb = "Shallow"; tone = RTColor.optimal
+        } else if maxDD <= 0.28 {
+            verb = "Moderate"; tone = RTColor.good
+        } else {
+            verb = "Deep"; tone = RTColor.warning
+        }
+        let ddPct = Int((maxDD * 100).rounded())
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.down.right.and.arrow.up.left")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density drawdown")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) −\(ddPct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                Path { path in
+                    for (i, dd) in ddSeries.enumerated() {
+                        let x = w * Double(i) / Double(max(1, ddSeries.count - 1))
+                        let y = h * (1.0 - dd)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+                // max DD rule
+                Path { path in
+                    let y = h * (1.0 - maxDD)
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: w, y: y))
+                }
+                .stroke(tone.opacity(0.55), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .frame(height: 44)
+            HStack {
+                Text("peak→trough · last \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("shallow ← → deep")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDrawdown)
+        .accessibilityLabel("Density drawdown \(verb) \(ddPct) percent")
     }
 
 
