@@ -10603,6 +10603,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-lever-polarity.png")
 
+        // Honest #581: A/B READY delta gauge
+        let abDelta = app.descendants(matching: .any)["sim.load.ab.ready.delta"].firstMatch
+        XCTAssertTrue(abDelta.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.lever.polarity"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ab.ready.delta")
+        if abDelta.exists {
+            if abDelta.isHittable { abDelta.tap() }
+            else { abDelta.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-ab-ready-delta.png")
+
         // Honest #563: READY composition stack
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
