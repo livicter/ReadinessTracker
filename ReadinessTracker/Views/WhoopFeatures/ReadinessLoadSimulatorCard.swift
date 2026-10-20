@@ -144,6 +144,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskEfficiencyDial
                 readyClimbForecast
                 readyHandoffRail
+                readyClimbPaceDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -3592,6 +3593,130 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyHandoff)
         .accessibilityLabel("READY handoff \(verb) \(start) to \(peak)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #617: READY climb pace dial — pts per unchecked task (Fitbit/GH richer sim graphics).
+    @ViewBuilder
+    private var readyClimbPaceDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbPaceBody(pending: pending)
+        }
+    }
+
+    private func readyClimbPaceBody(pending: [SimulatorTask]) -> some View {
+        let n = pending.count
+        let total = pending.map(\.readyDelta).reduce(0, +)
+        let pace = Double(total) / Double(max(1, n))
+        let top = pending.prefix(3).map(\.readyDelta).reduce(0, +)
+        let topPace = Double(top) / Double(max(1, min(3, n)))
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if pace >= 4 {
+            verb = "Sprint"; tone = RTColor.optimal
+        } else if pace >= 2.5 {
+            verb = "Brisk"; tone = RTColor.good
+        } else if pace >= 1.25 {
+            verb = "Steady"; tone = RTColor.caution
+        } else {
+            verb = "Crawl"; tone = RTColor.warning
+        }
+        let paceDisp = String(format: "%.1f", pace)
+        let topDisp = String(format: "%.1f", topPace)
+        let maxBar = max(1.0, pending.map { Double($0.readyDelta) }.max() ?? 1)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "speedometer")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb pace")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(min(1, pace / 6.0)))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(paceDisp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("pts/task")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Queue +\(total) · \(n) left")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("top3 \(topDisp)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.primaryText)
+                    }
+                    ForEach(Array(pending.prefix(4).enumerated()), id: \.offset) { _, t in
+                        HStack(spacing: 6) {
+                            Text(t.title.split(separator: " ").prefix(2).joined(separator: " "))
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(RTColor.secondaryText)
+                                .frame(width: 72, alignment: .leading)
+                                .lineLimit(1)
+                            GeometryReader { geo in
+                                let w = max(geo.size.width, 1)
+                                let frac = CGFloat(Double(t.readyDelta) / maxBar)
+                                ZStack(alignment: .leading) {
+                                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                                    Capsule()
+                                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                        .frame(width: w * frac)
+                                }
+                            }
+                            .frame(height: 7)
+                            Text("+\(t.readyDelta)")
+                                .font(.caption2.weight(.bold).monospacedDigit())
+                                .foregroundStyle(accent)
+                                .frame(width: 28, alignment: .trailing)
+                        }
+                    }
+                }
+            }
+            Text("pts per unchecked task · high→low · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbPace)
+        .accessibilityLabel("Climb pace \(verb) \(paceDisp) pts per task")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
