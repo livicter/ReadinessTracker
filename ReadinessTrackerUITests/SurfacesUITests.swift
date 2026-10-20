@@ -11625,6 +11625,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-outliers.png")
 
 
+        // Honest #604: density HHI
+        let densHHI = app.descendants(matching: .any)["fitbit.air.density.hhi"].firstMatch
+        XCTAssertTrue(densHHI.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.outliers"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.hhi")
+        if densHHI.exists {
+            if densHHI.isHittable { densHHI.tap() }
+            else {
+                app.swipeUp()
+                if densHHI.waitForExistence(timeout: 2), densHHI.isHittable {
+                    densHHI.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-hhi.png")
+
+
+
+
 
 
 
