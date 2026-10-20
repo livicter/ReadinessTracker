@@ -135,6 +135,7 @@ struct ReadinessLoadSimulatorCard: View {
                 airCoverageRadar
                 readyHeadroomDial
                 readyBurndownSpark
+                ghTriadBalance
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2384,6 +2385,117 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyBurndown)
         .accessibilityLabel("READY burn-down \(verb), \(left) points left")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+
+    /// Honest #599: Google Health Sleep·Vitals·Move triad — balance meters on Load Simulator (GH parity / graphics).
+    @ViewBuilder
+    private var ghTriadBalance: some View {
+        let chips = AirChip.all(from: data)
+        if chips.isEmpty {
+            EmptyView()
+        } else {
+            ghTriadBalanceBody(chips: chips)
+        }
+    }
+
+    private func ghTriadBalanceBody(chips: [AirChip]) -> some View {
+        let cats = AirDensityCategory.allCases
+        let fills: [Double] = cats.map { cat in
+            let ids = cat.chipIDs
+            let n = chips.filter { ids.contains($0.id) }.count
+            guard n > 0 else { return 0 }
+            return Double(chips.filter { ids.contains($0.id) && $0.filled }.count) / Double(n)
+        }
+        let mean = fills.reduce(0, +) / Double(max(1, fills.count))
+        let spread = (fills.max() ?? 0) - (fills.min() ?? 0)
+        let verb: String
+        let tone: Color
+        if spread <= 0.15 {
+            verb = "Balanced"; tone = RTColor.optimal
+        } else if spread <= 0.35 {
+            verb = "Tilted"; tone = RTColor.good
+        } else {
+            verb = "Skewed"; tone = RTColor.warning
+        }
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "triangle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("GH triad")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            ForEach(Array(cats.enumerated()), id: \.element.id) { idx, cat in
+                let fill = fills[idx]
+                let pct = Int((fill * 100).rounded())
+                Button {
+                    focusedAirRadar = focusedAirRadar == cat ? nil : cat
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack {
+                            Circle().fill(cat.color).frame(width: 8, height: 8)
+                            Text(cat.title)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(RTColor.primaryText)
+                            Spacer()
+                            Text("\(pct)%")
+                                .font(.caption.weight(.bold).monospacedDigit())
+                                .foregroundStyle(cat.color)
+                        }
+                        GeometryReader { geo in
+                            let w = max(geo.size.width, 1)
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                                Capsule()
+                                    .fill(LinearGradient(
+                                        colors: [cat.color.opacity(0.55), cat.color],
+                                        startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: w * CGFloat(fill))
+                                // mean tick
+                                Capsule()
+                                    .fill(RTColor.primaryText.opacity(0.45))
+                                    .frame(width: 2, height: 12)
+                                    .offset(x: w * mean - 1)
+                            }
+                        }
+                        .frame(height: 10)
+                    }
+                    .padding(.vertical, 2)
+                    .opacity(focusedAirRadar == nil || focusedAirRadar == cat ? 1 : 0.45)
+                }
+                .buttonStyle(.plain)
+            }
+            HStack {
+                Text(focusedAirRadar.map { "Focus \($0.title) · tap to clear" } ?? "Tap category · seed tasks")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text(String(format: "Δ%.0fpp", spread * 100))
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorGHTriad)
+        .accessibilityLabel("Google Health triad \(verb)")
+        .animation(.easeInOut(duration: 0.25), value: focusedAirRadar)
     }
 
 
