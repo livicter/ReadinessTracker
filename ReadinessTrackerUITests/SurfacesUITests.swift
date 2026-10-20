@@ -11549,6 +11549,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-gini.png")
 
 
+        // Honest #600: density volatility meter
+        let densVol = app.descendants(matching: .any)["fitbit.air.density.volatility"].firstMatch
+        XCTAssertTrue(densVol.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.gini"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.volatility")
+        if densVol.exists {
+            if densVol.isHittable { densVol.tap() }
+            else {
+                app.swipeUp()
+                if densVol.waitForExistence(timeout: 2), densVol.isHittable {
+                    densVol.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-volatility.png")
+
+
+
+
 
 
 
