@@ -79,6 +79,7 @@ struct FitbitAirDataCard: View {
                 densitySkewMeter
                 densityIQRMeter
                 densityPercentileMeter
+                densityEnvelopeChart
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1777,6 +1778,119 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityPercentile)
         .accessibilityLabel("Density percentile \(verb) P\(pctPP), tonight \(todayPP) percent")
+    }
+
+
+
+    /// Honest #580: density envelope chart — dens spark with Q1–Q3 band (Google Health graphics).
+    @ViewBuilder
+    private var densityEnvelopeChart: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityEnvelopeBody(days: days)
+        }
+    }
+
+    private func densityEnvelopeBody(days: [DailyHealthData]) -> some View {
+        struct Pt: Identifiable {
+            let id: Int
+            let date: Date
+            let dens: Double
+        }
+        let pts: [Pt] = days.enumerated().map { i, day in
+            let chips = AirChip.all(from: day)
+            let dens = chips.isEmpty ? 0.0 : Double(chips.filter(\.filled).count) / Double(chips.count)
+            return Pt(id: i, date: day.date, dens: dens)
+        }
+        let sorted = pts.map(\.dens).sorted()
+        let n = sorted.count
+        func pct(_ p: Double) -> Double {
+            let i = p * Double(n - 1)
+            let lo = Int(i.rounded(.down))
+            let hi = min(n - 1, lo + 1)
+            let f = i - Double(lo)
+            return sorted[lo] * (1 - f) + sorted[hi] * f
+        }
+        let q1 = pct(0.25)
+        let med = pct(0.50)
+        let q3 = pct(0.75)
+        let iqrPP = Int(((q3 - q1) * 100).rounded())
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.xyaxis.line")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density envelope")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("IQR \(iqrPP)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(accent.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(pts) { pt in
+                    AreaMark(
+                        x: .value("Day", pt.date),
+                        yStart: .value("Q1", q1),
+                        yEnd: .value("Q3", q3)
+                    )
+                    .foregroundStyle(accent.opacity(0.14))
+                    LineMark(
+                        x: .value("Day", pt.date),
+                        y: .value("Density", pt.dens)
+                    )
+                    .foregroundStyle(accent)
+                    .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                }
+                RuleMark(y: .value("Med", med))
+                    .foregroundStyle(RTColor.optimal.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
+            }
+            .chartYScale(domain: 0...1)
+            .chartXAxis(.hidden)
+            .chartYAxis {
+                AxisMarks(position: .leading, values: [0, 0.5, 1]) { v in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel {
+                        if let d = v.as(Double.self) {
+                            Text("\(Int((d * 100).rounded()))%")
+                                .font(.caption2)
+                                .foregroundStyle(RTColor.tertiaryText)
+                        }
+                    }
+                }
+            }
+            .frame(height: 88)
+            HStack {
+                Text("Q1 \(Int((q1 * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Med \(Int((med * 100).rounded()))%")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.optimal)
+                Spacer()
+                Text("Q3 \(Int((q3 * 100).rounded()))%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityEnvelope)
+        .accessibilityLabel("Density envelope IQR \(iqrPP) points")
     }
 
 
