@@ -10859,6 +10859,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-eta.png")
 
+        // Honest #621: READY climb surplus
+        let climbSurplus = app.descendants(matching: .any)["sim.load.ready.climb.surplus"].firstMatch
+        XCTAssertTrue(climbSurplus.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.eta"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.surplus")
+        if climbSurplus.exists {
+            if climbSurplus.isHittable { climbSurplus.tap() }
+            else {
+                app.swipeUp()
+                if climbSurplus.waitForExistence(timeout: 2), climbSurplus.isHittable {
+                    climbSurplus.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-surplus.png")
+
 
 
 
