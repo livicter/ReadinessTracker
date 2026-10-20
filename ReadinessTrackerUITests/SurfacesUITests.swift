@@ -10808,6 +10808,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-climb.png")
 
+        // Honest #615: READY handoff rail
+        let readyHandoff = app.descendants(matching: .any)["sim.load.ready.handoff"].firstMatch
+        XCTAssertTrue(readyHandoff.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.handoff")
+        if readyHandoff.exists {
+            if readyHandoff.isHittable { readyHandoff.tap() }
+            else {
+                app.swipeUp()
+                if readyHandoff.waitForExistence(timeout: 2), readyHandoff.isHittable {
+                    readyHandoff.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-handoff.png")
+
 
 
 
