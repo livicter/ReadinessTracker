@@ -32,6 +32,8 @@ struct ReadinessLoadSimulatorCard: View {
     @State private var sortTasksByImpact = false
     /// Honest #543: show only air-gap tasks vs all.
     @State private var showAirGapTasksOnly = false
+    /// Honest #593: which air-coverage radar category is focused.
+    @State private var focusedAirRadar: AirDensityCategory? = nil
 
     private var baseline: Int { scores.general }
 
@@ -130,6 +132,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskImpactLadder
                 readyPaceMeter
                 taskImpactShareStack
+                airCoverageRadar
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2172,6 +2175,147 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
+
+
+    /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
+    @ViewBuilder
+    private var airCoverageRadar: some View {
+        let chips = AirChip.all(from: data)
+        let filled = chips.filter(\.filled).count
+        if chips.isEmpty {
+            EmptyView()
+        } else {
+            airCoverageRadarBody(chips: chips, filled: filled)
+        }
+    }
+
+    private func airCoverageRadarBody(chips: [AirChip], filled: Int) -> some View {
+        let total = max(1, chips.count)
+        let pct = Int((Double(filled) / Double(total) * 100).rounded())
+        let tone: Color = pct >= 70 ? RTColor.optimal : (pct >= 40 ? RTColor.good : accent)
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "dot.radiowaves.left.and.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Air coverage")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(pct)%")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 10)
+                        .frame(width: 72, height: 72)
+                    ForEach(Array(AirDensityCategory.allCases.enumerated()), id: \.element.id) { idx, cat in
+                        airRadarArc(cat, index: idx, chips: chips)
+                    }
+                    VStack(spacing: 0) {
+                        Text("\(filled)")
+                            .font(.title3.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("/\(total)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .frame(width: 72, height: 72)
+                .accessibilityHidden(true)
+                VStack(spacing: 6) {
+                    ForEach(AirDensityCategory.allCases) { cat in
+                        airRadarPill(cat, chips: chips)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            HStack {
+                Text(focusedAirRadar.map { "Focus \($0.title)" } ?? "Tap category · seed tasks")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Sleep · Vitals · Move")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorAirRadar)
+        .accessibilityLabel("Air coverage \(pct) percent, \(filled) of \(total) fields")
+        .animation(.easeInOut(duration: 0.25), value: focusedAirRadar)
+    }
+
+    private func airRadarArc(_ cat: AirDensityCategory, index: Int, chips: [AirChip]) -> some View {
+        let span = 1.0 / Double(AirDensityCategory.allCases.count)
+        let start = Double(index) * span
+        let ratio = cat.fillRatio(in: chips)
+        let end = start + span * ratio
+        let dimmed = focusedAirRadar != nil && focusedAirRadar != cat
+        return Circle()
+            .trim(from: CGFloat(start), to: CGFloat(max(start, end)))
+            .stroke(cat.color.opacity(dimmed ? 0.22 : 0.95),
+                    style: StrokeStyle(lineWidth: focusedAirRadar == cat ? 12 : 10, lineCap: .round))
+            .rotationEffect(.degrees(-90))
+            .frame(width: 72, height: 72)
+    }
+
+    private func airRadarPill(_ cat: AirDensityCategory, chips: [AirChip]) -> some View {
+        let n = cat.filledCount(in: chips)
+        let den = cat.chipIDs.count
+        let on = focusedAirRadar == cat
+        return Button {
+            Haptic.selectionChanged()
+            focusedAirRadar = on ? nil : cat
+            if focusedAirRadar != nil {
+                showAirGapTasksOnly = true
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Circle()
+                    .fill(cat.color)
+                    .frame(width: 7, height: 7)
+                Text(cat.title)
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(on ? Color.white : RTColor.primaryText)
+                Spacer(minLength: 0)
+                Text("\(n)/\(den)")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(on ? Color.white.opacity(0.95) : cat.color)
+                GeometryReader { geo in
+                    let w = max(geo.size.width, 1)
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(RTColor.tertiaryText.opacity(0.15))
+                        Capsule()
+                            .fill(cat.color.opacity(on ? 1 : 0.85))
+                            .frame(width: w * CGFloat(cat.fillRatio(in: chips)))
+                    }
+                }
+                .frame(width: 36, height: 6)
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(on ? cat.color : cat.color.opacity(0.10))
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("sim.load.air.radar.\(cat.rawValue)")
+        .accessibilityLabel("\(cat.title) air \(n) of \(den)")
+    }
 
     private var fitbitAirStrip: some View {
         VStack(alignment: .leading, spacing: 8) {

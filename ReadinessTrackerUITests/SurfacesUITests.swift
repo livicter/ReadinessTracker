@@ -10608,6 +10608,27 @@ final class SurfacesUITests: XCTestCase {
 
 
 
+
+
+        // Honest #593: air coverage radar (Fitbit / Google Health)
+        let airRadar = app.descendants(matching: .any)["sim.load.air.radar"].firstMatch
+        XCTAssertTrue(airRadar.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks.impactshare"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.air.radar")
+        if airRadar.exists {
+            if airRadar.isHittable { airRadar.tap() }
+            else {
+                app.swipeUp()
+                if airRadar.waitForExistence(timeout: 2), airRadar.isHittable {
+                    airRadar.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-air-radar.png")
+
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
