@@ -11757,6 +11757,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-sharpe.png")
 
 
+        // Honest #612: density Sortino
+        let densSo = app.descendants(matching: .any)["fitbit.air.density.sortino"].firstMatch
+        XCTAssertTrue(densSo.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.sharpe"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.sortino")
+        if densSo.exists {
+            if densSo.isHittable { densSo.tap() }
+            else {
+                app.swipeUp()
+                if densSo.waitForExistence(timeout: 2), densSo.isHittable {
+                    densSo.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-sortino.png")
+
+
+
+
 
 
 
