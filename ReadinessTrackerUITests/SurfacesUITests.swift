@@ -10739,6 +10739,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-seed-confidence.png")
 
 
+        // Honest #607: READY momentum gauge
+        let readyMom = app.descendants(matching: .any)["sim.load.ready.momentum"].firstMatch
+        XCTAssertTrue(readyMom.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.seed.confidence"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.momentum")
+        if readyMom.exists {
+            if readyMom.isHittable { readyMom.tap() }
+            else {
+                app.swipeUp()
+                if readyMom.waitForExistence(timeout: 2), readyMom.isHittable {
+                    readyMom.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-momentum.png")
+
+
+
+
 
 
 
