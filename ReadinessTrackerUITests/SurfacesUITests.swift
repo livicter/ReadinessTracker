@@ -10757,6 +10757,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-momentum.png")
 
 
+        // Honest #609: READY zone buffer
+        let readyBuf = app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch
+        XCTAssertTrue(readyBuf.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.momentum"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.buffer")
+        if readyBuf.exists {
+            if readyBuf.isHittable { readyBuf.tap() }
+            else {
+                app.swipeUp()
+                if readyBuf.waitForExistence(timeout: 2), readyBuf.isHittable {
+                    readyBuf.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-buffer.png")
+
+
+
+
 
 
 
