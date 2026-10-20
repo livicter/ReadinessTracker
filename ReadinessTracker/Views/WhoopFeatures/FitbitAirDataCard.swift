@@ -80,6 +80,7 @@ struct FitbitAirDataCard: View {
                 densityIQRMeter
                 densityPercentileMeter
                 densityEnvelopeChart
+                densityMADMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -1892,6 +1893,92 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityEnvelope)
         .accessibilityLabel("Density envelope IQR \(iqrPP) points")
     }
+
+
+
+    /// Honest #582: density MAD meter — median absolute deviation of last-14 dens (Google Health graphics).
+    @ViewBuilder
+    private var densityMADMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityMADBody(days: days)
+        }
+    }
+
+    private func densityMADBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }.sorted()
+        let n = dens.count
+        let mid = n / 2
+        let median: Double = n % 2 == 0 ? (dens[mid - 1] + dens[mid]) / 2 : dens[mid]
+        let absDev = dens.map { abs($0 - median) }.sorted()
+        let mad: Double = n % 2 == 0 ? (absDev[mid - 1] + absDev[mid]) / 2 : absDev[mid]
+        let madPP = Int((mad * 100).rounded())
+        let medPP = Int((median * 100).rounded())
+        let tone: Color = madPP <= 8 ? RTColor.optimal : (madPP <= 15 ? RTColor.good : RTColor.warning)
+        let verb = madPP <= 8 ? "Stable" : (madPP <= 15 ? "Mild" : "Volatile")
+        let needle = min(1.0, mad / 0.30) // 30pp MAD = full scale
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path.ecg")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density MAD")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(madPP)pp")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [RTColor.optimal.opacity(0.4), RTColor.good.opacity(0.4), Color(hex: "FF375F").opacity(0.4)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    Circle()
+                        .fill(tone)
+                        .frame(width: 14, height: 14)
+                        .offset(x: max(0, min(w - 14, CGFloat(needle) * w - 7)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("Med \(medPP)%")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("robust scale · last \(n)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityMAD)
+        .accessibilityLabel("Density MAD \(verb) \(madPP) points")
+    }
+
+
 
 
     private func sparkSelectDensity(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
