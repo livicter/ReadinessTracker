@@ -88,6 +88,7 @@ struct FitbitAirDataCard: View {
                 densityEntropyMeter
                 densityKurtosisMeter
                 densitySpanMeter
+                densityGiniMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2724,6 +2725,121 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensitySpan)
         .accessibilityLabel("Density span \(verb) \(spanPct) percent")
+    }
+
+
+
+    /// Honest #598: density Gini meter — inequality of daily air-fill (Fitbit/Google Health graphics).
+    @ViewBuilder
+    private var densityGiniMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityGiniBody(days: days)
+        }
+    }
+
+    private func densityGiniBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let sorted = dens.sorted()
+        let n = Double(sorted.count)
+        let sum = sorted.reduce(0, +)
+        // Gini = (2 * Σ i*x_i) / (n * Σ x_i) - (n+1)/n
+        var gini = 0.0
+        if sum > 1e-9 {
+            var weighted = 0.0
+            for (i, x) in sorted.enumerated() {
+                weighted += Double(i + 1) * x
+            }
+            gini = (2.0 * weighted) / (n * sum) - (n + 1.0) / n
+            gini = max(0, min(1, gini))
+        }
+        let verb: String
+        let tone: Color
+        if gini <= 0.15 {
+            verb = "Even"; tone = RTColor.optimal
+        } else if gini <= 0.35 {
+            verb = "Mild"; tone = RTColor.good
+        } else {
+            verb = "Uneven"; tone = RTColor.warning
+        }
+        let gDisp = String(format: "%.2f", gini)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Gini")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) G=\(gDisp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                // Lorenz-ish polyline + equality diagonal
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: h))
+                    path.addLine(to: CGPoint(x: w, y: 0))
+                }
+                .stroke(RTColor.tertiaryText.opacity(0.35), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                Path { path in
+                    path.move(to: CGPoint(x: 0, y: h))
+                    var cum = 0.0
+                    let total = max(sum, 1e-9)
+                    for (i, x) in sorted.enumerated() {
+                        cum += x
+                        let px = w * Double(i + 1) / n
+                        let py = h * (1.0 - cum / total)
+                        path.addLine(to: CGPoint(x: px, y: py))
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                )
+                // Gini needle on bottom track
+                Capsule()
+                    .fill(RTColor.tertiaryText.opacity(0.12))
+                    .frame(height: 6)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                Capsule()
+                    .fill(tone)
+                    .frame(width: max(4, w * gini), height: 6)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .frame(height: 56)
+            HStack {
+                Text("even ← → uneven · last \(sorted.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("Lorenz vs equality")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityGini)
+        .accessibilityLabel("Density Gini \(verb) \(gDisp)")
     }
 
 

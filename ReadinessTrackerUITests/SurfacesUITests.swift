@@ -11511,6 +11511,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-span.png")
 
 
+        // Honest #598: density Gini meter
+        let densGini = app.descendants(matching: .any)["fitbit.air.density.gini"].firstMatch
+        XCTAssertTrue(densGini.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.span"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.gini")
+        if densGini.exists {
+            if densGini.isHittable { densGini.tap() }
+            else {
+                app.swipeUp()
+                if densGini.waitForExistence(timeout: 2), densGini.isHittable {
+                    densGini.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-gini.png")
+
+
+
+
 
 
 
