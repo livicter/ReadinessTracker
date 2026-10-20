@@ -11701,6 +11701,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-drawdown.png")
 
 
+        // Honest #608: density rebound
+        let densRB = app.descendants(matching: .any)["fitbit.air.density.rebound"].firstMatch
+        XCTAssertTrue(densRB.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.drawdown"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.rebound")
+        if densRB.exists {
+            if densRB.isHittable { densRB.tap() }
+            else {
+                app.swipeUp()
+                if densRB.waitForExistence(timeout: 2), densRB.isHittable {
+                    densRB.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-rebound.png")
+
+
+
+
 
 
 
