@@ -10543,6 +10543,18 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-zones.png")
 
+        // Honest #583: zone jump rail
+        let zoneJump = app.descendants(matching: .any)["sim.load.zone.jump"].firstMatch
+        XCTAssertTrue(zoneJump.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.zones"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.zone.jump")
+        if zoneJump.exists {
+            if zoneJump.isHittable { zoneJump.tap() }
+            else { zoneJump.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        }
+        saveShot("verify-simulator-zone-jump.png")
+
         // Honest #571: seed vs live delta rail
         let seedDelta = app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch
         XCTAssertTrue(seedDelta.waitForExistence(timeout: 5)

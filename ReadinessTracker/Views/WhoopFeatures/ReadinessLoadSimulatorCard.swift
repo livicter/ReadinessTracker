@@ -117,6 +117,7 @@ struct ReadinessLoadSimulatorCard: View {
                 sparkProjection
                 readyPathSpark
                 readyZoneStrip
+                zoneJumpRail
                 seedLiveDeltaRail
                 taskCompletionRadial
                 ringDeltaBars
@@ -1095,6 +1096,101 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("READY zones \(active.label) \(score)")
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
+
+
+    /// Honest #583: zone jump rail — baseline → projected READY zone (Google Health graphics).
+    private var zoneJumpRail: some View {
+        let zones: [(label: String, lo: Int, hi: Int, color: Color)] = [
+            ("Poor", 0, 49, Color(hex: "FF375F")),
+            ("Fair", 50, 69, RTColor.warning),
+            ("Good", 70, 84, RTColor.good),
+            ("Optimal", 85, 100, RTColor.optimal)
+        ]
+        func zone(for score: Int) -> (label: String, lo: Int, hi: Int, color: Color) {
+            zones.first { score >= $0.lo && score <= $0.hi } ?? zones[0]
+        }
+        let from = zone(for: baseline)
+        let to = zone(for: projectedCoupled)
+        let d = projectedCoupled - baseline
+        let jumped = from.label != to.label
+        let tone: Color = d > 0 ? RTColor.optimal : (d < 0 ? Color(hex: "FF375F") : RTColor.secondaryText)
+        let verb = jumped
+            ? (d >= 0 ? "↑ \(to.label)" : "↓ \(to.label)")
+            : (d == 0 ? "Hold \(to.label)" : (d > 0 ? "Climb \(to.label)" : "Slip \(to.label)"))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.right.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Zone jump")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(verb)
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(to.color)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(to.color.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    HStack(spacing: 2) {
+                        ForEach(Array(zones.enumerated()), id: \.offset) { _, z in
+                            let frac = CGFloat(z.hi - z.lo + 1) / 101.0
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(z.color.opacity(0.45))
+                                .frame(width: max(8, w * frac - 2))
+                        }
+                    }
+                    let aX = CGFloat(baseline) / 100.0 * w
+                    let bX = CGFloat(projectedCoupled) / 100.0 * w
+                    let lo = min(aX, bX)
+                    let hi = max(aX, bX)
+                    Capsule()
+                        .fill(tone.opacity(0.35))
+                        .frame(width: max(4, hi - lo), height: 10)
+                        .offset(x: lo, y: 0)
+                    // baseline tick
+                    Capsule().fill(RTColor.secondaryText)
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, min(w - 3, aX - 1.5)))
+                    // projected tick
+                    Capsule().fill(to.color)
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, min(w - 3, bX - 1.5)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 22)
+            HStack {
+                Text("Base \(from.label) \(baseline)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(from.color)
+                Spacer()
+                Text(d == 0 ? "±0" : (d > 0 ? "+\(d)" : "\(d)"))
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                Spacer()
+                Text("Now \(to.label) \(projectedCoupled)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(to.color)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorZoneJump)
+        .accessibilityLabel("Zone jump \(from.label) to \(to.label), delta \(d >= 0 ? "+" : "")\(d)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+        .animation(.easeInOut(duration: 0.25), value: baseline)
+    }
+
 
     /// Honest #571: seed vs live delta rail — tonight baseline vs scrubbed READY (Fitbit Air / Google Health graphics).
     private var seedLiveDeltaRail: some View {
