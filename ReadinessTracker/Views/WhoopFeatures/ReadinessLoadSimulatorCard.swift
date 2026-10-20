@@ -137,6 +137,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyBurndownSpark
                 ghTriadBalance
                 taskRingMix
+                taskBatchLiftPreview
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2599,6 +2600,106 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRingMix)
         .accessibilityLabel("Task ring mix \(verb)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+
+    /// Honest #603: next-batch lift preview — combined READYΔ of next 2 impact tasks (richer sim/tasks).
+    @ViewBuilder
+    private var taskBatchLiftPreview: some View {
+        let unchecked = tasks.filter { !completedTaskIDs.contains($0.id) }
+            .sorted { $0.readyDelta > $1.readyDelta }
+        let batch = Array(unchecked.prefix(2))
+        if batch.isEmpty {
+            EmptyView()
+        } else {
+            taskBatchLiftBody(batch: batch)
+        }
+    }
+
+    private func taskBatchLiftBody(batch: [SimulatorTask]) -> some View {
+        let lift = batch.map(\.readyDelta).reduce(0, +)
+        let after = min(100, projectedCoupled + lift)
+        let tone: Color = lift >= 6 ? RTColor.optimal : (lift >= 3 ? RTColor.good : accent)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "bolt.horizontal.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Batch lift")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("+\(lift) → \(after)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 8) {
+                ForEach(batch) { t in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(t.title)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.primaryText)
+                            .lineLimit(1)
+                        Text("+\(t.readyDelta)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                    }
+                    .padding(8)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(tone.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let cur = CGFloat(projectedCoupled) / 100
+                let nxt = CGFloat(after) / 100
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                    Capsule()
+                        .fill(accent.opacity(0.35))
+                        .frame(width: w * cur)
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: w * nxt)
+                        .opacity(0.85)
+                }
+            }
+            .frame(height: 10)
+            Button {
+                Haptic.selectionChanged()
+                for t in batch { completedTaskIDs.insert(t.id) }
+            } label: {
+                HStack {
+                    Image(systemName: "checkmark.seal.fill")
+                    Text("Apply batch · +\(lift) READY")
+                        .fontWeight(.bold)
+                    Spacer()
+                    Text("\(projectedCoupled)→\(after)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                }
+                .font(.caption)
+                .foregroundStyle(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(tone, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Apply batch lift plus \(lift) READY")
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorBatchLift)
+        .accessibilityLabel("Batch lift plus \(lift) to \(after)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
