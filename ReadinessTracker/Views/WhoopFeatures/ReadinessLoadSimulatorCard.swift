@@ -122,6 +122,7 @@ struct ReadinessLoadSimulatorCard: View {
                 ringDeltaBars
                 ringParityMeters
                 leverPolarityStrip
+                abReadyDeltaGauge
                 readyCompositionStack
                 readyTaskWaterfall
                 if !fitbitAirChips.isEmpty {
@@ -1482,6 +1483,81 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: strainDelta)
         .animation(.easeInOut(duration: 0.25), value: rhrDelta)
         .animation(.easeInOut(duration: 0.25), value: spo2Delta)
+    }
+
+
+
+    /// Honest #581: A/B READY delta gauge — Snap A vs B/Live (or Base→Live) (Google Health graphics).
+    private var abReadyDeltaGauge: some View {
+        let aReady = snapA?.ready ?? baseline
+        let bReady = snapB?.ready ?? projectedCoupled
+        let aLabel = snapA == nil ? "Base" : "A"
+        let bLabel = snapB == nil ? "Live" : "B"
+        let d = bReady - aReady
+        let tone: Color = d > 0 ? RTColor.optimal : (d < 0 ? Color(hex: "FF375F") : RTColor.secondaryText)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.left.arrow.right.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("A/B READY Δ")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(d == 0 ? "±0" : (d > 0 ? "+\(d)" : "\(d)"))
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let aX = CGFloat(min(100, max(0, aReady))) / 100 * w
+                let bX = CGFloat(min(100, max(0, bReady))) / 100 * w
+                ZStack(alignment: .leading) {
+                    Capsule().fill(accent.opacity(0.12)).frame(height: 14)
+                    // span between A and B
+                    let lo = min(aX, bX)
+                    let hi = max(aX, bX)
+                    Capsule()
+                        .fill(tone.opacity(0.35))
+                        .frame(width: max(4, hi - lo), height: 14)
+                        .offset(x: lo)
+                    // A tick
+                    Capsule().fill(RTColor.secondaryText)
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, aX - 1.5))
+                    // B tick
+                    Capsule().fill(accent)
+                        .frame(width: 3, height: 18)
+                        .offset(x: max(0, bX - 1.5))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 20)
+            HStack {
+                Text("\(aLabel) \(aReady)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(bLabel) \(bReady)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(accent)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorABReadyDelta)
+        .accessibilityLabel("A B READY delta \(d >= 0 ? "+" : "")\(d)")
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+        .animation(.easeInOut(duration: 0.25), value: aReady)
+        .animation(.easeInOut(duration: 0.25), value: bReady)
     }
 
 
