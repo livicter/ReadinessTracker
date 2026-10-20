@@ -10721,6 +10721,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-batch-lift.png")
 
 
+        // Honest #605: seed confidence dial
+        let seedConf = app.descendants(matching: .any)["sim.load.seed.confidence"].firstMatch
+        XCTAssertTrue(seedConf.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks.batch.lift"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.seed.confidence")
+        if seedConf.exists {
+            if seedConf.isHittable { seedConf.tap() }
+            else {
+                app.swipeUp()
+                if seedConf.waitForExistence(timeout: 2), seedConf.isHittable {
+                    seedConf.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-seed-confidence.png")
+
+
+
+
 
 
 
