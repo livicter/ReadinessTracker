@@ -10685,6 +10685,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-gh-triad.png")
 
 
+        // Honest #601: task ring mix
+        let ringMix = app.descendants(matching: .any)["sim.load.task.rings"].firstMatch
+        XCTAssertTrue(ringMix.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.gh.triad"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.task.rings")
+        if ringMix.exists {
+            if ringMix.isHittable { ringMix.tap() }
+            else {
+                app.swipeUp()
+                if ringMix.waitForExistence(timeout: 2), ringMix.isHittable {
+                    ringMix.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-task-ring-mix.png")
+
+
+
+
 
 
 
