@@ -10649,6 +10649,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-headroom.png")
 
 
+        // Honest #597: READY burn-down spark
+        let burndown = app.descendants(matching: .any)["sim.load.ready.burndown"].firstMatch
+        XCTAssertTrue(burndown.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.headroom"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.burndown")
+        if burndown.exists {
+            if burndown.isHittable { burndown.tap() }
+            else {
+                app.swipeUp()
+                if burndown.waitForExistence(timeout: 2), burndown.isHittable {
+                    burndown.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-ready-burndown.png")
+
+
+
+
 
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
