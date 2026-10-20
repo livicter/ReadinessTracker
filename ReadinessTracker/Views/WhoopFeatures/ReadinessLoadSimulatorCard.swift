@@ -136,6 +136,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyHeadroomDial
                 readyBurndownSpark
                 ghTriadBalance
+                taskRingMix
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2496,6 +2497,109 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorGHTriad)
         .accessibilityLabel("Google Health triad \(verb)")
         .animation(.easeInOut(duration: 0.25), value: focusedAirRadar)
+    }
+
+
+
+    /// Honest #601: task ring mix — pending READYΔ attributed to Sleep/Gym/Work (richer sim/tasks graphics).
+    @ViewBuilder
+    private var taskRingMix: some View {
+        if tasks.isEmpty {
+            EmptyView()
+        } else {
+            taskRingMixBody
+        }
+    }
+
+    private func taskRingAffinity(_ t: SimulatorTask) -> (label: String, color: Color) {
+        let id = t.id.lowercased()
+        if id.contains("sleep") {
+            return ("Sleep", Color(hex: "5E5CE6"))
+        }
+        if id.contains("strain") || id.contains("push") {
+            return ("Gym", Color(red: 255/255, green: 59/255, blue: 48/255))
+        }
+        if id.contains("hrv") || id.contains("rhr") {
+            return ("Work", Color(red: 52/255, green: 199/255, blue: 89/255))
+        }
+        return ("READY", accent)
+    }
+
+    private var taskRingMixBody: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }
+        let groups: [(label: String, color: Color)] = [
+            ("Sleep", Color(hex: "5E5CE6")),
+            ("Gym", Color(red: 255/255, green: 59/255, blue: 48/255)),
+            ("Work", Color(red: 52/255, green: 199/255, blue: 89/255)),
+            ("READY", accent)
+        ]
+        let lifts: [Int] = groups.map { g in
+            pending.filter { taskRingAffinity($0).label == g.label }.map(\.readyDelta).reduce(0, +)
+        }
+        let total = max(1, lifts.reduce(0, +))
+        let top = groups.enumerated().max(by: { lifts[$0.offset] < lifts[$1.offset] })
+        let verb = pending.isEmpty ? "Cleared" : (top.map { $0.element.label } ?? "Mixed")
+        let tone = top.map { $0.element.color } ?? accent
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "circle.grid.cross.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Task ring mix")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(verb) +\(lifts.reduce(0, +))")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                HStack(spacing: 2) {
+                    ForEach(Array(groups.enumerated()), id: \.offset) { idx, g in
+                        let frac = CGFloat(lifts[idx]) / CGFloat(total)
+                        if lifts[idx] > 0 {
+                            Capsule()
+                                .fill(LinearGradient(
+                                    colors: [g.color.opacity(0.55), g.color],
+                                    startPoint: .leading, endPoint: .trailing))
+                                .frame(width: max(6, w * frac - 2))
+                        }
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 12)
+            HStack(spacing: 8) {
+                ForEach(Array(groups.enumerated()), id: \.offset) { idx, g in
+                    if lifts[idx] > 0 || !pending.isEmpty {
+                        HStack(spacing: 4) {
+                            Circle().fill(g.color).frame(width: 6, height: 6)
+                            Text("\(g.label) +\(lifts[idx])")
+                                .font(.caption2.weight(.semibold).monospacedDigit())
+                                .foregroundStyle(RTColor.secondaryText)
+                        }
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+            Text(pending.isEmpty ? "All tasks checked" : "\(pending.count) pending · ring affinity")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRingMix)
+        .accessibilityLabel("Task ring mix \(verb)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
 
