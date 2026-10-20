@@ -10703,6 +10703,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-task-ring-mix.png")
 
 
+        // Honest #603: batch lift preview
+        let batchLift = app.descendants(matching: .any)["sim.load.tasks.batch.lift"].firstMatch
+        XCTAssertTrue(batchLift.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.task.rings"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.batch.lift")
+        if batchLift.exists {
+            if batchLift.isHittable { batchLift.tap() }
+            else {
+                app.swipeUp()
+                if batchLift.waitForExistence(timeout: 2), batchLift.isHittable {
+                    batchLift.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-batch-lift.png")
+
+
+
+
 
 
 
