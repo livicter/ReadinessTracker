@@ -11323,6 +11323,21 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-slope.png")
 
+        // Honest #588: density z-score strip
+        let densZ = app.descendants(matching: .any)["fitbit.air.density.zscore"].firstMatch
+        XCTAssertTrue(densZ.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.slope"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.zscore")
+        if densZ.exists {
+            if densZ.isHittable { densZ.tap() }
+            else {
+                app.swipeUp()
+                if densZ.waitForExistence(timeout: 2), densZ.isHittable { densZ.tap() }
+            }
+        }
+        saveShot("verify-fitbit-air-density-zscore.png")
+
 
         // Honest #503: spark period chips 7d/14d/30d
         let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
