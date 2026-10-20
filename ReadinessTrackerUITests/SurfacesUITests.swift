@@ -10555,6 +10555,24 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-zone-jump.png")
 
+
+        // Honest #585: task impact ladder
+        let impactLadder = app.descendants(matching: .any)["sim.load.tasks.ladder"].firstMatch
+        XCTAssertTrue(impactLadder.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks.waterfall"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.ladder")
+        if impactLadder.exists {
+            if impactLadder.isHittable { impactLadder.tap() }
+            else {
+                app.swipeUp()
+                if impactLadder.waitForExistence(timeout: 2), impactLadder.isHittable {
+                    impactLadder.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-task-ladder.png")
+
         // Honest #571: seed vs live delta rail
         let seedDelta = app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch
         XCTAssertTrue(seedDelta.waitForExistence(timeout: 5)

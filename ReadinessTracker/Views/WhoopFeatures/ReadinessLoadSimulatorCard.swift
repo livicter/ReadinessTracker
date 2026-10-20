@@ -126,6 +126,7 @@ struct ReadinessLoadSimulatorCard: View {
                 abReadyDeltaGauge
                 readyCompositionStack
                 readyTaskWaterfall
+                taskImpactLadder
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -1839,6 +1840,93 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskWaterfall)
         .accessibilityLabel("Task waterfall READY \(projected) to \(ceiling)")
     }
+
+    /// Honest #585: task impact ladder — ranked READY-lift bars (Google Health graphics / richer sim tasks).
+    @ViewBuilder
+    private var taskImpactLadder: some View {
+        let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
+        if ordered.isEmpty {
+            EmptyView()
+        } else {
+            taskImpactLadderBody(ordered: ordered)
+        }
+    }
+
+    private func taskImpactLadderBody(ordered: [SimulatorTask]) -> some View {
+        let maxD = max(1, ordered.map(\.readyDelta).max() ?? 1)
+        let pending = ordered.filter { !completedTaskIDs.contains($0.id) }
+        let remain = pending.reduce(0) { $0 + $1.readyDelta }
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "list.number")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Impact ladder")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text(remain == 0 ? "All clear" : "+\(remain) left")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(remain == 0 ? RTColor.optimal : RTColor.good)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background((remain == 0 ? RTColor.optimal : RTColor.good).opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            VStack(spacing: 6) {
+                ForEach(Array(ordered.prefix(6).enumerated()), id: \.element.id) { idx, task in
+                    let done = completedTaskIDs.contains(task.id)
+                    let frac = CGFloat(task.readyDelta) / CGFloat(maxD)
+                    let tone: Color = done ? RTColor.optimal : accent
+                    HStack(spacing: 8) {
+                        Text("\(idx + 1)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.tertiaryText)
+                            .frame(width: 14, alignment: .trailing)
+                        Image(systemName: done ? "checkmark.circle.fill" : task.icon)
+                            .font(.caption2)
+                            .foregroundStyle(tone)
+                            .frame(width: 16)
+                        Text(task.title)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(done ? RTColor.secondaryText : RTColor.primaryText)
+                            .lineLimit(1)
+                        Spacer(minLength: 4)
+                        GeometryReader { geo in
+                            let w = max(geo.size.width, 1)
+                            ZStack(alignment: .leading) {
+                                Capsule().fill(accent.opacity(0.10)).frame(height: 8)
+                                Capsule()
+                                    .fill(LinearGradient(
+                                        colors: [tone.opacity(0.45), tone.opacity(0.85)],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    ))
+                                    .frame(width: max(6, w * frac), height: 8)
+                            }
+                            .frame(maxHeight: .infinity, alignment: .center)
+                        }
+                        .frame(width: 72, height: 12)
+                        Text("+\(task.readyDelta)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .frame(width: 28, alignment: .trailing)
+                    }
+                    .opacity(done ? 0.72 : 1)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLadder)
+        .accessibilityLabel("Impact ladder \(remain) READY points remaining")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
 
     private var fitbitAirStrip: some View {
         VStack(alignment: .leading, spacing: 8) {
