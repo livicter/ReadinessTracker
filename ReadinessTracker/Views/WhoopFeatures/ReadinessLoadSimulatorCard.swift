@@ -139,6 +139,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskRingMix
                 taskBatchLiftPreview
                 seedConfidenceDial
+                readyMomentumGauge
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2819,6 +2820,147 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedConfidence)
         .accessibilityLabel("Seed confidence \(verb) \(pct) percent")
     }
+
+
+    /// Honest #607: READY momentum gauge — signed lever thrust + task lift (Fitbit/GH graphics).
+    @ViewBuilder
+    private var readyMomentumGauge: some View {
+        let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
+            (lever, lever.contribution(
+                sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta,
+                rhr: rhrDelta, spo2: spo2Delta
+            ))
+        }
+        let leverNet = rows.map(\.1).reduce(0, +)
+        let taskLift = Double(taskReadyLift)
+        let momentum = leverNet + taskLift
+        let mag = min(1.0, abs(momentum) / 12.0)
+        let verb: String
+        let tone: Color
+        if momentum >= 2.5 {
+            verb = "Rising"; tone = RTColor.optimal
+        } else if momentum <= -2.5 {
+            verb = "Falling"; tone = RTColor.warning
+        } else {
+            verb = "Steady"; tone = RTColor.good
+        }
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let signed = momentum >= 0
+            ? String(format: "+%.1f", momentum)
+            : String(format: "%.1f", momentum)
+        let maxAbs = max(1.0, rows.map { abs($0.1) }.max() ?? 1.0)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.arrow.down.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY momentum")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb) \(signed)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 10)
+                        .frame(width: 64, height: 64)
+                    // Bidirectional arc: left = negative, right = positive from bottom
+                    Circle()
+                        .trim(from: 0, to: CGFloat(mag * 0.5))
+                        .stroke(
+                            AngularGradient(
+                                colors: momentum >= 0
+                                    ? [accent.opacity(0.45), tone]
+                                    : [RTColor.warning.opacity(0.45), tone],
+                                center: .center
+                            ),
+                            style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                        )
+                        .rotationEffect(.degrees(momentum >= 0 ? -90 : 90))
+                        .scaleEffect(x: momentum >= 0 ? 1 : -1, y: 1)
+                        .frame(width: 64, height: 64)
+                    VStack(spacing: 0) {
+                        Image(systemName: momentum >= 2.5 ? "arrow.up" : (momentum <= -2.5 ? "arrow.down" : "arrow.left.and.right"))
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(tone)
+                        Text(signed)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                    }
+                }
+                VStack(alignment: .leading, spacing: 5) {
+                    ForEach(rows, id: \.0.id) { row in
+                        let lever = row.0
+                        let val = row.1
+                        HStack(spacing: 6) {
+                            Image(systemName: lever.icon)
+                                .font(.system(size: 9, weight: .semibold))
+                                .foregroundStyle(lever.color)
+                                .frame(width: 12)
+                            Text(lever.title)
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(RTColor.secondaryText)
+                                .frame(width: 36, alignment: .leading)
+                            GeometryReader { geo in
+                                let w = max(geo.size.width, 1)
+                                let mid = w / 2
+                                let frac = CGFloat(min(1, abs(val) / maxAbs))
+                                ZStack(alignment: .leading) {
+                                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                                    Capsule()
+                                        .fill(lever.color.opacity(0.85))
+                                        .frame(width: max(2, mid * frac))
+                                        .offset(x: val >= 0 ? mid : mid - mid * frac)
+                                    Rectangle()
+                                        .fill(RTColor.tertiaryText.opacity(0.35))
+                                        .frame(width: 1, height: 8)
+                                        .offset(x: mid)
+                                }
+                            }
+                            .frame(height: 8)
+                            Text(val >= 0 ? String(format: "+%.1f", val) : String(format: "%.1f", val))
+                                .font(.system(size: 9, weight: .bold).monospacedDigit())
+                                .foregroundStyle(abs(val) < 0.05 ? RTColor.tertiaryText : lever.color)
+                                .frame(width: 34, alignment: .trailing)
+                        }
+                    }
+                    HStack {
+                        Text("Tasks")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text(taskLift >= 0 ? String(format: "+%.0f", taskLift) : String(format: "%.0f", taskLift))
+                            .font(.system(size: 9, weight: .bold).monospacedDigit())
+                            .foregroundStyle(taskLift > 0 ? RTColor.optimal : RTColor.tertiaryText)
+                    }
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyMomentum)
+        .accessibilityLabel("READY momentum \(verb) \(signed)")
+        .animation(.easeInOut(duration: 0.25), value: sleepDelta)
+        .animation(.easeInOut(duration: 0.25), value: hrvDelta)
+        .animation(.easeInOut(duration: 0.25), value: strainDelta)
+        .animation(.easeInOut(duration: 0.25), value: rhrDelta)
+        .animation(.easeInOut(duration: 0.25), value: spo2Delta)
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+
 
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
