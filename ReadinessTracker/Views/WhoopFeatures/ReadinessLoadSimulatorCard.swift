@@ -145,6 +145,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbForecast
                 readyHandoffRail
                 readyClimbPaceDial
+                readyClimbETADial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -3717,6 +3718,159 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbPace)
         .accessibilityLabel("Climb pace \(verb) \(paceDisp) pts per task")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #619: READY climb ETA — unchecked tasks to Optimal (≥85) with cumulative spark (Fitbit/GH graphics).
+    @ViewBuilder
+    private var readyClimbETADial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbETABody(pending: pending)
+        }
+    }
+
+    private func readyClimbETABody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        let gap = max(0, target - start)
+        var run = start
+        var need = 0
+        var path: [Int] = [start]
+        for t in pending {
+            if run >= target { break }
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+            need += 1
+        }
+        let reached = run >= target
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if start >= target {
+            verb = "There"; tone = RTColor.optimal
+        } else if reached && need <= 1 {
+            verb = "Next"; tone = RTColor.optimal
+        } else if reached && need <= 3 {
+            verb = "Soon"; tone = RTColor.good
+        } else if reached {
+            verb = "Queue"; tone = RTColor.caution
+        } else {
+            verb = "Short"; tone = RTColor.warning
+        }
+        let etaDisp = start >= target ? "0" : (reached ? "\(need)" : "\(pending.count)+")
+        let lo = max(0, min(start, run, target) - 4)
+        let hi = min(100, max(start, run, target) + 4)
+        let span = max(1, hi - lo)
+        let fracToTarget = start >= target ? 1.0 : min(1.0, Double(start) / Double(target))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "flag.checkered")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb ETA")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(fracToTarget))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(etaDisp)
+                            .font(.title3.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text(start >= target ? "at Opt" : "tasks")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Now \(start)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                        Image(systemName: "arrow.right")
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(accent)
+                        Text("Opt \(target)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(RTColor.optimal)
+                        Spacer()
+                        Text(gap == 0 ? "gap 0" : "gap \(gap)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let h = max(geo.size.height, 1)
+                        // Optimal threshold rule
+                        let yT = h * (1.0 - Double(target - lo) / Double(span))
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: yT))
+                            p.addLine(to: CGPoint(x: w, y: yT))
+                        }
+                        .stroke(RTColor.optimal.opacity(0.45), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        Path { p in
+                            for (i, sc) in path.enumerated() {
+                                let x = w * Double(i) / Double(max(1, path.count - 1))
+                                let y = h * (1.0 - Double(sc - lo) / Double(span))
+                                if i == 0 { p.move(to: CGPoint(x: x, y: y)) }
+                                else { p.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                            style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                        )
+                        ForEach(Array(path.enumerated()), id: \.offset) { i, sc in
+                            let x = w * Double(i) / Double(max(1, path.count - 1))
+                            let y = h * (1.0 - Double(sc - lo) / Double(span))
+                            Circle()
+                                .fill(sc >= target ? RTColor.optimal : accent)
+                                .frame(width: i == 0 ? 8 : 6, height: i == 0 ? 8 : 6)
+                                .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1))
+                                .position(x: x, y: y)
+                        }
+                    }
+                    .frame(height: 44)
+                }
+            }
+            Text(reached || start >= target
+                 ? "tasks to Optimal ≥85 · high→low · \(sourceLabel)"
+                 : "queue short of Optimal · +\(pending.map(\.readyDelta).reduce(0, +)) pts left · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbETA)
+        .accessibilityLabel("Climb ETA \(verb) \(etaDisp) tasks")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
