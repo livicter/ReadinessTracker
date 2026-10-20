@@ -84,6 +84,7 @@ struct FitbitAirDataCard: View {
                 densityTukeyFences
                 densitySlopeMeter
                 densityZScoreStrip
+                densityACFMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2316,6 +2317,114 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityZScore)
         .accessibilityLabel("Density z-score \(verb) \(zDisp)")
+    }
+
+
+    /// Honest #590: density ACF meter — lag-1 autocorrelation of last-14 dens (Google Health graphics).
+    @ViewBuilder
+    private var densityACFMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 6 {
+            EmptyView()
+        } else {
+            densityACFBody(days: days)
+        }
+    }
+
+    private func densityACFBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        let n = dens.count
+        let mean = dens.reduce(0, +) / Double(n)
+        var num = 0.0, den = 0.0
+        for i in 0..<(n - 1) {
+            num += (dens[i] - mean) * (dens[i + 1] - mean)
+        }
+        for v in dens {
+            let d = v - mean
+            den += d * d
+        }
+        let acf = den > 0 ? num / den : 0
+        let acfClamped = max(-1.0, min(1.0, acf))
+        let tone: Color = abs(acf) >= 0.5 ? RTColor.optimal : (abs(acf) >= 0.2 ? RTColor.good : RTColor.warning)
+        let verb: String = {
+            if acf >= 0.5 { return "Sticky" }
+            if acf >= 0.2 { return "Mild" }
+            if acf <= -0.2 { return "Flip" }
+            return "Noise"
+        }()
+        let needle = (acfClamped + 1.0) / 2.0 // -1…+1 → 0…1
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "waveform.path")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density ACF₁")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(String(format: "%+.2f", acf))")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(LinearGradient(
+                            colors: [
+                                Color(hex: "FF375F").opacity(0.35),
+                                RTColor.warning.opacity(0.35),
+                                RTColor.optimal.opacity(0.45),
+                                RTColor.good.opacity(0.35),
+                                accent.opacity(0.45)
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ))
+                        .frame(height: 12)
+                    // zero tick
+                    Capsule().fill(RTColor.primaryText.opacity(0.55))
+                        .frame(width: 2, height: 16)
+                        .offset(x: w * 0.5 - 1)
+                    Circle()
+                        .fill(tone)
+                        .overlay(Circle().stroke(Color.white, lineWidth: 1.5))
+                        .frame(width: 14, height: 14)
+                        .offset(x: max(0, min(w - 14, CGFloat(needle) * w - 7)))
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 18)
+            HStack {
+                Text("−1")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("lag-1 · last \(n)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("+1")
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityACF)
+        .accessibilityLabel("Density autocorrelation \(verb) \(String(format: "%.2f", acf))")
     }
 
 
