@@ -99,6 +99,7 @@ struct FitbitAirDataCard: View {
                 densityCalmarMeter
                 densityOmegaMeter
                 densityUlcerMeter
+                densitySterlingMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -4045,6 +4046,140 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Density Ulcer \(verb) \(disp) pp")
     }
 
+    /// Honest #620: density Sterling — mean lift / mean drawdown (Fitbit/GH graphics).
+    @ViewBuilder
+    private var densitySterlingMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densitySterlingBody(days: days)
+        }
+    }
+
+    private func densitySterlingBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        var peak = dens[0]
+        var ddSum = 0.0
+        var lifts: [Double] = []
+        var dds: [Double] = []
+        for i in dens.indices {
+            let d = dens[i]
+            if d >= peak { peak = d }
+            let dd = max(0, peak - d)
+            dds.append(dd)
+            ddSum += dd
+            if i > 0 {
+                lifts.append(d - dens[i - 1])
+            }
+        }
+        let meanDD = ddSum / Double(dens.count)
+        let meanLift = lifts.isEmpty ? 0.0 : lifts.reduce(0, +) / Double(lifts.count)
+        let sterling = meanDD < 1e-6 ? (meanLift > 0 ? 4.0 : 0.0) : meanLift / meanDD
+        let clamped = max(-1.0, min(3.0, sterling))
+        let verb: String
+        let tone: Color
+        if sterling >= 1.5 {
+            verb = "Elite"; tone = RTColor.optimal
+        } else if sterling >= 0.6 {
+            verb = "Solid"; tone = RTColor.good
+        } else if sterling >= 0.0 {
+            verb = "Thin"; tone = RTColor.caution
+        } else {
+            verb = "Bleed"; tone = RTColor.warning
+        }
+        let disp = String(format: "%+.2f", sterling)
+        let lo = dens.min() ?? 0
+        let hi = max(dens.max() ?? 1, lo + 1e-9)
+        let span = hi - lo
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis.ascending")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Sterling")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(disp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                // map clamped [-1,3] → [0,1]
+                let frac = CGFloat((clamped + 1.0) / 4.0)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(3, w * frac))
+                }
+            }
+            .frame(height: 12)
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                // mean DD band under peak
+                Path { path in
+                    var runPeak = dens[0]
+                    for (i, d) in dens.enumerated() {
+                        if d >= runPeak { runPeak = d }
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let yP = h * (1.0 - (runPeak - lo) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: yP)) }
+                        else { path.addLine(to: CGPoint(x: x, y: yP)) }
+                    }
+                    for i in stride(from: dens.count - 1, through: 0, by: -1) {
+                        let d = dens[i]
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let yD = h * (1.0 - (d - lo) / span)
+                        path.addLine(to: CGPoint(x: x, y: yD))
+                    }
+                    path.closeSubpath()
+                }
+                .fill(tone.opacity(0.14))
+                Path { path in
+                    for (i, d) in dens.enumerated() {
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let y = h * (1.0 - (d - lo) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+            }
+            .frame(height: 44)
+            HStack {
+                Text("mean Δ / mean DD · \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("bleed ← → elite")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySterling)
+        .accessibilityLabel("Density Sterling \(verb) \(disp)")
+    }
 
 
 
