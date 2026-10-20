@@ -10589,6 +10589,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-pace.png")
 
 
+        // Honest #591: task impact share stack
+        let impactShare = app.descendants(matching: .any)["sim.load.tasks.impactshare"].firstMatch
+        XCTAssertTrue(impactShare.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.pace"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.impactshare")
+        if impactShare.exists {
+            if impactShare.isHittable { impactShare.tap() }
+            else {
+                app.swipeUp()
+                if impactShare.waitForExistence(timeout: 2), impactShare.isHittable {
+                    impactShare.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-task-impact-share.png")
+
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)

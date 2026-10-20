@@ -129,6 +129,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyTaskWaterfall
                 taskImpactLadder
                 readyPaceMeter
+                taskImpactShareStack
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2088,6 +2089,86 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyPace)
         .accessibilityLabel("READY pace \(verb), \(String(format: "%.1f", pace)) per task")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+    /// Honest #591: task impact share stack — proportional READY lift per task (Google Health graphics).
+    @ViewBuilder
+    private var taskImpactShareStack: some View {
+        let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
+        if ordered.isEmpty {
+            EmptyView()
+        } else {
+            taskImpactShareBody(ordered: ordered)
+        }
+    }
+
+    private func taskImpactShareBody(ordered: [SimulatorTask]) -> some View {
+        let total = max(1, ordered.map(\.readyDelta).reduce(0, +))
+        let secured = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        let pct = Int((Double(secured) / Double(total) * 100).rounded())
+        let tone: Color = pct >= 70 ? RTColor.optimal : (pct >= 40 ? RTColor.good : accent)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.doc.horizontal.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Impact share")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(pct)% · +\(secured)/+\(total)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                HStack(spacing: 2) {
+                    ForEach(ordered) { task in
+                        let frac = CGFloat(task.readyDelta) / CGFloat(total)
+                        let done = completedTaskIDs.contains(task.id)
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .fill(done
+                                  ? LinearGradient(colors: [RTColor.optimal, RTColor.optimal.opacity(0.7)], startPoint: .top, endPoint: .bottom)
+                                  : LinearGradient(colors: [accent.opacity(0.35), accent.opacity(0.18)], startPoint: .top, endPoint: .bottom))
+                            .frame(width: max(6, w * frac - 2))
+                            .overlay(alignment: .bottom) {
+                                if frac >= 0.12 {
+                                    Text("+\(task.readyDelta)")
+                                        .font(.system(size: 8, weight: .bold).monospacedDigit())
+                                        .foregroundStyle(done ? Color.white : RTColor.secondaryText)
+                                        .padding(.bottom, 2)
+                                }
+                            }
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .center)
+            }
+            .frame(height: 28)
+            .background(RTColor.tertiaryText.opacity(0.10), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+            HStack {
+                Text("Top \(min(3, ordered.count)) = +\(ordered.prefix(3).map(\.readyDelta).reduce(0, +))")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("share of lift")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskImpactShare)
+        .accessibilityLabel("Impact share \(pct) percent, secured +\(secured) of +\(total)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
