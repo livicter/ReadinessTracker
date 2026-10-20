@@ -10825,6 +10825,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-handoff.png")
 
+        // Honest #617: READY climb pace
+        let climbPace = app.descendants(matching: .any)["sim.load.ready.climb.pace"].firstMatch
+        XCTAssertTrue(climbPace.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.handoff"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.pace")
+        if climbPace.exists {
+            if climbPace.isHittable { climbPace.tap() }
+            else {
+                app.swipeUp()
+                if climbPace.waitForExistence(timeout: 2), climbPace.isHittable {
+                    climbPace.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-pace.png")
+
 
 
 
