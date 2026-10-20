@@ -11879,6 +11879,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-omega.png")
 
+        // Honest #618: density Ulcer
+        let densUl = app.descendants(matching: .any)["fitbit.air.density.ulcer"].firstMatch
+        XCTAssertTrue(densUl.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.omega"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.ulcer")
+        if densUl.exists {
+            if densUl.isHittable { densUl.tap() }
+            else {
+                app.swipeUp()
+                if densUl.waitForExistence(timeout: 2), densUl.isHittable {
+                    densUl.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-ulcer.png")
+
 
 
 
