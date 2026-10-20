@@ -146,6 +146,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyHandoffRail
                 readyClimbPaceDial
                 readyClimbETADial
+                readyClimbSurplusDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -3871,6 +3872,158 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbETA)
         .accessibilityLabel("Climb ETA \(verb) \(etaDisp) tasks")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #621: READY climb surplus — pts above Optimal after ETA queue (Fitbit/GH graphics).
+    @ViewBuilder
+    private var readyClimbSurplusDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbSurplusBody(pending: pending)
+        }
+    }
+
+    private func readyClimbSurplusBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let peak = path.max() ?? start
+        let surplus = max(0, peak - target)
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if peak < target {
+            verb = "Deficit"; tone = RTColor.warning
+        } else if surplus >= 10 {
+            verb = "Flood"; tone = RTColor.optimal
+        } else if surplus >= 5 {
+            verb = "Cushion"; tone = RTColor.good
+        } else if surplus > 0 {
+            verb = "Edge"; tone = RTColor.caution
+        } else {
+            verb = "Exact"; tone = accent
+        }
+        let disp = peak < target ? String(format: "%d", peak - target) : String(format: "+%d", surplus)
+        let lo = max(0, min(start, peak, target) - 4)
+        let hi = min(100, max(start, peak, target) + 4)
+        let span = max(1, hi - lo)
+        let frac = peak < target ? CGFloat(max(0, Double(peak) / Double(target))) : CGFloat(min(1, 0.55 + Double(surplus) / 30.0))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.to.line.circle.fill")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb surplus")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: frac)
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("vs Opt")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Peak \(peak)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("· Opt \(target)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.optimal)
+                        Spacer()
+                        Text("\(pending.count) queued")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let h = max(geo.size.height, 1)
+                        let yT = h * (1.0 - Double(target - lo) / Double(span))
+                        // surplus fill above Optimal
+                        if peak >= target {
+                            let yP = h * (1.0 - Double(min(hi, peak) - lo) / Double(span))
+                            Rectangle()
+                                .fill(RTColor.optimal.opacity(0.12))
+                                .frame(width: w, height: max(0, yT - yP))
+                                .offset(y: yP)
+                        }
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: yT))
+                            p.addLine(to: CGPoint(x: w, y: yT))
+                        }
+                        .stroke(RTColor.optimal.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        Path { p in
+                            for (i, sc) in path.enumerated() {
+                                let x = w * Double(i) / Double(max(1, path.count - 1))
+                                let y = h * (1.0 - Double(sc - lo) / Double(span))
+                                if i == 0 { p.move(to: CGPoint(x: x, y: y)) }
+                                else { p.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                            style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                        )
+                        ForEach(Array(path.enumerated()), id: \.offset) { i, sc in
+                            let x = w * Double(i) / Double(max(1, path.count - 1))
+                            let y = h * (1.0 - Double(sc - lo) / Double(span))
+                            Circle()
+                                .fill(sc >= target ? RTColor.optimal : accent)
+                                .frame(width: i == 0 || i == path.count - 1 ? 8 : 5, height: i == 0 || i == path.count - 1 ? 8 : 5)
+                                .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1))
+                                .position(x: x, y: y)
+                        }
+                    }
+                    .frame(height: 44)
+                }
+            }
+            Text("full queue peak vs Optimal · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbSurplus)
+        .accessibilityLabel("Climb surplus \(verb) \(disp)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
