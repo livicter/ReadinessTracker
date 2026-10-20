@@ -134,6 +134,7 @@ struct ReadinessLoadSimulatorCard: View {
                 taskImpactShareStack
                 airCoverageRadar
                 readyHeadroomDial
+                readyBurndownSpark
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -2273,6 +2274,115 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyHeadroom)
         .accessibilityLabel("READY headroom \(verb), \(headroom) points left")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+    }
+
+
+
+    /// Honest #597: READY burn-down spark — remaining task lift if completed by impact (richer sim / GH tasks).
+    @ViewBuilder
+    private var readyBurndownSpark: some View {
+        let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
+        if ordered.isEmpty {
+            EmptyView()
+        } else {
+            readyBurndownBody(ordered: ordered)
+        }
+    }
+
+    private func readyBurndownBody(ordered: [SimulatorTask]) -> some View {
+        let totalLift = ordered.map(\.readyDelta).reduce(0, +)
+        var series: [(label: String, remain: Int)] = [("Start", totalLift)]
+        for (i, _) in ordered.enumerated() {
+            let after = max(0, totalLift - ordered.prefix(i + 1).map(\.readyDelta).reduce(0, +))
+            series.append(("T\(i + 1)", after))
+        }
+        let secured = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        let left = max(0, totalLift - secured)
+        let doneN = ordered.filter { completedTaskIDs.contains($0.id) }.count
+        let tone: Color = left == 0 ? RTColor.optimal : (left <= max(2, totalLift / 3) ? RTColor.good : accent)
+        let verb = left == 0 ? "Cleared" : (doneN == 0 ? "Pending" : "Burning")
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.line.downtrend.xyaxis")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("READY burn-down")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(verb) \(left) left")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            Chart {
+                ForEach(Array(series.enumerated()), id: \.offset) { _, pt in
+                    LineMark(
+                        x: .value("Step", pt.label),
+                        y: .value("Left", pt.remain)
+                    )
+                    .foregroundStyle(accent)
+                    .interpolationMethod(.catmullRom)
+                    AreaMark(
+                        x: .value("Step", pt.label),
+                        y: .value("Left", pt.remain)
+                    )
+                    .foregroundStyle(accent.opacity(0.14))
+                    .interpolationMethod(.catmullRom)
+                    PointMark(
+                        x: .value("Step", pt.label),
+                        y: .value("Left", pt.remain)
+                    )
+                    .foregroundStyle(pt.remain == 0 ? RTColor.optimal : accent)
+                    .symbolSize(48)
+                }
+                RuleMark(y: .value("Now", left))
+                    .foregroundStyle(tone.opacity(0.7))
+                    .lineStyle(StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                    .annotation(position: .top, alignment: .trailing) {
+                        Text("now \(left)")
+                            .font(.system(size: 9, weight: .bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                    }
+            }
+            .chartYScale(domain: 0...max(1, totalLift))
+            .chartYAxis {
+                AxisMarks(position: .leading, values: [0, max(1, totalLift / 2), totalLift]) { _ in
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                        .foregroundStyle(RTColor.divider)
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .chartXAxis {
+                AxisMarks { _ in
+                    AxisValueLabel()
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+            .frame(height: 88)
+            HStack {
+                Text("\(doneN)/\(ordered.count) tasks · secured +\(secured)")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("ideal impact order")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyBurndown)
+        .accessibilityLabel("READY burn-down \(verb), \(left) points left")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
