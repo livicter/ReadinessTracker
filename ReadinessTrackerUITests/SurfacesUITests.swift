@@ -10775,6 +10775,26 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-buffer.png")
 
 
+        // Honest #611: task efficiency
+        let taskEff = app.descendants(matching: .any)["sim.load.tasks.efficiency"].firstMatch
+        XCTAssertTrue(taskEff.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.tasks.efficiency")
+        if taskEff.exists {
+            if taskEff.isHittable { taskEff.tap() }
+            else {
+                app.swipeUp()
+                if taskEff.waitForExistence(timeout: 2), taskEff.isHittable {
+                    taskEff.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-task-efficiency.png")
+
+
+
+
 
 
 
