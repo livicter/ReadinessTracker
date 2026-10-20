@@ -85,6 +85,7 @@ struct FitbitAirDataCard: View {
                 densitySlopeMeter
                 densityZScoreStrip
                 densityACFMeter
+                densityEntropyMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -2425,6 +2426,97 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityACF)
         .accessibilityLabel("Density autocorrelation \(verb) \(String(format: "%.2f", acf))")
+    }
+
+
+    /// Honest #592: density entropy meter — Shannon entropy of dens histogram (Google Health graphics).
+    @ViewBuilder
+    private var densityEntropyMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityEntropyBody(days: days)
+        }
+    }
+
+    private func densityEntropyBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        // 5 equal bins over 0…1
+        var bins = Array(repeating: 0, count: 5)
+        for v in dens {
+            let i = min(4, max(0, Int((v * 5.0).rounded(.down))))
+            bins[i] += 1
+        }
+        let n = Double(dens.count)
+        var h = 0.0
+        for c in bins where c > 0 {
+            let p = Double(c) / n
+            h -= p * Foundation.log2(p)
+        }
+        // max entropy for 5 bins = log2(5) ≈ 2.32
+        let hMax = Foundation.log2(5.0)
+        let hNorm = h / hMax
+        let hDisp = String(format: "%.2f", h)
+        let tone: Color = hNorm <= 0.45 ? RTColor.optimal : (hNorm <= 0.75 ? RTColor.good : RTColor.warning)
+        let verb = hNorm <= 0.45 ? "Focused" : (hNorm <= 0.75 ? "Mixed" : "Scattered")
+        let needle = min(1.0, hNorm)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density entropy")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) H=\(hDisp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                HStack(alignment: .bottom, spacing: 3) {
+                    ForEach(Array(bins.enumerated()), id: \.offset) { _, c in
+                        let frac = CGFloat(c) / CGFloat(max(1, dens.count))
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(tone.opacity(0.35 + 0.5 * Double(frac)))
+                            .frame(width: max(8, (w - 12) / 5), height: max(4, 28 * frac))
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            }
+            .frame(height: 32)
+            .overlay(alignment: .trailing) {
+                // entropy needle strip on right edge
+                EmptyView()
+            }
+            HStack {
+                Text("5 bins · last \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("\(Int((hNorm * 100).rounded()))% of max")
+                    .font(.caption2.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(tone)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityEntropy)
+        .accessibilityLabel("Density entropy \(verb) \(hDisp)")
     }
 
 
