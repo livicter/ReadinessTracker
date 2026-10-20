@@ -91,6 +91,7 @@ struct FitbitAirDataCard: View {
                 densityGiniMeter
                 densityVolatilityMeter
                 densityOutlierMeter
+                densityHHIMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -3042,6 +3043,99 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityOutliers)
         .accessibilityLabel("Density outliers \(verb) \(count) of \(n)")
+    }
+
+
+
+    /// Honest #604: density HHI — Herfindahl concentration of category fill (Fitbit/Google Health graphics).
+    @ViewBuilder
+    private var densityHHIMeter: some View {
+        let chips = AirChip.all(from: history.last ?? data)
+        if chips.isEmpty {
+            EmptyView()
+        } else {
+            densityHHIBody(chips: chips)
+        }
+    }
+
+    private func densityHHIBody(chips: [AirChip]) -> some View {
+        let cats = AirDensityCategory.allCases
+        let fills: [Double] = cats.map { cat in
+            let n = max(1, chips.filter { cat.chipIDs.contains($0.id) }.count)
+            return Double(chips.filter { cat.chipIDs.contains($0.id) && $0.filled }.count) / Double(n)
+        }
+        let sum = fills.reduce(0, +)
+        let shares: [Double] = sum > 1e-9 ? fills.map { $0 / sum } : Array(repeating: 1.0 / Double(cats.count), count: cats.count)
+        let hhi = shares.map { $0 * $0 }.reduce(0, +)  // 1/3…1
+        // normalize to 0…1 vs equal (1/3)
+        let equal = 1.0 / Double(cats.count)
+        let span = max(1e-9, 1.0 - equal)
+        let conc = max(0, min(1, (hhi - equal) / span))
+        let verb: String
+        let tone: Color
+        if conc <= 0.2 {
+            verb = "Diffuse"; tone = RTColor.optimal
+        } else if conc <= 0.5 {
+            verb = "Focused"; tone = RTColor.good
+        } else {
+            verb = "Narrow"; tone = RTColor.warning
+        }
+        let hDisp = String(format: "%.2f", hhi)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "square.stack.3d.up.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density HHI")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(hDisp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                HStack(spacing: 3) {
+                    ForEach(Array(cats.enumerated()), id: \.element.id) { idx, cat in
+                        let frac = CGFloat(shares[idx])
+                        VStack(spacing: 4) {
+                            Capsule()
+                                .fill(LinearGradient(
+                                    colors: [cat.color.opacity(0.45), cat.color],
+                                    startPoint: .bottom, endPoint: .top))
+                                .frame(width: max(8, (w - 12) / 3), height: max(8, 40 * frac * 3))
+                            Text(cat.shortTitle)
+                                .font(.system(size: 9, weight: .bold))
+                                .foregroundStyle(RTColor.tertiaryText)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    }
+                }
+            }
+            .frame(height: 56)
+            HStack {
+                Text("Sleep·Vitals·Move share² · today")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("diffuse ← → narrow")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHHI)
+        .accessibilityLabel("Density HHI \(verb) \(hDisp)")
     }
 
 
