@@ -10842,6 +10842,24 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-pace.png")
 
+        // Honest #619: READY climb ETA
+        let climbETA = app.descendants(matching: .any)["sim.load.ready.climb.eta"].firstMatch
+        XCTAssertTrue(climbETA.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.pace"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.eta")
+        if climbETA.exists {
+            if climbETA.isHittable { climbETA.tap() }
+            else {
+                app.swipeUp()
+                if climbETA.waitForExistence(timeout: 2), climbETA.isHittable {
+                    climbETA.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-eta.png")
+
+
 
 
 
