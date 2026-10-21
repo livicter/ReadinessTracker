@@ -147,6 +147,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbPaceDial
                 readyClimbETADial
                 readyClimbSurplusDial
+                readyClimbRunwayDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -4027,6 +4028,184 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
+
+    /// Honest #623: READY climb runway — fraction of gap-to-Optimal covered by pending queue (Fitbit/Health graphics).
+    @ViewBuilder
+    private var readyClimbRunwayDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbRunwayBody(pending: pending)
+        }
+    }
+
+    private func readyClimbRunwayBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        let gap = max(0, target - start)
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let peak = path.max() ?? start
+        let covered = gap == 0 ? 1.0 : min(1.0, Double(max(0, peak - start)) / Double(gap))
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if gap == 0 {
+            verb = "Airborne"; tone = RTColor.optimal
+        } else if covered >= 1.0 {
+            verb = "Rotate"; tone = RTColor.optimal
+        } else if covered >= 0.66 {
+            verb = "Roll"; tone = RTColor.good
+        } else if covered >= 0.33 {
+            verb = "Taxi"; tone = RTColor.caution
+        } else {
+            verb = "Hold"; tone = RTColor.warning
+        }
+        let disp = String(format: "%.0f%%", covered * 100)
+        let lo = max(0, min(start, peak, target) - 4)
+        let hi = min(100, max(start, peak, target) + 4)
+        let span = max(1, hi - lo)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "airplane.departure")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb runway")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            // Runway progress bar with Optimal marker
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let fillW = w * CGFloat(covered)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(4, fillW))
+                    // Optimal = full runway
+                    Rectangle()
+                        .fill(RTColor.optimal)
+                        .frame(width: 2, height: 16)
+                        .offset(x: max(0, w - 2))
+                }
+            }
+            .frame(height: 12)
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(covered))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("runway")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Now \(start)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("→ Opt \(target)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.optimal)
+                        Spacer()
+                        Text(gap == 0 ? "at Opt" : "gap \(gap)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(gap == 0 ? RTColor.optimal : RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let h = max(geo.size.height, 1)
+                        let yT = h * (1.0 - Double(target - lo) / Double(span))
+                        // runway band from start to Optimal
+                        let yS = h * (1.0 - Double(start - lo) / Double(span))
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: min(yS, yT)))
+                            p.addLine(to: CGPoint(x: w, y: min(yS, yT)))
+                            p.addLine(to: CGPoint(x: w, y: max(yS, yT)))
+                            p.addLine(to: CGPoint(x: 0, y: max(yS, yT)))
+                            p.closeSubpath()
+                        }
+                        .fill(RTColor.optimal.opacity(0.10))
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: yT))
+                            p.addLine(to: CGPoint(x: w, y: yT))
+                        }
+                        .stroke(RTColor.optimal.opacity(0.55), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        Path { p in
+                            for (i, sc) in path.enumerated() {
+                                let x = w * Double(i) / Double(max(1, path.count - 1))
+                                let y = h * (1.0 - Double(sc - lo) / Double(span))
+                                if i == 0 { p.move(to: CGPoint(x: x, y: y)) }
+                                else { p.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                            style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                        )
+                        ForEach(Array(path.enumerated()), id: \.offset) { i, sc in
+                            let x = w * Double(i) / Double(max(1, path.count - 1))
+                            let y = h * (1.0 - Double(sc - lo) / Double(span))
+                            Circle()
+                                .fill(sc >= target ? RTColor.optimal : accent)
+                                .frame(width: i == 0 || i == path.count - 1 ? 8 : 5, height: i == 0 || i == path.count - 1 ? 8 : 5)
+                                .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1))
+                                .position(x: x, y: y)
+                        }
+                    }
+                    .frame(height: 44)
+                }
+            }
+            HStack {
+                Text("queue covers Optimal gap · \(pending.count) tasks · \(sourceLabel)")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("hold ← → airborne")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbRunway)
+        .accessibilityLabel("Climb runway \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
     @ViewBuilder
