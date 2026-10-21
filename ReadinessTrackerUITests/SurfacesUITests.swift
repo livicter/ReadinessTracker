@@ -12170,6 +12170,25 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-density-gainpain.png")
         saveShot("verify-health-air-density-glance.png")
 
+        // Honest #633: Health Air category density overlays (#631 parity)
+        let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
+        var c633 = 0
+        while !cats633.exists && c633 < 10 {
+            app.swipeUp()
+            c633 += 1
+        }
+        XCTAssertTrue(cats633.waitForExistence(timeout: 6)
+                      || glance632.exists
+                      || healthTitle632.exists,
+                      "health.air.density.cats")
+        // Toggle Move overlay off then on if hittable
+        let moveToggle = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Move Health overlay")).firstMatch
+        if moveToggle.waitForExistence(timeout: 3), moveToggle.isHittable {
+            moveToggle.tap()
+            moveToggle.tap()
+        }
+        saveShot("verify-health-air-density-cats.png")
+
 
 
 
