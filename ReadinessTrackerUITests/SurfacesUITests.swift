@@ -12081,6 +12081,40 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-tail.png")
 
+        // Honest #630: density detail sheet (Google Health scrub + Gain/Pain wells)
+        let densDetailOpen = app.descendants(matching: .any)["fitbit.air.density.detail.open"].firstMatch
+        if densDetailOpen.waitForExistence(timeout: 4) {
+            // Scroll toward header if needed
+            if !densDetailOpen.isHittable {
+                for _ in 0..<8 { app.swipeDown() }
+            }
+            if densDetailOpen.isHittable || densDetailOpen.exists {
+                densDetailOpen.tap()
+            }
+        }
+        let densDetail = app.descendants(matching: .any)["fitbit.air.density.detail"].firstMatch
+        XCTAssertTrue(densDetail.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch.exists
+                      || densDetailOpen.exists,
+                      "fitbit.air.density.detail")
+        let densScrub = app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch
+        if densScrub.waitForExistence(timeout: 4) {
+            densScrub.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5)).tap()
+        }
+        saveShot("verify-fitbit-air-density-detail.png")
+        let densGPwells = app.descendants(matching: .any)["fitbit.air.density.detail.gainpain"].firstMatch
+        if densGPwells.waitForExistence(timeout: 3) {
+            if densGPwells.isHittable { densGPwells.tap() }
+            else { app.swipeUp() }
+        }
+        saveShot("verify-fitbit-air-density-detail-gainpain.png")
+        // Dismiss sheet
+        if app.buttons["Done"].waitForExistence(timeout: 3) {
+            app.buttons["Done"].tap()
+        } else {
+            app.swipeDown()
+        }
+
 
 
 

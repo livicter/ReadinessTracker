@@ -30,6 +30,8 @@ struct FitbitAirDataCard: View {
     @State private var showDensityWowDetail: Bool = false
     /// Honest #538: expand density streak detail.
     @State private var showDensityStreakDetail: Bool = false
+    /// Honest #630: Google Health–style density detail sheet.
+    @State private var showDensityDetailSheet: Bool = false
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -118,6 +120,9 @@ struct FitbitAirDataCard: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(SurfaceID.fitbitAirDataCard)
         .accessibilityLabel(source == .fitbit ? "Fitbit air data" : "Health air data")
+        .sheet(isPresented: $showDensityDetailSheet) {
+            FitbitAirDensityDetailSheet(history: history, source: source)
+        }
     }
 
     private var header: some View {
@@ -133,6 +138,26 @@ struct FitbitAirDataCard: View {
                     .foregroundStyle(RTColor.secondaryText)
             }
             Spacer()
+            // Honest #630: open Google Health–style density detail sheet
+            Button {
+                Haptic.selectionChanged()
+                showDensityDetailSheet = true
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chart.xyaxis.line")
+                        .font(.caption2.weight(.semibold))
+                    Text("Detail")
+                        .font(.caption.weight(.semibold))
+                }
+                .foregroundStyle(accent)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 4)
+                .background(accent.opacity(0.12))
+                .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailOpen)
+            .accessibilityLabel("Open air density detail")
             Text("\(filledCount)/\(chips.count)")
                 .font(.caption.weight(.bold).monospacedDigit())
                 .foregroundStyle(accent)
@@ -5804,5 +5829,274 @@ struct AirChip: Identifiable {
                   detail: "Basal energy (kcal).",
                   icon: "leaf.fill", filled: (basal ?? 0) > 0, metric: .basalEnergy),
         ]
+    }
+}
+
+
+// MARK: - Honest #630: Fitbit / Google Health density detail sheet
+
+/// Interactive density detail — scrub chart + richer Gain/Pain wells (Today tab).
+struct FitbitAirDensityDetailSheet: View {
+    let history: [DailyHealthData]
+    let source: DataSource
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var period: Int = 14
+    @State private var scrubIndex: Int? = nil
+
+    private let accent = Color(hex: "00B0B9")
+
+    private var days: [DailyHealthData] {
+        Array(history.suffix(period))
+    }
+
+    private var densSeries: [(date: Date, density: Double)] {
+        days.map { day in
+            let chips = AirChip.all(from: day)
+            let d: Double
+            if chips.isEmpty { d = 0 }
+            else { d = Double(chips.filter(\.filled).count) / Double(chips.count) }
+            return (date: day.date, density: d)
+        }
+    }
+
+    private var activeIndex: Int {
+        scrubIndex ?? max(0, densSeries.count - 1)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    periodPicker
+                    scrubHero
+                    gainPainWells
+                }
+                .padding(16)
+            }
+            .background(RTColor.background.ignoresSafeArea())
+            .navigationTitle(source == .fitbit ? "Fitbit Density" : "Health Density")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                }
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetail)
+        .accessibilityLabel("Air density detail sheet")
+    }
+
+    private var periodPicker: some View {
+        HStack(spacing: 8) {
+            ForEach([7, 14, 30], id: \.self) { p in
+                Button {
+                    Haptic.selectionChanged()
+                    period = p
+                    scrubIndex = nil
+                } label: {
+                    Text("\(p)d")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(period == p ? Color.white : accent)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(period == p ? accent : accent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+            Spacer()
+            if densSeries.indices.contains(activeIndex) {
+                let pt = densSeries[activeIndex]
+                Text("\(Int((pt.density * 100).rounded()))%")
+                    .font(.title2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.primaryText)
+            }
+        }
+    }
+
+    private var scrubHero: some View {
+        let points = densSeries
+        return VStack(alignment: .leading, spacing: 8) {
+            Text("Density scrub")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(RTColor.secondaryText)
+            if points.count >= 2 {
+                Chart {
+                    ForEach(Array(points.enumerated()), id: \.offset) { i, pt in
+                        AreaMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(accent.opacity(0.16))
+                        LineMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(accent)
+                        .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                        if i == activeIndex {
+                            RuleMark(x: .value("Scrub", pt.date))
+                                .foregroundStyle(RTColor.secondaryText.opacity(0.45))
+                                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                            PointMark(
+                                x: .value("Day", pt.date),
+                                y: .value("Density", pt.density)
+                            )
+                            .foregroundStyle(accent)
+                            .symbolSize(72)
+                        }
+                    }
+                }
+                .chartXAxis {
+                    AxisMarks(values: .automatic(desiredCount: 4)) { _ in
+                        AxisGridLine()
+                        AxisValueLabel(format: .dateTime.month(.abbreviated).day())
+                    }
+                }
+                .chartYScale(domain: 0...1)
+                .chartYAxis {
+                    AxisMarks(values: [0, 0.5, 1]) { v in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let d = v.as(Double.self) {
+                                Text("\(Int(d * 100))%")
+                            }
+                        }
+                    }
+                }
+                .frame(height: 180)
+                .chartOverlay { proxy in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        selectScrub(at: value.location, proxy: proxy, geo: geo, count: points.count)
+                                    }
+                            )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailScrub)
+                .accessibilityLabel("Density scrub chart")
+            } else {
+                Text("Need more history to scrub")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(12)
+        .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private func selectScrub(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
+        guard count >= 1 else { return }
+        let width = max(geo.size.width, 1)
+        let frac = min(max(location.x / width, 0), 1)
+        let best = count == 1 ? 0 : min(count - 1, max(0, Int((frac * CGFloat(count - 1)).rounded())))
+        _ = proxy
+        if scrubIndex != best {
+            scrubIndex = best
+            Haptic.selectionChanged()
+        }
+    }
+
+    /// Richer Gain/Pain wells — day wells + cumulative Σ↑ / Σ↓ (builds on #628).
+    private var gainPainWells: some View {
+        let dens = densSeries.map(\.density)
+        guard dens.count >= 5 else {
+            return AnyView(EmptyView())
+        }
+        var up = 0.0
+        var down = 0.0
+        var deltas: [Double] = []
+        for i in 1..<dens.count {
+            let d = dens[i] - dens[i - 1]
+            deltas.append(d)
+            if d >= 0 { up += d } else { down += -d }
+        }
+        let gp = down < 1e-6 ? (up > 0 ? 4.0 : 0.0) : up / down
+        let verb: String
+        let tone: Color
+        if gp >= 2.0 { verb = "Bull"; tone = RTColor.optimal }
+        else if gp >= 1.0 { verb = "Net+"; tone = RTColor.good }
+        else if gp >= 0.5 { verb = "Mixed"; tone = RTColor.caution }
+        else { verb = "Bleed"; tone = RTColor.warning }
+        let disp = String(format: "%.2f", gp)
+        let maxAbs = max(deltas.map { abs($0) }.max() ?? 0.01, 0.01)
+
+        return AnyView(
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text("Gain / Pain wells")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.secondaryText)
+                    Spacer()
+                    Text("\(verb) \(disp)")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(tone)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(tone.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+                // Day wells
+                GeometryReader { geo in
+                    let w = max(geo.size.width, 1)
+                    let h = max(geo.size.height, 1)
+                    let n = max(deltas.count, 1)
+                    let bw = w / Double(n)
+                    let midY = h / 2
+                    Path { p in
+                        p.move(to: CGPoint(x: 0, y: midY))
+                        p.addLine(to: CGPoint(x: w, y: midY))
+                    }
+                    .stroke(RTColor.tertiaryText.opacity(0.35), lineWidth: 1)
+                    ForEach(Array(deltas.enumerated()), id: \.offset) { i, dlt in
+                        let bh = (abs(dlt) / maxAbs) * (h * 0.45)
+                        let x = bw * (Double(i) + 0.5)
+                        let y = dlt >= 0 ? midY - bh : midY
+                        RoundedRectangle(cornerRadius: 2, style: .continuous)
+                            .fill(dlt >= 0 ? RTColor.optimal.opacity(0.85) : RTColor.warning.opacity(0.85))
+                            .frame(width: max(3, bw * 0.7), height: max(2, bh))
+                            .position(x: x, y: y + bh / 2)
+                    }
+                }
+                .frame(height: 88)
+                // Cumulative stacks
+                HStack(spacing: 10) {
+                    wellStat(title: "Σ Gain", value: String(format: "+%.2f", up), color: RTColor.optimal)
+                    wellStat(title: "Σ Pain", value: String(format: "−%.2f", down), color: RTColor.warning)
+                    wellStat(title: "Ratio", value: disp, color: tone)
+                }
+                Text("Day Δ wells · \(deltas.count) steps · \(period)d window")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            .padding(12)
+            .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(accent.opacity(0.22), lineWidth: 1)
+            )
+            .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailGainPain)
+            .accessibilityLabel("Gain Pain wells \(verb) \(disp)")
+        )
+    }
+
+    private func wellStat(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+            Text(value)
+                .font(.subheadline.weight(.bold).monospacedDigit())
+                .foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
