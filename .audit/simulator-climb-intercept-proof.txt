@@ -1,0 +1,10 @@
+Honest #639 — Simulator climb intercept
+tip_base: 9030961 (Honest #638)
+branch: honest-639-sim-climb-intercept
+command: xcodebuild test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD639 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO -resultBundlePath /tmp/RT-DD639-result.xcresult
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~583
+xcresult: /tmp/RT-DD639-result.xcresult
+pngs: .audit/verify-simulator-climb-intercept.png
+SID: sim.load.ready.climb.intercept
+when_hkt: 2026-10-22 04:20 HKT
