@@ -6374,9 +6374,78 @@ struct FitbitAirDensityDetailSheet: View {
                     .font(.caption)
                     .foregroundStyle(RTColor.tertiaryText)
             }
+            // Honest #636: live scrub readout (date + density + fill + Δ)
+            scrubReadout
         }
         .padding(12)
         .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    /// Honest #636: interactive scrub readout chip under the density chart.
+    @ViewBuilder
+    private var scrubReadout: some View {
+        let pts = densSeries
+        if pts.indices.contains(activeIndex) {
+            let pt = pts[activeIndex]
+            let day = days.indices.contains(activeIndex) ? days[activeIndex] : nil
+            let chips = day.map { AirChip.all(from: $0) } ?? []
+            let filled = chips.filter(\.filled).count
+            let total = chips.count
+            let pct = Int((pt.density * 100).rounded())
+            let deltaPP: Int? = activeIndex > 0
+                ? Int(((pt.density - pts[activeIndex - 1].density) * 100).rounded())
+                : nil
+            let dateStr = pt.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
+            let deltaText: String = {
+                guard let d = deltaPP else { return "—" }
+                if d > 0 { return "Δ+\(d)pp" }
+                if d < 0 { return "Δ\(d)pp" }
+                return "Δ0pp"
+            }()
+            let deltaColor: Color = {
+                guard let d = deltaPP else { return RTColor.tertiaryText }
+                if d > 0 { return Color(hex: "34C759") }
+                if d < 0 { return Color(hex: "FF3B30") }
+                return RTColor.secondaryText
+            }()
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(dateStr)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(RTColor.primaryText)
+                    Text("Scrub day")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+                Spacer(minLength: 4)
+                Text("\(pct)%")
+                    .font(.title3.weight(.bold).monospacedDigit())
+                    .foregroundStyle(accent)
+                Text("\(filled)/\(max(total, 1))")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(accent.opacity(0.12), in: Capsule())
+                Text(deltaText)
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .foregroundStyle(deltaColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(deltaColor.opacity(0.12), in: Capsule())
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(RTColor.surfaceHighlight.opacity(0.65), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(accent.opacity(0.28), lineWidth: 1)
+            )
+            .accessibilityIdentifier(source == .appleWatch
+                                     ? SurfaceID.healthAirDensityDetailScrubReadout
+                                     : SurfaceID.fitbitAirDensityDetailScrubReadout)
+            .accessibilityLabel("Scrub readout \(dateStr) \(pct) percent \(filled) of \(total) \(deltaText)")
+        }
     }
 
     private func selectScrub(at location: CGPoint, proxy: ChartProxy, geo: GeometryProxy, count: Int) {
