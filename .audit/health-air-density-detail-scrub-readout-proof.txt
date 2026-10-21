@@ -1,0 +1,11 @@
+Honest #636 — density detail scrub readout
+tip_base: 10abe31 (Honest #635)
+branch: honest-636-density-detail-scrub-readout
+command: xcodebuild test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD636 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO -quiet
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1575
+xcresult: /tmp/RT-DD636/Logs/Test/Test-ReadinessTracker-2026.10.22_02-37-29-+0800.xcresult
+pngs:
+  .audit/verify-fitbit-air-density-detail-scrub-readout.png
+  .audit/verify-health-air-density-detail-scrub-readout.png
+when_hkt: 2026-10-22 03:03 HKT

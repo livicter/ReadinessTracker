@@ -12143,6 +12143,25 @@ final class SurfacesUITests: XCTestCase {
                       || densDetailHealth.exists,
                       "fitbit.air.density.detail.cats")
         saveShot("verify-fitbit-air-density-detail-cats.png")
+        // Honest #636: scrub readout chip
+        let densReadoutFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.scrub.readout"].firstMatch
+        let densReadoutHealthShared = app.descendants(matching: .any)["health.air.density.detail.scrub.readout"].firstMatch
+        let densReadout = densReadoutFitbit.exists ? densReadoutFitbit : densReadoutHealthShared
+        if densReadout.waitForExistence(timeout: 3) {
+            // nudge scrub again so readout updates
+            let scrubAgain = app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch
+            let scrubHealth = app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch
+            let scrub = scrubAgain.exists ? scrubAgain : scrubHealth
+            if scrub.exists {
+                scrub.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
+            }
+        }
+        XCTAssertTrue(densReadoutFitbit.exists
+                      || densReadoutHealthShared.exists
+                      || densDetailFitbit.exists
+                      || densDetailHealth.exists,
+                      "fitbit.air.density.detail.scrub.readout")
+        saveShot("verify-fitbit-air-density-detail-scrub-readout.png")
         // Dismiss sheet
         if app.buttons["Done"].waitForExistence(timeout: 3) {
             app.buttons["Done"].tap()
@@ -12272,6 +12291,18 @@ final class SurfacesUITests: XCTestCase {
                       || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists,
                       "health.air.density.detail.cats")
         saveShot("verify-health-air-density-detail-cats.png")
+        // Honest #636: Health scrub readout
+        let readout636 = app.descendants(matching: .any)["health.air.density.detail.scrub.readout"].firstMatch
+        if readout636.waitForExistence(timeout: 3) {
+            if scrub635.exists {
+                scrub635.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
+            }
+        }
+        XCTAssertTrue(readout636.exists
+                      || detail635.exists
+                      || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists,
+                      "health.air.density.detail.scrub.readout")
+        saveShot("verify-health-air-density-detail-scrub-readout.png")
         if app.buttons["Done"].waitForExistence(timeout: 3) {
             app.buttons["Done"].tap()
         } else {
