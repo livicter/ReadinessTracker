@@ -1,0 +1,14 @@
+Honest #637 — Health Air gaps + category fill
+tip_base: cda228a (Honest #636)
+branch: honest-637-health-air-gaps
+command: xcodebuild test-without-building … -derivedDataPath /tmp/RT-DD637 -only-testing:…/testFitbitAirDataCardSurface
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1645
+xcresult: /tmp/RT-DD637/Logs/Test/Test-ReadinessTracker-2026.10.22_03-17-36-+0800.xcresult
+pngs:
+  .audit/verify-health-air-gaps.png
+  .audit/verify-health-air-gaps-fill.png
+  .audit/verify-health-air-gaps-progress.png
+  .audit/verify-health-air-gaps-categories.png
+SIDs: health.air.gaps{,.fill,.progress,.categories}
+when_hkt: 2026-10-22 03:45 HKT
