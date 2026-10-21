@@ -103,6 +103,7 @@ struct FitbitAirDataCard: View {
                 densityBurkeMeter
                 densityMartinMeter
                 densityKappaMeter
+                densityGainPainMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -4564,6 +4565,140 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityKappa)
         .accessibilityLabel("Density Kappa \(verb) \(disp)")
     }
+
+
+    /// Honest #628: density Gain/Pain — Σ up Δ / |Σ down Δ| (Fitbit/Health graphics).
+    @ViewBuilder
+    private var densityGainPainMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 5 {
+            EmptyView()
+        } else {
+            densityGainPainBody(days: days)
+        }
+    }
+
+    private func densityGainPainBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        var up = 0.0
+        var down = 0.0
+        var deltas: [Double] = []
+        for i in 1..<dens.count {
+            let d = dens[i] - dens[i - 1]
+            deltas.append(d)
+            if d >= 0 { up += d } else { down += -d }
+        }
+        let gp = down < 1e-6 ? (up > 0 ? 4.0 : 0.0) : up / down
+        let clamped = max(0.0, min(4.0, gp))
+        let verb: String
+        let tone: Color
+        if gp >= 2.0 {
+            verb = "Bull"; tone = RTColor.optimal
+        } else if gp >= 1.0 {
+            verb = "Net+"; tone = RTColor.good
+        } else if gp >= 0.5 {
+            verb = "Mixed"; tone = RTColor.caution
+        } else {
+            verb = "Bleed"; tone = RTColor.warning
+        }
+        let disp = String(format: "%.2f", gp)
+        let lo = dens.min() ?? 0
+        let hi = max(dens.max() ?? 1, lo + 1e-9)
+        let span = hi - lo
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.arrow.down.circle")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Gain/Pain")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(disp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let frac = CGFloat(clamped / 4.0)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(3, w * frac))
+                }
+            }
+            .frame(height: 12)
+            // up vs down split bars
+            HStack(spacing: 6) {
+                let tot = max(up + down, 1e-9)
+                GeometryReader { geo in
+                    let w = max(geo.size.width, 1)
+                    HStack(spacing: 2) {
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(RTColor.optimal.opacity(0.85))
+                            .frame(width: max(2, w * CGFloat(up / tot)))
+                        RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            .fill(RTColor.warning.opacity(0.85))
+                            .frame(width: max(2, w * CGFloat(down / tot)))
+                        Spacer(minLength: 0)
+                    }
+                }
+                .frame(height: 10)
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                Path { path in
+                    for (i, d) in dens.enumerated() {
+                        let x = w * Double(i) / Double(max(1, dens.count - 1))
+                        let y = h * (1.0 - (d - lo) / span)
+                        if i == 0 { path.move(to: CGPoint(x: x, y: y)) }
+                        else { path.addLine(to: CGPoint(x: x, y: y)) }
+                    }
+                }
+                .stroke(
+                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
+                )
+                ForEach(Array(deltas.enumerated()), id: \.offset) { i, dlt in
+                    let x = w * Double(i + 1) / Double(max(1, dens.count - 1))
+                    let y = h * (1.0 - (dens[i + 1] - lo) / span)
+                    Circle()
+                        .fill(dlt >= 0 ? RTColor.optimal : RTColor.warning)
+                        .frame(width: 5, height: 5)
+                        .position(x: x, y: y)
+                }
+            }
+            .frame(height: 44)
+            HStack {
+                Text("Σ↑ / Σ↓ · \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("bleed ← → bull")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityGainPain)
+        .accessibilityLabel("Density Gain Pain \(verb) \(disp)")
+    }
+
 
 
 
