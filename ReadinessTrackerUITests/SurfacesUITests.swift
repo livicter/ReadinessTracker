@@ -12108,6 +12108,22 @@ final class SurfacesUITests: XCTestCase {
             else { app.swipeUp() }
         }
         saveShot("verify-fitbit-air-density-detail-gainpain.png")
+        // Honest #631: category density overlays
+        let densCats = app.descendants(matching: .any)["fitbit.air.density.detail.cats"].firstMatch
+        if densCats.waitForExistence(timeout: 4) {
+            if densCats.isHittable { densCats.tap() }
+            else { app.swipeUp() }
+            // toggle Move overlay off then on for interactivity
+            let moveBtn = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Move overlay")).firstMatch
+            if moveBtn.waitForExistence(timeout: 2), moveBtn.isHittable {
+                moveBtn.tap()
+                moveBtn.tap()
+            }
+        }
+        XCTAssertTrue(densCats.exists
+                      || app.descendants(matching: .any)["fitbit.air.density.detail"].firstMatch.exists,
+                      "fitbit.air.density.detail.cats")
+        saveShot("verify-fitbit-air-density-detail-cats.png")
         // Dismiss sheet
         if app.buttons["Done"].waitForExistence(timeout: 3) {
             app.buttons["Done"].tap()
