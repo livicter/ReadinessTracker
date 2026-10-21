@@ -104,6 +104,7 @@ struct FitbitAirDataCard: View {
                 densityMartinMeter
                 densityKappaMeter
                 densityGainPainMeter
+                densityTailMeter
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -4698,6 +4699,141 @@ struct FitbitAirDataCard: View {
         .accessibilityIdentifier(SurfaceID.fitbitAirDensityGainPain)
         .accessibilityLabel("Density Gain Pain \(verb) \(disp)")
     }
+
+
+    /// Honest #629: density Tail Ratio — mean top-tail Δ / |mean bottom-tail Δ| (Fitbit/Health graphics).
+    @ViewBuilder
+    private var densityTailMeter: some View {
+        let days = Array(history.suffix(14))
+        if days.count < 6 {
+            EmptyView()
+        } else {
+            densityTailBody(days: days)
+        }
+    }
+
+    private func densityTailBody(days: [DailyHealthData]) -> some View {
+        let dens: [Double] = days.map { day in
+            let chips = AirChip.all(from: day)
+            guard !chips.isEmpty else { return 0 }
+            return Double(chips.filter(\.filled).count) / Double(chips.count)
+        }
+        var deltas: [Double] = []
+        for i in 1..<dens.count {
+            deltas.append(dens[i] - dens[i - 1])
+        }
+        let sorted = deltas.sorted()
+        let n = sorted.count
+        // ~20% tails (at least 1 each) — honest for short 14d windows
+        let k = max(1, n / 5)
+        let bottom = Array(sorted.prefix(k))
+        let top = Array(sorted.suffix(k))
+        let meanBot = bottom.reduce(0, +) / Double(bottom.count)
+        let meanTop = top.reduce(0, +) / Double(top.count)
+        let absBot = abs(meanBot)
+        let ratio = absBot < 1e-6 ? (meanTop > 0 ? 4.0 : 0.0) : meanTop / absBot
+        let clamped = max(0.0, min(4.0, ratio))
+        let verb: String
+        let tone: Color
+        if ratio >= 2.0 {
+            verb = "Fat"; tone = RTColor.optimal
+        } else if ratio >= 1.0 {
+            verb = "Balanced"; tone = RTColor.good
+        } else if ratio >= 0.5 {
+            verb = "Lean"; tone = RTColor.caution
+        } else {
+            verb = "Left"; tone = RTColor.warning
+        }
+        let disp = String(format: "%.2f", ratio)
+        let dLo = min(sorted.first ?? -0.01, -1e-6)
+        let dHi = max(sorted.last ?? 0.01, 1e-6)
+        let dSpan = dHi - dLo
+        // simple 7-bin hist of deltas
+        let bins = 7
+        var counts = Array(repeating: 0, count: bins)
+        for d in deltas {
+            let t = (d - dLo) / max(dSpan, 1e-9)
+            let idx = min(bins - 1, max(0, Int(t * Double(bins))))
+            counts[idx] += 1
+        }
+        let maxC = max(counts.max() ?? 1, 1)
+        let botCut = bottom.last ?? dLo
+        let topCut = top.first ?? dHi
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "chart.bar.xaxis")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Density Tail")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("\(verb) \(disp)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let frac = CGFloat(clamped / 4.0)
+                ZStack(alignment: .leading) {
+                    Capsule().fill(RTColor.tertiaryText.opacity(0.10))
+                    Capsule()
+                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .frame(width: max(3, w * frac))
+                }
+            }
+            .frame(height: 12)
+            // delta histogram with tail shading
+            GeometryReader { geo in
+                let w = max(geo.size.width, 1)
+                let h = max(geo.size.height, 1)
+                let bw = w / Double(bins)
+                ForEach(0..<bins, id: \.self) { i in
+                    let mid = dLo + (Double(i) + 0.5) * dSpan / Double(bins)
+                    let isLeft = mid <= botCut
+                    let isRight = mid >= topCut
+                    let fill: Color = isLeft ? RTColor.warning.opacity(0.85)
+                        : (isRight ? RTColor.optimal.opacity(0.85) : accent.opacity(0.45))
+                    let bh = h * Double(counts[i]) / Double(maxC)
+                    RoundedRectangle(cornerRadius: 2, style: .continuous)
+                        .fill(fill)
+                        .frame(width: max(2, bw - 2), height: max(2, bh))
+                        .position(x: bw * (Double(i) + 0.5), y: h - bh / 2)
+                }
+                // zero line
+                let zx = w * (0 - dLo) / max(dSpan, 1e-9)
+                Path { p in
+                    p.move(to: CGPoint(x: zx, y: 0))
+                    p.addLine(to: CGPoint(x: zx, y: h))
+                }
+                .stroke(RTColor.secondaryText.opacity(0.45), style: StrokeStyle(lineWidth: 1, dash: [3, 2]))
+            }
+            .frame(height: 44)
+            HStack {
+                Text("μ↑tail / |μ↓tail| · \(k)/\(n) · \(dens.count)d")
+                    .font(.caption2)
+                    .foregroundStyle(RTColor.tertiaryText)
+                Spacer()
+                Text("left ← → fat")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityTail)
+        .accessibilityLabel("Density Tail \(verb) \(disp)")
+    }
+
+
 
 
 

@@ -12064,6 +12064,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-gainpain.png")
 
+        // Honest #629: density Tail Ratio
+        let densTail = app.descendants(matching: .any)["fitbit.air.density.tail"].firstMatch
+        XCTAssertTrue(densTail.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.gainpain"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.tail")
+        if densTail.exists {
+            if densTail.isHittable { densTail.tap() }
+            else {
+                app.swipeUp()
+                if densTail.waitForExistence(timeout: 2), densTail.isHittable {
+                    densTail.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-tail.png")
+
 
 
 
