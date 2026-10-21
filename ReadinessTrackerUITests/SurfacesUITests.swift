@@ -11221,8 +11221,20 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(gh.waitForExistence(timeout: 4) || fitbit.exists, "Google Health caption")
         saveShot("verify-fitbit-settings-air-status.png")
         // Soft when not authenticated in fixture — SurfaceID present only if connected.
-        _ = app.descendants(matching: .any)["settings.fitbit.air"].firstMatch.exists
+        let airStatus = app.descendants(matching: .any)["settings.fitbit.air"].firstMatch
+        _ = airStatus.exists
         saveShot("verify-fitbit-settings-air-status-chips.png")
+        // Honest #625: density ring + category fill (when air day present)
+        let airRing = app.descendants(matching: .any)["settings.fitbit.air.ring"].firstMatch
+        XCTAssertTrue(airRing.waitForExistence(timeout: 4)
+                      || airStatus.exists
+                      || fitbit.exists,
+                      "settings.fitbit.air.ring")
+        if airRing.exists {
+            if airRing.isHittable { airRing.tap() }
+            else { app.swipeUp() }
+        }
+        saveShot("verify-fitbit-settings-air-ring.png")
         tapMainTab("Today")
     }
 
