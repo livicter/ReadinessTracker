@@ -1,0 +1,11 @@
+Honest #641 — Health Air density Tail Ratio (Fitbit #629 parity for appleWatch/HealthKit)
+tip_base: 0d1bef0 (Honest #640)
+branch: honest-641-health-air-tail
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD641 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~2057
+xcresult: /tmp/RT-DD641-result.xcresult
+pngs: .audit/verify-health-air-density-tail.png
+SID: health.air.density.tail
+when_hkt: 2026-10-22 05:38 HKT
+EXIT:0

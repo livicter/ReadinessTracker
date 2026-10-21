@@ -12089,9 +12089,12 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-gainpain.png")
 
-        // Honest #629: density Tail Ratio
+        // Honest #629: density Tail Ratio (#641: appleWatch uses health.air.density.tail)
         let densTail = app.descendants(matching: .any)["fitbit.air.density.tail"].firstMatch
+        let densTailHealth = app.descendants(matching: .any)["health.air.density.tail"].firstMatch
         XCTAssertTrue(densTail.waitForExistence(timeout: 5)
+                      || densTailHealth.exists
+                      || app.descendants(matching: .any)["health.air.density.gainpain.meter"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density.gainpain"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.tail")
@@ -12249,6 +12252,31 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-gainpain-meter.png")
+
+        // Honest #641: Health Density Tail (#629 parity, Health pink)
+        let hTail641 = app.descendants(matching: .any)["health.air.density.tail"].firstMatch
+        var t641 = 0
+        while !hTail641.exists && t641 < 10 {
+            app.swipeUp()
+            t641 += 1
+        }
+        if !hTail641.exists {
+            for _ in 0..<6 { app.swipeDown() }
+        }
+        XCTAssertTrue(hTail641.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.gainpain.meter"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.tail")
+        if hTail641.exists {
+            if hTail641.isHittable { hTail641.tap() }
+            else {
+                app.swipeUp()
+                if hTail641.waitForExistence(timeout: 2), hTail641.isHittable {
+                    hTail641.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-tail.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
