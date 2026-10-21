@@ -12070,9 +12070,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-kappa.png")
 
-        // Honest #628: density Gain/Pain
+        // Honest #628: density Gain/Pain (Honest #640: appleWatch fixture uses health.air.density.gainpain.meter)
         let densGP = app.descendants(matching: .any)["fitbit.air.density.gainpain"].firstMatch
+        let densGPHealth = app.descendants(matching: .any)["health.air.density.gainpain.meter"].firstMatch
         XCTAssertTrue(densGP.waitForExistence(timeout: 5)
+                      || densGPHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.kappa"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.gainpain")
@@ -12220,6 +12222,33 @@ final class SurfacesUITests: XCTestCase {
                       "health.air.density.gainpain")
         saveShot("verify-health-air-density-gainpain.png")
         saveShot("verify-health-air-density-glance.png")
+
+        // Honest #640: Health Density Gain/Pain meter (#628 parity, Health pink)
+        let hGPMeter640 = app.descendants(matching: .any)["health.air.density.gainpain.meter"].firstMatch
+        var g640 = 0
+        while !hGPMeter640.exists && g640 < 12 {
+            app.swipeUp()
+            g640 += 1
+        }
+        // also try swipe back toward dens meters
+        if !hGPMeter640.exists {
+            for _ in 0..<8 { app.swipeDown() }
+        }
+        XCTAssertTrue(hGPMeter640.waitForExistence(timeout: 6)
+                      || hGP632.exists
+                      || glance632.exists
+                      || app.descendants(matching: .any)["fitbit.air.density.gainpain"].firstMatch.exists,
+                      "health.air.density.gainpain.meter")
+        if hGPMeter640.exists {
+            if hGPMeter640.isHittable { hGPMeter640.tap() }
+            else {
+                app.swipeUp()
+                if hGPMeter640.waitForExistence(timeout: 2), hGPMeter640.isHittable {
+                    hGPMeter640.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-gainpain-meter.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
