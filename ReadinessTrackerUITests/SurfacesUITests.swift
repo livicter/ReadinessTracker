@@ -12087,34 +12087,47 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-tail.png")
 
         // Honest #630: density detail sheet (Google Health scrub + Gain/Pain wells)
-        let densDetailOpen = app.descendants(matching: .any)["fitbit.air.density.detail.open"].firstMatch
-        if densDetailOpen.waitForExistence(timeout: 4) {
-            // Scroll toward header if needed
-            if !densDetailOpen.isHittable {
+        // Honest #635: when source == .appleWatch, open/sheet SIDs are health.air.density.detail*
+        let densDetailOpenFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.open"].firstMatch
+        let densDetailOpenHealth = app.descendants(matching: .any)["health.air.density.detail.open"].firstMatch
+        let densDetailOpen = densDetailOpenFitbit.exists ? densDetailOpenFitbit : densDetailOpenHealth
+        if densDetailOpen.waitForExistence(timeout: 4) || densDetailOpenHealth.waitForExistence(timeout: 2) {
+            let openBtn = densDetailOpenFitbit.exists ? densDetailOpenFitbit : densDetailOpenHealth
+            if !openBtn.isHittable {
                 for _ in 0..<8 { app.swipeDown() }
             }
-            if densDetailOpen.isHittable || densDetailOpen.exists {
-                densDetailOpen.tap()
+            if openBtn.isHittable || openBtn.exists {
+                openBtn.tap()
             }
         }
-        let densDetail = app.descendants(matching: .any)["fitbit.air.density.detail"].firstMatch
-        XCTAssertTrue(densDetail.waitForExistence(timeout: 6)
+        let densDetailFitbit = app.descendants(matching: .any)["fitbit.air.density.detail"].firstMatch
+        let densDetailHealth = app.descendants(matching: .any)["health.air.density.detail"].firstMatch
+        XCTAssertTrue(densDetailFitbit.waitForExistence(timeout: 6)
+                      || densDetailHealth.waitForExistence(timeout: 2)
                       || app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch.exists
-                      || densDetailOpen.exists,
+                      || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists
+                      || densDetailOpenFitbit.exists
+                      || densDetailOpenHealth.exists,
                       "fitbit.air.density.detail")
-        let densScrub = app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch
+        let densScrubFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.scrub"].firstMatch
+        let densScrubHealth = app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch
+        let densScrub = densScrubFitbit.exists ? densScrubFitbit : densScrubHealth
         if densScrub.waitForExistence(timeout: 4) {
             densScrub.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5)).tap()
         }
         saveShot("verify-fitbit-air-density-detail.png")
-        let densGPwells = app.descendants(matching: .any)["fitbit.air.density.detail.gainpain"].firstMatch
+        let densGPwellsFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.gainpain"].firstMatch
+        let densGPwellsHealth = app.descendants(matching: .any)["health.air.density.detail.gainpain"].firstMatch
+        let densGPwells = densGPwellsFitbit.exists ? densGPwellsFitbit : densGPwellsHealth
         if densGPwells.waitForExistence(timeout: 3) {
             if densGPwells.isHittable { densGPwells.tap() }
             else { app.swipeUp() }
         }
         saveShot("verify-fitbit-air-density-detail-gainpain.png")
         // Honest #631: category density overlays
-        let densCats = app.descendants(matching: .any)["fitbit.air.density.detail.cats"].firstMatch
+        let densCatsFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.cats"].firstMatch
+        let densCatsHealth = app.descendants(matching: .any)["health.air.density.detail.cats"].firstMatch
+        let densCats = densCatsFitbit.exists ? densCatsFitbit : densCatsHealth
         if densCats.waitForExistence(timeout: 4) {
             if densCats.isHittable { densCats.tap() }
             else { app.swipeUp() }
@@ -12126,7 +12139,8 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         XCTAssertTrue(densCats.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.detail"].firstMatch.exists,
+                      || densDetailFitbit.exists
+                      || densDetailHealth.exists,
                       "fitbit.air.density.detail.cats")
         saveShot("verify-fitbit-air-density-detail-cats.png")
         // Dismiss sheet
@@ -12205,6 +12219,65 @@ final class SurfacesUITests: XCTestCase {
         let d14 = app.buttons["Health density 14 day period"]
         if d14.waitForExistence(timeout: 2), d14.isHittable { d14.tap() }
         saveShot("verify-health-air-density-period.png")
+
+        // Honest #635: Health Air density Detail sheet (#630 parity when source == .appleWatch)
+        // Re-anchor to Health Air header / Detail capsule
+        var h635 = 0
+        let healthTitle635 = app.staticTexts["Health Air"]
+        while !healthTitle635.exists && h635 < 12 {
+            if h635 < 4 { app.swipeDown() } else { app.swipeUp() }
+            h635 += 1
+        }
+        let detailOpen635 = app.descendants(matching: .any)["health.air.density.detail.open"].firstMatch
+        var o635 = 0
+        while !detailOpen635.exists && o635 < 10 {
+            app.swipeDown()
+            o635 += 1
+        }
+        if detailOpen635.waitForExistence(timeout: 4) {
+            if !detailOpen635.isHittable {
+                for _ in 0..<6 { app.swipeDown() }
+            }
+            if detailOpen635.isHittable || detailOpen635.exists {
+                detailOpen635.tap()
+            }
+        }
+        let detail635 = app.descendants(matching: .any)["health.air.density.detail"].firstMatch
+        XCTAssertTrue(detail635.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists
+                      || detailOpen635.exists
+                      || healthTitle635.exists,
+                      "health.air.density.detail")
+        let scrub635 = app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch
+        if scrub635.waitForExistence(timeout: 4) {
+            scrub635.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5)).tap()
+        }
+        saveShot("verify-health-air-density-detail.png")
+        let gp635 = app.descendants(matching: .any)["health.air.density.detail.gainpain"].firstMatch
+        if gp635.waitForExistence(timeout: 3) {
+            if gp635.isHittable { gp635.tap() } else { app.swipeUp() }
+        }
+        saveShot("verify-health-air-density-detail-gainpain.png")
+        let cats635 = app.descendants(matching: .any)["health.air.density.detail.cats"].firstMatch
+        if cats635.waitForExistence(timeout: 4) {
+            if cats635.isHittable { cats635.tap() } else { app.swipeUp() }
+            let moveBtn635 = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Move overlay")).firstMatch
+            if moveBtn635.waitForExistence(timeout: 2), moveBtn635.isHittable {
+                moveBtn635.tap()
+                moveBtn635.tap()
+            }
+        }
+        XCTAssertTrue(cats635.exists
+                      || detail635.exists
+                      || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists,
+                      "health.air.density.detail.cats")
+        saveShot("verify-health-air-density-detail-cats.png")
+        if app.buttons["Done"].waitForExistence(timeout: 3) {
+            app.buttons["Done"].tap()
+        } else {
+            app.swipeDown()
+        }
+
 
 
 

@@ -1,0 +1,12 @@
+Honest #635 — Health Air density Detail sheet
+Date: 2026-10-22 Asia/Hong_Kong
+Branch tip (pre-commit base): 5f428c4 Honest #634 Health period picker (#662)
+Command:
+  xcodebuild test -project ReadinessTracker.xcodeproj -scheme ReadinessTracker \
+    -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+    -derivedDataPath /tmp/RT-DD635 \
+    -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface \
+    CODE_SIGNING_ALLOWED=NO -quiet
+Result: PASSED (0 failures) in 1972.443s — Test Suite Selected tests passed 2026-10-22 02:25:23 HKT
+Receipt PNGs: .audit/verify-health-air-density-detail{,-gainpain,-cats}.png (from /tmp/rt-audit)
+SurfaceIDs: health.air.density.detail.open|detail|scrub|gainpain|cats

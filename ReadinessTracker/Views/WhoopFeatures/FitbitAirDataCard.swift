@@ -528,8 +528,12 @@ struct FitbitAirDataCard: View {
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailOpen)
-            .accessibilityLabel("Open air density detail")
+            .accessibilityIdentifier(source == .appleWatch
+                                     ? SurfaceID.healthAirDensityDetailOpen
+                                     : SurfaceID.fitbitAirDensityDetailOpen)
+            .accessibilityLabel(source == .appleWatch
+                                ? "Open Health air density detail"
+                                : "Open air density detail")
             Text("\(filledCount)/\(chips.count)")
                 .font(.caption.weight(.bold).monospacedDigit())
                 .foregroundStyle(accent)
@@ -6218,7 +6222,10 @@ struct FitbitAirDensityDetailSheet: View {
     /// Honest #631: which category overlays are visible on the scrub chart.
     @State private var visibleCats: Set<AirDensityCategory> = Set(AirDensityCategory.allCases)
 
-    private let accent = Color(hex: "00B0B9")
+    /// Honest #635: HealthKit pink when Apple Watch source; Fitbit teal otherwise.
+    private var accent: Color {
+        source == .appleWatch ? Color(hex: "FF2D55") : Color(hex: "00B0B9")
+    }
 
     private var days: [DailyHealthData] {
         Array(history.suffix(period))
@@ -6258,8 +6265,12 @@ struct FitbitAirDensityDetailSheet: View {
                 }
             }
         }
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetail)
-        .accessibilityLabel("Air density detail sheet")
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDensityDetail
+                                 : SurfaceID.fitbitAirDensityDetail)
+        .accessibilityLabel(source == .appleWatch
+                            ? "Health air density detail sheet"
+                            : "Air density detail sheet")
     }
 
     private var periodPicker: some View {
@@ -6354,7 +6365,9 @@ struct FitbitAirDensityDetailSheet: View {
                             )
                     }
                 }
-                .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailScrub)
+                .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDensityDetailScrub
+                                 : SurfaceID.fitbitAirDensityDetailScrub)
                 .accessibilityLabel("Density scrub chart")
             } else {
                 Text("Need more history to scrub")
@@ -6510,7 +6523,9 @@ struct FitbitAirDensityDetailSheet: View {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(accent.opacity(0.22), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailCats)
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDensityDetailCats
+                                 : SurfaceID.fitbitAirDensityDetailCats)
         .accessibilityLabel("Category density overlays")
     }
 
@@ -6592,7 +6607,9 @@ struct FitbitAirDensityDetailSheet: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(accent.opacity(0.22), lineWidth: 1)
             )
-            .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailGainPain)
+            .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDensityDetailGainPain
+                                 : SurfaceID.fitbitAirDensityDetailGainPain)
             .accessibilityLabel("Gain Pain wells \(verb) \(disp)")
         )
     }
