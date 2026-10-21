@@ -36,6 +36,8 @@ struct FitbitAirDataCard: View {
     @State private var healthScrubIndex: Int? = nil
     /// Honest #633: Health Air glance category overlay toggles (#631 sheet parity).
     @State private var healthVisibleCats: Set<AirDensityCategory> = Set(AirDensityCategory.allCases)
+    /// Honest #634: Health Air glance period (7/14/30d) — #630 detail sheet parity.
+    @State private var healthPeriod: Int = 14
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -139,7 +141,7 @@ struct FitbitAirDataCard: View {
     /// (parity with Fitbit #630 detail sheet, on-card for HealthKit / Apple Watch source).
     private var healthAirDensityGlance: some View {
         let healthAccent = Color(hex: "FF2D55")  // Apple Health pink
-        let days = Array(history.suffix(14))
+        let days = Array(history.suffix(healthPeriod))
         let densSeries: [(date: Date, density: Double)] = days.map { day in
             let chips = AirChip.all(from: day)
             let d: Double
@@ -189,6 +191,32 @@ struct FitbitAirDataCard: View {
                         .clipShape(Capsule())
                 }
             }
+            // Honest #634: 7/14/30d period picker (#630 detail sheet parity)
+            HStack(spacing: 8) {
+                ForEach([7, 14, 30], id: \.self) { p in
+                    Button {
+                        Haptic.selectionChanged()
+                        healthPeriod = p
+                        healthScrubIndex = nil
+                    } label: {
+                        Text("\(p)d")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(healthPeriod == p ? Color.white : healthAccent)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(healthPeriod == p ? healthAccent : healthAccent.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Health density \(p) day period")
+                }
+                Spacer()
+                Text("\(healthPeriod)d window")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            .accessibilityIdentifier(SurfaceID.healthAirDensityPeriod)
+            .accessibilityLabel("Health density period picker")
             if densSeries.count >= 2 {
                 Chart {
                     ForEach(Array(densSeries.enumerated()), id: \.offset) { i, pt in

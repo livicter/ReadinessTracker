@@ -12189,6 +12189,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-cats.png")
 
+        // Honest #634: Health Air period picker 7/14/30d
+        let period634 = app.descendants(matching: .any)["health.air.density.period"].firstMatch
+        var p634 = 0
+        while !period634.exists && p634 < 8 {
+            app.swipeUp()
+            p634 += 1
+        }
+        XCTAssertTrue(period634.waitForExistence(timeout: 5)
+                      || glance632.exists
+                      || healthTitle632.exists,
+                      "health.air.density.period")
+        let d7 = app.buttons["Health density 7 day period"]
+        if d7.waitForExistence(timeout: 3), d7.isHittable { d7.tap() }
+        let d14 = app.buttons["Health density 14 day period"]
+        if d14.waitForExistence(timeout: 2), d14.isHittable { d14.tap() }
+        saveShot("verify-health-air-density-period.png")
+
 
 
 
