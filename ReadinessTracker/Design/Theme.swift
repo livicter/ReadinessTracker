@@ -304,6 +304,7 @@ enum SurfaceID {
     static let fitbitAirDensityUlcer = "fitbit.air.density.ulcer"  // Honest #618
     static let fitbitAirDensitySterling = "fitbit.air.density.sterling"  // Honest #620
     static let fitbitAirDensityBurke = "fitbit.air.density.burke"  // Honest #622
+    static let fitbitAirDensityMartin = "fitbit.air.density.martin"  // Honest #624
     static let readinessSimulatorReadyHeadroom = "sim.load.ready.headroom"  // Honest #595
     static let readinessSimulatorReadyBurndown = "sim.load.ready.burndown"  // Honest #597
     static let readinessSimulatorGHTriad = "sim.load.gh.triad"  // Honest #599
