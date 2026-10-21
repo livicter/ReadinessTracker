@@ -1,0 +1,10 @@
+Honest #640 — Health Air density Gain/Pain meter (#628 parity)
+tip_base: 8e4ef11 (Honest #639)
+branch: honest-640-health-air-gainpain
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD640 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1627
+xcresult: /tmp/RT-DD640-result.xcresult
+pngs: .audit/verify-health-air-density-gainpain-meter.png
+SID: health.air.density.gainpain.meter
+when_hkt: 2026-10-22 04:54 HKT
