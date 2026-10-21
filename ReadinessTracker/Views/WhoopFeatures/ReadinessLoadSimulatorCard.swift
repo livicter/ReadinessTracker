@@ -148,6 +148,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbETADial
                 readyClimbSurplusDial
                 readyClimbRunwayDial
+                readyClimbGlideDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -4205,6 +4206,170 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
+
+    /// Honest #626: READY climb glide — actual queue path vs linear glide to Optimal (Fitbit/Health graphics).
+    @ViewBuilder
+    private var readyClimbGlideDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbGlideBody(pending: pending)
+        }
+    }
+
+    private func readyClimbGlideBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let n = max(1, path.count - 1)
+        // linear glide from start → min(100, max(start, target)) over same steps
+        let glideEnd = min(100, max(start, target))
+        let glide: [Int] = (0...n).map { i in
+            let f = Double(i) / Double(n)
+            return Int((Double(start) + (Double(glideEnd) - Double(start)) * f).rounded())
+        }
+        // signed area actual − glide (positive = ahead of glide)
+        var area = 0.0
+        for i in path.indices {
+            area += Double(path[i] - glide[i])
+        }
+        let meanDev = area / Double(path.count)
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if meanDev >= 4 {
+            verb = "Above"; tone = RTColor.optimal
+        } else if meanDev >= 1 {
+            verb = "On path"; tone = RTColor.good
+        } else if meanDev >= -2 {
+            verb = "Lag"; tone = RTColor.caution
+        } else {
+            verb = "Below"; tone = RTColor.warning
+        }
+        let disp = String(format: "%+.1f", meanDev)
+        let lo = max(0, min(start, path.max() ?? start, target, glideEnd) - 4)
+        let hi = min(100, max(start, path.max() ?? start, target, glideEnd) + 4)
+        let span = max(1, hi - lo)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "point.topleft.down.to.point.bottomright.curvepath")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb glide")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(min(1, max(0, (meanDev + 6) / 12.0))))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("vs glide")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Now \(start)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("→ Opt \(target)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.optimal)
+                        Spacer()
+                        Text("\(pending.count) steps")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let h = max(geo.size.height, 1)
+                        let yT = h * (1.0 - Double(target - lo) / Double(span))
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: yT))
+                            p.addLine(to: CGPoint(x: w, y: yT))
+                        }
+                        .stroke(RTColor.optimal.opacity(0.5), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+                        // glide (dashed)
+                        Path { p in
+                            for (i, sc) in glide.enumerated() {
+                                let x = w * Double(i) / Double(max(1, glide.count - 1))
+                                let y = h * (1.0 - Double(sc - lo) / Double(span))
+                                if i == 0 { p.move(to: CGPoint(x: x, y: y)) }
+                                else { p.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(RTColor.secondaryText.opacity(0.55), style: StrokeStyle(lineWidth: 1.5, dash: [3, 3]))
+                        // actual path
+                        Path { p in
+                            for (i, sc) in path.enumerated() {
+                                let x = w * Double(i) / Double(max(1, path.count - 1))
+                                let y = h * (1.0 - Double(sc - lo) / Double(span))
+                                if i == 0 { p.move(to: CGPoint(x: x, y: y)) }
+                                else { p.addLine(to: CGPoint(x: x, y: y)) }
+                            }
+                        }
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                            style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
+                        )
+                        ForEach(Array(path.enumerated()), id: \.offset) { i, sc in
+                            let x = w * Double(i) / Double(max(1, path.count - 1))
+                            let y = h * (1.0 - Double(sc - lo) / Double(span))
+                            Circle()
+                                .fill(sc >= target ? RTColor.optimal : accent)
+                                .frame(width: i == 0 || i == path.count - 1 ? 8 : 5, height: i == 0 || i == path.count - 1 ? 8 : 5)
+                                .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1))
+                                .position(x: x, y: y)
+                        }
+                    }
+                    .frame(height: 44)
+                }
+            }
+            Text("queue path vs linear glide to Optimal · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbGlide)
+        .accessibilityLabel("Climb glide \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
 
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
