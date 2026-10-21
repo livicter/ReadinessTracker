@@ -5106,7 +5106,8 @@ struct FitbitAirDataCard: View {
     }
 
 
-    /// Honest #629: density Tail Ratio — mean top-tail Δ / |mean bottom-tail Δ| (Fitbit/Health graphics).
+    /// Honest #629: density Tail Ratio — mean top-tail Δ / |mean bottom-tail Δ| (Fitbit graphics).
+    /// Honest #641: appleWatch / HealthKit uses Health pink + health.air.density.tail (#629 parity).
     @ViewBuilder
     private var densityTailMeter: some View {
         let days = Array(history.suffix(14))
@@ -5137,6 +5138,9 @@ struct FitbitAirDataCard: View {
         let meanTop = top.reduce(0, +) / Double(top.count)
         let absBot = abs(meanBot)
         let ratio = absBot < 1e-6 ? (meanTop > 0 ? 4.0 : 0.0) : meanTop / absBot
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Tail" : "Density Tail"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityTail : SurfaceID.fitbitAirDensityTail
         let clamped = max(0.0, min(4.0, ratio))
         let verb: String
         let tone: Color
@@ -5168,8 +5172,8 @@ struct FitbitAirDataCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.xaxis")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Tail")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -5187,7 +5191,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(RTColor.tertiaryText.opacity(0.10))
                     Capsule()
-                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(3, w * frac))
                 }
             }
@@ -5202,7 +5206,7 @@ struct FitbitAirDataCard: View {
                     let isLeft = mid <= botCut
                     let isRight = mid >= topCut
                     let fill: Color = isLeft ? RTColor.warning.opacity(0.85)
-                        : (isRight ? RTColor.optimal.opacity(0.85) : accent.opacity(0.45))
+                        : (isRight ? RTColor.optimal.opacity(0.85) : meterAccent.opacity(0.45))
                     let bh = h * Double(counts[i]) / Double(maxC)
                     RoundedRectangle(cornerRadius: 2, style: .continuous)
                         .fill(fill)
@@ -5219,7 +5223,7 @@ struct FitbitAirDataCard: View {
             }
             .frame(height: 44)
             HStack {
-                Text("μ↑tail / |μ↓tail| · \(k)/\(n) · \(dens.count)d")
+                Text("μ↑tail / |μ↓tail| · \(k)/\(n) · \(dens.count)d · \(source == .appleWatch ? "HealthKit" : "Fitbit/GH")")
                     .font(.caption2)
                     .foregroundStyle(RTColor.tertiaryText)
                 Spacer()
@@ -5229,13 +5233,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityTail)
-        .accessibilityLabel("Density Tail \(verb) \(disp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(disp)")
     }
 
 
