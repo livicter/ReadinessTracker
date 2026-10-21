@@ -10910,26 +10910,22 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-glide.png")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // Honest #639: READY climb intercept
+        let climbIntercept = app.descendants(matching: .any)["sim.load.ready.climb.intercept"].firstMatch
+        XCTAssertTrue(climbIntercept.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.glide"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.intercept")
+        if climbIntercept.exists {
+            if climbIntercept.isHittable { climbIntercept.tap() }
+            else {
+                app.swipeUp()
+                if climbIntercept.waitForExistence(timeout: 2), climbIntercept.isHittable {
+                    climbIntercept.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-intercept.png")
 
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch

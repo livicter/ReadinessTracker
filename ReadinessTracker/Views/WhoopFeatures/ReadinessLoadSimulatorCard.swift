@@ -149,6 +149,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbSurplusDial
                 readyClimbRunwayDial
                 readyClimbGlideDial
+                readyClimbInterceptDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -4366,6 +4367,153 @@ struct ReadinessLoadSimulatorCard: View {
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbGlide)
         .accessibilityLabel("Climb glide \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
+    /// Honest #639: READY climb intercept — first queue step that crosses Optimal (richer sim graphics).
+    @ViewBuilder
+    private var readyClimbInterceptDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbInterceptBody(pending: pending)
+        }
+    }
+
+    private func readyClimbInterceptBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let interceptIdx = path.firstIndex(where: { $0 >= target })
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let hit = interceptIdx != nil
+        let tone: Color = hit ? RTColor.optimal : RTColor.caution
+        let stepLabel: String
+        let readyLabel: String
+        if let i = interceptIdx {
+            stepLabel = i == 0 ? "Already" : "Step \(i)"
+            readyLabel = "READY \(path[i])"
+        } else {
+            let short = max(0, target - (path.last ?? start))
+            stepLabel = "Short"
+            readyLabel = "Δ\(short) to Opt"
+        }
+        let end = path.last ?? start
+        let progress = hit
+            ? 1.0
+            : min(1.0, max(0.0, Double(end - start) / Double(max(1, target - start))))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "scope")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb intercept")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(stepLabel)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progress))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(hit ? "HIT" : "MISS")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("Opt \(target)")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Now \(start)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("→ \(readyLabel)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Spacer()
+                        Text("\(pending.count) left")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    // step rail
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let n = max(1, path.count - 1)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12)).frame(height: 8)
+                            Capsule()
+                                .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                .frame(width: max(8, w * CGFloat(progress)), height: 8)
+                            if let i = interceptIdx {
+                                let x = w * Double(i) / Double(n)
+                                Circle()
+                                    .fill(RTColor.optimal)
+                                    .frame(width: 12, height: 12)
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 2))
+                                    .position(x: min(w - 6, max(6, x)), y: 4)
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 16)
+                    // next-task chips to intercept
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(Array(pending.prefix(6).enumerated()), id: \.offset) { idx, task in
+                                let crosses = (interceptIdx ?? Int.max) == idx + 1
+                                Text(task.title)
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(crosses ? Color.white : RTColor.primaryText)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 5)
+                                    .background(crosses ? tone : tone.opacity(0.12))
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+                }
+            }
+            Text(hit
+                 ? "first queue step that reaches Optimal · \(sourceLabel)"
+                 : "queue never reaches Optimal — lift more tasks · \(sourceLabel)")
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbIntercept)
+        .accessibilityLabel("Climb intercept \(stepLabel) \(readyLabel)")
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
