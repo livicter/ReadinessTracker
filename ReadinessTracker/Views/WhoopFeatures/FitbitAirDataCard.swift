@@ -5315,7 +5315,9 @@ struct FitbitAirDataCard: View {
                 Text("\(filledCount)/\(chips.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)
-                    .accessibilityIdentifier(SurfaceID.fitbitAirGapsProgress)
+                    .accessibilityIdentifier(source == .appleWatch
+                                            ? SurfaceID.healthAirGapsProgress
+                                            : SurfaceID.fitbitAirGapsProgress)
                     .accessibilityLabel("Air gaps filled \(filledCount) of \(chips.count)")
                 if !gapChips.isEmpty {
                     // Honest #550: cycle focus to next unfilled air field
@@ -5337,7 +5339,9 @@ struct FitbitAirDataCard: View {
                             .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityIdentifier(SurfaceID.fitbitAirGapsFill)
+                    .accessibilityIdentifier(source == .appleWatch
+                                            ? SurfaceID.healthAirGapsFill
+                                            : SurfaceID.fitbitAirGapsFill)
                     .accessibilityLabel("Fill next air gap")
                 }
                 Text(source == .fitbit ? "Google Health" : "HealthKit")
@@ -5386,12 +5390,15 @@ struct FitbitAirDataCard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .accessibilityIdentifier(SurfaceID.fitbitAirDataGaps)
-        .accessibilityLabel("Air gaps")
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDataGaps
+                                 : SurfaceID.fitbitAirDataGaps)
+        .accessibilityLabel(source == .appleWatch ? "Health air gaps" : "Air gaps")
     }
 
 
     /// Honest #554: interactive category fill gauges under air gaps (Google Health / Fitbit parity).
+    /// Honest #637: HealthKit / appleWatch uses health.air.gaps.categories SID.
     private var gapsCategoryGauges: some View {
         HStack(spacing: 8) {
             ForEach(AirDensityCategory.allCases) { cat in
@@ -5454,8 +5461,12 @@ struct FitbitAirDataCard: View {
                 .accessibilityLabel("\(cat.title) air fill \(filled) of \(total)")
             }
         }
-        .accessibilityIdentifier(SurfaceID.fitbitAirGapsCategories)
-        .accessibilityLabel("Air gaps category fill")
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirGapsCategories
+                                 : SurfaceID.fitbitAirGapsCategories)
+        .accessibilityLabel(source == .appleWatch
+                            ? "Health air gaps category fill"
+                            : "Air gaps category fill")
     }
 
     private var focusedGapHint: String {
@@ -5464,6 +5475,33 @@ struct FitbitAirDataCard: View {
             return source == .fitbit
                 ? "Tap a gap · wear Fitbit overnight, open Fitbit app, then pull-to-refresh Google Health."
                 : "Tap a gap · grant Health access or switch source to Fitbit for Google Health sync."
+        }
+        // Honest #637: HealthKit-aware copy when source == .appleWatch (Google Health–style guidance).
+        if source == .appleWatch {
+            switch gap.id {
+            case "sleep":
+                return "Sleep empty · wear Apple Watch overnight; Sleep in Health → Browse → Sleep."
+            case "hrv":
+                return "HRV empty · continuous Watch wear ≥4h overnight fills HRV (SDNN) in Health."
+            case "rhr":
+                return "RHR empty · resting heart needs quiet wake window; check Health → Heart."
+            case "spo2":
+                return "SpO₂ empty · enable Blood Oxygen in Watch settings; sync to Health."
+            case "resp":
+                return "Resp empty · respiratory rate lands with Watch sleep tracking in Health."
+            case "skin":
+                return "Skin empty · wrist temp needs Watch Ultra/Series overnight sleep focus."
+            case "steps":
+                return "Steps empty · walk with iPhone or Watch; pull-to-refresh Health Air."
+            case "kcal", "amin", "basal":
+                return "\(gap.label) empty · Move ring + basal energy sync from Watch/HealthKit."
+            case "dist":
+                return "Distance empty · outdoor walk/run with Watch GPS or iPhone co-presence."
+            case "floors":
+                return "Floors empty · climb stairs; Watch altimeter writes Flights Climbed to Health."
+            default:
+                return "\(gap.label) · grant Health access or wear Watch, then refresh."
+            }
         }
         switch gap.id {
         case "sleep":

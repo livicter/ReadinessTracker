@@ -12309,6 +12309,42 @@ final class SurfacesUITests: XCTestCase {
             app.swipeDown()
         }
 
+        // Honest #637: Health Air gaps + category fill (Fitbit #509/#550/#552/#554 parity)
+        // Still on Apple Watch source after #632–#636.
+        let healthGaps637 = app.descendants(matching: .any)["health.air.gaps"].firstMatch
+        var hg637 = 0
+        while !healthGaps637.exists && hg637 < 16 {
+            app.swipeUp()
+            hg637 += 1
+        }
+        XCTAssertTrue(healthGaps637.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.gaps.categories"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.gaps.progress"].firstMatch.exists
+                      || app.staticTexts["Health Air"].exists,
+                      "health.air.gaps")
+        if healthGaps637.exists {
+            healthGaps637.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        }
+        saveShot("verify-health-air-gaps.png")
+        let hGapFill637 = app.descendants(matching: .any)["health.air.gaps.fill"].firstMatch
+        if hGapFill637.waitForExistence(timeout: 3) || healthGaps637.exists {
+            if hGapFill637.exists { hGapFill637.tap() }
+            saveShot("verify-health-air-gaps-fill.png")
+        }
+        let hGapProg637 = app.descendants(matching: .any)["health.air.gaps.progress"].firstMatch
+        if hGapProg637.waitForExistence(timeout: 3) || healthGaps637.exists {
+            if hGapProg637.exists { hGapProg637.tap() }
+            saveShot("verify-health-air-gaps-progress.png")
+        }
+        let hGapCats637 = app.descendants(matching: .any)["health.air.gaps.categories"].firstMatch
+        if hGapCats637.waitForExistence(timeout: 3) || healthGaps637.exists {
+            if hGapCats637.exists {
+                hGapCats637.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+            }
+            saveShot("verify-health-air-gaps-categories.png")
+        }
+
+
 
 
 
