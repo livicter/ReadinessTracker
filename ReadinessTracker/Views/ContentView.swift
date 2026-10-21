@@ -327,6 +327,13 @@ struct SettingsView: View {
                                 .font(.caption2)
                                 .foregroundStyle(RTColor.tertiaryText)
                         }
+                        // Honest #638: Health Air density ring (Fitbit #625 Settings parity)
+                        if healthKit.isAuthorized {
+                            FitbitSettingsAirStatus(
+                                data: DataStore.shared.latest(for: .appleWatch),
+                                source: .appleWatch
+                            )
+                        }
                         Button(healthKit.isAuthorized ? "Reconnect" : "Connect") {
                             Haptic.press()
                             Task {

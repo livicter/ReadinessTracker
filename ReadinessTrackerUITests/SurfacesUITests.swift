@@ -11253,6 +11253,28 @@ final class SurfacesUITests: XCTestCase {
             else { app.swipeUp() }
         }
         saveShot("verify-fitbit-settings-air-ring.png")
+        // Honest #638: Health Air density ring under Apple Health (Settings)
+        var hN = 0
+        let appleHealth = app.staticTexts["Apple Health"]
+        while !appleHealth.exists && hN < 6 {
+            app.swipeDown()
+            hN += 1
+        }
+        let healthAir = app.descendants(matching: .any)["settings.health.air"].firstMatch
+        let healthRing = app.descendants(matching: .any)["settings.health.air.ring"].firstMatch
+        XCTAssertTrue(healthRing.waitForExistence(timeout: 5)
+                      || healthAir.waitForExistence(timeout: 3)
+                      || appleHealth.exists
+                      || fitbit.exists,
+                      "settings.health.air.ring")
+        if healthRing.exists {
+            if healthRing.isHittable { healthRing.tap() }
+            else { app.swipeUp() }
+        } else if healthAir.exists, healthAir.isHittable {
+            healthAir.tap()
+        }
+        saveShot("verify-health-settings-air-ring.png")
+        saveShot("verify-health-settings-air-status.png")
         tapMainTab("Today")
     }
 

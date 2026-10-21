@@ -1,0 +1,9 @@
+Honest #638 — Settings Health Air density ring
+tip_base: fa3038a (Honest #637)
+branch: honest-638-settings-health-air-ring
+command: xcodebuild test-without-building … -derivedDataPath /tmp/RT-DD638 -only-testing:…/testFitbitSettingsAirStatusSurface
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~52
+pngs: .audit/verify-health-settings-air-ring.png .audit/verify-health-settings-air-status.png
+SIDs: settings.health.air{,.ring,.chips}
+when_hkt: 2026-10-22 03:57 HKT
