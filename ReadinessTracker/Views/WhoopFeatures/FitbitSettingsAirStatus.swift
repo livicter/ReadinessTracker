@@ -2,10 +2,16 @@ import SwiftUI
 
 /// Honest #501: Settings Fitbit air-status density from latest Google Health day.
 /// Honest #625: interactive density ring + Sleep/Vitals/Move fill (Fitbit + HealthKit UX graphics).
+/// Honest #638: HealthKit / appleWatch parity — pink accent + `settings.health.air*` SIDs.
 struct FitbitSettingsAirStatus: View {
     let data: DailyHealthData?
+    var source: DataSource = .fitbit
 
-    private let accent = Color(hex: "00B0B9")
+    @State private var focusedCategory: AirDensityCategory?
+
+    private var accent: Color {
+        source == .appleWatch ? Color(hex: "FF2D55") : Color(hex: "00B0B9")
+    }
 
     private var chips: [AirChip] {
         guard let data else { return [] }
@@ -16,6 +22,16 @@ struct FitbitSettingsAirStatus: View {
     private var density: Double {
         guard !chips.isEmpty else { return 0 }
         return Double(filled) / Double(chips.count)
+    }
+
+    private var brandTitle: String {
+        source == .appleWatch ? "Health air · HealthKit fields" : "Fitbit air · Health fields"
+    }
+
+    private var emptyHint: String {
+        source == .appleWatch
+            ? "Reconnect Apple Health or refresh after Watch overnight wear."
+            : "Refresh after Google Health sync to populate air chips."
     }
 
     var body: some View {
@@ -31,26 +47,34 @@ struct FitbitSettingsAirStatus: View {
             }
 
             if chips.isEmpty {
-                Text("Refresh after Google Health sync to populate air chips.")
+                Text(emptyHint)
                     .font(.caption2)
                     .foregroundStyle(RTColor.tertiaryText)
             } else {
                 HStack(alignment: .center, spacing: 14) {
                     densityRing
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Fitbit air · Health fields")
+                        Text(brandTitle)
                             .font(.caption2.weight(.semibold))
                             .foregroundStyle(RTColor.secondaryText)
                         ForEach(AirDensityCategory.allCases) { cat in
-                            categoryRow(cat)
+                            Button {
+                                Haptic.selectionChanged()
+                                focusedCategory = focusedCategory == cat ? nil : cat
+                            } label: {
+                                categoryRow(cat)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
-                .accessibilityIdentifier(SurfaceID.settingsFitbitAirRing)
+                .accessibilityIdentifier(source == .appleWatch
+                                        ? SurfaceID.settingsHealthAirRing
+                                        : SurfaceID.settingsFitbitAirRing)
                 .accessibilityLabel("Air density ring \(Int((density * 100).rounded())) percent")
 
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 64), spacing: 6)], spacing: 6) {
-                    ForEach(chips.prefix(8)) { chip in
+                    ForEach(visibleChips) { chip in
                         HStack(spacing: 4) {
                             Circle()
                                 .fill(chip.filled ? RTColor.optimal : RTColor.tertiaryText.opacity(0.35))
@@ -65,16 +89,30 @@ struct FitbitSettingsAirStatus: View {
                         .frame(maxWidth: .infinity)
                         .background(RTColor.surfaceHighlight.opacity(chip.filled ? 1 : 0.5))
                         .clipShape(Capsule())
+                        .opacity(chipOpacity(chip))
                     }
                 }
-                .accessibilityIdentifier(SurfaceID.settingsFitbitAirChips)
+                .accessibilityIdentifier(source == .appleWatch
+                                        ? SurfaceID.settingsHealthAirChips
+                                        : SurfaceID.settingsFitbitAirChips)
             }
         }
         .padding(10)
         .background(accent.opacity(0.08))
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .accessibilityIdentifier(SurfaceID.settingsFitbitAirStatus)
-        .accessibilityLabel("Fitbit air status")
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.settingsHealthAirStatus
+                                 : SurfaceID.settingsFitbitAirStatus)
+        .accessibilityLabel(source == .appleWatch ? "Health air status" : "Fitbit air status")
+    }
+
+    private var visibleChips: [AirChip] {
+        Array(chips.prefix(8))
+    }
+
+    private func chipOpacity(_ chip: AirChip) -> Double {
+        guard let focus = focusedCategory else { return 1 }
+        return focus.chipIDs.contains(chip.id) ? 1 : 0.35
     }
 
     private var densityRing: some View {
@@ -110,25 +148,36 @@ struct FitbitSettingsAirStatus: View {
         let ratio = cat.fillRatio(in: chips)
         let n = cat.filledCount(in: chips)
         let total = cat.chipIDs.count
+        let focused = focusedCategory == cat
         return HStack(spacing: 6) {
             Text(cat.shortTitle)
                 .font(.system(size: 9, weight: .bold).monospacedDigit())
-                .foregroundStyle(cat.color)
+                .foregroundStyle(focused ? Color.white : cat.color)
                 .frame(width: 28, alignment: .leading)
             GeometryReader { geo in
                 let w = max(geo.size.width, 1)
                 ZStack(alignment: .leading) {
-                    Capsule().fill(RTColor.tertiaryText.opacity(0.12))
+                    Capsule().fill(RTColor.tertiaryText.opacity(focused ? 0.28 : 0.12))
                     Capsule()
-                        .fill(LinearGradient(colors: [cat.color.opacity(0.55), cat.color], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(
+                            colors: focused
+                                ? [Color.white.opacity(0.85), Color.white]
+                                : [cat.color.opacity(0.55), cat.color],
+                            startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(2, w * CGFloat(ratio)))
                 }
             }
             .frame(height: 7)
             Text("\(n)/\(total)")
                 .font(.system(size: 9, weight: .semibold).monospacedDigit())
-                .foregroundStyle(RTColor.tertiaryText)
+                .foregroundStyle(focused ? Color.white.opacity(0.9) : RTColor.tertiaryText)
                 .frame(width: 28, alignment: .trailing)
         }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 3)
+        .background(
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(focused ? cat.color : Color.clear)
+        )
     }
 }
