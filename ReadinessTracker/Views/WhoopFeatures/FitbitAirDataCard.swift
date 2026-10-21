@@ -34,6 +34,8 @@ struct FitbitAirDataCard: View {
     @State private var showDensityDetailSheet: Bool = false
     /// Honest #632: Health Air Today scrub index (Apple Health glance parity with #630 sheet).
     @State private var healthScrubIndex: Int? = nil
+    /// Honest #633: Health Air glance category overlay toggles (#631 sheet parity).
+    @State private var healthVisibleCats: Set<AirDensityCategory> = Set(AirDensityCategory.allCases)
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -302,6 +304,8 @@ struct FitbitAirDataCard: View {
                 .accessibilityIdentifier(SurfaceID.healthAirDensityGainPain)
                 .accessibilityLabel("Health Gain Pain \(verb) \(disp)")
             }
+            // Honest #633: Sleep / Vitals / Move density overlays (#631 sheet parity, on-card)
+            healthCategoryOverlay(days: days, active: active, healthAccent: healthAccent)
         }
         .padding(12)
         .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -311,6 +315,143 @@ struct FitbitAirDataCard: View {
         )
         .accessibilityIdentifier(SurfaceID.healthAirDensityGlance)
         .accessibilityLabel("Health Air density glance")
+    }
+
+    /// Honest #633: Health Air category density overlays (Sleep / Vitals / Move).
+    private func healthCategoryOverlay(days: [DailyHealthData], active: Int, healthAccent: Color) -> some View {
+        let catSeries: [(cat: AirDensityCategory, points: [(date: Date, density: Double)])] = AirDensityCategory.allCases.map { cat in
+            let pts = days.map { day -> (date: Date, density: Double) in
+                let chips = AirChip.all(from: day)
+                return (date: day.date, density: cat.fillRatio(in: chips))
+            }
+            return (cat: cat, points: pts)
+        }
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Category density")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("Health overlay")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(healthAccent)
+            }
+            HStack(spacing: 8) {
+                ForEach(AirDensityCategory.allCases) { cat in
+                    let on = healthVisibleCats.contains(cat)
+                    Button {
+                        Haptic.selectionChanged()
+                        if on {
+                            if healthVisibleCats.count > 1 { healthVisibleCats.remove(cat) }
+                        } else {
+                            healthVisibleCats.insert(cat)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Circle().fill(cat.color).frame(width: 8, height: 8)
+                            Text(cat.title)
+                                .font(.caption.weight(.semibold))
+                        }
+                        .foregroundStyle(on ? RTColor.primaryText : RTColor.tertiaryText)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(on ? cat.color.opacity(0.14) : RTColor.surfaceHighlight.opacity(0.5))
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule().stroke(on ? cat.color.opacity(0.45) : Color.clear, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(cat.title) Health overlay \(on ? "on" : "off")")
+                }
+            }
+            if days.count >= 2 {
+                Chart {
+                    ForEach(catSeries, id: \.cat.id) { item in
+                        if healthVisibleCats.contains(item.cat) {
+                            ForEach(Array(item.points.enumerated()), id: \.offset) { i, pt in
+                                LineMark(
+                                    x: .value("Day", pt.date),
+                                    y: .value("Density", pt.density),
+                                    series: .value("Cat", item.cat.title)
+                                )
+                                .foregroundStyle(item.cat.color)
+                                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                                if i == active {
+                                    PointMark(
+                                        x: .value("Day", pt.date),
+                                        y: .value("Density", pt.density)
+                                    )
+                                    .foregroundStyle(item.cat.color)
+                                    .symbolSize(48)
+                                }
+                            }
+                        }
+                    }
+                }
+                .chartXAxis(.hidden)
+                .chartYScale(domain: 0...1)
+                .chartYAxis {
+                    AxisMarks(values: [0, 0.5, 1]) { v in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let d = v.as(Double.self) {
+                                Text("\(Int(d * 100))%")
+                            }
+                        }
+                    }
+                }
+                .frame(height: 110)
+                .chartOverlay { _ in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        let count = days.count
+                                        guard count >= 1 else { return }
+                                        let width = max(geo.size.width, 1)
+                                        let frac = min(max(value.location.x / width, 0), 1)
+                                        let best = count == 1 ? 0 : min(count - 1, max(0, Int((frac * CGFloat(count - 1)).rounded())))
+                                        if healthScrubIndex != best {
+                                            healthScrubIndex = best
+                                            Haptic.selectionChanged()
+                                        }
+                                    }
+                            )
+                    }
+                }
+                if days.indices.contains(active) {
+                    HStack(spacing: 8) {
+                        ForEach(AirDensityCategory.allCases) { cat in
+                            if healthVisibleCats.contains(cat) {
+                                let chips = AirChip.all(from: days[active])
+                                let r = cat.fillRatio(in: chips)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(cat.shortTitle)
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(cat.color)
+                                    Text("\(Int((r * 100).rounded()))%")
+                                        .font(.caption.weight(.bold).monospacedDigit())
+                                        .foregroundStyle(RTColor.primaryText)
+                                }
+                                .padding(8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(cat.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need more HealthKit history for category overlays")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .accessibilityIdentifier(SurfaceID.healthAirDensityCats)
+        .accessibilityLabel("Health category density overlays")
     }
 
     private func healthWellStat(title: String, value: String, color: Color) -> some View {
