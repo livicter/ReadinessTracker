@@ -1,0 +1,11 @@
+Honest #643 — Health Air density Kappa (Fitbit #627 parity for appleWatch/HealthKit)
+tip_base: d7330e2 (Honest #642)
+branch: honest-643-health-air-kappa
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD643 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1709
+xcresult: /tmp/RT-DD643-result.xcresult
+pngs: .audit/verify-health-air-density-kappa.png
+SID: health.air.density.kappa
+when_hkt: 2026-10-22 07:30 HKT
+EXIT:0
