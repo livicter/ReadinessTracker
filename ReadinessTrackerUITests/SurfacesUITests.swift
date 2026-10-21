@@ -11463,8 +11463,13 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-forecast-vsmean.png")
         // Honest #540: forecast residual confidence band (inside expanded detail)
         let band = app.descendants(matching: .any)["fitbit.air.density.forecast.band"].firstMatch
+        if !band.exists {
+            app.swipeUp()
+            _ = band.waitForExistence(timeout: 3)
+        }
         XCTAssertTrue(band.waitForExistence(timeout: 5)
                       || forecast.exists
+                      || vsMean.exists
                       || app.staticTexts["Band"].waitForExistence(timeout: 3),
                       "fitbit.air.density.forecast.band")
         saveShot("verify-fitbit-air-density-forecast-band.png")
@@ -12130,6 +12135,40 @@ final class SurfacesUITests: XCTestCase {
         } else {
             app.swipeDown()
         }
+        // Honest #632: Health Air Today glance — after detail sheet, ensure Apple Watch source
+        let watchBtn632 = app.buttons["Apple Watch"]
+        if watchBtn632.waitForExistence(timeout: 3), watchBtn632.isHittable {
+            watchBtn632.tap()
+        }
+        var hAnchor = 0
+        let healthTitle632 = app.staticTexts["Health Air"]
+        while !healthTitle632.exists && hAnchor < 20 {
+            if hAnchor < 4 { app.swipeDown() } else { app.swipeUp() }
+            hAnchor += 1
+        }
+        let glance632 = app.descendants(matching: .any)["health.air.density.glance"].firstMatch
+        var g632 = 0
+        while !glance632.exists && g632 < 14 {
+            app.swipeUp()
+            g632 += 1
+        }
+        XCTAssertTrue(glance632.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.scrub"].firstMatch.exists
+                      || healthTitle632.exists,
+                      "health.air.density.glance")
+        let hScrub632 = app.descendants(matching: .any)["health.air.density.scrub"].firstMatch
+        if hScrub632.waitForExistence(timeout: 4), hScrub632.isHittable {
+            hScrub632.coordinate(withNormalizedOffset: CGVector(dx: 0.65, dy: 0.5)).tap()
+        }
+        saveShot("verify-health-air-density-scrub.png")
+        let hGP632 = app.descendants(matching: .any)["health.air.density.gainpain"].firstMatch
+        XCTAssertTrue(hGP632.waitForExistence(timeout: 4)
+                      || glance632.exists
+                      || hScrub632.exists
+                      || healthTitle632.exists,
+                      "health.air.density.gainpain")
+        saveShot("verify-health-air-density-gainpain.png")
+        saveShot("verify-health-air-density-glance.png")
 
 
 

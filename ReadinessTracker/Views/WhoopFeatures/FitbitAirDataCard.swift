@@ -32,6 +32,8 @@ struct FitbitAirDataCard: View {
     @State private var showDensityStreakDetail: Bool = false
     /// Honest #630: Google Health–style density detail sheet.
     @State private var showDensityDetailSheet: Bool = false
+    /// Honest #632: Health Air Today scrub index (Apple Health glance parity with #630 sheet).
+    @State private var healthScrubIndex: Int? = nil
 
     private let accent = Color(hex: "00B0B9")  // Fitbit teal
 
@@ -107,6 +109,11 @@ struct FitbitAirDataCard: View {
                 densityKappaMeter
                 densityGainPainMeter
                 densityTailMeter
+                // Honest #632: Apple Health / HealthKit Today glance — scrub + Gain/Pain (#630 sheet parity)
+                // Placed after forecast/density meters so early UITest scroll to forecast.band stays stable.
+                if source == .appleWatch {
+                    healthAirDensityGlance
+                }
                 if let selectedChip {
                     selectedDetail(selectedChip)
                 }
@@ -124,6 +131,202 @@ struct FitbitAirDataCard: View {
             FitbitAirDensityDetailSheet(history: history, source: source)
         }
     }
+
+
+    /// Honest #632: Health Air Today — Google Health–style density scrub + Gain/Pain wells
+    /// (parity with Fitbit #630 detail sheet, on-card for HealthKit / Apple Watch source).
+    private var healthAirDensityGlance: some View {
+        let healthAccent = Color(hex: "FF2D55")  // Apple Health pink
+        let days = Array(history.suffix(14))
+        let densSeries: [(date: Date, density: Double)] = days.map { day in
+            let chips = AirChip.all(from: day)
+            let d: Double
+            if chips.isEmpty { d = 0 }
+            else { d = Double(chips.filter(\.filled).count) / Double(chips.count) }
+            return (date: day.date, density: d)
+        }
+        let active = healthScrubIndex ?? max(0, densSeries.count - 1)
+        let dens = densSeries.map(\.density)
+        // Gain/Pain from day deltas
+        var up = 0.0
+        var down = 0.0
+        var deltas: [Double] = []
+        if dens.count >= 2 {
+            for i in 1..<dens.count {
+                let dlt = dens[i] - dens[i - 1]
+                deltas.append(dlt)
+                if dlt >= 0 { up += dlt } else { down += -dlt }
+            }
+        }
+        let gp = down < 1e-6 ? (up > 0 ? 4.0 : 0.0) : up / down
+        let verb: String
+        let tone: Color
+        if gp >= 2.0 { verb = "Bull"; tone = RTColor.optimal }
+        else if gp >= 1.0 { verb = "Net+"; tone = RTColor.good }
+        else if gp >= 0.5 { verb = "Mixed"; tone = RTColor.caution }
+        else { verb = "Bleed"; tone = RTColor.warning }
+        let disp = String(format: "%.2f", gp)
+        let maxAbs = max(deltas.map { abs($0) }.max() ?? 0.01, 0.01)
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Health density")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("Apple Health")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(healthAccent)
+                if densSeries.indices.contains(active) {
+                    Text("\(Int((densSeries[active].density * 100).rounded()))%")
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(RTColor.primaryText)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(healthAccent.opacity(0.12))
+                        .clipShape(Capsule())
+                }
+            }
+            if densSeries.count >= 2 {
+                Chart {
+                    ForEach(Array(densSeries.enumerated()), id: \.offset) { i, pt in
+                        AreaMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(healthAccent.opacity(0.14))
+                        LineMark(
+                            x: .value("Day", pt.date),
+                            y: .value("Density", pt.density)
+                        )
+                        .foregroundStyle(healthAccent)
+                        .lineStyle(StrokeStyle(lineWidth: 2.25, lineCap: .round))
+                        if i == active {
+                            RuleMark(x: .value("Scrub", pt.date))
+                                .foregroundStyle(RTColor.secondaryText.opacity(0.4))
+                                .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 2]))
+                            PointMark(
+                                x: .value("Day", pt.date),
+                                y: .value("Density", pt.density)
+                            )
+                            .foregroundStyle(healthAccent)
+                            .symbolSize(64)
+                        }
+                    }
+                }
+                .chartXAxis(.hidden)
+                .chartYScale(domain: 0...1)
+                .chartYAxis {
+                    AxisMarks(values: [0, 0.5, 1]) { v in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let d = v.as(Double.self) {
+                                Text("\(Int(d * 100))%")
+                            }
+                        }
+                    }
+                }
+                .frame(height: 110)
+                .chartOverlay { _ in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        let count = densSeries.count
+                                        guard count >= 1 else { return }
+                                        let width = max(geo.size.width, 1)
+                                        let frac = min(max(value.location.x / width, 0), 1)
+                                        let best = count == 1 ? 0 : min(count - 1, max(0, Int((frac * CGFloat(count - 1)).rounded())))
+                                        if healthScrubIndex != best {
+                                            healthScrubIndex = best
+                                            Haptic.selectionChanged()
+                                        }
+                                    }
+                            )
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.healthAirDensityScrub)
+                .accessibilityLabel("Health density scrub")
+            } else {
+                Text("Need more HealthKit history for density scrub")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+            // Gain/Pain wells
+            if deltas.count >= 4 {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Gain / Pain")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("\(verb) \(disp)")
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(tone.opacity(0.12))
+                            .clipShape(Capsule())
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let h = max(geo.size.height, 1)
+                        let n = max(deltas.count, 1)
+                        let bw = w / Double(n)
+                        let midY = h / 2
+                        Path { p in
+                            p.move(to: CGPoint(x: 0, y: midY))
+                            p.addLine(to: CGPoint(x: w, y: midY))
+                        }
+                        .stroke(RTColor.tertiaryText.opacity(0.35), lineWidth: 1)
+                        ForEach(Array(deltas.enumerated()), id: \.offset) { i, dlt in
+                            let bh = (abs(dlt) / maxAbs) * (h * 0.45)
+                            let x = bw * (Double(i) + 0.5)
+                            let y = dlt >= 0 ? midY - bh : midY
+                            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                                .fill(dlt >= 0 ? RTColor.optimal.opacity(0.85) : RTColor.warning.opacity(0.85))
+                                .frame(width: max(3, bw * 0.7), height: max(2, bh))
+                                .position(x: x, y: y + bh / 2)
+                        }
+                    }
+                    .frame(height: 72)
+                    HStack(spacing: 8) {
+                        healthWellStat(title: "Σ Gain", value: String(format: "+%.2f", up), color: RTColor.optimal)
+                        healthWellStat(title: "Σ Pain", value: String(format: "−%.2f", down), color: RTColor.warning)
+                        healthWellStat(title: "Ratio", value: disp, color: tone)
+                    }
+                }
+                .accessibilityIdentifier(SurfaceID.healthAirDensityGainPain)
+                .accessibilityLabel("Health Gain Pain \(verb) \(disp)")
+            }
+        }
+        .padding(12)
+        .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(healthAccent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.healthAirDensityGlance)
+        .accessibilityLabel("Health Air density glance")
+    }
+
+    private func healthWellStat(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(RTColor.tertiaryText)
+            Text(value)
+                .font(.caption.weight(.bold).monospacedDigit())
+                .foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(8)
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
 
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
