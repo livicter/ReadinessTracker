@@ -5843,6 +5843,8 @@ struct FitbitAirDensityDetailSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var period: Int = 14
     @State private var scrubIndex: Int? = nil
+    /// Honest #631: which category overlays are visible on the scrub chart.
+    @State private var visibleCats: Set<AirDensityCategory> = Set(AirDensityCategory.allCases)
 
     private let accent = Color(hex: "00B0B9")
 
@@ -5870,6 +5872,7 @@ struct FitbitAirDensityDetailSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     periodPicker
                     scrubHero
+                    categoryOverlay
                     gainPainWells
                 }
                 .padding(16)
@@ -6001,6 +6004,142 @@ struct FitbitAirDensityDetailSheet: View {
             scrubIndex = best
             Haptic.selectionChanged()
         }
+    }
+
+    /// Honest #631: Sleep / Vitals / Move density overlays (Google Health multi-series).
+    private var categoryOverlay: some View {
+        let catSeries: [(cat: AirDensityCategory, points: [(date: Date, density: Double)])] = AirDensityCategory.allCases.map { cat in
+            let pts = days.map { day -> (date: Date, density: Double) in
+                let chips = AirChip.all(from: day)
+                return (date: day.date, density: cat.fillRatio(in: chips))
+            }
+            return (cat: cat, points: pts)
+        }
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Category density")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(RTColor.secondaryText)
+                Spacer()
+                Text("GH overlay")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(accent)
+            }
+            HStack(spacing: 8) {
+                ForEach(AirDensityCategory.allCases) { cat in
+                    let on = visibleCats.contains(cat)
+                    Button {
+                        Haptic.selectionChanged()
+                        if on {
+                            if visibleCats.count > 1 { visibleCats.remove(cat) }
+                        } else {
+                            visibleCats.insert(cat)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Circle().fill(cat.color).frame(width: 8, height: 8)
+                            Text(cat.title)
+                                .font(.caption.weight(.semibold))
+                        }
+                        .foregroundStyle(on ? RTColor.primaryText : RTColor.tertiaryText)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(on ? cat.color.opacity(0.14) : RTColor.surfaceHighlight.opacity(0.5))
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule().stroke(on ? cat.color.opacity(0.45) : Color.clear, lineWidth: 1)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(cat.title) overlay \(on ? "on" : "off")")
+                }
+            }
+            if days.count >= 2 {
+                Chart {
+                    ForEach(catSeries, id: \.cat.id) { item in
+                        if visibleCats.contains(item.cat) {
+                            ForEach(Array(item.points.enumerated()), id: \.offset) { i, pt in
+                                LineMark(
+                                    x: .value("Day", pt.date),
+                                    y: .value("Density", pt.density),
+                                    series: .value("Cat", item.cat.title)
+                                )
+                                .foregroundStyle(item.cat.color)
+                                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                                if i == activeIndex {
+                                    PointMark(
+                                        x: .value("Day", pt.date),
+                                        y: .value("Density", pt.density)
+                                    )
+                                    .foregroundStyle(item.cat.color)
+                                    .symbolSize(48)
+                                }
+                            }
+                        }
+                    }
+                }
+                .chartXAxis(.hidden)
+                .chartYScale(domain: 0...1)
+                .chartYAxis {
+                    AxisMarks(values: [0, 0.5, 1]) { v in
+                        AxisGridLine()
+                        AxisValueLabel {
+                            if let d = v.as(Double.self) {
+                                Text("\(Int(d * 100))%")
+                            }
+                        }
+                    }
+                }
+                .frame(height: 120)
+                .chartOverlay { proxy in
+                    GeometryReader { geo in
+                        Rectangle()
+                            .fill(Color.clear)
+                            .contentShape(Rectangle())
+                            .gesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { value in
+                                        selectScrub(at: value.location, proxy: proxy, geo: geo, count: densSeries.count)
+                                    }
+                            )
+                    }
+                }
+                // Scrub callout for visible cats
+                if densSeries.indices.contains(activeIndex) {
+                    HStack(spacing: 8) {
+                        ForEach(AirDensityCategory.allCases) { cat in
+                            if visibleCats.contains(cat) {
+                                let chips = AirChip.all(from: days[activeIndex])
+                                let r = cat.fillRatio(in: chips)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(cat.shortTitle)
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(cat.color)
+                                    Text("\(Int((r * 100).rounded()))%")
+                                        .font(.caption.weight(.bold).monospacedDigit())
+                                        .foregroundStyle(RTColor.primaryText)
+                                }
+                                .padding(8)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(cat.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text("Need more history for category overlays")
+                    .font(.caption)
+                    .foregroundStyle(RTColor.tertiaryText)
+            }
+        }
+        .padding(12)
+        .background(RTColor.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(accent.opacity(0.22), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDetailCats)
+        .accessibilityLabel("Category density overlays")
     }
 
     /// Richer Gain/Pain wells — day wells + cumulative Σ↑ / Σ↓ (builds on #628).
