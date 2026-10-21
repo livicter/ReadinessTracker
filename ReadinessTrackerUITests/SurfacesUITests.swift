@@ -12047,6 +12047,23 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-kappa.png")
 
+        // Honest #628: density Gain/Pain
+        let densGP = app.descendants(matching: .any)["fitbit.air.density.gainpain"].firstMatch
+        XCTAssertTrue(densGP.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["fitbit.air.density.kappa"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+                      "fitbit.air.density.gainpain")
+        if densGP.exists {
+            if densGP.isHittable { densGP.tap() }
+            else {
+                app.swipeUp()
+                if densGP.waitForExistence(timeout: 2), densGP.isHittable {
+                    densGP.tap()
+                }
+            }
+        }
+        saveShot("verify-fitbit-air-density-gainpain.png")
+
 
 
 
