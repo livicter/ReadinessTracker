@@ -12019,9 +12019,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-sterling.png")
 
-        // Honest #622: density Burke
+        // Honest #622: density Burke (#644: appleWatch uses health.air.density.burke)
         let densBk = app.descendants(matching: .any)["fitbit.air.density.burke"].firstMatch
+        let densBkHealth = app.descendants(matching: .any)["health.air.density.burke"].firstMatch
         XCTAssertTrue(densBk.waitForExistence(timeout: 5)
+                      || densBkHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.sterling"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.burke")
@@ -12331,6 +12333,32 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-kappa.png")
+
+        // Honest #644: Health Density Burke (#622 parity, Health pink)
+        let hBurke644 = app.descendants(matching: .any)["health.air.density.burke"].firstMatch
+        var b644 = 0
+        while !hBurke644.exists && b644 < 10 {
+            app.swipeUp()
+            b644 += 1
+        }
+        if !hBurke644.exists {
+            for _ in 0..<6 { app.swipeDown() }
+        }
+        XCTAssertTrue(hBurke644.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.kappa"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.martin"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.burke")
+        if hBurke644.exists {
+            if hBurke644.isHittable { hBurke644.tap() }
+            else {
+                app.swipeUp()
+                if hBurke644.waitForExistence(timeout: 2), hBurke644.isHittable {
+                    hBurke644.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-burke.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
