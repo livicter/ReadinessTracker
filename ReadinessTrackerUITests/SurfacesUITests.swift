@@ -11917,9 +11917,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #610: density Sharpe
         let densSh = app.descendants(matching: .any)["fitbit.air.density.sharpe"].firstMatch
-        XCTAssertTrue(densSh.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.rebound"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densShHealth = app.descendants(matching: .any)["health.air.density.sharpe"].firstMatch
+        XCTAssertTrue(densSh.waitForExistence(timeout: 6) || densShHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.sharpe")
         if densSh.exists {
             if densSh.isHittable { densSh.tap() }
@@ -12501,6 +12500,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-sortino.png")
+
+        // Honest #650: Health Density Sharpe (#610 parity, Health pink)
+        // Sharpe renders above Sortino — prefer swipeDown after #649.
+        let hSharpe650 = app.descendants(matching: .any)["health.air.density.sharpe"].firstMatch
+        var c650 = 0
+        while !hSharpe650.exists && c650 < 10 {
+            app.swipeDown()
+            c650 += 1
+        }
+        if !hSharpe650.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hSharpe650.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.sortino"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.calmar"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.sharpe")
+        if hSharpe650.exists {
+            if hSharpe650.isHittable { hSharpe650.tap() }
+            else {
+                app.swipeUp()
+                if hSharpe650.waitForExistence(timeout: 2), hSharpe650.isHittable {
+                    hSharpe650.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-sharpe.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
