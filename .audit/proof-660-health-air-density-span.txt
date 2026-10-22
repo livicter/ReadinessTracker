@@ -1,0 +1,11 @@
+Honest #660 Health Air density Span
+tip_base: 0fd8a845c139cd6b955aa51e6f8590e6d1c1db87
+branch: honest-660-health-air-span
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD660
+resultBundle: /tmp/RT-DD660-result.xcresult
+SID: health.air.density.span
+parity: Fitbit #596 / Honest #596
+PNG: .audit/verify-health-air-density-span.png
+HKT_start: 2026-10-22 19:21
+HKT_done: 2026-10-22 20:04
