@@ -38,4 +38,4 @@
 | 18:35 | #659 Skew | start | tip_base 2f39173; branch honest-659-health-air-skew; Fitbit #574 parity |
 | 19:20 | #659 Skew | land | tip 0fd8a84 PR #687; UITest EXIT:0 /tmp/RT-DD659; SID health.air.density.skew; Eng Board Merged |
 | 19:21 | #660 Span | start | tip_base 0fd8a84; branch honest-660-health-air-span; Fitbit #596 parity |
-| 20:06 | #660 Span | land | tip_base 0fd8a84; UITest EXIT:0 /tmp/RT-DD660; SID health.air.density.span; PNG .audit/verify-health-air-density-span.png; awaiting PR |
+| 20:07 | #660 Span | land | tip ba48a0d PR #688; UITest EXIT:0 /tmp/RT-DD660; SID health.air.density.span; Eng Board Merged |
