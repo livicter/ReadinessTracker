@@ -1,0 +1,11 @@
+Honest #656 Health Air density Percentile
+tip_base: 460f2f6f5c3fc43486daf0b3503bbee9557b9b82
+branch: honest-656-health-air-percentile
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD656
+resultBundle: /tmp/RT-DD656-result.xcresult
+SID: health.air.density.percentile
+parity: Fitbit #578 (steering labeled #601)
+PNG: .audit/verify-health-air-density-percentile.png
+HKT_start: 2026-10-22 16:07
+HKT_done: 2026-10-22 16:54

@@ -11644,9 +11644,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #578: density percentile rank
         let densPct = app.descendants(matching: .any)["fitbit.air.density.percentile"].firstMatch
-        XCTAssertTrue(densPct.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.iqr"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densPctHealth = app.descendants(matching: .any)["health.air.density.percentile"].firstMatch
+        XCTAssertTrue(densPct.waitForExistence(timeout: 6) || densPctHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.percentile")
         if densPct.exists {
             if densPct.isHittable { densPct.tap() }
@@ -12657,6 +12656,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-volatility.png")
+
+        // Honest #656: Health Density percentile (#578 parity, Health pink)
+        // Percentile renders above Volatility in the density stack — prefer swipeDown after #655.
+        let hPct656 = app.descendants(matching: .any)["health.air.density.percentile"].firstMatch
+        var c656 = 0
+        while !hPct656.exists && c656 < 12 {
+            app.swipeDown()
+            c656 += 1
+        }
+        if !hPct656.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hPct656.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.volatility"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.outliers"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.percentile")
+        if hPct656.exists {
+            if hPct656.isHittable { hPct656.tap() }
+            else {
+                app.swipeUp()
+                if hPct656.waitForExistence(timeout: 2), hPct656.isHittable {
+                    hPct656.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-percentile.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
