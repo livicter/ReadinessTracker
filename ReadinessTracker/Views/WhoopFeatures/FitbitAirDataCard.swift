@@ -3051,6 +3051,8 @@ struct FitbitAirDataCard: View {
 
     /// Honest #596: density span meter — max−min air-fill over window (Fitbit/Google Health graphics).
     @ViewBuilder
+    /// Honest #596: density span meter — lo…hi band of last-14 dens (Google Health graphics).
+    /// Honest #660: appleWatch / HealthKit uses Health pink + health.air.density.span (#596 parity).
     private var densitySpanMeter: some View {
         let days = Array(history.suffix(14))
         if days.count < 5 {
@@ -3082,12 +3084,15 @@ struct FitbitAirDataCard: View {
         let spanPct = Int((span * 100).rounded())
         let loPct = Int((lo * 100).rounded())
         let hiPct = Int((hi * 100).rounded())
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density span" : "Density span"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensitySpan : SurfaceID.fitbitAirDensitySpan
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.and.right")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density span")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3108,7 +3113,7 @@ struct FitbitAirDataCard: View {
                     // filled band from lo…hi
                     Capsule()
                         .fill(LinearGradient(
-                            colors: [accent.opacity(0.45), tone],
+                            colors: [meterAccent.opacity(0.45), tone],
                             startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(4, w * span), height: 10)
                         .offset(x: w * lo)
@@ -3119,7 +3124,7 @@ struct FitbitAirDataCard: View {
                         .offset(x: w * mean - 1)
                     // lo / hi dots
                     Circle()
-                        .fill(accent)
+                        .fill(meterAccent)
                         .frame(width: 12, height: 12)
                         .overlay(Circle().stroke(Color.white.opacity(0.85), lineWidth: 1.5))
                         .offset(x: w * lo - 6)
@@ -3147,13 +3152,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySpan)
-        .accessibilityLabel("Density span \(verb) \(spanPct) percent")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(spanPct) percent")
     }
 
 
