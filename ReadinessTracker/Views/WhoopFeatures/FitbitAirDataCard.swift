@@ -3555,6 +3555,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #606: density max drawdown — peak→trough air-fill drop over window (Fitbit/GH graphics).
+    /// Honest #652: appleWatch / HealthKit uses Health pink + health.air.density.drawdown (#606 parity).
     @ViewBuilder
     private var densityDrawdownMeter: some View {
         let days = Array(history.suffix(14))
@@ -3590,12 +3591,15 @@ struct FitbitAirDataCard: View {
             verb = "Deep"; tone = RTColor.warning
         }
         let ddPct = Int((maxDD * 100).rounded())
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density drawdown" : "Density drawdown"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityDrawdown : SurfaceID.fitbitAirDensityDrawdown
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.down.right.and.arrow.up.left")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density drawdown")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3619,7 +3623,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
                 // max DD rule
@@ -3642,13 +3646,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityDrawdown)
-        .accessibilityLabel("Density drawdown \(verb) \(ddPct) percent")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(ddPct) percent")
     }
 
 
