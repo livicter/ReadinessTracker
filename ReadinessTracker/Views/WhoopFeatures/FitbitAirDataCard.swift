@@ -3365,6 +3365,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #602: density outlier days — count beyond Tukey fences (Fitbit/Google Health graphics).
+    /// Honest #654: appleWatch / HealthKit uses Health pink + health.air.density.outliers (#602 parity).
     @ViewBuilder
     private var densityOutlierMeter: some View {
         let days = Array(history.suffix(14))
@@ -3399,12 +3400,15 @@ struct FitbitAirDataCard: View {
         } else {
             verb = "Many"; tone = RTColor.warning
         }
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density outliers" : "Density outliers"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityOutliers : SurfaceID.fitbitAirDensityOutliers
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density outliers")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3425,14 +3429,14 @@ struct FitbitAirDataCard: View {
                     let yLo = h * (1 - CGFloat(max(0, min(1, lo))))
                     let yHi = h * (1 - CGFloat(max(0, min(1, hi))))
                     Rectangle()
-                        .fill(accent.opacity(0.08))
+                        .fill(meterAccent.opacity(0.08))
                         .frame(height: max(2, yLo - yHi))
                         .offset(y: yHi)
                     ForEach(Array(dens.enumerated()), id: \.offset) { i, d in
                         let x = step * CGFloat(i) + step * 0.25
                         let y = h * (1 - CGFloat(max(0, min(1, d))))
                         Circle()
-                            .fill(flags[i] ? tone : accent.opacity(0.55))
+                            .fill(flags[i] ? tone : meterAccent.opacity(0.55))
                             .frame(width: flags[i] ? 10 : 7, height: flags[i] ? 10 : 7)
                             .position(x: x + 3.5, y: y)
                     }
@@ -3450,13 +3454,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityOutliers)
-        .accessibilityLabel("Density outliers \(verb) \(count) of \(n)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(count) of \(n)")
     }
 
 
