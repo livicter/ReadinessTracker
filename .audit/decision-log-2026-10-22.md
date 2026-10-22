@@ -31,3 +31,6 @@
 | 16:55 | #656 Percentile | land | tip 01fa4ec PR #684; UITest EXIT:0 /tmp/RT-DD656; SID health.air.density.percentile; Eng Board Merged |
 | 16:55 | #657 Gini | start | tip_base 01fa4ec; branch honest-657-health-air-gini; Fitbit #598 parity |
 | 17:44 | #657 Gini | land | tip_base 01fa4ec; UITest EXIT:0 /tmp/RT-DD657; SID health.air.density.gini; PNG .audit/verify-health-air-density-gini.png; awaiting PR |
+| 17:45 | #657 Gini | land | tip 53f5989 PR #685; UITest EXIT:0 /tmp/RT-DD657; SID health.air.density.gini; Eng Board Merged |
+| 17:45 | #658 IQR | start | tip_base 53f5989; branch honest-658-health-air-iqr; Fitbit #576 parity |
+| 18:34 | #658 IQR | land | tip_base 53f5989; UITest EXIT:0 /tmp/RT-DD658; SID health.air.density.iqr; PNG .audit/verify-health-air-density-iqr.png; awaiting PR |

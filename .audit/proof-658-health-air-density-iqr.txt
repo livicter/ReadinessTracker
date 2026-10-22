@@ -1,0 +1,11 @@
+Honest #658 Health Air density IQR
+tip_base: 53f5989ac07f95c73016c3efa437331655985dcc
+branch: honest-658-health-air-iqr
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD658
+resultBundle: /tmp/RT-DD658-result.xcresult
+SID: health.air.density.iqr
+parity: Fitbit #576
+PNG: .audit/verify-health-air-density-iqr.png
+HKT_start: 2026-10-22 17:45
+HKT_done: 2026-10-22 18:34
