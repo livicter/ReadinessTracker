@@ -1,0 +1,11 @@
+Honest #646 — Health Air density Ulcer (Fitbit #618 parity for appleWatch/HealthKit)
+tip_base: ddff08040cae2f17d92d7c87fc3b630be9c92f0c (Honest #645)
+branch: honest-646-health-air-ulcer
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD646 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1839
+xcresult: /tmp/RT-DD646-result.xcresult
+pngs: .audit/verify-health-air-density-ulcer.png
+SID: health.air.density.ulcer
+when_hkt: 2026-10-22 09:29 HKT
+EXIT:0

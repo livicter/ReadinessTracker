@@ -11985,9 +11985,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-omega.png")
 
-        // Honest #618: density Ulcer
+        // Honest #618: density Ulcer (#646: appleWatch uses health.air.density.ulcer)
         let densUl = app.descendants(matching: .any)["fitbit.air.density.ulcer"].firstMatch
+        let densUlHealth = app.descendants(matching: .any)["health.air.density.ulcer"].firstMatch
         XCTAssertTrue(densUl.waitForExistence(timeout: 5)
+                      || densUlHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.omega"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.ulcer")
@@ -12388,6 +12390,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-sterling.png")
+
+        // Honest #646: Health Density Ulcer (#618 parity, Health pink)
+        // Ulcer renders above Sterling — prefer swipeDown after #645.
+        let hUlcer646 = app.descendants(matching: .any)["health.air.density.ulcer"].firstMatch
+        var u646 = 0
+        while !hUlcer646.exists && u646 < 10 {
+            app.swipeDown()
+            u646 += 1
+        }
+        if !hUlcer646.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hUlcer646.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.sterling"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.burke"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.ulcer")
+        if hUlcer646.exists {
+            if hUlcer646.isHittable { hUlcer646.tap() }
+            else {
+                app.swipeUp()
+                if hUlcer646.waitForExistence(timeout: 2), hUlcer646.isHittable {
+                    hUlcer646.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-ulcer.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
