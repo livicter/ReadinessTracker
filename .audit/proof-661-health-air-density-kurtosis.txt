@@ -1,0 +1,11 @@
+Honest #661 Health Air density Kurtosis
+tip_base: 52cf401
+branch: honest-661-health-air-kurtosis
+UITest: testFitbitAirDataCardSurface EXIT:0
+derivedData: /tmp/RT-DD661
+result: /tmp/RT-DD661-result.xcresult (passedTests=1 failedTests=0)
+PNG: .audit/verify-health-air-density-kurtosis.png
+SID: health.air.density.kurtosis
+model: deepseek-flash
+parity: Fitbit #594
+finished: 2026-10-23 ~03:18 HKT

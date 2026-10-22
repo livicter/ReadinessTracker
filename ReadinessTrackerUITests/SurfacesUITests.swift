@@ -11770,9 +11770,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #594: density kurtosis meter
         let densKurt = app.descendants(matching: .any)["fitbit.air.density.kurtosis"].firstMatch
-        XCTAssertTrue(densKurt.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.entropy"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densKurtHealth = app.descendants(matching: .any)["health.air.density.kurtosis"].firstMatch
+        XCTAssertTrue(densKurt.waitForExistence(timeout: 6) || densKurtHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.kurtosis")
         if densKurt.exists {
             if densKurt.isHittable { densKurt.tap() }
@@ -12785,6 +12784,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-span.png")
+
+        // Honest #661: Health Air density kurtosis (#594 parity)
+        let hKurt661 = app.descendants(matching: .any)["health.air.density.kurtosis"].firstMatch
+        var c661 = 0
+        while !hKurt661.exists && c661 < 14 {
+            app.swipeDown()
+            c661 += 1
+        }
+        if !hKurt661.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hKurt661.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.span"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.skew"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.iqr"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.kurtosis")
+        if hKurt661.exists {
+            if hKurt661.isHittable { hKurt661.tap() }
+            else {
+                app.swipeUp()
+                if hKurt661.waitForExistence(timeout: 2), hKurt661.isHittable {
+                    hKurt661.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-kurtosis.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
