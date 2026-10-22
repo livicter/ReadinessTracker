@@ -1,0 +1,11 @@
+Honest #648 — Health Air density Calmar (Fitbit #614 parity for appleWatch/HealthKit)
+tip_base: f7154ab (Honest #647 Omega / PR #675)
+branch: honest-648-health-air-calmar
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD648 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~2191
+xcresult: /tmp/RT-DD648-result.xcresult
+pngs: .audit/verify-health-air-density-calmar.png
+SID: health.air.density.calmar
+when_hkt: 2026-10-22 10:57 HKT
+EXIT:0

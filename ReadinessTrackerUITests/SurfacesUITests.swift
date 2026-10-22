@@ -11951,9 +11951,11 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-sortino.png")
 
 
-        // Honest #614: density Calmar
+        // Honest #614: density Calmar (#648: appleWatch uses health.air.density.calmar)
         let densCa = app.descendants(matching: .any)["fitbit.air.density.calmar"].firstMatch
+        let densCaHealth = app.descendants(matching: .any)["health.air.density.calmar"].firstMatch
         XCTAssertTrue(densCa.waitForExistence(timeout: 5)
+                      || densCaHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.sortino"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.calmar")
@@ -12446,6 +12448,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-omega.png")
+
+        // Honest #648: Health Density Calmar (#614 parity, Health pink)
+        // Calmar renders above Omega — prefer swipeDown after #647.
+        let hCalmar648 = app.descendants(matching: .any)["health.air.density.calmar"].firstMatch
+        var c648 = 0
+        while !hCalmar648.exists && c648 < 10 {
+            app.swipeDown()
+            c648 += 1
+        }
+        if !hCalmar648.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hCalmar648.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.omega"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.ulcer"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.calmar")
+        if hCalmar648.exists {
+            if hCalmar648.isHittable { hCalmar648.tap() }
+            else {
+                app.swipeUp()
+                if hCalmar648.waitForExistence(timeout: 2), hCalmar648.isHittable {
+                    hCalmar648.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-calmar.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
