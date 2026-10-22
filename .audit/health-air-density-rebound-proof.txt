@@ -1,0 +1,11 @@
+Honest #651 — Health Air density Rebound (Fitbit #608 parity for appleWatch/HealthKit)
+tip_base: 2306611 (Honest #650 Sharpe / PR #678)
+branch: honest-651-health-air-rebound
+command: xcodebuild test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD651 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1935
+xcresult: /tmp/RT-DD651-result.xcresult
+pngs: .audit/verify-health-air-density-rebound.png
+SID: health.air.density.rebound
+when_hkt: 2026-10-22 13:05 HKT
+EXIT:0

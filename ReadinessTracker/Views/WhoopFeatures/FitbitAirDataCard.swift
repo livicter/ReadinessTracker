@@ -3654,6 +3654,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #608: density rebound — recovery from max-drawdown trough toward prior peak (Fitbit/GH graphics).
+    /// Honest #651: appleWatch / HealthKit uses Health pink + health.air.density.rebound (#608 parity).
     @ViewBuilder
     private var densityReboundMeter: some View {
         let days = Array(history.suffix(14))
@@ -3711,12 +3712,15 @@ struct FitbitAirDataCard: View {
         let seriesMax = max(postSeries.max() ?? 1, peakAtTrough, 1e-9)
         let seriesMin = min(postSeries.min() ?? 0, troughVal)
         let span = max(seriesMax - seriesMin, 1e-9)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density rebound" : "Density rebound"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityRebound : SurfaceID.fitbitAirDensityRebound
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.uturn.up")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density rebound")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3732,10 +3736,10 @@ struct FitbitAirDataCard: View {
             GeometryReader { geo in
                 let w = max(geo.size.width, 1)
                 ZStack(alignment: .leading) {
-                    Capsule().fill(accent.opacity(0.12))
+                    Capsule().fill(meterAccent.opacity(0.12))
                     Capsule()
                         .fill(
-                            LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing)
+                            LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing)
                         )
                         .frame(width: w * rebound)
                 }
@@ -3761,7 +3765,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
             }
@@ -3777,13 +3781,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityRebound)
-        .accessibilityLabel("Density rebound \(verb) \(reboundPct) percent")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(reboundPct) percent")
     }
 
 

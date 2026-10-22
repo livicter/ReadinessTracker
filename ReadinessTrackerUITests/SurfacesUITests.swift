@@ -11899,9 +11899,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #608: density rebound
         let densRB = app.descendants(matching: .any)["fitbit.air.density.rebound"].firstMatch
-        XCTAssertTrue(densRB.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.drawdown"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densRBHealth = app.descendants(matching: .any)["health.air.density.rebound"].firstMatch
+        XCTAssertTrue(densRB.waitForExistence(timeout: 6) || densRBHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.rebound")
         if densRB.exists {
             if densRB.isHittable { densRB.tap() }
@@ -12527,6 +12526,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-sharpe.png")
+
+        // Honest #651: Health Density rebound (#608 parity, Health pink)
+        // Rebound renders above Sharpe — prefer swipeDown after #650.
+        let hRebound651 = app.descendants(matching: .any)["health.air.density.rebound"].firstMatch
+        var c651 = 0
+        while !hRebound651.exists && c651 < 10 {
+            app.swipeDown()
+            c651 += 1
+        }
+        if !hRebound651.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hRebound651.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.sharpe"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.sortino"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.rebound")
+        if hRebound651.exists {
+            if hRebound651.isHittable { hRebound651.tap() }
+            else {
+                app.swipeUp()
+                if hRebound651.waitForExistence(timeout: 2), hRebound651.isHittable {
+                    hRebound651.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-rebound.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
