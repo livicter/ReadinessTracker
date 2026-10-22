@@ -1,0 +1,11 @@
+Honest #654 Health Air density Outliers
+tip_base: b1bee0f6ba4ff597a6a64c32b9bfe5800daf52d5
+branch: honest-654-health-air-outliers
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD654
+resultBundle: /tmp/RT-DD654-result.xcresult
+SID: health.air.density.outliers
+parity: Fitbit #602
+PNG: .audit/verify-health-air-density-outliers.png
+HKT_start: 2026-10-22 14:38
+HKT_done: 2026-10-22 15:16

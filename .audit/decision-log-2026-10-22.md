@@ -19,3 +19,6 @@
 | 13:55 | #653 HHI | start | tip_base d33fe5f; branch honest-653-health-air-hhi; Fitbit #604 parity |
 | 13:54 | #652 Drawdown | land | tip d33fe5f PR #680; UITest EXIT:0 /tmp/RT-DD652; SID health.air.density.drawdown; Eng Board Merged |
 | 14:34 | #653 HHI | land | tip_base d33fe5f; UITest EXIT:0 /tmp/RT-DD653; SID health.air.density.hhi; PNG .audit/verify-health-air-density-hhi.png; awaiting PR |
+| 14:37 | #653 HHI | land | tip b1bee0f PR #681; UITest EXIT:0 /tmp/RT-DD653; SID health.air.density.hhi; Eng Board Merged |
+| 14:38 | #654 Outliers | start | tip_base b1bee0f; branch honest-654-health-air-outliers; Fitbit #602 parity |
+| 15:16 | #654 Outliers | land | tip_base b1bee0f; UITest EXIT:0 /tmp/RT-DD654; SID health.air.density.outliers; PNG .audit/verify-health-air-density-outliers.png; awaiting PR |
