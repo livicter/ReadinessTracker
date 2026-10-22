@@ -3462,6 +3462,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #604: density HHI — Herfindahl concentration of category fill (Fitbit/Google Health graphics).
+    /// Honest #653: appleWatch / HealthKit uses Health pink + health.air.density.hhi (#604 parity).
     @ViewBuilder
     private var densityHHIMeter: some View {
         let chips = AirChip.all(from: history.last ?? data)
@@ -3495,12 +3496,15 @@ struct FitbitAirDataCard: View {
             verb = "Narrow"; tone = RTColor.warning
         }
         let hDisp = String(format: "%.2f", hhi)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density HHI" : "Density HHI"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityHHI : SurfaceID.fitbitAirDensityHHI
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "square.stack.3d.up.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density HHI")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3543,13 +3547,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHHI)
-        .accessibilityLabel("Density HHI \(verb) \(hDisp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(hDisp)")
     }
 
 

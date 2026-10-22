@@ -11863,9 +11863,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #604: density HHI
         let densHHI = app.descendants(matching: .any)["fitbit.air.density.hhi"].firstMatch
-        XCTAssertTrue(densHHI.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.outliers"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densHHIHealth = app.descendants(matching: .any)["health.air.density.hhi"].firstMatch
+        XCTAssertTrue(densHHI.waitForExistence(timeout: 6) || densHHIHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.hhi")
         if densHHI.exists {
             if densHHI.isHittable { densHHI.tap() }
@@ -12579,6 +12578,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-drawdown.png")
+
+        // Honest #653: Health Density HHI (#604 parity, Health pink)
+        // HHI renders above Drawdown — prefer swipeDown after #652.
+        let hHHI653 = app.descendants(matching: .any)["health.air.density.hhi"].firstMatch
+        var c653 = 0
+        while !hHHI653.exists && c653 < 10 {
+            app.swipeDown()
+            c653 += 1
+        }
+        if !hHHI653.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hHHI653.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.drawdown"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.rebound"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.hhi")
+        if hHHI653.exists {
+            if hHHI653.isHittable { hHHI653.tap() }
+            else {
+                app.swipeUp()
+                if hHHI653.waitForExistence(timeout: 2), hHHI653.isHittable {
+                    hHHI653.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-hhi.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
