@@ -2862,6 +2862,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #592: density entropy meter — Shannon entropy of dens histogram (Google Health graphics).
+    /// Honest #662: appleWatch / HealthKit uses Health pink + health.air.density.entropy (#592 parity).
     @ViewBuilder
     private var densityEntropyMeter: some View {
         let days = Array(history.suffix(14))
@@ -2897,12 +2898,15 @@ struct FitbitAirDataCard: View {
         let tone: Color = hNorm <= 0.45 ? RTColor.optimal : (hNorm <= 0.75 ? RTColor.good : RTColor.warning)
         let verb = hNorm <= 0.45 ? "Focused" : (hNorm <= 0.75 ? "Mixed" : "Scattered")
         let needle = min(1.0, hNorm)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density entropy" : "Density entropy"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityEntropy : SurfaceID.fitbitAirDensityEntropy
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density entropy")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2942,13 +2946,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityEntropy)
-        .accessibilityLabel("Density entropy \(verb) \(hDisp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(hDisp)")
     }
 
 
