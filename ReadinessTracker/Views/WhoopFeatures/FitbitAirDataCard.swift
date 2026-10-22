@@ -2538,6 +2538,7 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #586: density slope meter — 14d dens trend line + rising/stable/falling (Google Health graphics).
+    /// Honest #665: appleWatch / HealthKit uses Health pink + health.air.density.slope (#586 parity).
     @ViewBuilder
     private var densitySlopeMeter: some View {
         let days = Array(history.suffix(14))
@@ -2582,12 +2583,16 @@ struct FitbitAirDataCard: View {
         }
         let endY = meanY + slope * (Double(n - 1) - meanX)
         let startY = meanY + slope * (0 - meanX)
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density slope" : "Density slope"
+        let meterSID = isHealth ? SurfaceID.healthAirDensitySlope : SurfaceID.fitbitAirDensitySlope
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density slope")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2615,7 +2620,7 @@ struct FitbitAirDataCard: View {
                             else { path.addLine(to: CGPoint(x: x, y: y)) }
                         }
                     }
-                    .stroke(accent.opacity(0.55), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+                    .stroke(meterColor.opacity(0.55), style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
                     // trend line
                     Path { path in
                         let y0 = h - CGFloat((startY - minV) / span) * h
@@ -2638,14 +2643,15 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySlope)
-        .accessibilityLabel("Density slope \(verb) \(String(format: "%.1f", slopePP7)) points per week")
+        .accessibilityIdentifier(meterSID)
+        .accessibilityLabel("\(meterTitle) \(verb) \(String(format: "%.1f", slopePP7)) points per week")
     }
+
 
 
     /// Honest #588: density z-score strip — tonight dens vs last-14 μ/σ (Google Health graphics).
