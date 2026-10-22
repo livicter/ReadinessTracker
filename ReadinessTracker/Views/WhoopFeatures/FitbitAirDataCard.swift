@@ -2754,6 +2754,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #590: density ACF meter — lag-1 autocorrelation of last-14 dens (Google Health graphics).
+    /// Honest #663: appleWatch / HealthKit uses Health pink + health.air.density.acf (#590 parity).
     @ViewBuilder
     private var densityACFMeter: some View {
         let days = Array(history.suffix(14))
@@ -2782,6 +2783,10 @@ struct FitbitAirDataCard: View {
         }
         let acf = den > 0 ? num / den : 0
         let acfClamped = max(-1.0, min(1.0, acf))
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density ACF₁" : "Density ACF₁"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityACF : SurfaceID.fitbitAirDensityACF
         let tone: Color = abs(acf) >= 0.5 ? RTColor.optimal : (abs(acf) >= 0.2 ? RTColor.good : RTColor.warning)
         let verb: String = {
             if acf >= 0.5 { return "Sticky" }
@@ -2794,8 +2799,8 @@ struct FitbitAirDataCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density ACF₁")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2817,7 +2822,7 @@ struct FitbitAirDataCard: View {
                                 RTColor.warning.opacity(0.35),
                                 RTColor.optimal.opacity(0.45),
                                 RTColor.good.opacity(0.35),
-                                accent.opacity(0.45)
+                                meterColor.opacity(0.45)
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -2851,13 +2856,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityACF)
-        .accessibilityLabel("Density autocorrelation \(verb) \(String(format: "%.2f", acf))")
+        .accessibilityIdentifier(meterSID)
+        .accessibilityLabel("\(meterTitle) autocorrelation \(verb) \(String(format: "%.2f", acf))")
     }
 
 
