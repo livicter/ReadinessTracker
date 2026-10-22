@@ -4588,6 +4588,7 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #622: density Burke — mean lift / √(mean sq DD) (Fitbit/GH graphics).
+    /// Honest #644: appleWatch / HealthKit uses Health pink + health.air.density.burke (#622 parity).
     @ViewBuilder
     private var densityBurkeMeter: some View {
         let days = Array(history.suffix(14))
@@ -4630,6 +4631,9 @@ struct FitbitAirDataCard: View {
             verb = "Sink"; tone = RTColor.warning
         }
         let disp = String(format: "%+.2f", burke)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Burke" : "Density Burke"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityBurke : SurfaceID.fitbitAirDensityBurke
         let lo = dens.min() ?? 0
         let hi = max(dens.max() ?? 1, lo + 1e-9)
         let span = hi - lo
@@ -4637,8 +4641,8 @@ struct FitbitAirDataCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path.ecg.rectangle")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Burke")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -4656,7 +4660,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(RTColor.tertiaryText.opacity(0.10))
                     Capsule()
-                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(3, w * frac))
                 }
             }
@@ -4691,7 +4695,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
             }
@@ -4707,13 +4711,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityBurke)
-        .accessibilityLabel("Density Burke \(verb) \(disp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(disp)")
     }
 
 

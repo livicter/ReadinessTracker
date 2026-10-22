@@ -1,0 +1,11 @@
+Honest #644 — Health Air density Burke (Fitbit #622 parity for appleWatch/HealthKit)
+tip_base: 4121802 (Honest #643)
+branch: honest-644-health-air-burke
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD644 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1766
+xcresult: /tmp/RT-DD644-result.xcresult
+pngs: .audit/verify-health-air-density-burke.png
+SID: health.air.density.burke
+when_hkt: 2026-10-22 08:13 HKT
+EXIT:0
