@@ -1,0 +1,11 @@
+Honest #655 Health Air density Volatility
+tip_base: 905958fdba847284bf60df5b35c8f0a2b4725ace
+branch: honest-655-health-air-volatility
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD655
+resultBundle: /tmp/RT-DD655-result.xcresult
+SID: health.air.density.volatility
+parity: Fitbit #600
+PNG: .audit/verify-health-air-density-volatility.png
+HKT_start: 2026-10-22 15:18
+HKT_done: 2026-10-22 16:05

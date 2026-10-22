@@ -3262,6 +3262,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #600: density volatility meter — σ of day-to-day air-fill diffs (Fitbit/Google Health graphics).
+    /// Honest #655: appleWatch / HealthKit uses Health pink + health.air.density.volatility (#600 parity).
     @ViewBuilder
     private var densityVolatilityMeter: some View {
         let days = Array(history.suffix(14))
@@ -3297,12 +3298,15 @@ struct FitbitAirDataCard: View {
         }
         let sDisp = String(format: "%.0f", sigma * 100)
         let maxAbs = max(diffs.map { abs($0) }.max() ?? 0.01, 0.01)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density volatility" : "Density volatility"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityVolatility : SurfaceID.fitbitAirDensityVolatility
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path.ecg")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density volatility")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3332,7 +3336,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
                 // σ band
@@ -3353,13 +3357,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityVolatility)
-        .accessibilityLabel("Density volatility \(verb) \(sDisp) percentage points")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(sDisp) percentage points")
     }
 
 
