@@ -11968,9 +11968,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-calmar.png")
 
-        // Honest #616: density Omega
+        // Honest #616: density Omega (#647: appleWatch uses health.air.density.omega)
         let densOm = app.descendants(matching: .any)["fitbit.air.density.omega"].firstMatch
+        let densOmHealth = app.descendants(matching: .any)["health.air.density.omega"].firstMatch
         XCTAssertTrue(densOm.waitForExistence(timeout: 5)
+                      || densOmHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.calmar"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.omega")
@@ -12417,6 +12419,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-ulcer.png")
+
+        // Honest #647: Health Density Omega (#616 parity, Health pink)
+        // Omega renders above Ulcer — prefer swipeDown after #646.
+        let hOmega647 = app.descendants(matching: .any)["health.air.density.omega"].firstMatch
+        var o647 = 0
+        while !hOmega647.exists && o647 < 10 {
+            app.swipeDown()
+            o647 += 1
+        }
+        if !hOmega647.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hOmega647.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.ulcer"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.sterling"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.omega")
+        if hOmega647.exists {
+            if hOmega647.isHittable { hOmega647.tap() }
+            else {
+                app.swipeUp()
+                if hOmega647.waitForExistence(timeout: 2), hOmega647.isHittable {
+                    hOmega647.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-omega.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch

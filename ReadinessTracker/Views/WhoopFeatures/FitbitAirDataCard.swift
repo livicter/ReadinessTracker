@@ -4192,6 +4192,7 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #616: density Omega — gains above 55% / losses below (Fitbit/GH graphics).
+    /// Honest #647: appleWatch / HealthKit uses Health pink + health.air.density.omega (#616 parity).
     @ViewBuilder
     private var densityOmegaMeter: some View {
         let days = Array(history.suffix(14))
@@ -4225,6 +4226,9 @@ struct FitbitAirDataCard: View {
             verb = "Scarce"; tone = RTColor.warning
         }
         let disp = String(format: "%.2f", omega)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Omega" : "Density Omega"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityOmega : SurfaceID.fitbitAirDensityOmega
         let gainPct = Int((gains / Double(max(1, dens.count)) * 100).rounded())
         let lossPct = Int((losses / Double(max(1, dens.count)) * 100).rounded())
         let lo = dens.min() ?? 0
@@ -4234,8 +4238,8 @@ struct FitbitAirDataCard: View {
             HStack(spacing: 8) {
                 Image(systemName: "scalemass.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Omega")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -4255,7 +4259,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(RTColor.tertiaryText.opacity(0.10))
                     Capsule()
-                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(3, w * frac))
                     Rectangle()
                         .fill(RTColor.tertiaryText.opacity(0.45))
@@ -4295,7 +4299,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
             }
@@ -4311,13 +4315,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityOmega)
-        .accessibilityLabel("Density Omega \(verb) \(disp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(disp)")
     }
 
     /// Honest #618: density Ulcer — RMS of peak drawdowns (Fitbit/GH graphics).
