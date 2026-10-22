@@ -1,0 +1,11 @@
+Honest #657 Health Air density Gini
+tip_base: 01fa4ecd07c5adc60120c4175d413c29c6db018c
+branch: honest-657-health-air-gini
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD657
+resultBundle: /tmp/RT-DD657-result.xcresult
+SID: health.air.density.gini
+parity: Fitbit #598
+PNG: .audit/verify-health-air-density-gini.png
+HKT_start: 2026-10-22 16:55
+HKT_done: 2026-10-22 17:44
