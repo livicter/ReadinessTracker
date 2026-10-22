@@ -2017,6 +2017,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #576: density IQR band — Q1–Q3 + median of last-14 dens (Google Health graphics).
+    /// Honest #658: appleWatch / HealthKit uses Health pink + health.air.density.iqr (#576 parity).
     @ViewBuilder
     private var densityIQRMeter: some View {
         let days = Array(history.suffix(14))
@@ -2049,12 +2050,15 @@ struct FitbitAirDataCard: View {
         let medPP = Int((med * 100).rounded())
         let tone: Color = iqrPP <= 12 ? RTColor.optimal : (iqrPP <= 22 ? RTColor.good : RTColor.warning)
         let verb = iqrPP <= 12 ? "Tight" : (iqrPP <= 22 ? "Steady" : "Wide")
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density IQR" : "Density IQR"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityIQR : SurfaceID.fitbitAirDensityIQR
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "rectangle.split.3x1.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density IQR")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2073,7 +2077,7 @@ struct FitbitAirDataCard: View {
                 let xm = CGFloat(med) * w
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(accent.opacity(0.12))
+                        .fill(meterAccent.opacity(0.12))
                         .frame(height: 12)
                     Capsule()
                         .fill(LinearGradient(
@@ -2106,13 +2110,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityIQR)
-        .accessibilityLabel("Density IQR \(verb) \(iqrPP) points, median \(medPP) percent")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(iqrPP) points, median \(medPP) percent")
     }
 
 
