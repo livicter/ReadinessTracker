@@ -25,3 +25,6 @@
 | 15:18 | #654 Outliers | land | tip 905958f PR #682; UITest EXIT:0 /tmp/RT-DD654; SID health.air.density.outliers; Eng Board Merged |
 | 15:18 | #655 Volatility | start | tip_base 905958f; branch honest-655-health-air-volatility; Fitbit #600 parity |
 | 16:05 | #655 Volatility | land | tip_base 905958f; UITest EXIT:0 /tmp/RT-DD655; SID health.air.density.volatility; PNG .audit/verify-health-air-density-volatility.png; awaiting PR |
+| 16:06 | #655 Volatility | land | tip 460f2f6 PR #683; UITest EXIT:0 /tmp/RT-DD655; SID health.air.density.volatility; Eng Board Merged |
+| 16:07 | #656 Percentile | start | tip_base 460f2f6; branch honest-656-health-air-percentile; Fitbit #578 parity (steering said #601) |
+| 16:54 | #656 Percentile | land | tip_base 460f2f6; UITest EXIT:0 /tmp/RT-DD656; SID health.air.density.percentile; PNG .audit/verify-health-air-density-percentile.png; awaiting PR |

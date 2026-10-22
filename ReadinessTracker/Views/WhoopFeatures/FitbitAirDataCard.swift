@@ -2118,6 +2118,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #578: density percentile rank — tonight dens vs last-14 (Google Health graphics).
+    /// Honest #656: appleWatch / HealthKit uses Health pink + health.air.density.percentile (#578 parity).
     @ViewBuilder
     private var densityPercentileMeter: some View {
         let days = Array(history.suffix(14))
@@ -2144,12 +2145,15 @@ struct FitbitAirDataCard: View {
         let todayPP = Int((today * 100).rounded())
         let tone: Color = pctPP >= 70 ? RTColor.optimal : (pctPP >= 40 ? RTColor.good : RTColor.warning)
         let verb = pctPP >= 70 ? "High" : (pctPP >= 40 ? "Mid" : "Low")
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density percentile" : "Density percentile"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityPercentile : SurfaceID.fitbitAirDensityPercentile
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "percent")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density percentile")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2197,13 +2201,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityPercentile)
-        .accessibilityLabel("Density percentile \(verb) P\(pctPP), tonight \(todayPP) percent")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) P\(pctPP), tonight \(todayPP) percent")
     }
 
 
