@@ -1932,6 +1932,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #574: density skew meter — Pearson moment skewness of last-14 dens (Google Health graphics).
+    /// Honest #659: appleWatch / HealthKit uses Health pink + health.air.density.skew (#574 parity).
     @ViewBuilder
     private var densitySkewMeter: some View {
         let days = Array(history.suffix(14))
@@ -1959,12 +1960,15 @@ struct FitbitAirDataCard: View {
         let tone: Color = absS <= 0.5 ? RTColor.optimal : (absS <= 1.0 ? RTColor.good : RTColor.warning)
         let verb = skew > 0.15 ? "Right" : (skew < -0.15 ? "Left" : "Sym")
         let needle = max(-1.0, min(1.0, skew / 2.0))
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density skew" : "Density skew"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensitySkew : SurfaceID.fitbitAirDensitySkew
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "triangle.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density skew")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1981,7 +1985,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule()
                         .fill(LinearGradient(
-                            colors: [Color(hex: "FF375F").opacity(0.3), accent.opacity(0.12), RTColor.optimal.opacity(0.35)],
+                            colors: [Color(hex: "FF375F").opacity(0.3), meterAccent.opacity(0.12), RTColor.optimal.opacity(0.35)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -2004,13 +2008,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySkew)
-        .accessibilityLabel("Density skew \(verb) \(String(format: "%.2f", skew))")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(String(format: "%.2f", skew))")
     }
 
 
