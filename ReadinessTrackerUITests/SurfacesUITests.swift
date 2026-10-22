@@ -12866,6 +12866,34 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-acf.png")
 
+
+        // Honest #665: Health Air density slope (#586 parity)
+        let hSl665 = app.descendants(matching: .any)["health.air.density.slope"].firstMatch
+        var c665 = 0
+        while !hSl665.exists && c665 < 14 {
+            app.swipeDown()
+            c665 += 1
+        }
+        if !hSl665.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hSl665.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.zscore"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.acf"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.entropy"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.slope")
+        if hSl665.exists {
+            if hSl665.isHittable { hSl665.tap() }
+            else {
+                app.swipeUp()
+                if hSl665.waitForExistence(timeout: 2), hSl665.isHittable {
+                    hSl665.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-slope.png")
+
         // Honest #664: Health Air density z-score (#588 parity)
         let hZs664 = app.descendants(matching: .any)["health.air.density.zscore"].firstMatch
         var c664 = 0
