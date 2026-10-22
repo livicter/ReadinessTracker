@@ -325,6 +325,7 @@ enum SurfaceID {
     static let healthAirDensityMartin = "health.air.density.martin"  // Honest #642
     static let healthAirDensityKappa = "health.air.density.kappa"  // Honest #643
     static let healthAirDensityBurke = "health.air.density.burke"  // Honest #644
+    static let healthAirDensitySterling = "health.air.density.sterling"  // Honest #645
     static let healthAirDensityCats = "health.air.density.cats"  // Honest #633
     static let healthAirDensityPeriod = "health.air.density.period"  // Honest #634
     static let healthAirDensityDetailOpen = "health.air.density.detail.open"  // Honest #635

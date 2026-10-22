@@ -1,0 +1,11 @@
+Honest #645 — Health Air density Sterling (Fitbit #620 parity for appleWatch/HealthKit)
+tip_base: e5e3971 (Honest #644)
+branch: honest-645-health-air-sterling
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD645 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1794
+xcresult: /tmp/RT-DD645-result.xcresult
+pngs: .audit/verify-health-air-density-sterling.png
+SID: health.air.density.sterling
+when_hkt: 2026-10-22 08:51 HKT
+EXIT:0
