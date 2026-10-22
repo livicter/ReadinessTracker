@@ -16,3 +16,6 @@
 | 13:14 | #651 Rebound | land | tip 9d8f8ba PR #679; UITest EXIT:0 /tmp/RT-DD651; SID health.air.density.rebound; Eng Board Merged |
 | 13:15 | #652 Drawdown | start | tip_base 9d8f8ba; branch honest-652-health-air-drawdown; Fitbit #606 parity |
 | 13:54 | #652 Drawdown | land | tip_base 9d8f8ba; UITest EXIT:0 /tmp/RT-DD652; SID health.air.density.drawdown; PNG .audit/verify-health-air-density-drawdown.png; awaiting PR |
+| 13:55 | #653 HHI | start | tip_base d33fe5f; branch honest-653-health-air-hhi; Fitbit #604 parity |
+| 13:54 | #652 Drawdown | land | tip d33fe5f PR #680; UITest EXIT:0 /tmp/RT-DD652; SID health.air.density.drawdown; Eng Board Merged |
+| 14:34 | #653 HHI | land | tip_base d33fe5f; UITest EXIT:0 /tmp/RT-DD653; SID health.air.density.hhi; PNG .audit/verify-health-air-density-hhi.png; awaiting PR |
