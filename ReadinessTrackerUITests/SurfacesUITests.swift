@@ -11827,9 +11827,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #600: density volatility meter
         let densVol = app.descendants(matching: .any)["fitbit.air.density.volatility"].firstMatch
-        XCTAssertTrue(densVol.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.gini"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densVolHealth = app.descendants(matching: .any)["health.air.density.volatility"].firstMatch
+        XCTAssertTrue(densVol.waitForExistence(timeout: 6) || densVolHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.volatility")
         if densVol.exists {
             if densVol.isHittable { densVol.tap() }
@@ -12631,6 +12630,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-outliers.png")
+
+        // Honest #655: Health Density volatility (#600 parity, Health pink)
+        // Volatility renders above Outliers — prefer swipeDown after #654.
+        let hVol655 = app.descendants(matching: .any)["health.air.density.volatility"].firstMatch
+        var c655 = 0
+        while !hVol655.exists && c655 < 10 {
+            app.swipeDown()
+            c655 += 1
+        }
+        if !hVol655.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hVol655.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.outliers"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.hhi"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.volatility")
+        if hVol655.exists {
+            if hVol655.isHittable { hVol655.tap() }
+            else {
+                app.swipeUp()
+                if hVol655.waitForExistence(timeout: 2), hVol655.isHittable {
+                    hVol655.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-volatility.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
