@@ -1,0 +1,11 @@
+Honest #650 — Health Air density Sharpe (Fitbit #610 parity for appleWatch/HealthKit)
+tip_base: 426aac9 (Honest #649 Sortino / PR #677)
+branch: honest-650-health-air-sharpe
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD650 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: ~1879
+xcresult: /tmp/RT-DD650-result.xcresult
+pngs: .audit/verify-health-air-density-sharpe.png
+SID: health.air.density.sharpe
+when_hkt: 2026-10-22 12:23 HKT
+EXIT:0
