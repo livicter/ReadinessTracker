@@ -4056,6 +4056,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #614: density Calmar — (μ−55%) / max drawdown (Fitbit/GH graphics).
+    /// Honest #648: appleWatch / HealthKit uses Health pink + health.air.density.calmar (#614 parity).
     @ViewBuilder
     private var densityCalmarMeter: some View {
         let days = Array(history.suffix(14))
@@ -4105,12 +4106,15 @@ struct FitbitAirDataCard: View {
         let lo = dens.min() ?? 0
         let hi = max(dens.max() ?? 1, lo + 1e-9)
         let span = hi - lo
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Calmar" : "Density Calmar"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityCalmar : SurfaceID.fitbitAirDensityCalmar
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "mountain.2.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Calmar")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -4129,7 +4133,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule().fill(RTColor.tertiaryText.opacity(0.10))
                     Capsule()
-                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(3, mid * frac))
                         .offset(x: clamped >= 0 ? mid : mid - mid * frac)
                     Rectangle()
@@ -4166,7 +4170,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
             }
@@ -4182,13 +4186,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityCalmar)
-        .accessibilityLabel("Density Calmar \(verb) \(disp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(disp)")
     }
 
     /// Honest #616: density Omega — gains above 55% / losses below (Fitbit/GH graphics).
