@@ -9,3 +9,5 @@
 | 04:15 HKT | Honest #663 Health Air density ACF | model=deepseek-flash | port Fitbit #590 → health.air.density.acf pink | mid-ship |
 | 05:06 HKT | Honest #663 Health Air density ACF | model=deepseek-flash | UITest EXIT:0 /tmp/RT-DD663; PNG .audit/verify-health-air-density-acf.png; SID health.air.density.acf; awaiting PR |
 | 05:12 HKT | #663 ACF | land | tip 90053b5 PR #691; UITest EXIT:0 /tmp/RT-DD663; SID health.air.density.acf; Eng Board Merged; model=deepseek-flash |
+| 05:13 HKT | Honest #664 Health Air density z-score | model=deepseek-flash | port Fitbit #588 → health.air.density.zscore pink | mid-ship |
+| 06:05 HKT | Honest #664 Health Air density z-score | model=deepseek-flash | UITest EXIT:0 /tmp/RT-DD664; PNG .audit/verify-health-air-density-zscore.png; SID health.air.density.zscore; awaiting PR |

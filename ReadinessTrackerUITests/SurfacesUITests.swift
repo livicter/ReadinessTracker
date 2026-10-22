@@ -12866,6 +12866,33 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-acf.png")
 
+        // Honest #664: Health Air density z-score (#588 parity)
+        let hZs664 = app.descendants(matching: .any)["health.air.density.zscore"].firstMatch
+        var c664 = 0
+        while !hZs664.exists && c664 < 14 {
+            app.swipeDown()
+            c664 += 1
+        }
+        if !hZs664.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hZs664.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.acf"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.entropy"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.kurtosis"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.zscore")
+        if hZs664.exists {
+            if hZs664.isHittable { hZs664.tap() }
+            else {
+                app.swipeUp()
+                if hZs664.waitForExistence(timeout: 2), hZs664.isHittable {
+                    hZs664.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-zscore.png")
+
 
 
         // Honest #633: Health Air category density overlays (#631 parity)

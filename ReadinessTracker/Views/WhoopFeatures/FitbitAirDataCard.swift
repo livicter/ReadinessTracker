@@ -2649,6 +2649,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #588: density z-score strip — tonight dens vs last-14 μ/σ (Google Health graphics).
+    /// Honest #664: appleWatch / HealthKit uses Health pink + health.air.density.zscore (#588 parity).
     @ViewBuilder
     private var densityZScoreStrip: some View {
         let days = Array(history.suffix(14))
@@ -2682,12 +2683,16 @@ struct FitbitAirDataCard: View {
             return "Typical"
         }()
         let needle = (zClamped + 3.0) / 6.0
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density z-score" : "Density z-score"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityZScore : SurfaceID.fitbitAirDensityZScore
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "gauge.with.dots.needle.67percent")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density z-score")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2743,13 +2748,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityZScore)
-        .accessibilityLabel("Density z-score \(verb) \(zDisp)")
+        .accessibilityIdentifier(meterSID)
+        .accessibilityLabel("\(meterTitle) \(verb) \(zDisp)")
     }
 
 
