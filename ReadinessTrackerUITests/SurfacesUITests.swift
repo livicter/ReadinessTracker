@@ -12002,9 +12002,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-ulcer.png")
 
-        // Honest #620: density Sterling
+        // Honest #620: density Sterling (#645: appleWatch uses health.air.density.sterling)
         let densSt = app.descendants(matching: .any)["fitbit.air.density.sterling"].firstMatch
+        let densStHealth = app.descendants(matching: .any)["health.air.density.sterling"].firstMatch
         XCTAssertTrue(densSt.waitForExistence(timeout: 5)
+                      || densStHealth.exists
                       || app.descendants(matching: .any)["fitbit.air.density.ulcer"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.sterling")
@@ -12359,6 +12361,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-burke.png")
+
+        // Honest #645: Health Density Sterling (#620 parity, Health pink)
+        // Sterling renders above Burke — prefer swipeDown after #644.
+        let hSterling645 = app.descendants(matching: .any)["health.air.density.sterling"].firstMatch
+        var s645 = 0
+        while !hSterling645.exists && s645 < 10 {
+            app.swipeDown()
+            s645 += 1
+        }
+        if !hSterling645.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hSterling645.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.burke"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.kappa"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.sterling")
+        if hSterling645.exists {
+            if hSterling645.isHittable { hSterling645.tap() }
+            else {
+                app.swipeUp()
+                if hSterling645.waitForExistence(timeout: 2), hSterling645.isHittable {
+                    hSterling645.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-sterling.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
