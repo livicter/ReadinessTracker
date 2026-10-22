@@ -2954,6 +2954,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #594: density kurtosis meter — excess kurtosis of dens series (Google Health graphics).
+    /// Honest #661: appleWatch / HealthKit uses Health pink + health.air.density.kurtosis (#594 parity).
     @ViewBuilder
     private var densityKurtosisMeter: some View {
         let days = Array(history.suffix(14))
@@ -2987,12 +2988,15 @@ struct FitbitAirDataCard: View {
         let kDisp = String(format: "%+.2f", kurt)
         // needle mapped: clamp kurt into [-2, 3] → 0…1
         let needle = min(1.0, max(0.0, (kurt + 2.0) / 5.0))
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density kurtosis" : "Density kurtosis"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityKurtosis : SurfaceID.fitbitAirDensityKurtosis
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density kurtosis")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3037,14 +3041,15 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityKurtosis)
-        .accessibilityLabel("Density kurtosis \(verb) \(kDisp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(kDisp)")
     }
+
 
 
 
