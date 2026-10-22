@@ -11808,9 +11808,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #598: density Gini meter
         let densGini = app.descendants(matching: .any)["fitbit.air.density.gini"].firstMatch
-        XCTAssertTrue(densGini.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.span"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densGiniHealth = app.descendants(matching: .any)["health.air.density.gini"].firstMatch
+        XCTAssertTrue(densGini.waitForExistence(timeout: 6) || densGiniHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.gini")
         if densGini.exists {
             if densGini.isHittable { densGini.tap() }
@@ -12683,6 +12682,33 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-percentile.png")
+
+        // Honest #657: Health Density Gini (#598 parity, Health pink)
+        // Gini renders above Percentile — prefer swipeDown after #656.
+        let hGini657 = app.descendants(matching: .any)["health.air.density.gini"].firstMatch
+        var c657 = 0
+        while !hGini657.exists && c657 < 12 {
+            app.swipeDown()
+            c657 += 1
+        }
+        if !hGini657.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hGini657.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.percentile"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.volatility"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.gini")
+        if hGini657.exists {
+            if hGini657.isHittable { hGini657.tap() }
+            else {
+                app.swipeUp()
+                if hGini657.waitForExistence(timeout: 2), hGini657.isHittable {
+                    hGini657.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-gini.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch

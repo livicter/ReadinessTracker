@@ -3151,6 +3151,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #598: density Gini meter — inequality of daily air-fill (Fitbit/Google Health graphics).
+    /// Honest #657: appleWatch / HealthKit uses Health pink + health.air.density.gini (#598 parity).
     @ViewBuilder
     private var densityGiniMeter: some View {
         let days = Array(history.suffix(14))
@@ -3190,12 +3191,15 @@ struct FitbitAirDataCard: View {
             verb = "Uneven"; tone = RTColor.warning
         }
         let gDisp = String(format: "%.2f", gini)
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Gini" : "Density Gini"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensityGini : SurfaceID.fitbitAirDensityGini
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.xaxis")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Gini")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3228,7 +3232,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2.5, lineCap: .round, lineJoin: .round)
                 )
                 // Gini needle on bottom track
@@ -3254,13 +3258,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityGini)
-        .accessibilityLabel("Density Gini \(verb) \(gDisp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(gDisp)")
     }
 
 
