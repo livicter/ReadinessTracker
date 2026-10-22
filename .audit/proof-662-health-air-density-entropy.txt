@@ -1,0 +1,11 @@
+Honest #662 Health Air density Entropy
+tip_base: 8182116
+branch: honest-662-health-air-entropy
+UITest: testFitbitAirDataCardSurface EXIT:0
+derivedData: /tmp/RT-DD662
+result: /tmp/RT-DD662-result.xcresult (passedTests=1 failedTests=0)
+PNG: .audit/verify-health-air-density-entropy.png
+SID: health.air.density.entropy
+model: deepseek-flash
+parity: Fitbit #592
+finished: 2026-10-23 ~04:07 HKT

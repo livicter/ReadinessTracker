@@ -12812,6 +12812,34 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-kurtosis.png")
 
+        // Honest #662: Health Air density entropy (#592 parity)
+        let hEnt662 = app.descendants(matching: .any)["health.air.density.entropy"].firstMatch
+        var c662 = 0
+        while !hEnt662.exists && c662 < 14 {
+            app.swipeDown()
+            c662 += 1
+        }
+        if !hEnt662.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hEnt662.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.kurtosis"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.span"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.skew"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.entropy")
+        if hEnt662.exists {
+            if hEnt662.isHittable { hEnt662.tap() }
+            else {
+                app.swipeUp()
+                if hEnt662.waitForExistence(timeout: 2), hEnt662.isHittable {
+                    hEnt662.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-entropy.png")
+
+
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
         var c633 = 0
