@@ -3913,6 +3913,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #612: density Sortino — excess vs 55% / downside σ (Fitbit/GH graphics).
+    /// Honest #649: appleWatch / HealthKit uses Health pink + health.air.density.sortino (#612 parity).
     @ViewBuilder
     private var densitySortinoMeter: some View {
         let days = Array(history.suffix(14))
@@ -3955,12 +3956,15 @@ struct FitbitAirDataCard: View {
         let lo = dens.min() ?? 0
         let hi = max(dens.max() ?? 1, lo + 1e-9)
         let span = hi - lo
+        let meterAccent = source == .appleWatch ? Color(hex: "FF2D55") : accent
+        let title = source == .appleWatch ? "Health Density Sortino" : "Density Sortino"
+        let sid = source == .appleWatch ? SurfaceID.healthAirDensitySortino : SurfaceID.fitbitAirDensitySortino
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "shield.lefthalf.filled")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density Sortino")
+                    .foregroundStyle(meterAccent)
+                Text(title)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -3984,7 +3988,7 @@ struct FitbitAirDataCard: View {
                         .fill(RTColor.warning.opacity(0.12))
                         .frame(width: mid)
                     Capsule()
-                        .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterAccent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(3, mid * frac))
                         .offset(x: clamped >= 0 ? mid : mid - mid * frac)
                     Rectangle()
@@ -4028,7 +4032,7 @@ struct FitbitAirDataCard: View {
                     }
                 }
                 .stroke(
-                    LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing),
+                    LinearGradient(colors: [meterAccent, tone], startPoint: .leading, endPoint: .trailing),
                     style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round)
                 )
             }
@@ -4044,13 +4048,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySortino)
-        .accessibilityLabel("Density Sortino \(verb) \(disp)")
+        .accessibilityIdentifier(sid)
+        .accessibilityLabel("\(title) \(verb) \(disp)")
     }
 
 
