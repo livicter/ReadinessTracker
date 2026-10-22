@@ -1,0 +1,11 @@
+Honest #659 Health Air density Skew
+tip_base: 2f391733f19c04246642044b32605c52c7988d54
+branch: honest-659-health-air-skew
+UITest: EXIT:0 testFitbitAirDataCardSurface
+derivedData: /tmp/RT-DD659
+resultBundle: /tmp/RT-DD659-result.xcresult
+SID: health.air.density.skew
+parity: Fitbit #574
+PNG: .audit/verify-health-air-density-skew.png
+HKT_start: 2026-10-22 18:35
+HKT_done: 2026-10-22 19:18

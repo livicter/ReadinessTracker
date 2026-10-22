@@ -11620,9 +11620,8 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #574: density skew meter
         let densSkew = app.descendants(matching: .any)["fitbit.air.density.skew"].firstMatch
-        XCTAssertTrue(densSkew.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.cv"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
+        let densSkewHealth = app.descendants(matching: .any)["health.air.density.skew"].firstMatch
+        XCTAssertTrue(densSkew.waitForExistence(timeout: 6) || densSkewHealth.waitForExistence(timeout: 2),
                       "fitbit.air.density.skew")
         if densSkew.exists {
             if densSkew.isHittable { densSkew.tap() }
@@ -12735,6 +12734,32 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-iqr.png")
+
+        // Honest #659: Health Density skew (#574 parity, Health pink)
+        let hSkew659 = app.descendants(matching: .any)["health.air.density.skew"].firstMatch
+        var c659 = 0
+        while !hSkew659.exists && c659 < 14 {
+            app.swipeDown()
+            c659 += 1
+        }
+        if !hSkew659.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hSkew659.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.iqr"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.gini"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.skew")
+        if hSkew659.exists {
+            if hSkew659.isHittable { hSkew659.tap() }
+            else {
+                app.swipeUp()
+                if hSkew659.waitForExistence(timeout: 2), hSkew659.isHittable {
+                    hSkew659.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-skew.png")
 
         // Honest #633: Health Air category density overlays (#631 parity)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
