@@ -2222,6 +2222,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #580: density envelope chart — dens spark with Q1–Q3 band (Google Health graphics).
     @ViewBuilder
+    /// Honest #668: appleWatch / HealthKit uses Health pink + health.air.density.envelope (#580 parity).
     private var densityEnvelopeChart: some View {
         let days = Array(history.suffix(14))
         if days.count < 5 {
@@ -2255,21 +2256,25 @@ struct FitbitAirDataCard: View {
         let med = pct(0.50)
         let q3 = pct(0.75)
         let iqrPP = Int(((q3 - q1) * 100).rounded())
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density envelope" : "Density envelope"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityEnvelope : SurfaceID.fitbitAirDensityEnvelope
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.xyaxis.line")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density envelope")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
                 Text("IQR \(iqrPP)pp")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(accent)
+                    .foregroundStyle(meterColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(accent.opacity(0.12))
+                    .background(meterColor.opacity(0.12))
                     .clipShape(Capsule())
             }
             Chart {
@@ -2279,12 +2284,12 @@ struct FitbitAirDataCard: View {
                         yStart: .value("Q1", q1),
                         yEnd: .value("Q3", q3)
                     )
-                    .foregroundStyle(accent.opacity(0.14))
+                    .foregroundStyle(meterColor.opacity(0.14))
                     LineMark(
                         x: .value("Day", pt.date),
                         y: .value("Density", pt.dens)
                     )
-                    .foregroundStyle(accent)
+                    .foregroundStyle(meterColor)
                     .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
                 }
                 RuleMark(y: .value("Med", med))
@@ -2322,15 +2327,14 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityEnvelope)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density envelope IQR \(iqrPP) points")
     }
-
 
 
     /// Honest #582: density MAD meter — median absolute deviation of last-14 dens (Google Health graphics).
