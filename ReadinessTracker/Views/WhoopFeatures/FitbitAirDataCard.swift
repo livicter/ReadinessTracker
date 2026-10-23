@@ -2416,6 +2416,7 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #584: density Tukey fences — box + 1.5×IQR whiskers + outlier ticks (Google Health graphics).
+    /// Honest #666: appleWatch / HealthKit uses Health pink + health.air.density.tukey (#584 parity).
     @ViewBuilder
     private var densityTukeyFences: some View {
         let days = Array(history.suffix(14))
@@ -2451,12 +2452,16 @@ struct FitbitAirDataCard: View {
         let outN = outliers.count
         let tone: Color = outN == 0 ? RTColor.optimal : (outN <= 2 ? RTColor.good : RTColor.warning)
         let verb = outN == 0 ? "Clean" : (outN == 1 ? "1 outlier" : "\(outN) outliers")
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density fences" : "Density fences"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityTukey : SurfaceID.fitbitAirDensityTukey
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.boxplot.fill")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density fences")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2478,7 +2483,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     // track
                     Capsule()
-                        .fill(accent.opacity(0.10))
+                        .fill(meterColor.opacity(0.10))
                         .frame(height: 10)
                     // whisker span
                     Capsule()
@@ -2528,13 +2533,13 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityTukey)
-        .accessibilityLabel("Density Tukey fences \(verb), median \(Int((med * 100).rounded())) percent")
+        .accessibilityIdentifier(meterSID)
+        .accessibilityLabel("\(meterTitle) Tukey fences \(verb), median \(Int((med * 100).rounded())) percent")
     }
 
     /// Honest #586: density slope meter — 14d dens trend line + rising/stable/falling (Google Health graphics).
