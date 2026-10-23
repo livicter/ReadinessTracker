@@ -2334,6 +2334,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #582: density MAD meter — median absolute deviation of last-14 dens (Google Health graphics).
+    /// Honest #667: appleWatch / HealthKit uses Health pink + health.air.density.mad (#582 parity).
     @ViewBuilder
     private var densityMADMeter: some View {
         let days = Array(history.suffix(14))
@@ -2360,12 +2361,16 @@ struct FitbitAirDataCard: View {
         let tone: Color = madPP <= 8 ? RTColor.optimal : (madPP <= 15 ? RTColor.good : RTColor.warning)
         let verb = madPP <= 8 ? "Stable" : (madPP <= 15 ? "Mild" : "Volatile")
         let needle = min(1.0, mad / 0.30) // 30pp MAD = full scale
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density MAD" : "Density MAD"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityMAD : SurfaceID.fitbitAirDensityMAD
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path.ecg")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density MAD")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -2406,12 +2411,12 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityMAD)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density MAD \(verb) \(madPP) points")
     }
 
