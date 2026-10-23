@@ -12867,6 +12867,33 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-density-acf.png")
 
 
+
+        // Honest #669: Health Air density hist (#570 parity)
+        let hHist669 = app.descendants(matching: .any)["health.air.density.hist"].firstMatch
+        var c669 = 0
+        while !hHist669.exists && c669 < 14 {
+            app.swipeDown()
+            c669 += 1
+        }
+        if !hHist669.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hHist669.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.envelope"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.mad"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.hist")
+        if hHist669.exists {
+            if hHist669.isHittable { hHist669.tap() }
+            else {
+                app.swipeUp()
+                if hHist669.waitForExistence(timeout: 2), hHist669.isHittable {
+                    hHist669.tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-hist.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0

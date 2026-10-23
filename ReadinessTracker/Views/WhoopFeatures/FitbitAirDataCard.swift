@@ -1774,6 +1774,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #570: density distribution histogram — last-14 day density bins (Google Health graphics).
+    /// Honest #669: appleWatch / HealthKit uses Health pink + health.air.density.hist (#570 parity).
     @ViewBuilder
     private var densityDistributionHist: some View {
         let days = Array(history.suffix(14))
@@ -1804,21 +1805,25 @@ struct FitbitAirDataCard: View {
         }
         let peak = bins.map(\.count).max() ?? 0
         let meanPP = Int(((dens.reduce(0, +) / Double(max(1, dens.count))) * 100).rounded())
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density hist" : "Density hist"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityHist : SurfaceID.fitbitAirDensityHist
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.xaxis")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density hist")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
                 Text("μ \(meanPP)% · \(dens.count)d")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(accent)
+                    .foregroundStyle(meterColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(accent.opacity(0.12))
+                    .background(meterColor.opacity(0.12))
                     .clipShape(Capsule())
             }
             Chart {
@@ -1827,7 +1832,7 @@ struct FitbitAirDataCard: View {
                         x: .value("Bin", bin.label),
                         y: .value("Days", bin.count)
                     )
-                    .foregroundStyle(accent.opacity(0.35 + 0.2 * Double(bin.id)))
+                    .foregroundStyle(meterColor.opacity(0.35 + 0.2 * Double(bin.id)))
                     .cornerRadius(4)
                 }
             }
@@ -1853,12 +1858,12 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHist)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density histogram mean \(meanPP) percent")
     }
 
