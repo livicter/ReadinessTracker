@@ -1,0 +1,6 @@
+Honest #669 Health Air density hist
+SID: health.air.density.hist
+UITest: testFitbitAirDataCardSurface EXIT:0 /tmp/RT-DD669
+TEST SUCCEEDED (log)
+model=deepseek-flash
+base tip: c92e55b
