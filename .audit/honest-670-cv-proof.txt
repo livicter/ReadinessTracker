@@ -1,0 +1,6 @@
+Honest #670 Health Air density CV
+SID: health.air.density.cv
+UITest: testFitbitAirDataCardSurface EXIT:0 /tmp/RT-DD670
+TEST SUCCEEDED (log)
+model=deepseek-flash
+base tip: 8b5d81b
