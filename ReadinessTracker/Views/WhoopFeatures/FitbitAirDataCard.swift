@@ -1869,6 +1869,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #572: density CV meter — 14d coefficient of variation (Google Health graphics).
+    /// Honest #670: appleWatch / HealthKit uses Health pink + health.air.density.cv (#572 parity).
     @ViewBuilder
     private var densityCVMeter: some View {
         let days = Array(history.suffix(14))
@@ -1894,12 +1895,16 @@ struct FitbitAirDataCard: View {
         let tone: Color = cvPP <= 15 ? RTColor.optimal : (cvPP <= 30 ? RTColor.good : RTColor.warning)
         let stability = cvPP <= 15 ? "Stable" : (cvPP <= 30 ? "Mixed" : "Volatile")
         let barFrac = min(1.0, cv / 0.5) // 50% CV = full bar
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Density CV" : "Density CV"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityCV : SurfaceID.fitbitAirDensityCV
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Density CV")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1913,9 +1918,9 @@ struct FitbitAirDataCard: View {
             }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(accent.opacity(0.14)).frame(height: 12)
+                    Capsule().fill(meterColor.opacity(0.14)).frame(height: 12)
                     Capsule()
-                        .fill(LinearGradient(colors: [accent, tone], startPoint: .leading, endPoint: .trailing))
+                        .fill(LinearGradient(colors: [meterColor, tone], startPoint: .leading, endPoint: .trailing))
                         .frame(width: max(8, geo.size.width * CGFloat(barFrac)), height: 12)
                 }
                 .frame(maxHeight: .infinity, alignment: .center)
@@ -1926,15 +1931,14 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityCV)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density coefficient of variation \(cvPP) percent, \(stability)")
     }
-
 
     /// Honest #574: density skew meter — Pearson moment skewness of last-14 dens (Google Health graphics).
     /// Honest #659: appleWatch / HealthKit uses Health pink + health.air.density.skew (#574 parity).
