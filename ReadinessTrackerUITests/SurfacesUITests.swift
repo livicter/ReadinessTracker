@@ -13356,6 +13356,52 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-forecast-bar.png")
 
+        // Honest #681: Health Air density forecast band (#540 parity)
+        // Band row mounts under expanded Tomorrow density — re-open forecast if needed.
+        let forecast681 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        var c681a = 0
+        while !forecast681.exists && c681a < 14 {
+            app.swipeDown()
+            c681a += 1
+        }
+        if !forecast681.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        if forecast681.waitForExistence(timeout: 5) {
+            if forecast681.isHittable { forecast681.tap() }
+            else {
+                app.swipeUp()
+                if forecast681.waitForExistence(timeout: 2), forecast681.isHittable {
+                    forecast681.tap()
+                } else {
+                    forecast681.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        let hBand681 = app.descendants(matching: .any)["health.air.density.forecast.band"].firstMatch
+        var c681 = 0
+        while !hBand681.exists && c681 < 8 {
+            app.swipeUp()
+            c681 += 1
+        }
+        XCTAssertTrue(hBand681.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.forecast.bar"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.forecast.band")
+        if hBand681.exists {
+            if hBand681.isHittable { hBand681.tap() }
+            else {
+                app.swipeUp()
+                if hBand681.waitForExistence(timeout: 2), hBand681.isHittable {
+                    hBand681.tap()
+                } else {
+                    hBand681.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-forecast-band.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0

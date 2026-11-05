@@ -947,9 +947,16 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #540: ±1σ residual band row (split out for type-checker).
+    /// Honest #681: appleWatch / HealthKit uses Health pink + health.air.density.forecast.band (#540 parity).
     private func densityForecastBandRow(lo: Double, hi: Double) -> some View {
         let loPct = Int((lo * 100).rounded())
         let hiPct = Int((hi * 100).rounded())
+        let isHealth = source == .appleWatch
+        let bandColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let bandSID = isHealth ? SurfaceID.healthAirDensityForecastBand : SurfaceID.fitbitAirDensityForecastBand
+        let bandLabel = isHealth
+            ? "Health tomorrow density band \(loPct) to \(hiPct) percent"
+            : "Tomorrow density band \(loPct) to \(hiPct) percent"
         return HStack(spacing: 8) {
             Image(systemName: "chart.line.uptrend.xyaxis")
                 .font(.caption2.weight(.semibold))
@@ -958,14 +965,14 @@ struct FitbitAirDataCard: View {
             Spacer()
             Text("\(loPct)–\(hiPct)%")
                 .font(.caption.weight(.bold).monospacedDigit())
-                .foregroundStyle(accent)
+                .foregroundStyle(bandColor)
         }
         .foregroundStyle(RTColor.secondaryText)
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBand)
-        .accessibilityLabel("Tomorrow density band \(loPct) to \(hiPct) percent")
+        .background(bandColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .accessibilityIdentifier(bandSID)
+        .accessibilityLabel(bandLabel)
     }
 
 
