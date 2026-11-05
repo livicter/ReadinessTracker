@@ -866,12 +866,16 @@ struct FitbitAirDataCard: View {
             let tone: Color = abs(deltaPP) < 0.5 ? RTColor.secondaryText
                 : (deltaPP > 0 ? RTColor.optimal : RTColor.warning)
             // Honest #558: forecast vs window mean density (Google Health air graphics)
+            // Honest #676: appleWatch / HealthKit uses Health pink + health.air.density.forecast.vsmean (#558 parity).
             let meanVals = densityHistoryPoints.map(\.density).filter { $0 > 0 }
             let winMean = meanVals.isEmpty ? 0.0 : meanVals.reduce(0, +) / Double(meanVals.count)
             let vsMeanPP = winMean > 0 ? (fc.tomorrow - winMean) * 100 : 0
             let vsSign = vsMeanPP >= 0 ? "+" : ""
             let vsTone: Color = abs(vsMeanPP) < 3 ? RTColor.secondaryText
                 : (vsMeanPP >= 0 ? RTColor.optimal : RTColor.warning)
+            let isHealthVs = source == .appleWatch
+            let vsColor: Color = isHealthVs ? Color(hex: "FF2D55") : vsTone
+            let vsSID = isHealthVs ? SurfaceID.healthAirDensityForecastVsMean : SurfaceID.fitbitAirDensityForecastVsMean
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -896,12 +900,12 @@ struct FitbitAirDataCard: View {
                         if winMean > 0 {
                             Text("vs avg \(vsSign)\(Int(vsMeanPP.rounded()))pp")
                                 .font(.caption2.weight(.bold).monospacedDigit())
-                                .foregroundStyle(vsTone)
+                                .foregroundStyle(vsColor)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 3)
-                                .background(vsTone.opacity(0.12))
+                                .background(vsColor.opacity(0.12))
                                 .clipShape(Capsule())
-                                .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastVsMean)
+                                .accessibilityIdentifier(vsSID)
                                 .accessibilityLabel("Forecast versus mean \(vsSign)\(Int(vsMeanPP.rounded())) percentage points")
                         }
                         Image(systemName: showDensityForecastDetail ? "chevron.up" : "chevron.down")
