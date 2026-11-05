@@ -994,18 +994,23 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #560: confidence meter — narrower ±1σ band ⇒ higher confidence.
+    /// Honest #675: appleWatch / HealthKit uses Health pink + health.air.density.forecast.conf (#560 parity).
     private func densityForecastConfidenceMeter(lo: Double, hi: Double) -> some View {
         let span = max(0, min(1, hi - lo))
         let conf = max(0, min(1, 1 - span))  // 0% span → 100% conf
         let pct = Int((conf * 100).rounded())
         let tone: Color = conf >= 0.75 ? RTColor.optimal
             : (conf >= 0.45 ? RTColor.good : RTColor.warning)
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : tone
+        let meterTitle = isHealth ? "Health Confidence" : "Confidence"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityForecastConf : SurfaceID.fitbitAirDensityForecastConf
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "shield.lefthalf.filled")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(tone)
-                Text("Confidence")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1020,11 +1025,11 @@ struct FitbitAirDataCard: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(RTColor.tertiaryText.opacity(0.16))
+                        .fill(meterColor.opacity(0.14))
                         .frame(height: 10)
                     Capsule()
                         .fill(LinearGradient(
-                            colors: [tone.opacity(0.55), tone],
+                            colors: [meterColor.opacity(0.55), meterColor],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -1039,12 +1044,12 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(tone.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(tone.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastConf)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Forecast confidence \(pct) percent")
     }
 
