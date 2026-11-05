@@ -1510,11 +1510,19 @@ struct FitbitAirDataCard: View {
         return (current, best, threshold)
     }
 
+    /// Honest #538: density streak badge (≥ threshold consecutive days).
+    /// Honest #682: appleWatch / HealthKit uses Health pink + health.air.density.streak (#538 parity).
     @ViewBuilder
     private var densityStreakBadge: some View {
         if let streak = densityStreak {
+            let isHealth = source == .appleWatch
+            let streakAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
             let tone: Color = streak.current >= 3 ? RTColor.optimal
-                : (streak.current > 0 ? accent : RTColor.secondaryText)
+                : (streak.current > 0 ? streakAccent : RTColor.secondaryText)
+            let streakSID = isHealth ? SurfaceID.healthAirDensityStreak : SurfaceID.fitbitAirDensityStreak
+            let streakLabel = isHealth
+                ? "Health density streak \(streak.current) days"
+                : "Density streak \(streak.current) days"
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -1537,7 +1545,7 @@ struct FitbitAirDataCard: View {
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(RTColor.tertiaryText)
                     }
-                    .foregroundStyle(accent)
+                    .foregroundStyle(streakAccent)
                     .padding(10)
                     .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
@@ -1552,8 +1560,8 @@ struct FitbitAirDataCard: View {
                     }
                 }
             }
-            .accessibilityIdentifier(SurfaceID.fitbitAirDensityStreak)
-            .accessibilityLabel("Density streak \(streak.current) days")
+            .accessibilityIdentifier(streakSID)
+            .accessibilityLabel(streakLabel)
             .accessibilityAddTraits(.isButton)
         }
     }

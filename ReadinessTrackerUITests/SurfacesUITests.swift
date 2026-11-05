@@ -13274,7 +13274,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #679: Health Air density streak calendar (#546 parity)
         // Calendar dots mount under density streak badge — scroll to streak / spark.
-        let streak679 = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
+        let streak679 = app.descendants(matching: .any)["health.air.density.streak"].firstMatch
         var c679a = 0
         while !streak679.exists && c679a < 14 {
             app.swipeDown()
@@ -13293,7 +13293,7 @@ final class SurfacesUITests: XCTestCase {
             for _ in 0..<12 { app.swipeDown() }
         }
         XCTAssertTrue(hCal679.waitForExistence(timeout: 6)
-                      || app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.streak"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.spark.range"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.streak.cal")
@@ -13401,6 +13401,35 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-forecast-band.png")
+
+        // Honest #682: Health Air density streak (#538 parity)
+        // Streak badge mounts near spark / calendar — scroll to health streak SID.
+        let hStreak682 = app.descendants(matching: .any)["health.air.density.streak"].firstMatch
+        var c682 = 0
+        while !hStreak682.exists && c682 < 14 {
+            app.swipeDown()
+            c682 += 1
+        }
+        if !hStreak682.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hStreak682.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.streak.cal"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark.range"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.streak")
+        if hStreak682.exists {
+            if hStreak682.isHittable { hStreak682.tap() }
+            else {
+                app.swipeUp()
+                if hStreak682.waitForExistence(timeout: 2), hStreak682.isHittable {
+                    hStreak682.tap()
+                } else {
+                    hStreak682.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-streak.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
