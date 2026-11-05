@@ -11462,17 +11462,25 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-fitbit-air-density-wow.png")
         }
         // Honest #534: tomorrow density forecast
-        let forecast = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
-        XCTAssertTrue(forecast.waitForExistence(timeout: 5)
+        // Honest #683: appleWatch fixture uses health.air.density.forecast (#534 parity).
+        let forecastFitbit = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecastHealth = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
+        XCTAssertTrue(forecastFitbit.waitForExistence(timeout: 5)
+                      || forecastHealth.waitForExistence(timeout: 3)
                       || app.staticTexts["Tomorrow density"].waitForExistence(timeout: 3)
                       || app.staticTexts["7-day density"].exists,
                       "fitbit.air.density.forecast")
+        let forecast = forecastFitbit.exists ? forecastFitbit : forecastHealth
         if forecast.exists { forecast.tap() }
         saveShot("verify-fitbit-air-density-forecast.png")
         // Honest #558: forecast vs window mean density
+        // Honest #676/#683: appleWatch uses health.air.density.forecast.vsmean / .forecast
         let vsMean = app.descendants(matching: .any)["fitbit.air.density.forecast.vsmean"].firstMatch
+        let vsMeanHealth = app.descendants(matching: .any)["health.air.density.forecast.vsmean"].firstMatch
         XCTAssertTrue(vsMean.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || vsMeanHealth.exists
+                      || forecast.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists,
                       "fitbit.air.density.forecast.vsmean")
         if vsMean.exists {
             if vsMean.isHittable { vsMean.tap() }
@@ -11481,27 +11489,33 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-forecast-vsmean.png")
         // Honest #540: forecast residual confidence band (inside expanded detail)
         let band = app.descendants(matching: .any)["fitbit.air.density.forecast.band"].firstMatch
-        if !band.exists {
+        let bandHealth = app.descendants(matching: .any)["health.air.density.forecast.band"].firstMatch
+        if !band.exists && !bandHealth.exists {
             app.swipeUp()
             _ = band.waitForExistence(timeout: 3)
         }
         XCTAssertTrue(band.waitForExistence(timeout: 5)
+                      || bandHealth.exists
                       || forecast.exists
-                      || vsMean.exists
+                      || vsMean.exists || vsMeanHealth.exists
                       || app.staticTexts["Band"].waitForExistence(timeout: 3),
                       "fitbit.air.density.forecast.band")
         saveShot("verify-fitbit-air-density-forecast-band.png")
         // Honest #542: forecast band visual bar
         let bandBar = app.descendants(matching: .any)["fitbit.air.density.forecast.bar"].firstMatch
+        let bandBarHealth = app.descendants(matching: .any)["health.air.density.forecast.bar"].firstMatch
         XCTAssertTrue(bandBar.waitForExistence(timeout: 5)
+                      || bandBarHealth.exists
                       || forecast.exists
-                      || band.exists,
+                      || band.exists || bandHealth.exists,
                       "fitbit.air.density.forecast.bar")
         saveShot("verify-fitbit-air-density-forecast-bar.png")
         // Honest #560: forecast confidence meter
         let conf = app.descendants(matching: .any)["fitbit.air.density.forecast.conf"].firstMatch
+        let confHealth = app.descendants(matching: .any)["health.air.density.forecast.conf"].firstMatch
         XCTAssertTrue(conf.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || confHealth.exists
+                      || forecast.exists,
                       "fitbit.air.density.forecast.conf")
         if conf.exists {
             if conf.isHittable { conf.tap() }
@@ -11511,8 +11525,10 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #562: 3-day forecast horizon bars
         let horizon = app.descendants(matching: .any)["fitbit.air.density.forecast.horizon"].firstMatch
+        let horizonHealth = app.descendants(matching: .any)["health.air.density.forecast.horizon"].firstMatch
         XCTAssertTrue(horizon.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || horizonHealth.exists
+                      || forecast.exists,
                       "fitbit.air.density.forecast.horizon")
         if horizon.exists {
             if horizon.isHittable { horizon.tap() }
@@ -11522,8 +11538,10 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #564: forecast residual spark
         let residual = app.descendants(matching: .any)["fitbit.air.density.forecast.residual"].firstMatch
+        let residualHealth = app.descendants(matching: .any)["health.air.density.forecast.residual"].firstMatch
         XCTAssertTrue(residual.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || residualHealth.exists
+                      || forecast.exists,
                       "fitbit.air.density.forecast.residual")
         if residual.exists {
             if residual.isHittable { residual.tap() }
@@ -11533,9 +11551,11 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #566: forecast hit-rate meter
         let hitRate = app.descendants(matching: .any)["fitbit.air.density.forecast.hitrate"].firstMatch
+        let hitRateHealth = app.descendants(matching: .any)["health.air.density.forecast.hitrate"].firstMatch
         XCTAssertTrue(hitRate.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast.residual"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || hitRateHealth.exists
+                      || residual.exists || residualHealth.exists
+                      || forecast.exists,
                       "fitbit.air.density.forecast.hitrate")
         if hitRate.exists {
             if hitRate.isHittable { hitRate.tap() }
@@ -11545,9 +11565,11 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #568: residual bias meter
         let bias = app.descendants(matching: .any)["fitbit.air.density.forecast.bias"].firstMatch
+        let biasHealth = app.descendants(matching: .any)["health.air.density.forecast.bias"].firstMatch
         XCTAssertTrue(bias.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast.hitrate"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists,
+                      || biasHealth.exists
+                      || hitRate.exists || hitRateHealth.exists
+                      || forecast.exists,
                       "fitbit.air.density.forecast.bias")
         if bias.exists {
             if bias.isHittable { bias.tap() }
@@ -11555,8 +11577,11 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-forecast-bias.png")
         // Honest #538: density streak (≥70% consecutive)
+        // Honest #682: appleWatch uses health.air.density.streak
         let streak = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
+        let streakHealth = app.descendants(matching: .any)["health.air.density.streak"].firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 5)
+                      || streakHealth.exists
                       || forecast.exists
                       || wow.exists
                       || heat.exists,
@@ -11565,9 +11590,12 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-streak.png")
         // Honest #546: streak calendar dots (always mounted under streak badge)
         let streakCal = app.descendants(matching: .any)["fitbit.air.density.streak.cal"].firstMatch
+        let streakCalHealth = app.descendants(matching: .any)["health.air.density.streak.cal"].firstMatch
         XCTAssertTrue(streakCal.waitForExistence(timeout: 5)
-                      || streak.exists
-                      || app.staticTexts["Density streak"].exists,
+                      || streakCalHealth.exists
+                      || streak.exists || streakHealth.exists
+                      || app.staticTexts["Density streak"].exists
+                      || app.staticTexts["Health density streak"].exists,
                       "fitbit.air.density.streak.cal")
         saveShot("verify-fitbit-air-density-streak-cal.png")
         // Honest #514: density history spark (same window) — assert early with legend.
@@ -12922,7 +12950,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #671: Health Air density forecast bias (#568 parity)
         // Bias lives under expanded Tomorrow density — re-open forecast if needed.
-        let forecast671 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast671 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c671a = 0
         while !forecast671.exists && c671a < 14 {
             app.swipeDown()
@@ -12950,7 +12978,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hBias671.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.cv"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.bias")
         if hBias671.exists {
@@ -12968,7 +12996,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #672: Health Air density forecast hitrate (#566 parity)
         // Hitrate lives under expanded Tomorrow density — re-open forecast if needed.
-        let forecast672 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast672 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c672a = 0
         while !forecast672.exists && c672a < 14 {
             app.swipeDown()
@@ -12996,7 +13024,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hHit672.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.bias"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.hitrate")
         if hHit672.exists {
@@ -13014,7 +13042,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #673: Health Air density forecast residual (#564 parity)
         // Residual spark lives under expanded Tomorrow density — re-open forecast if needed.
-        let forecast673 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast673 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c673a = 0
         while !forecast673.exists && c673a < 14 {
             app.swipeDown()
@@ -13042,7 +13070,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hRes673.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.hitrate"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.residual")
         if hRes673.exists {
@@ -13060,7 +13088,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #674: Health Air density forecast horizon (#562 parity)
         // Horizon bars live under expanded Tomorrow density — re-open forecast if needed.
-        let forecast674 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast674 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c674a = 0
         while !forecast674.exists && c674a < 14 {
             app.swipeDown()
@@ -13088,7 +13116,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hHor674.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.residual"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.horizon")
         if hHor674.exists {
@@ -13106,7 +13134,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #675: Health Air density forecast conf (#560 parity)
         // Confidence meter lives under expanded Tomorrow density — re-open forecast if needed.
-        let forecast675 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast675 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c675a = 0
         while !forecast675.exists && c675a < 14 {
             app.swipeDown()
@@ -13134,7 +13162,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hConf675.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.horizon"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.conf")
         if hConf675.exists {
@@ -13152,7 +13180,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #676: Health Air density forecast vsmean (#558 parity)
         // Capsule lives on Tomorrow density header — re-open forecast if needed.
-        let forecast676 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast676 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c676a = 0
         while !forecast676.exists && c676a < 14 {
             app.swipeDown()
@@ -13180,7 +13208,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hVs676.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.conf"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.vsmean")
         if hVs676.exists {
@@ -13312,7 +13340,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #680: Health Air density forecast band bar (#542 parity)
         // Band bar mounts under expanded Tomorrow density — re-open forecast if needed.
-        let forecast680 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast680 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c680a = 0
         while !forecast680.exists && c680a < 14 {
             app.swipeDown()
@@ -13340,7 +13368,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hBar680.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.conf"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.bar")
         if hBar680.exists {
@@ -13358,7 +13386,7 @@ final class SurfacesUITests: XCTestCase {
 
         // Honest #681: Health Air density forecast band (#540 parity)
         // Band row mounts under expanded Tomorrow density — re-open forecast if needed.
-        let forecast681 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecast681 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
         var c681a = 0
         while !forecast681.exists && c681a < 14 {
             app.swipeDown()
@@ -13386,7 +13414,7 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(hBand681.waitForExistence(timeout: 6)
                       || app.descendants(matching: .any)["health.air.density.forecast.bar"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
                       "health.air.density.forecast.band")
         if hBand681.exists {
@@ -13430,6 +13458,35 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-streak.png")
+
+        // Honest #683: Health Air density forecast (#534 parity)
+        // Base Tomorrow density forecast badge — Health pink SID.
+        let hFc683 = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
+        var c683 = 0
+        while !hFc683.exists && c683 < 14 {
+            app.swipeDown()
+            c683 += 1
+        }
+        if !hFc683.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hFc683.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.forecast.band"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast.bar"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.forecast")
+        if hFc683.exists {
+            if hFc683.isHittable { hFc683.tap() }
+            else {
+                app.swipeUp()
+                if hFc683.waitForExistence(timeout: 2), hFc683.isHittable {
+                    hFc683.tap()
+                } else {
+                    hFc683.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-forecast.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch

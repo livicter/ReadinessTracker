@@ -876,6 +876,14 @@ struct FitbitAirDataCard: View {
             let isHealthVs = source == .appleWatch
             let vsColor: Color = isHealthVs ? Color(hex: "FF2D55") : vsTone
             let vsSID = isHealthVs ? SurfaceID.healthAirDensityForecastVsMean : SurfaceID.fitbitAirDensityForecastVsMean
+            // Honest #534: tomorrow density forecast badge.
+            // Honest #683: appleWatch / HealthKit uses Health pink + health.air.density.forecast (#534 parity).
+            let isHealth = source == .appleWatch
+            let forecastAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+            let forecastSID = isHealth ? SurfaceID.healthAirDensityForecast : SurfaceID.fitbitAirDensityForecast
+            let forecastLabel = isHealth
+                ? "Health tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent"
+                : "Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent"
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -889,7 +897,7 @@ struct FitbitAirDataCard: View {
                         Spacer()
                         Text("\(Int((fc.tomorrow * 100).rounded()))%")
                             .font(.caption.weight(.bold).monospacedDigit())
-                            .foregroundStyle(accent)
+                            .foregroundStyle(forecastAccent)
                         Text("\(sign)\(Int(deltaPP.rounded()))pp")
                             .font(.caption.weight(.bold).monospacedDigit())
                             .foregroundStyle(tone)
@@ -912,7 +920,7 @@ struct FitbitAirDataCard: View {
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(RTColor.tertiaryText)
                     }
-                    .foregroundStyle(accent)
+                    .foregroundStyle(forecastAccent)
                     .padding(10)
                     .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
@@ -940,8 +948,8 @@ struct FitbitAirDataCard: View {
                     densityForecastResidualBias()
                 }
             }
-            .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecast)
-            .accessibilityLabel("Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent")
+            .accessibilityIdentifier(forecastSID)
+            .accessibilityLabel(forecastLabel)
             .accessibilityAddTraits(.isButton)
         }
     }
