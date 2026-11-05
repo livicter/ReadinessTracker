@@ -1706,6 +1706,7 @@ struct FitbitAirDataCard: View {
                 }
             }
             // Honest #548: density spark min–max range strip
+            // Honest #678: appleWatch / HealthKit uses Health pink + health.air.density.spark.range (#548 parity).
             if let densMin = points.map(\.density).min(),
                let densMax = points.map(\.density).max(),
                densMax > 0 {
@@ -1716,16 +1717,20 @@ struct FitbitAirDataCard: View {
                     }
                     return densMax
                 }()
+                let isHealthRange = source == .appleWatch
+                let rangeColor: Color = isHealthRange ? Color(hex: "FF2D55") : RTColor.secondaryText
+                let rangeSID = isHealthRange ? SurfaceID.healthAirDensitySparkRange : SurfaceID.fitbitAirDensitySparkRange
+                let rangeLabel = isHealthRange ? "Health density spark range" : "Density spark range"
                 HStack(spacing: 8) {
                     Text("\(Int((densMin * 100).rounded()))–\(Int((densMax * 100).rounded()))%")
                         .font(.caption2.weight(.semibold).monospacedDigit())
-                        .foregroundStyle(RTColor.secondaryText)
+                        .foregroundStyle(rangeColor)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(RTColor.secondaryText.opacity(0.10))
+                        .background(rangeColor.opacity(0.10))
                         .clipShape(Capsule())
-                        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySparkRange)
-                        .accessibilityLabel("Density spark range")
+                        .accessibilityIdentifier(rangeSID)
+                        .accessibilityLabel(rangeLabel)
                     GeometryReader { geo in
                         let span = max(densMax - densMin, 0.0001)
                         let scrubFrac = CGFloat((scrubD - densMin) / span)

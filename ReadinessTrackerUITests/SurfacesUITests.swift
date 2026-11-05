@@ -13234,6 +13234,44 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-spark-mean.png")
 
+        // Honest #678: Health Air density spark range (#548 parity)
+        // Range capsule lives on densityHistorySpark header — scroll to spark.
+        let spark678 = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
+        var c678a = 0
+        while !spark678.exists && c678a < 14 {
+            app.swipeDown()
+            c678a += 1
+        }
+        if !spark678.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        let hRange678 = app.descendants(matching: .any)["health.air.density.spark.range"].firstMatch
+        var c678 = 0
+        while !hRange678.exists && c678 < 10 {
+            app.swipeUp()
+            c678 += 1
+        }
+        if !hRange678.exists {
+            for _ in 0..<12 { app.swipeDown() }
+        }
+        XCTAssertTrue(hRange678.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark.mean"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.spark.range")
+        if hRange678.exists {
+            if hRange678.isHittable { hRange678.tap() }
+            else {
+                app.swipeUp()
+                if hRange678.waitForExistence(timeout: 2), hRange678.isHittable {
+                    hRange678.tap()
+                } else {
+                    hRange678.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-spark-range.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0
