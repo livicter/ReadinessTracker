@@ -1119,6 +1119,7 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #564: residual spark — last-7 actual density vs linear prediction (Google Health graphics).
+    /// Honest #673: appleWatch / HealthKit uses Health pink + health.air.density.forecast.residual (#564 parity).
     @ViewBuilder
     private func densityForecastResidualSpark() -> some View {
         let days = Array(history.suffix(7))
@@ -1163,12 +1164,16 @@ struct FitbitAirDataCard: View {
         let mae = points.map { abs($0.actual - $0.predicted) }.reduce(0, +) / Double(max(1, points.count))
         let maePP = Int((mae * 100).rounded())
         let maeTone: Color = maePP <= 8 ? RTColor.optimal : (maePP <= 15 ? RTColor.good : RTColor.warning)
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Residual" : "Residual"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityForecastResidual : SurfaceID.fitbitAirDensityForecastResidual
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path.ecg")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Residual")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1186,7 +1191,7 @@ struct FitbitAirDataCard: View {
                         x: .value("Day", pt.label),
                         y: .value("Actual", pt.actual * 100)
                     )
-                    .foregroundStyle(accent)
+                    .foregroundStyle(meterColor)
                     .interpolationMethod(.catmullRom)
                     .symbol(Circle())
                     .symbolSize(36)
@@ -1218,7 +1223,7 @@ struct FitbitAirDataCard: View {
             .frame(height: 88)
             HStack(spacing: 12) {
                 HStack(spacing: 4) {
-                    Capsule().fill(accent).frame(width: 12, height: 3)
+                    Capsule().fill(meterColor).frame(width: 12, height: 3)
                     Text("Actual")
                         .font(.caption2)
                         .foregroundStyle(RTColor.tertiaryText)
@@ -1235,12 +1240,12 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastResidual)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Forecast residual spark mean absolute error \(maePP) percentage points")
     }
 

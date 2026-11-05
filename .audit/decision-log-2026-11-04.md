@@ -8,3 +8,5 @@
 | 08:31 HKT | Honest #672 Health Air forecast hitrate | model=deepseek-flash | port Fitbit #566 → health.air.density.forecast.hitrate pink | mid-ship |
 | 09:39 HKT | #672 forecast hitrate | resume land | UITest green /tmp/RT-DD672; finishing ship; model=deepseek-flash |
 | 09:40 HKT | #672 forecast hitrate | land | tip 074fe0a PR #701; UITest EXIT:0 /tmp/RT-DD672; SID health.air.density.forecast.hitrate; Eng Board Merged; model=deepseek-flash |
+| 09:42 HKT | Honest #673 Health Air forecast residual | model=deepseek-flash | port Fitbit #564 → health.air.density.forecast.residual pink | mid-ship |
+| 10:54 HKT | #673 forecast residual | resume land | UITest green /tmp/RT-DD673; finishing ship; model=deepseek-flash |
