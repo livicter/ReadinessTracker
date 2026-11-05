@@ -1,0 +1,6 @@
+Honest #673 Health Air density forecast residual
+SID: health.air.density.forecast.residual
+UITest: testFitbitAirDataCardSurface EXIT:0 /tmp/RT-DD673
+TEST SUCCEEDED 2026-11-05 10:54 HKT (log)
+model=deepseek-flash
+base tip: 35cae3e
