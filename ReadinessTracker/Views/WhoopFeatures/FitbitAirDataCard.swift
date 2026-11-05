@@ -1337,6 +1337,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #568: residual bias — signed mean residual (over/under predict) (Google Health graphics).
+    /// Honest #671: appleWatch / HealthKit uses Health pink + health.air.density.forecast.bias (#568 parity).
     @ViewBuilder
     private func densityForecastResidualBias() -> some View {
         let days = Array(history.suffix(7))
@@ -1377,12 +1378,16 @@ struct FitbitAirDataCard: View {
         let verb = biasPP > 0 ? "Under" : (biasPP < 0 ? "Over" : "Neutral")
         // bias>0 ⇒ actual > predicted ⇒ model under-predicted
         let needle = max(-1.0, min(1.0, bias / 0.15)) // ±15pp full scale
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Residual bias" : "Residual bias"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityForecastBias : SurfaceID.fitbitAirDensityForecastBias
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.arrow.right")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Residual bias")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1399,7 +1404,7 @@ struct FitbitAirDataCard: View {
                 ZStack(alignment: .leading) {
                     Capsule()
                         .fill(LinearGradient(
-                            colors: [Color(hex: "FF375F").opacity(0.35), accent.opacity(0.12), RTColor.optimal.opacity(0.35)],
+                            colors: [Color(hex: "FF375F").opacity(0.35), meterColor.opacity(0.12), RTColor.optimal.opacity(0.35)],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -1429,12 +1434,12 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBias)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Residual bias \(verb) \(biasPP) percentage points")
     }
 

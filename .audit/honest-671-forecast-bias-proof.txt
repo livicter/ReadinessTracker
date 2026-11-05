@@ -1,0 +1,6 @@
+Honest #671 Health Air density forecast bias
+SID: health.air.density.forecast.bias
+UITest: testFitbitAirDataCardSurface EXIT:0 /tmp/RT-DD671
+TEST SUCCEEDED 2026-11-04 21:40:45 HKT (log)
+model=deepseek-flash
+base tip: 5240ea3
