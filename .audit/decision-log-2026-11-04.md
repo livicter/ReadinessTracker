@@ -23,3 +23,5 @@
 | 14:50 HKT | Honest #677 Health Air spark mean | model=deepseek-flash | port Fitbit #556 → health.air.density.spark.mean pink | mid-ship |
 | 16:02 HKT | #677 spark mean | resume land | UITest suite green /tmp/RT-DD677 (hung post-pass; killed); finishing ship; model=deepseek-flash |
 | 16:05 HKT | #677 spark mean | land | tip a115201 PR #706; UITest suite green /tmp/RT-DD677 (hung post-pass killed); SID health.air.density.spark.mean; Eng Board Merged; model=deepseek-flash |
+| 16:08 HKT | Honest #678 Health Air spark range | model=deepseek-flash | port Fitbit #548 → health.air.density.spark.range pink | mid-ship |
+| 00:50 HKT | #678 spark range | resume land | UITest suite green /tmp/RT-DD678 (hung post-pass; killed); finishing ship; model=deepseek-flash |
