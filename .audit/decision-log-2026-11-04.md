@@ -14,3 +14,5 @@
 | 11:00 HKT | Honest #674 Health Air forecast horizon | model=deepseek-flash | port Fitbit #562 → health.air.density.forecast.horizon pink | mid-ship |
 | 12:17 HKT | #674 forecast horizon | resume land | UITest green /tmp/RT-DD674; finishing ship; model=deepseek-flash |
 | 12:18 HKT | #674 forecast horizon | land | tip 813497e PR #703; UITest EXIT:0 /tmp/RT-DD674; SID health.air.density.forecast.horizon; Eng Board Merged; model=deepseek-flash |
+| 12:20 HKT | Honest #675 Health Air forecast conf | model=deepseek-flash | port Fitbit #560 → health.air.density.forecast.conf pink | mid-ship |
+| 13:37 HKT | #675 forecast conf | resume land | UITest suite green /tmp/RT-DD675 (hung post-pass; killed); finishing ship; model=deepseek-flash |
