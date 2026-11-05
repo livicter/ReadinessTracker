@@ -357,6 +357,7 @@ enum SurfaceID {
     static let healthAirDensityForecastHorizon = "health.air.density.forecast.horizon"  // Honest #674
     static let healthAirDensityForecastConf = "health.air.density.forecast.conf"  // Honest #675
     static let healthAirDensityForecastVsMean = "health.air.density.forecast.vsmean"  // Honest #676
+    static let healthAirDensitySparkMean = "health.air.density.spark.mean"  // Honest #677
     static let healthAirDensityCats = "health.air.density.cats"  // Honest #633
     static let healthAirDensityPeriod = "health.air.density.period"  // Honest #634
     static let healthAirDensityDetailOpen = "health.air.density.detail.open"  // Honest #635

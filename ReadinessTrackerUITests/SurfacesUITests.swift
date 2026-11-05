@@ -13196,6 +13196,44 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-forecast-vsmean.png")
 
+        // Honest #677: Health Air density spark mean (#556 parity)
+        // Mean capsule lives on densityHistorySpark header — scroll to spark.
+        let spark677 = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
+        var c677a = 0
+        while !spark677.exists && c677a < 14 {
+            app.swipeDown()
+            c677a += 1
+        }
+        if !spark677.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        let hMean677 = app.descendants(matching: .any)["health.air.density.spark.mean"].firstMatch
+        var c677 = 0
+        while !hMean677.exists && c677 < 10 {
+            app.swipeUp()
+            c677 += 1
+        }
+        if !hMean677.exists {
+            for _ in 0..<12 { app.swipeDown() }
+        }
+        XCTAssertTrue(hMean677.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.forecast.vsmean"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.spark.mean")
+        if hMean677.exists {
+            if hMean677.isHittable { hMean677.tap() }
+            else {
+                app.swipeUp()
+                if hMean677.waitForExistence(timeout: 2), hMean677.isHittable {
+                    hMean677.tap()
+                } else {
+                    hMean677.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-spark-mean.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0

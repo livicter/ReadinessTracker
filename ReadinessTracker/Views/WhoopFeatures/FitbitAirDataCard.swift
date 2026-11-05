@@ -1668,6 +1668,11 @@ struct FitbitAirDataCard: View {
             guard !vals.isEmpty else { return 0 }
             return vals.reduce(0, +) / Double(vals.count)
         }()
+        // Honest #677: appleWatch / HealthKit uses Health pink + health.air.density.spark.mean (#556 parity).
+        let isHealthMean = source == .appleWatch
+        let meanColor: Color = isHealthMean ? Color(hex: "FF2D55") : RTColor.secondaryText
+        let meanSID = isHealthMean ? SurfaceID.healthAirDensitySparkMean : SurfaceID.fitbitAirDensitySparkMean
+        let meanLabelPrefix = isHealthMean ? "Health density spark mean" : "Density spark mean"
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Density · \(sparkPeriod)d")
@@ -1677,13 +1682,13 @@ struct FitbitAirDataCard: View {
                 if densMean > 0 {
                     Text("avg \(Int((densMean * 100).rounded()))%")
                         .font(.caption2.weight(.bold).monospacedDigit())
-                        .foregroundStyle(RTColor.secondaryText)
+                        .foregroundStyle(meanColor)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(RTColor.secondaryText.opacity(0.10))
+                        .background(meanColor.opacity(0.10))
                         .clipShape(Capsule())
-                        .accessibilityIdentifier(SurfaceID.fitbitAirDensitySparkMean)
-                        .accessibilityLabel("Density spark mean \(Int((densMean * 100).rounded())) percent")
+                        .accessibilityIdentifier(meanSID)
+                        .accessibilityLabel("\(meanLabelPrefix) \(Int((densMean * 100).rounded())) percent")
                 }
                 if let idx = sparkScrubIndex ?? (points.isEmpty ? nil : points.count - 1),
                    points.indices.contains(idx) {
