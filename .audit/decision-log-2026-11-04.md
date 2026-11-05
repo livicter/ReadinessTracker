@@ -26,3 +26,5 @@
 | 16:08 HKT | Honest #678 Health Air spark range | model=deepseek-flash | port Fitbit #548 → health.air.density.spark.range pink | mid-ship |
 | 00:50 HKT | #678 spark range | resume land | UITest suite green /tmp/RT-DD678 (hung post-pass; killed); finishing ship; model=deepseek-flash |
 | 00:51 HKT | #678 spark range | land | tip ce7413c PR #707; UITest suite green /tmp/RT-DD678 (hung post-pass killed); SID health.air.density.spark.range; Eng Board Merged; model=deepseek-flash |
+| 01:00 HKT | Honest #679 Health Air streak calendar | model=deepseek-flash | port Fitbit #546 → health.air.density.streak.cal pink | mid-ship |
+| 02:00 HKT | #679 streak calendar | resume land | UITest suite green /tmp/RT-DD679 (LogStoreManifest 0 failures; DD unlinked mid-run; empty xcresult); finishing ship; model=deepseek-flash |

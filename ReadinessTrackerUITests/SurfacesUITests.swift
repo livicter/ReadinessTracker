@@ -13272,6 +13272,44 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-spark-range.png")
 
+        // Honest #679: Health Air density streak calendar (#546 parity)
+        // Calendar dots mount under density streak badge — scroll to streak / spark.
+        let streak679 = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
+        var c679a = 0
+        while !streak679.exists && c679a < 14 {
+            app.swipeDown()
+            c679a += 1
+        }
+        if !streak679.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        let hCal679 = app.descendants(matching: .any)["health.air.density.streak.cal"].firstMatch
+        var c679 = 0
+        while !hCal679.exists && c679 < 10 {
+            app.swipeUp()
+            c679 += 1
+        }
+        if !hCal679.exists {
+            for _ in 0..<12 { app.swipeDown() }
+        }
+        XCTAssertTrue(hCal679.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark.range"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.streak.cal")
+        if hCal679.exists {
+            if hCal679.isHittable { hCal679.tap() }
+            else {
+                app.swipeUp()
+                if hCal679.waitForExistence(timeout: 2), hCal679.isHittable {
+                    hCal679.tap()
+                } else {
+                    hCal679.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-streak-cal.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0
