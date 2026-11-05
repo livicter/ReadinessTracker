@@ -1246,6 +1246,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #566: forecast hit-rate — share of last-7 actuals inside residual band (Google Health graphics).
+    /// Honest #672: appleWatch / HealthKit uses Health pink + health.air.density.forecast.hitrate (#566 parity).
     @ViewBuilder
     private func densityForecastHitRate() -> some View {
         let days = Array(history.suffix(7))
@@ -1288,12 +1289,16 @@ struct FitbitAirDataCard: View {
         let rate = total > 0 ? Double(hits) / Double(total) : 0
         let ratePP = Int((rate * 100).rounded())
         let tone: Color = ratePP >= 70 ? RTColor.optimal : (ratePP >= 50 ? RTColor.good : RTColor.warning)
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Hit rate" : "Hit rate"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityForecastHitRate : SurfaceID.fitbitAirDensityForecastHitRate
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "scope")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Hit rate")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
@@ -1308,11 +1313,11 @@ struct FitbitAirDataCard: View {
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(accent.opacity(0.14))
+                        .fill(meterColor.opacity(0.14))
                         .frame(height: 12)
                     Capsule()
                         .fill(LinearGradient(
-                            colors: [accent, tone],
+                            colors: [meterColor, tone],
                             startPoint: .leading,
                             endPoint: .trailing
                         ))
@@ -1326,12 +1331,12 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHitRate)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Forecast hit rate \(ratePP) percent, \(hits) of \(total)")
     }
 

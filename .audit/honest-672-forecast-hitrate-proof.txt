@@ -1,0 +1,6 @@
+Honest #672 Health Air density forecast hitrate
+SID: health.air.density.forecast.hitrate
+UITest: testFitbitAirDataCardSurface EXIT:0 /tmp/RT-DD672
+TEST SUCCEEDED 2026-11-05 09:29:08 HKT (log)
+model=deepseek-flash
+base tip: 8e7ba1d
