@@ -1050,6 +1050,7 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #562: 3-day ahead density horizon bars with tapering confidence (Google Health).
+    /// Honest #674: appleWatch / HealthKit uses Health pink + health.air.density.forecast.horizon (#562 parity).
     private func densityForecastHorizon(fc: (tomorrow: Double, slopePP: Double, today: Double, lo: Double, hi: Double)) -> some View {
         let slope = fc.slopePP / 100.0  // per-day density fraction
         let days: [(label: String, value: Double, conf: Double)] = (1...3).map { d in
@@ -1060,21 +1061,25 @@ struct FitbitAirDataCard: View {
             let taper = max(0.25, 1.0 - 0.22 * Double(d - 1))
             return ("D+\(d)", v, baseConf * taper)
         }
+        let isHealth = source == .appleWatch
+        let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let meterTitle = isHealth ? "Health Horizon" : "Horizon"
+        let meterSID = isHealth ? SurfaceID.healthAirDensityForecastHorizon : SurfaceID.fitbitAirDensityForecastHorizon
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "calendar.badge.clock")
                     .font(.caption2.weight(.semibold))
-                    .foregroundStyle(accent)
-                Text("Horizon")
+                    .foregroundStyle(meterColor)
+                Text(meterTitle)
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
                 Text("3-day")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(accent)
+                    .foregroundStyle(meterColor)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(accent.opacity(0.12))
+                    .background(meterColor.opacity(0.12))
                     .clipShape(Capsule())
             }
             HStack(alignment: .bottom, spacing: 10) {
@@ -1082,11 +1087,11 @@ struct FitbitAirDataCard: View {
                     VStack(spacing: 6) {
                         Text("\(Int((day.value * 100).rounded()))%")
                             .font(.caption2.weight(.bold).monospacedDigit())
-                            .foregroundStyle(accent.opacity(0.55 + 0.45 * day.conf))
+                            .foregroundStyle(meterColor.opacity(0.55 + 0.45 * day.conf))
                         RoundedRectangle(cornerRadius: 6, style: .continuous)
                             .fill(
                                 LinearGradient(
-                                    colors: [accent.opacity(0.35 * day.conf), accent.opacity(0.85 * day.conf + 0.15)],
+                                    colors: [meterColor.opacity(0.35 * day.conf), meterColor.opacity(0.85 * day.conf + 0.15)],
                                     startPoint: .bottom,
                                     endPoint: .top
                                 )
@@ -1109,12 +1114,12 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(meterColor.opacity(0.28), lineWidth: 1)
         )
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastHorizon)
+        .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density forecast horizon three day")
     }
 
