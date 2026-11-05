@@ -970,21 +970,26 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #542: visual 0–100% track with ±1σ band fill + tomorrow marker.
+    /// Honest #680: appleWatch / HealthKit uses Health pink + health.air.density.forecast.bar (#542 parity).
     private func densityForecastBandBar(lo: Double, hi: Double, tomorrow: Double) -> some View {
         let loC = min(1, max(0, lo))
         let hiC = min(1, max(0, hi))
         let mid = min(1, max(0, tomorrow))
+        let isHealth = source == .appleWatch
+        let barColor: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let barSID = isHealth ? SurfaceID.healthAirDensityForecastBar : SurfaceID.fitbitAirDensityForecastBar
+        let barLabel = isHealth ? "Health tomorrow density band bar" : "Tomorrow density band bar"
         return GeometryReader { geo in
             let w = geo.size.width
             ZStack(alignment: .leading) {
                 Capsule()
                     .fill(RTColor.tertiaryText.opacity(0.18))
                 Capsule()
-                    .fill(accent.opacity(0.28))
+                    .fill(barColor.opacity(0.28))
                     .frame(width: max(4, (hiC - loC) * w))
                     .offset(x: loC * w)
                 Circle()
-                    .fill(accent)
+                    .fill(barColor)
                     .frame(width: 10, height: 10)
                     .offset(x: max(0, mid * w - 5))
             }
@@ -992,8 +997,8 @@ struct FitbitAirDataCard: View {
         .frame(height: 10)
         .padding(.horizontal, 10)
         .padding(.bottom, 8)
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityForecastBar)
-        .accessibilityLabel("Tomorrow density band bar \(Int((loC * 100).rounded())) to \(Int((hiC * 100).rounded())) percent, marker \(Int((mid * 100).rounded()))")
+        .accessibilityIdentifier(barSID)
+        .accessibilityLabel("\(barLabel) \(Int((loC * 100).rounded())) to \(Int((hiC * 100).rounded())) percent, marker \(Int((mid * 100).rounded()))")
     }
 
 
