@@ -29,3 +29,5 @@
 | 01:00 HKT | Honest #679 Health Air streak calendar | model=deepseek-flash | port Fitbit #546 → health.air.density.streak.cal pink | mid-ship |
 | 02:00 HKT | #679 streak calendar | resume land | UITest suite green /tmp/RT-DD679 (LogStoreManifest 0 failures; DD unlinked mid-run; empty xcresult); finishing ship; model=deepseek-flash |
 | 02:01 HKT | #679 streak calendar | land | tip 0b47bad PR #708; UITest suite green /tmp/RT-DD679 (0 failures LogStoreManifest; empty xcresult); SID health.air.density.streak.cal; Eng Board Merged; model=deepseek-flash |
+| 02:03 HKT | Honest #680 Health Air forecast band bar | model=deepseek-flash | port Fitbit #542 → health.air.density.forecast.bar pink | mid-ship |
+| 03:12 HKT | #680 forecast band bar | resume land | UITest suite green /tmp/RT-DD680 (hung post-pass; killed); finishing ship; model=deepseek-flash |
