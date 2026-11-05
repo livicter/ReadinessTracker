@@ -12920,6 +12920,52 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-health-air-density-cv.png")
 
+        // Honest #671: Health Air density forecast bias (#568 parity)
+        // Bias lives under expanded Tomorrow density — re-open forecast if needed.
+        let forecast671 = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        var c671a = 0
+        while !forecast671.exists && c671a < 14 {
+            app.swipeDown()
+            c671a += 1
+        }
+        if !forecast671.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        if forecast671.waitForExistence(timeout: 5) {
+            if forecast671.isHittable { forecast671.tap() }
+            else {
+                app.swipeUp()
+                if forecast671.waitForExistence(timeout: 2), forecast671.isHittable {
+                    forecast671.tap()
+                } else {
+                    forecast671.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        let hBias671 = app.descendants(matching: .any)["health.air.density.forecast.bias"].firstMatch
+        var c671 = 0
+        while !hBias671.exists && c671 < 8 {
+            app.swipeUp()
+            c671 += 1
+        }
+        XCTAssertTrue(hBias671.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.cv"].firstMatch.exists
+                      || app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.forecast.bias")
+        if hBias671.exists {
+            if hBias671.isHittable { hBias671.tap() }
+            else {
+                app.swipeUp()
+                if hBias671.waitForExistence(timeout: 2), hBias671.isHittable {
+                    hBias671.tap()
+                } else {
+                    hBias671.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-forecast-bias.png")
+
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
         var c668 = 0
