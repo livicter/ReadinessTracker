@@ -1548,26 +1548,31 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #546: 14-day streak calendar dots (filled = density ≥ threshold).
+    /// Honest #679: appleWatch / HealthKit uses Health pink + health.air.density.streak.cal (#546 parity).
     private func densityStreakCalendar(threshold: Double) -> some View {
         let days = Array(history.suffix(14))
+        let isHealth = source == .appleWatch
+        let hitColor: Color = isHealth ? Color(hex: "FF2D55") : RTColor.optimal
+        let calSID = isHealth ? SurfaceID.healthAirDensityStreakCal : SurfaceID.fitbitAirDensityStreakCal
+        let calLabel = isHealth ? "Health density streak calendar" : "Density streak calendar"
         return HStack(spacing: 4) {
             ForEach(Array(days.enumerated()), id: \.offset) { _, day in
                 let chips = AirChip.all(from: day)
                 let dens = chips.isEmpty ? 0.0 : Double(chips.filter(\.filled).count) / Double(chips.count)
                 let hit = dens >= threshold
                 Circle()
-                    .fill(hit ? RTColor.optimal.opacity(0.9) : RTColor.divider)
+                    .fill(hit ? hitColor.opacity(0.9) : RTColor.divider)
                     .frame(width: 10, height: 10)
                     .overlay(
-                        Circle().stroke(hit ? RTColor.optimal : RTColor.tertiaryText.opacity(0.35), lineWidth: 0.5)
+                        Circle().stroke(hit ? hitColor : RTColor.tertiaryText.opacity(0.35), lineWidth: 0.5)
                     )
                     .accessibilityLabel(hit ? "Above bar" : "Below bar")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 4)
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityStreakCal)
-        .accessibilityLabel("Density streak calendar, last \(days.count) days")
+        .accessibilityIdentifier(calSID)
+        .accessibilityLabel("\(calLabel), last \(days.count) days")
     }
 
     /// Honest #527: last-7d mean density vs prior-7d.
