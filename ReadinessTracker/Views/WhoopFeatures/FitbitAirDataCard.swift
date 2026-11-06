@@ -545,8 +545,16 @@ struct FitbitAirDataCard: View {
         }
     }
 
+    /// Honest #521: tap density ring to cycle legend focus + spark link.
+    /// Honest #685: appleWatch / HealthKit uses Health pink + health.air.density.cycle (#521 parity).
     private var densityRing: some View {
-        ZStack {
+        let isHealth = source == .appleWatch
+        let ringAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let ringSID = isHealth ? SurfaceID.healthAirDensityCycle : SurfaceID.fitbitAirDensityRingCycle
+        let ringLabel = isHealth
+            ? "Health air density \(Int((density * 100).rounded())) percent, tap to cycle category"
+            : "Air density \(Int((density * 100).rounded())) percent, tap to cycle category"
+        return ZStack {
             Circle()
                 .stroke(RTColor.divider, lineWidth: 8)
             // Honest #513: category arcs (Sleep / Vitals / Activity) + overall trim
@@ -555,7 +563,7 @@ struct FitbitAirDataCard: View {
             }
             Circle()
                 .trim(from: 0, to: CGFloat(density))
-                .stroke(accent.opacity(focusedLegend == nil ? 0.35 : 0.12),
+                .stroke(ringAccent.opacity(focusedLegend == nil ? 0.35 : 0.12),
                         style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeInOut(duration: 0.3), value: density)
@@ -572,9 +580,9 @@ struct FitbitAirDataCard: View {
         .animation(.easeInOut(duration: 0.25), value: focusedLegend)
         .contentShape(Circle())
         .onTapGesture { cycleDensityLegendFocus() }
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityRingCycle)
+        .accessibilityIdentifier(ringSID)
         .accessibilityAddTraits(.isButton)
-        .accessibilityLabel("Air density \(Int((density * 100).rounded())) percent, tap to cycle category")
+        .accessibilityLabel(ringLabel)
         .accessibilityHint("Cycles Sleep, Vitals, Activity focus")
     }
 

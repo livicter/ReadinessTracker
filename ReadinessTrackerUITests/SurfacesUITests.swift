@@ -11397,10 +11397,14 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density")
         saveShot("verify-fitbit-air-data-card-detail.png")
         // Honest #521: density ring tap cycles Sleep/Vitals/Activity focus
-        let ringCycle = app.descendants(matching: .any)["fitbit.air.density.cycle"].firstMatch
-        XCTAssertTrue(ringCycle.waitForExistence(timeout: 5)
+        // Honest #685: appleWatch fixture uses health.air.density.cycle (#521 parity).
+        let ringCycleFitbit = app.descendants(matching: .any)["fitbit.air.density.cycle"].firstMatch
+        let ringCycleHealth = app.descendants(matching: .any)["health.air.density.cycle"].firstMatch
+        XCTAssertTrue(ringCycleFitbit.waitForExistence(timeout: 5)
+                      || ringCycleHealth.waitForExistence(timeout: 3)
                       || density.exists,
                       "fitbit.air.density.cycle")
+        let ringCycle = ringCycleFitbit.exists ? ringCycleFitbit : ringCycleHealth
         if ringCycle.exists { ringCycle.tap() }
         saveShot("verify-fitbit-air-density-ring-cycle.png")
         // Honest #513: density legend (Sleep / Vitals / Move) — assert early before scrub/gaps re-anchor.
@@ -13527,6 +13531,35 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-heatmap.png")
+
+        // Honest #685: Health Air density cycle (#521 parity)
+        // Density ring tap cycles Sleep/Vitals/Activity — Health pink SID.
+        let hCycle685 = app.descendants(matching: .any)["health.air.density.cycle"].firstMatch
+        var c685 = 0
+        while !hCycle685.exists && c685 < 14 {
+            app.swipeDown()
+            c685 += 1
+        }
+        if !hCycle685.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hCycle685.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.heat"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists
+                      || app.staticTexts["Health Air"].exists,
+                      "health.air.density.cycle")
+        if hCycle685.exists {
+            if hCycle685.isHittable { hCycle685.tap() }
+            else {
+                app.swipeUp()
+                if hCycle685.waitForExistence(timeout: 2), hCycle685.isHittable {
+                    hCycle685.tap()
+                } else {
+                    hCycle685.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-ring-cycle.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
