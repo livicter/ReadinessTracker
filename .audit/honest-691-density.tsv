@@ -1,1 +1,2 @@
 2026-11-06T10:33:52Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD691	running
+2026-11-06T10:59:23Z	prove	UITest FAILED hist soft-fallback	root SID swap broke fitbit.air.density fallbacks; fixed Health twins	/tmp/RT-DD691	red→fix

@@ -63,3 +63,4 @@
 | 18:27 HKT | #690 density legend | resume land | UITest suite green /tmp/RT-DD690 (4588.964s, 0 failures; hung post-pass; killed); finishing ship; model=deepseek-flash |
 | 18:31 HKT | #690 density legend | land | tip a8577e3 PR #719; UITest suite green /tmp/RT-DD690 (4588.964s, 0 failures; hung post-pass killed); SID health.air.density.legend; Eng Board Merged; model=deepseek-flash |
 | 18:33 HKT | Honest #691 Health Air density container | model=deepseek-flash | port fitbit.air.density → health.air.density pink | mid-ship |
+| 18:59 HKT | #691 density container | fix soft-fallbacks | hist/CV + N× fitbit.air.density fallbacks accept health.air.density after root SID swap | mid-ship |
