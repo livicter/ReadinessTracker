@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T15:44:08Z	start	Honest #694 Health Air spark root SID	Fitbit spark parity health.air.spark; tip 7a1af5f after #693	tip 7a1af5f / docs 7a1af5f	open
+2026-11-06T15:44:08Z	implement	Theme+card SID+UITest+README	smallest Fitbit spark root parity change	pending commit	mid-ship
+2026-11-06T15:44:42Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD694	running
+2026-11-06T17:09:58Z	prove	UITest green hung-post-pass	testFitbitAirDataCardSurface 4832.899s 0 failures; attachment verify-health-air-spark.png	/tmp/RT-DD694	green
+2026-11-06T17:10:30Z	land	proof PNG + receipt; SID health.air.spark	copy /tmp/rt-audit → .audit; PR squash next	.audit/verify-health-air-spark.png	shipping

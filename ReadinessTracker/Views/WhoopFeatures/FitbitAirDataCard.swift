@@ -6125,8 +6125,12 @@ struct FitbitAirDataCard: View {
         return sparkPoints[idx].value - mean
     }
 
+    /// Honest #694: appleWatch / HealthKit uses Health pink + health.air.spark (fitbit.air.spark parity).
     private var sparkBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let isHealth = source == .appleWatch
+        let sparkAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let sparkSID = isHealth ? SurfaceID.healthAirDataSpark : SurfaceID.fitbitAirDataSpark
+        return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("\(sparkMetric.title) · \(sparkPeriod)d")
                     .font(.caption.weight(.semibold))
@@ -6140,10 +6144,10 @@ struct FitbitAirDataCard: View {
                         } label: {
                             Text("\(days)d")
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(sparkPeriod == days ? Color.white : accent)
+                                .foregroundStyle(sparkPeriod == days ? Color.white : sparkAccent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(sparkPeriod == days ? accent : accent.opacity(0.12))
+                                .background(sparkPeriod == days ? sparkAccent : sparkAccent.opacity(0.12))
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -6161,10 +6165,10 @@ struct FitbitAirDataCard: View {
                         } label: {
                             Text(metric.title)
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(sparkMetric == metric ? Color.white : accent)
+                                .foregroundStyle(sparkMetric == metric ? Color.white : sparkAccent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background(sparkMetric == metric ? accent : accent.opacity(0.12))
+                                .background(sparkMetric == metric ? sparkAccent : sparkAccent.opacity(0.12))
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -6186,7 +6190,7 @@ struct FitbitAirDataCard: View {
                         .foregroundStyle(RTColor.secondaryText)
                     Text(sparkScrubValueText(pt.value))
                         .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(accent)
+                        .foregroundStyle(sparkAccent)
                     Spacer()
                     Text("scrub")
                         .font(.caption2.weight(.semibold))
@@ -6225,7 +6229,7 @@ struct FitbitAirDataCard: View {
                         LinearGradient(
                             colors: [
                                 (delta >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.95),
-                                accent.opacity(0.85)
+                                sparkAccent.opacity(0.85)
                             ],
                             startPoint: .leading,
                             endPoint: .trailing
@@ -6247,10 +6251,10 @@ struct FitbitAirDataCard: View {
                         } label: {
                             Text(pt.date, format: .dateTime.day())
                                 .font(.caption2.weight(.bold).monospacedDigit())
-                                .foregroundStyle((sparkScrubIndex ?? sparkPoints.count - 1) == i ? Color.white : accent)
+                                .foregroundStyle((sparkScrubIndex ?? sparkPoints.count - 1) == i ? Color.white : sparkAccent)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
-                                .background((sparkScrubIndex ?? sparkPoints.count - 1) == i ? accent : accent.opacity(0.12))
+                                .background((sparkScrubIndex ?? sparkPoints.count - 1) == i ? sparkAccent : sparkAccent.opacity(0.12))
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
@@ -6265,19 +6269,19 @@ struct FitbitAirDataCard: View {
                         x: .value("Day", pt.date),
                         y: .value(sparkMetric.title, pt.value)
                     )
-                    .foregroundStyle(accent.opacity(0.25))
+                    .foregroundStyle(sparkAccent.opacity(0.25))
                     LineMark(
                         x: .value("Day", pt.date),
                         y: .value(sparkMetric.title, pt.value)
                     )
-                    .foregroundStyle(accent)
+                    .foregroundStyle(sparkAccent)
                     .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
                     if (sparkScrubIndex ?? sparkPoints.count - 1) == i {
                         PointMark(
                             x: .value("Day", pt.date),
                             y: .value(sparkMetric.title, pt.value)
                         )
-                        .foregroundStyle(accent)
+                        .foregroundStyle(sparkAccent)
                         .symbolSize(64)
                     }
                 }
@@ -6308,7 +6312,7 @@ struct FitbitAirDataCard: View {
             }
             .animation(.easeInOut(duration: 0.25), value: sparkPeriod)
             .animation(.easeInOut(duration: 0.25), value: sparkMetric)
-            .accessibilityIdentifier(SurfaceID.fitbitAirDataSpark)
+            .accessibilityIdentifier(sparkSID)
             .onChange(of: sparkPeriod) { _ in sparkScrubIndex = nil }
             .onChange(of: sparkMetric) { _ in sparkScrubIndex = nil }
         }

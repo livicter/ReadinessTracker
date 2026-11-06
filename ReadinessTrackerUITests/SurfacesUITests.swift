@@ -14144,7 +14144,14 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         // Honest #507: spark scrub (while spark still on-screen)
-        let spark = app.descendants(matching: .any)["fitbit.air.spark"].firstMatch
+        // Honest #694: appleWatch fixture uses health.air.spark (fitbit.air.spark parity).
+        let sparkFitbitLate = app.descendants(matching: .any)["fitbit.air.spark"].firstMatch
+        let sparkHealthLate = app.descendants(matching: .any)["health.air.spark"].firstMatch
+        XCTAssertTrue(sparkFitbitLate.waitForExistence(timeout: 6)
+                      || sparkHealthLate.waitForExistence(timeout: 3),
+                      "fitbit.air.spark / health.air.spark")
+        let spark = sparkFitbitLate.exists ? sparkFitbitLate : sparkHealthLate
+        saveShot("verify-health-air-spark.png")
         if spark.exists {
             let scrub = app.descendants(matching: .any)["fitbit.air.spark.scrub"].firstMatch
             // Default callout seeds last day — assert visible; optionally nudge a day chip.

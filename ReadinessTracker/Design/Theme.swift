@@ -414,6 +414,7 @@ enum SurfaceID {
     static let fitbitAirDataChips = "fitbit.air.chips"
     static let healthAirDataChips = "health.air.chips"  // Honest #693
     static let fitbitAirDataSpark = "fitbit.air.spark"
+    static let healthAirDataSpark = "health.air.spark"  // Honest #694
     static let sleepPerformance = "sleep.performance"
     static let sleepHRVBaselineCallout = "sleep.hrv.baseline"
     static let sleepHRVSpark = "sleep.hrv.spark"
