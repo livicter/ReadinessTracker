@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T22:17:55Z	start	Honest #698 Health Air spark.extra SID	Fitbit #510 parity health.air.spark.extra; tip a2adfb3 after #697	tip a2adfb3 / docs c4b1e80	open
+2026-11-06T22:17:55Z	implement	Theme+card SID+UITest+README	smallest Fitbit spark.extra parity change; pink already from #694	pending prove	mid-ship
+2026-11-06T22:17:55Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD698	running
+2026-11-06T23:42:51Z	prove	UITest green	suite passed 0 failures hung post-pass killed	4798.687s /tmp/RT-DD698	green
+2026-11-06T23:49:00Z	land	proof PNG + docs	bound to tip 91d6a23	.audit/verify-health-air-spark-extra.png	landing
