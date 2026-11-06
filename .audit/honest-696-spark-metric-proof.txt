@@ -1,0 +1,11 @@
+Honest #696 Health Air spark.metric
+SID: health.air.spark.metric
+Parity: fitbit.air.spark.metric / #505
+UITest: testFitbitAirDataCardSurface
+Duration: 5092.907s
+Failures: 0
+DerivedData: /tmp/RT-DD696
+Hung post-pass: killed pid 89200
+Proof: .audit/verify-health-air-spark-metric.png
+Branch tip (pre-land): a4343d1
+model=deepseek-flash
