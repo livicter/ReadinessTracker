@@ -14167,9 +14167,16 @@ final class SurfacesUITests: XCTestCase {
         let spark = sparkFitbitLate.exists ? sparkFitbitLate : sparkHealthLate
         saveShot("verify-health-air-spark.png")
         if spark.exists {
-            let scrub = app.descendants(matching: .any)["fitbit.air.spark.scrub"].firstMatch
+            // Honest #697: appleWatch fixture uses health.air.spark.scrub (fitbit.air.spark.scrub parity).
+            let scrubFitbit = app.descendants(matching: .any)["fitbit.air.spark.scrub"].firstMatch
+            let scrubHealth = app.descendants(matching: .any)["health.air.spark.scrub"].firstMatch
+            XCTAssertTrue(scrubFitbit.waitForExistence(timeout: 6)
+                          || scrubHealth.waitForExistence(timeout: 3),
+                          "fitbit.air.spark.scrub / health.air.spark.scrub")
+            let scrub = scrubFitbit.exists ? scrubFitbit : scrubHealth
+            saveShot("verify-health-air-spark-scrub.png")
             // Default callout seeds last day — assert visible; optionally nudge a day chip.
-            if scrub.waitForExistence(timeout: 3) {
+            if scrub.exists {
                 let day = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Scrub day")).element(boundBy: 0)
                 if day.exists, day.isHittable { day.tap() }
                 saveShot("verify-fitbit-air-data-spark-scrub.png")
