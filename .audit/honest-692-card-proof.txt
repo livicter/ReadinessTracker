@@ -1,0 +1,10 @@
+Honest #692 Health Air card root SID
+SID: health.air.card
+Parity: fitbit.air.card / #498
+UITest: testFitbitAirDataCardSurface
+Result: passed (4694.909s), 0 failures
+DerivedData: /tmp/RT-DD692
+Note: hung post-pass on xcresult; killed pid 34622
+Proof PNG: .audit/verify-health-air-card.png (from /tmp/rt-audit)
+Feature tip: 87cc99e
+model=deepseek-flash
