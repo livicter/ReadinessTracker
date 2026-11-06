@@ -11456,10 +11456,14 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-density-heatmap.png")
         // Honest #526: selected heatmap day chip-dot strip
-        let heatDay = app.descendants(matching: .any)["fitbit.air.density.heat.day"].firstMatch
-        XCTAssertTrue(heatDay.waitForExistence(timeout: 6)
+        // Honest #688: appleWatch fixture uses health.air.density.heat.day (#526 parity).
+        let heatDayFitbit = app.descendants(matching: .any)["fitbit.air.density.heat.day"].firstMatch
+        let heatDayHealth = app.descendants(matching: .any)["health.air.density.heat.day"].firstMatch
+        XCTAssertTrue(heatDayFitbit.waitForExistence(timeout: 6)
+                      || heatDayHealth.waitForExistence(timeout: 3)
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "fields")).count > 0
-                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Selected density day")).count > 0,
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Selected density day")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health selected density day")).count > 0,
                       "fitbit.air.density.heat.day")
         saveShot("verify-fitbit-air-density-heat-day.png")
         // Honest #527: week-over-week density badge
@@ -13632,6 +13636,42 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-wow.png")
+
+        // Honest #688: Health Air density heat.day (#526 parity)
+        // Selected heatmap day chip-dot strip — Health pink SID.
+        // Re-select a density day so the strip mounts after prior swipes.
+        let dayCell688 = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "Density day")
+        ).element(boundBy: 6)
+        if dayCell688.waitForExistence(timeout: 3) {
+            dayCell688.tap()
+        } else {
+            let hHeat688 = app.descendants(matching: .any)["health.air.density.heat"].firstMatch
+            var c688heat = 0
+            while !hHeat688.exists && c688heat < 10 {
+                app.swipeDown()
+                c688heat += 1
+            }
+            if hHeat688.exists {
+                hHeat688.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.62)).tap()
+            }
+        }
+        let hHeatDay688 = app.descendants(matching: .any)["health.air.density.heat.day"].firstMatch
+        var c688 = 0
+        while !hHeatDay688.exists && c688 < 8 {
+            app.swipeDown()
+            c688 += 1
+        }
+        if !hHeatDay688.exists {
+            for _ in 0..<6 { app.swipeUp() }
+        }
+        XCTAssertTrue(hHeatDay688.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health selected density day")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "fields")).count > 0
+                      || app.descendants(matching: .any)["health.air.density.heat"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.wow"].firstMatch.exists,
+                      "health.air.density.heat.day")
+        saveShot("verify-health-air-density-heat-day.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch

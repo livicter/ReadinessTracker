@@ -811,9 +811,14 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #526: selected heatmap day chip-dot strip.
+    /// Honest #688: appleWatch / HealthKit uses Health pink + health.air.density.heat.day (#526 parity).
     private func heatmapDayStrip(_ day: DailyHealthData) -> some View {
         let dayChips = AirChip.all(from: day)
         let filled = dayChips.filter(\.filled).count
+        let isHealth = source == .appleWatch
+        let dayAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let daySID = isHealth ? SurfaceID.healthAirDensityHeatDay : SurfaceID.fitbitAirDensityHeatDay
+        let dayLabel = isHealth ? "Health selected density day field strip" : "Selected density day field strip"
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(day.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
@@ -822,12 +827,12 @@ struct FitbitAirDataCard: View {
                 Spacer()
                 Text("\(filled)/\(dayChips.count) fields")
                     .font(.caption2.weight(.bold).monospacedDigit())
-                    .foregroundStyle(accent)
+                    .foregroundStyle(dayAccent)
             }
             HStack(spacing: 4) {
                 ForEach(dayChips) { chip in
                     Circle()
-                        .fill(chip.filled ? accent : RTColor.surfaceHighlight)
+                        .fill(chip.filled ? dayAccent : RTColor.surfaceHighlight)
                         .frame(width: 8, height: 8)
                         .accessibilityLabel("\(chip.label) \(chip.filled ? "filled" : "gap")")
                 }
@@ -835,8 +840,8 @@ struct FitbitAirDataCard: View {
         }
         .padding(10)
         .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHeatDay)
-        .accessibilityLabel("Selected density day field strip")
+        .accessibilityIdentifier(daySID)
+        .accessibilityLabel(dayLabel)
     }
 
     private func heatmapColor(_ dens: Double, heatAccent: Color) -> Color {
