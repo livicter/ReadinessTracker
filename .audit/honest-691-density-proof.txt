@@ -1,0 +1,12 @@
+Honest #691 Health Air density container
+SID: health.air.density
+Parity: Fitbit root fitbit.air.density
+branch: honest-691-health-air-density
+base tip: a8577e3 / docs 5d957ea
+command: xcodebuild test ... -derivedDataPath /tmp/RT-DD691 ... CODE_SIGNING_ALLOWED=NO
+NO -resultBundlePath
+model=deepseek-flash
+status: GREEN
+UITest: testFitbitAirDataCardSurface passed (4665.104s), 0 failures
+hung post-pass xcresult; killed
+proof: .audit/verify-health-air-density.png (from /tmp/rt-audit; attachment t≈3847.43s)

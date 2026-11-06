@@ -1,2 +1,6 @@
 2026-11-06T10:33:52Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD691	running
 2026-11-06T10:59:23Z	prove	UITest FAILED hist soft-fallback	root SID swap broke fitbit.air.density fallbacks; fixed Health twins	/tmp/RT-DD691	red→fix
+2026-11-06T10:59:28Z	prove	restarted UITest after soft-fallback fix	proof gate needs fresh receipt	/tmp/RT-DD691	running
+2026-11-06T11:00:11Z	prove	restart after DD locked race	single xcodebuild; soft-fallback tip e35ec46	/tmp/RT-DD691	running
+2026-11-06T12:24:52Z	prove	UITest suite GREEN	testFitbitAirDataCardSurface passed 4665.104s 0 failures; hung post-pass; killed	/tmp/RT-DD691	green
+2026-11-06T12:27:00Z	ship	proof PNG bound	.audit/verify-health-air-density.png from /tmp/rt-audit	tip e35ec46	ready-land
