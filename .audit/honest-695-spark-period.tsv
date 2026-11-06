@@ -1,3 +1,6 @@
 ts	phase	decision	why	evidence	result
 2026-11-06T17:14:50Z	start	Honest #695 Health Air spark.period SID	Fitbit #503 parity health.air.spark.period; tip 0023a04 after #694	tip 0023a04 / docs 0023a04	open
 2026-11-06T17:14:50Z	implement	Theme+card SID+UITest+README	smallest Fitbit spark.period parity change; pink already from #694	pending prove	mid-ship
+2026-11-06T17:14:59Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD695	running
+2026-11-06T18:38:52Z	prove	UITest green hung-post-pass	testFitbitAirDataCardSurface 4768.309s 0 failures; attachment verify-health-air-spark-period.png	/tmp/RT-DD695	green
+2026-11-06T18:50:00Z	land	proof PNG + receipt; SID health.air.spark.period	copy /tmp/rt-audit → .audit; PR squash next	.audit/verify-health-air-spark-period.png	shipping
