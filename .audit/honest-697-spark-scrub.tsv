@@ -4,3 +4,4 @@ ts	phase	decision	why	evidence	result
 2026-11-06T20:35:00Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD697	running
 2026-11-06T22:07:27Z	prove	UITest suite green /tmp/RT-DD697 (5240.755s, 0 failures; hung post-pass; killed)	proof gate	.audit/verify-health-air-spark-scrub.png	green
 2026-11-06T22:15:00Z	land	proof PNG + receipt; SID health.air.spark.scrub; PR squash next	ship	.audit/verify-health-air-spark-scrub.png	landing
+2026-11-06T22:16:00Z	land	tip a2adfb3 PR #726	SID health.air.spark.scrub; Eng Board Merged	.audit/verify-health-air-spark-scrub.png	landed
