@@ -11428,10 +11428,15 @@ final class SurfacesUITests: XCTestCase {
         if stack.exists { stack.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap() }
         saveShot("verify-fitbit-air-density-stack.png")
         // Honest #525: 7-day density heatmap
-        let heat = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
-        XCTAssertTrue(heat.waitForExistence(timeout: 5)
-                      || app.staticTexts["7-day density"].waitForExistence(timeout: 3),
+        // Honest #684: appleWatch fixture uses health.air.density.heat (#525 parity).
+        let heatFitbit = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
+        let heatHealth = app.descendants(matching: .any)["health.air.density.heat"].firstMatch
+        XCTAssertTrue(heatFitbit.waitForExistence(timeout: 5)
+                      || heatHealth.waitForExistence(timeout: 3)
+                      || app.staticTexts["7-day density"].waitForExistence(timeout: 3)
+                      || app.staticTexts["Health 7-day density"].waitForExistence(timeout: 2),
                       "fitbit.air.density.heat")
+        let heat = heatFitbit.exists ? heatFitbit : heatHealth
         // Prefer labeled day cell (Honest #526 needs a real select).
         let dayCell = app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH[c] %@", "Density day")
@@ -11456,8 +11461,11 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-fitbit-air-density-wow.png")
         } else {
             // History may be short in some fixtures — still assert label OR skip soft
+            // Honest #684: Health path titles the heatmap "Health 7-day density".
             XCTAssertTrue(app.staticTexts["WoW density"].waitForExistence(timeout: 2)
-                          || app.staticTexts["7-day density"].exists,
+                          || app.staticTexts["7-day density"].exists
+                          || app.staticTexts["Health 7-day density"].exists
+                          || heat.exists,
                           "fitbit.air.density.wow")
             saveShot("verify-fitbit-air-density-wow.png")
         }
@@ -11468,7 +11476,9 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(forecastFitbit.waitForExistence(timeout: 5)
                       || forecastHealth.waitForExistence(timeout: 3)
                       || app.staticTexts["Tomorrow density"].waitForExistence(timeout: 3)
-                      || app.staticTexts["7-day density"].exists,
+                      || app.staticTexts["7-day density"].exists
+                      || app.staticTexts["Health 7-day density"].exists
+                      || heat.exists,
                       "fitbit.air.density.forecast")
         let forecast = forecastFitbit.exists ? forecastFitbit : forecastHealth
         if forecast.exists { forecast.tap() }
@@ -13487,6 +13497,36 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-forecast.png")
+
+        // Honest #684: Health Air density heat (#525 parity)
+        // 7-day density heatmap — Health pink SID.
+        let hHeat684 = app.descendants(matching: .any)["health.air.density.heat"].firstMatch
+        var c684 = 0
+        while !hHeat684.exists && c684 < 14 {
+            app.swipeDown()
+            c684 += 1
+        }
+        if !hHeat684.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hHeat684.waitForExistence(timeout: 6)
+                      || app.staticTexts["Health 7-day density"].waitForExistence(timeout: 3)
+                      || app.descendants(matching: .any)["health.air.density.forecast"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.heat")
+        // Prefer labeled day cell (tap maps into spark scrub).
+        let dayCell684 = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "Density day")
+        ).element(boundBy: 6)
+        if dayCell684.waitForExistence(timeout: 3) {
+            dayCell684.tap()
+        } else if hHeat684.exists {
+            if hHeat684.isHittable { hHeat684.tap() }
+            else {
+                hHeat684.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.62)).tap()
+            }
+        }
+        saveShot("verify-health-air-density-heatmap.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch

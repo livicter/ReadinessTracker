@@ -733,10 +733,16 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #525/#526: interactive 7-day density heatmap; tap selects day + scrub spark.
+    /// Honest #684: appleWatch / HealthKit uses Health pink + health.air.density.heat (#525 parity).
     private var densityHeatmap: some View {
         let days = Array(history.suffix(7))
+        let isHealth = source == .appleWatch
+        let heatAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let heatSID = isHealth ? SurfaceID.healthAirDensityHeat : SurfaceID.fitbitAirDensityHeatmap
+        let heatTitle = isHealth ? "Health 7-day density" : "7-day density"
+        let heatLabel = isHealth ? "Health seven day air density heatmap" : "Seven day air density heatmap"
         return VStack(alignment: .leading, spacing: 8) {
-            Text("7-day density")
+            Text(heatTitle)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(RTColor.secondaryText)
             HStack(spacing: 6) {
@@ -757,7 +763,7 @@ struct FitbitAirDataCard: View {
                     } label: {
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(heatmapColor(dens))
+                                .fill(heatmapColor(dens, heatAccent: heatAccent))
                                 .frame(height: 36)
                                 .overlay(
                                     Text("\(Int((dens * 100).rounded()))")
@@ -766,11 +772,11 @@ struct FitbitAirDataCard: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                        .stroke(selected ? accent : Color.clear, lineWidth: 2)
+                                        .stroke(selected ? heatAccent : Color.clear, lineWidth: 2)
                                 )
                             Text(day.date, format: .dateTime.weekday(.narrow))
                                 .font(.caption2.weight(.semibold))
-                                .foregroundStyle(selected ? accent : RTColor.tertiaryText)
+                                .foregroundStyle(selected ? heatAccent : RTColor.tertiaryText)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -783,8 +789,8 @@ struct FitbitAirDataCard: View {
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier(SurfaceID.fitbitAirDensityHeatmap)
-        .accessibilityLabel("Seven day air density heatmap")
+        .accessibilityIdentifier(heatSID)
+        .accessibilityLabel(heatLabel)
     }
 
     /// Honest #526: selected heatmap day chip-dot strip.
@@ -816,11 +822,11 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Selected density day field strip")
     }
 
-    private func heatmapColor(_ dens: Double) -> Color {
+    private func heatmapColor(_ dens: Double, heatAccent: Color) -> Color {
         if dens <= 0 { return RTColor.surfaceHighlight }
-        if dens < 0.4 { return accent.opacity(0.25) }
-        if dens < 0.7 { return accent.opacity(0.55) }
-        return accent.opacity(0.9)
+        if dens < 0.4 { return heatAccent.opacity(0.25) }
+        if dens < 0.7 { return heatAccent.opacity(0.55) }
+        return heatAccent.opacity(0.9)
     }
 
 
