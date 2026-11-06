@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T12:31:16Z	start	Honest #692 Health Air card root SID	Fitbit #498 parity health.air.card; tip ecde7be after #691	tip ecde7be / docs 7ac1d83	open
+2026-11-06T12:31:57Z	implement	Theme+card SID+UITest+README	smallest Fitbit #498 parity change	commit 87cc99e	mid-ship
+2026-11-06T12:31:57Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD692	running
+2026-11-06T13:54:47Z	prove	UITest suite GREEN	testFitbitAirDataCardSurface passed 4694.909s 0 failures; hung post-pass; killed	/tmp/RT-DD692	green
+2026-11-06T13:58:00Z	ship	proof PNG bound	.audit/verify-health-air-card.png from /tmp/rt-audit	tip 87cc99e	ready-land

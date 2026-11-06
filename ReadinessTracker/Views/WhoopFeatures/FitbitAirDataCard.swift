@@ -129,7 +129,10 @@ struct FitbitAirDataCard: View {
             .padding(16)
         }
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier(SurfaceID.fitbitAirDataCard)
+        // Honest #692: appleWatch / HealthKit uses health.air.card (fitbit.air.card parity).
+        .accessibilityIdentifier(source == .appleWatch
+                                 ? SurfaceID.healthAirDataCard
+                                 : SurfaceID.fitbitAirDataCard)
         .accessibilityLabel(source == .fitbit ? "Fitbit air data" : "Health air data")
         .sheet(isPresented: $showDensityDetailSheet) {
             FitbitAirDensityDetailSheet(history: history, source: source)
