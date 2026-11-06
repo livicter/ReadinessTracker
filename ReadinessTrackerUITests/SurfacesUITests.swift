@@ -14189,12 +14189,17 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         // Honest #519: spark vs period-avg delta strip
-        let sparkDelta = app.descendants(matching: .any)["fitbit.air.spark.delta"].firstMatch
+        // Honest #699: appleWatch fixture uses health.air.spark.delta (fitbit.air.spark.delta parity).
+        let sparkDeltaFitbit = app.descendants(matching: .any)["fitbit.air.spark.delta"].firstMatch
+        let sparkDeltaHealth = app.descendants(matching: .any)["health.air.spark.delta"].firstMatch
         // Soft: density stack can push spark delta off-screen on long Fitbit Air card.
-        if sparkDelta.waitForExistence(timeout: 3)
+        if sparkDeltaFitbit.waitForExistence(timeout: 3)
+            || sparkDeltaHealth.waitForExistence(timeout: 3)
             || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "vs")).count > 0 {
+            let sparkDelta = sparkDeltaFitbit.exists ? sparkDeltaFitbit : sparkDeltaHealth
             if sparkDelta.exists { sparkDelta.tap() }
         }
+        saveShot("verify-health-air-spark-delta.png")
         saveShot("verify-fitbit-air-data-spark-delta.png")
         // Honest #509: air gaps strip (empty Google Health / Fitbit fields)
         let gaps = app.descendants(matching: .any)["fitbit.air.gaps"].firstMatch

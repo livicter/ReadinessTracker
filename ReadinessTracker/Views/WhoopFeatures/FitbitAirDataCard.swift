@@ -6242,7 +6242,8 @@ struct FitbitAirDataCard: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
-                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkDelta)
+                // Honest #699: appleWatch uses health.air.spark.delta (fitbit.air.spark.delta parity).
+                .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkDelta : SurfaceID.fitbitAirDataSparkDelta)
                 .accessibilityLabel("Spark delta versus average")
             }
             // Day chips — UITest-reliable scrub affordance (drag still works on chart).
