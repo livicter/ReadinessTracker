@@ -6198,7 +6198,8 @@ struct FitbitAirDataCard: View {
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(RTColor.tertiaryText)
                 }
-                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkScrub)
+                // Honest #697: appleWatch uses health.air.spark.scrub (fitbit.air.spark.scrub parity).
+                .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkScrub : SurfaceID.fitbitAirDataSparkScrub)
                 .accessibilityLabel("Spark scrub \(sparkScrubValueText(pt.value))")
             }
             // Honest #519: vs period mean delta (tap toggles abs / %)
@@ -6260,7 +6261,8 @@ struct FitbitAirDataCard: View {
                                 .clipShape(Capsule())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkScrub)
+                        // Honest #697: appleWatch uses health.air.spark.scrub (fitbit.air.spark.scrub parity).
+                        .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkScrub : SurfaceID.fitbitAirDataSparkScrub)
                         .accessibilityLabel("Scrub day \(i + 1)")
                     }
                 }
