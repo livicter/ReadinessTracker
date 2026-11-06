@@ -14133,7 +14133,14 @@ final class SurfacesUITests: XCTestCase {
             saveShot("verify-fitbit-air-data-spark-period.png")
         }
         // Honest #505/#510: spark metric Steps/Sleep/HRV/Active/RHR/SpO₂
-        let metric = app.descendants(matching: .any)["fitbit.air.spark.metric"].firstMatch
+        // Honest #696: appleWatch fixture uses health.air.spark.metric (fitbit.air.spark.metric parity).
+        let metricFitbit = app.descendants(matching: .any)["fitbit.air.spark.metric"].firstMatch
+        let metricHealth = app.descendants(matching: .any)["health.air.spark.metric"].firstMatch
+        XCTAssertTrue(metricFitbit.waitForExistence(timeout: 6)
+                      || metricHealth.waitForExistence(timeout: 3),
+                      "fitbit.air.spark.metric / health.air.spark.metric")
+        let metric = metricFitbit.exists ? metricFitbit : metricHealth
+        saveShot("verify-health-air-spark-metric.png")
         if metric.exists {
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-metric.png")
