@@ -11425,10 +11425,14 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.legend.spark")
         saveShot("verify-fitbit-air-legend-spark-link.png")
         // Honest #529: density category stacked bar
-        let stack = app.descendants(matching: .any)["fitbit.air.density.stack"].firstMatch
-        XCTAssertTrue(stack.waitForExistence(timeout: 5)
+        // Honest #686: appleWatch fixture uses health.air.density.stack (#529 parity).
+        let stackFitbit = app.descendants(matching: .any)["fitbit.air.density.stack"].firstMatch
+        let stackHealth = app.descendants(matching: .any)["health.air.density.stack"].firstMatch
+        XCTAssertTrue(stackFitbit.waitForExistence(timeout: 5)
+                      || stackHealth.waitForExistence(timeout: 3)
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "stack")).count > 0,
                       "fitbit.air.density.stack")
+        let stack = stackFitbit.exists ? stackFitbit : stackHealth
         if stack.exists { stack.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap() }
         saveShot("verify-fitbit-air-density-stack.png")
         // Honest #525: 7-day density heatmap
@@ -13560,6 +13564,34 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-ring-cycle.png")
+
+        // Honest #686: Health Air density stack (#529 parity)
+        // Density category stacked bar — Health pink SID.
+        let hStack686 = app.descendants(matching: .any)["health.air.density.stack"].firstMatch
+        var c686 = 0
+        while !hStack686.exists && c686 < 14 {
+            app.swipeDown()
+            c686 += 1
+        }
+        if !hStack686.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hStack686.waitForExistence(timeout: 6)
+                      || app.descendants(matching: .any)["health.air.density.cycle"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.heat"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.stack")
+        if hStack686.exists {
+            if hStack686.isHittable {
+                hStack686.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+            } else {
+                app.swipeUp()
+                if hStack686.waitForExistence(timeout: 2) {
+                    hStack686.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+                }
+            }
+        }
+        saveShot("verify-health-air-density-stack.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch

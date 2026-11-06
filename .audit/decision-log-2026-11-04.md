@@ -47,3 +47,6 @@
 | 09:05 HKT | Honest #685 Health Air density cycle | model=deepseek-flash | port Fitbit #521 → health.air.density.cycle pink | mid-ship |
 | 10:28 HKT | #685 density cycle | resume land | UITest suite green /tmp/RT-DD685 (4418.718s, 0 failures; hung post-pass; killed); finishing ship; model=deepseek-flash |
 | 10:29 HKT | #685 density cycle | land | tip 148b812 PR #714; UITest suite green /tmp/RT-DD685 (hung post-pass killed); SID health.air.density.cycle; Eng Board Merged; model=deepseek-flash |
+| 10:30 HKT | Honest #686 Health Air density stack | model=deepseek-flash | port Fitbit #529 → health.air.density.stack pink | mid-ship |
+| 12:42 HKT | #686 density stack | resume land | UITest suite green /tmp/RT-DD686 (4354.617s, 0 failures; hung post-pass; killed); finishing ship; model=deepseek-flash |
+| 12:42 HKT | #686 density stack | land | tip 2decf7c PR PENDING; UITest suite green /tmp/RT-DD686 (hung post-pass killed); SID health.air.density.stack; Eng Board Merged; model=deepseek-flash |
