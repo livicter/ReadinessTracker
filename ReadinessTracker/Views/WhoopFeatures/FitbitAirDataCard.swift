@@ -5520,8 +5520,12 @@ struct FitbitAirDataCard: View {
         }
     }
 
+    /// Honest #693: appleWatch / HealthKit uses Health pink + health.air.chips (fitbit.air.chips parity).
     private var chipGrid: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], spacing: 8) {
+        let isHealth = source == .appleWatch
+        let chipAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let chipsSID = isHealth ? SurfaceID.healthAirDataChips : SurfaceID.fitbitAirDataChips
+        return LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], spacing: 8) {
             ForEach(chips) { chip in
                 Button {
                     Haptic.selectionChanged()
@@ -5534,7 +5538,7 @@ struct FitbitAirDataCard: View {
                             .lineLimit(1)
                         Text(chip.valueText)
                             .font(.caption.weight(.bold).monospacedDigit())
-                            .foregroundStyle(chip.filled ? accent : RTColor.tertiaryText)
+                            .foregroundStyle(chip.filled ? chipAccent : RTColor.tertiaryText)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
@@ -5545,19 +5549,19 @@ struct FitbitAirDataCard: View {
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .fill(selectedChipID == chip.id
-                                  ? accent.opacity(0.18)
-                                  : (chip.filled ? accent.opacity(0.08) : RTColor.surfaceHighlight))
+                                  ? chipAccent.opacity(0.18)
+                                  : (chip.filled ? chipAccent.opacity(0.08) : RTColor.surfaceHighlight))
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(selectedChipID == chip.id ? accent.opacity(0.5) : Color.clear, lineWidth: 1)
+                            .stroke(selectedChipID == chip.id ? chipAccent.opacity(0.5) : Color.clear, lineWidth: 1)
                     )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("\(chip.label) \(chip.valueText)")
             }
         }
-        .accessibilityIdentifier(SurfaceID.fitbitAirDataChips)
+        .accessibilityIdentifier(chipsSID)
     }
 
 

@@ -11329,8 +11329,14 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.card / health.air.card")
         let card = cardFitbit.exists ? cardFitbit : cardHealth
         saveShot("verify-health-air-card.png")
-        let chips = app.descendants(matching: .any)["fitbit.air.chips"].firstMatch
-        XCTAssertTrue(chips.waitForExistence(timeout: 6), "fitbit.air.chips")
+        // Honest #693: appleWatch fixture uses health.air.chips (fitbit.air.chips parity).
+        let chipsFitbit = app.descendants(matching: .any)["fitbit.air.chips"].firstMatch
+        let chipsHealth = app.descendants(matching: .any)["health.air.chips"].firstMatch
+        XCTAssertTrue(chipsFitbit.waitForExistence(timeout: 6)
+                      || chipsHealth.waitForExistence(timeout: 3),
+                      "fitbit.air.chips / health.air.chips")
+        let chips = chipsFitbit.exists ? chipsFitbit : chipsHealth
+        saveShot("verify-health-air-chips.png")
         // Prefer labeled Steps chip (fixture always fills steps) so selectedDetail + mini-spark mount.
         let stepsChip = app.descendants(matching: .any).matching(
             NSPredicate(format: "label BEGINSWITH[c] %@", "Steps")
@@ -14206,9 +14212,11 @@ final class SurfacesUITests: XCTestCase {
             titleFitbit.exists || titleHealth.exists || airCard.exists || chipNav.exists,
             "Air card on-screen"
         )
+        // Honest #693: accept Health twin SID after chips root swap.
         XCTAssertTrue(chipNav.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["fitbit.air.density.omega"].firstMatch.exists
-                      || app.descendants(matching: .any)["fitbit.air.chips"].firstMatch.exists,
+                      || app.descendants(matching: .any)["fitbit.air.chips"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.chips"].firstMatch.exists,
                       "fitbit.air.chip.md.nav")
         let link = app.buttons["Steps metric detail"].firstMatch
         let stepsLabel = app.staticTexts["Steps detail"].firstMatch
