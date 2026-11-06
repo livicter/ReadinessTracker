@@ -14145,9 +14145,15 @@ final class SurfacesUITests: XCTestCase {
             metric.coordinate(withNormalizedOffset: CGVector(dx: 0.35, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-metric.png")
             // Honest #510 extras — scroll toward RHR/SpO₂ end
-            // Honest #510 extras — optional when long density stack pushes chips off-screen.
-            let extra = app.descendants(matching: .any)["fitbit.air.spark.extra"].firstMatch
-            if extra.waitForExistence(timeout: 2) {
+            // Honest #698: appleWatch fixture uses health.air.spark.extra (fitbit.air.spark.extra parity).
+            let extraFitbit = app.descendants(matching: .any)["fitbit.air.spark.extra"].firstMatch
+            let extraHealth = app.descendants(matching: .any)["health.air.spark.extra"].firstMatch
+            XCTAssertTrue(extraFitbit.waitForExistence(timeout: 6)
+                          || extraHealth.waitForExistence(timeout: 3),
+                          "fitbit.air.spark.extra / health.air.spark.extra")
+            let extra = extraFitbit.exists ? extraFitbit : extraHealth
+            saveShot("verify-health-air-spark-extra.png")
+            if extra.exists {
                 metric.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.5)).tap()
                 saveShot("verify-fitbit-air-data-spark-extra.png")
                 metric.coordinate(withNormalizedOffset: CGVector(dx: 0.1, dy: 0.5)).tap()
