@@ -6181,7 +6181,8 @@ struct FitbitAirDataCard: View {
                         .accessibilityLabel("Spark metric extras")
                 }
             }
-            .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkMetric)
+            // Honest #696: appleWatch uses health.air.spark.metric (fitbit.air.spark.metric parity).
+            .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkMetric : SurfaceID.fitbitAirDataSparkMetric)
             let scrubIdx = sparkScrubIndex ?? (sparkPoints.isEmpty ? nil : sparkPoints.count - 1)
             if let idx = scrubIdx, sparkPoints.indices.contains(idx) {
                 let pt = sparkPoints[idx]
