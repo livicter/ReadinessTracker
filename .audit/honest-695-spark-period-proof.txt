@@ -1,0 +1,11 @@
+Honest #695 Health Air spark.period
+SID: health.air.spark.period
+Parity: fitbit.air.spark.period / #503
+UITest: testFitbitAirDataCardSurface
+Duration: 4768.309s
+Failures: 0
+DerivedData: /tmp/RT-DD695
+Hung post-pass: killed pid 75524
+Proof: .audit/verify-health-air-spark-period.png
+Branch tip (pre-land): 9f76ae4
+model=deepseek-flash

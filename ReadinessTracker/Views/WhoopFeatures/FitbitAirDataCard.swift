@@ -6153,7 +6153,8 @@ struct FitbitAirDataCard: View {
                         .buttonStyle(.plain)
                     }
                 }
-                .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkPeriod)
+                // Honest #695: appleWatch uses health.air.spark.period (fitbit.air.spark.period parity).
+                .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkPeriod : SurfaceID.fitbitAirDataSparkPeriod)
             }
             // Honest #510: scrollable Steps/Sleep/HRV/Active/RHR/SpO₂ (+ SurfaceID spark.extra)
             ScrollView(.horizontal, showsIndicators: false) {

@@ -14120,7 +14120,14 @@ final class SurfacesUITests: XCTestCase {
 
 
         // Honest #503: spark period chips 7d/14d/30d
-        let period = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
+        // Honest #695: appleWatch fixture uses health.air.spark.period (fitbit.air.spark.period parity).
+        let periodFitbit = app.descendants(matching: .any)["fitbit.air.spark.period"].firstMatch
+        let periodHealth = app.descendants(matching: .any)["health.air.spark.period"].firstMatch
+        XCTAssertTrue(periodFitbit.waitForExistence(timeout: 6)
+                      || periodHealth.waitForExistence(timeout: 3),
+                      "fitbit.air.spark.period / health.air.spark.period")
+        let period = periodFitbit.exists ? periodFitbit : periodHealth
+        saveShot("verify-health-air-spark-period.png")
         if period.exists {
             period.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
             saveShot("verify-fitbit-air-data-spark-period.png")
