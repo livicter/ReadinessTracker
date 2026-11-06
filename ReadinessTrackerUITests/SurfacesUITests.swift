@@ -11408,8 +11408,15 @@ final class SurfacesUITests: XCTestCase {
         if ringCycle.exists { ringCycle.tap() }
         saveShot("verify-fitbit-air-density-ring-cycle.png")
         // Honest #513: density legend (Sleep / Vitals / Move) — assert early before scrub/gaps re-anchor.
-        let legend = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
-        XCTAssertTrue(legend.waitForExistence(timeout: 5), "fitbit.air.density.legend")
+        // Honest #690: appleWatch fixture uses health.air.density.legend (#513 parity).
+        let legendFitbit = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
+        let legendHealth = app.descendants(matching: .any)["health.air.density.legend"].firstMatch
+        XCTAssertTrue(legendFitbit.waitForExistence(timeout: 5)
+                      || legendHealth.waitForExistence(timeout: 3)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "air density legend")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density legend")).count > 0,
+                      "fitbit.air.density.legend")
+        let legend = legendFitbit.exists ? legendFitbit : legendHealth
         // Honest #517: tap Sleep pill (stable id) so spark link cue appears
         let sleepPill = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
         if sleepPill.waitForExistence(timeout: 3) {
@@ -13704,6 +13711,31 @@ final class SurfacesUITests: XCTestCase {
             hSpark689.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
         }
         saveShot("verify-health-air-density-spark.png")
+
+        // Honest #690: Health Air density legend (#513 parity)
+        // Interactive Sleep / Vitals / Activity legend — Health pink SID.
+        let hLegend690 = app.descendants(matching: .any)["health.air.density.legend"].firstMatch
+        var c690 = 0
+        while !hLegend690.exists && c690 < 12 {
+            app.swipeDown()
+            c690 += 1
+        }
+        if !hLegend690.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hLegend690.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density legend")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Sleep density")).count > 0
+                      || app.descendants(matching: .any)["health.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.stack"].firstMatch.exists,
+                      "health.air.density.legend")
+        let sleepPill690 = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
+        if sleepPill690.waitForExistence(timeout: 3) {
+            sleepPill690.tap()
+        } else if hLegend690.exists {
+            hLegend690.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
+        }
+        saveShot("verify-health-air-density-legend.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch

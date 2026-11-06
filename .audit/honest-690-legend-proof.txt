@@ -1,0 +1,12 @@
+Honest #690 Health Air density legend
+SID: health.air.density.legend
+Parity: Fitbit #513
+branch: honest-690-health-air-legend
+base tip: 3c233c5 / docs 40b5338
+command: xcodebuild test ... -derivedDataPath /tmp/RT-DD690 ... CODE_SIGNING_ALLOWED=NO
+NO -resultBundlePath
+model=deepseek-flash
+status: GREEN
+UITest: testFitbitAirDataCardSurface passed (4588.964s), 0 failures
+hung post-pass xcresult; killed
+proof: .audit/verify-health-air-density-legend.png (from /tmp/rt-audit; attachment t≈3809.61s)
