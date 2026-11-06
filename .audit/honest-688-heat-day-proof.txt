@@ -1,0 +1,11 @@
+Honest #688 Health Air density heat.day
+SID: health.air.density.heat.day
+Parity: Fitbit #526
+branch: honest-688-health-air-heat-day
+base tip: 74e9ba0 / docs a4221df
+command: xcodebuild test -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD688 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO
+NO -resultBundlePath
+model=deepseek-flash
+status: UITest suite green — passed 4556.532s, 0 failures (hung post-pass on xcresult; killed pid 75097)
+proof: .audit/verify-health-air-density-heat-day.png (from /tmp/rt-audit; attachment t≈3395.88s)
+finished: 2026-11-06 15:29:56 HKT

@@ -1,0 +1,5 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T06:08:19Z	start	Honest #688 heat.day Health pink parity	smallest mirror of #687 wow / Fitbit #526	tip 74e9ba0 branch honest-688-health-air-heat-day	mid-ship
+2026-11-06T06:10:00Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt bound to tip	/tmp/RT-DD688	running
+2026-11-06T07:29:56Z	prove	UITest suite green 4556.532s 0 failures	hung post-pass xcresult; killed 75097	/tmp/RT-DD688 + /tmp/rt-audit/verify-health-air-density-heat-day.png	green
+2026-11-06T07:32:00Z	land	finishing ship	README already mentions Health heat.day (#526 parity); proof PNG copied	.audit/verify-health-air-density-heat-day.png	in-flight
