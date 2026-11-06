@@ -622,6 +622,12 @@ struct FitbitAirDataCard: View {
     private func densityLegendPill(_ cat: AirDensityCategory) -> some View {
         let filled = cat.filledCount(in: chips)
         let total = cat.chipIDs.count
+        // Honest #690: appleWatch / HealthKit uses Health pink (#513 parity).
+        let isHealth = source == .appleWatch
+        let idx = AirDensityCategory.allCases.firstIndex(of: cat) ?? 0
+        let pillColor: Color = isHealth
+            ? Color(hex: "FF2D55").opacity(0.55 + 0.15 * Double(idx))
+            : cat.color
         return Button {
             Haptic.selectionChanged()
             focusedLegend = focusedLegend == cat ? nil : cat
@@ -637,7 +643,7 @@ struct FitbitAirDataCard: View {
             VStack(spacing: 3) {
                 HStack(spacing: 4) {
                     Circle()
-                        .fill(cat.color)
+                        .fill(pillColor)
                         .frame(width: 7, height: 7)
                     Text(cat.title)
                         .font(.caption2.weight(.bold))
@@ -645,27 +651,32 @@ struct FitbitAirDataCard: View {
                 }
                 Text("\(filled)/\(total)")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.9) : cat.color)
+                    .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.9) : pillColor)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(focusedLegend == cat ? cat.color : cat.color.opacity(0.10))
+                    .fill(focusedLegend == cat ? pillColor : pillColor.opacity(0.10))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(focusedLegend == cat ? cat.color.opacity(0.8) : Color.clear, lineWidth: 1)
+                    .stroke(focusedLegend == cat ? pillColor.opacity(0.8) : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("fitbit.air.legend.\(cat.rawValue)")
-        .accessibilityLabel("\(cat.title) density \(filled) of \(total)")
+        .accessibilityLabel("\(isHealth ? "Health " : "")\(cat.title) density \(filled) of \(total)")
     }
 
     /// Honest #513: interactive Sleep / Vitals / Activity density legend.
+    /// Honest #690: appleWatch / HealthKit uses Health pink + health.air.density.legend (#513 parity).
     private var densityLegend: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let isHealth = source == .appleWatch
+        let legendSID = isHealth ? SurfaceID.healthAirDensityLegend : SurfaceID.fitbitAirDataDensityLegend
+        let legendLabel = isHealth ? "Health air density legend" : "Air density legend"
+        let linkColor: Color = isHealth ? Color(hex: "FF2D55") : (focusedLegend?.color ?? accent)
+        return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 ForEach(AirDensityCategory.allCases) { cat in
                     densityLegendPill(cat)
@@ -682,17 +693,17 @@ struct FitbitAirDataCard: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(focusedLegend.color.opacity(0.15))
+                        .background(linkColor.opacity(0.15))
                         .clipShape(Capsule())
                 }
-                .foregroundStyle(focusedLegend.color)
+                .foregroundStyle(linkColor)
                 .accessibilityIdentifier(SurfaceID.fitbitAirLegendSparkLink)
-                .accessibilityLabel("Spark linked to \(focusedLegend.sparkMetric.title)")
+                .accessibilityLabel("\(isHealth ? "Health " : "")Spark linked to \(focusedLegend.sparkMetric.title)")
             }
         }
         .accessibilityElement(children: .contain)
-        .accessibilityIdentifier(SurfaceID.fitbitAirDataDensityLegend)
-        .accessibilityLabel("Air density legend")
+        .accessibilityIdentifier(legendSID)
+        .accessibilityLabel(legendLabel)
     }
 
     /// Honest #529: interactive Sleep/Vitals/Activity stacked density bar.
