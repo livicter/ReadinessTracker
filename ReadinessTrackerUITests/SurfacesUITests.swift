@@ -11392,9 +11392,15 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(chipRange.waitForExistence(timeout: 10),
                       "fitbit.air.chip.spark.range")
         saveShot("verify-fitbit-air-chip-spark-range.png")
-        let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
-        XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
+        // Honest #691: appleWatch fixture uses health.air.density (fitbit.air.density parity).
+        let densityFitbit = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
+        let densityHealth = app.descendants(matching: .any)["health.air.density"].firstMatch
+        XCTAssertTrue(densityFitbit.exists
+                      || densityHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
+        let density = densityFitbit.exists ? densityFitbit : densityHealth
         saveShot("verify-fitbit-air-data-card-detail.png")
         // Honest #521: density ring tap cycles Sleep/Vitals/Activity focus
         // Honest #685: appleWatch fixture uses health.air.density.cycle (#521 parity).
@@ -13736,6 +13742,30 @@ final class SurfacesUITests: XCTestCase {
             hLegend690.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
         }
         saveShot("verify-health-air-density-legend.png")
+
+        // Honest #691: Health Air density container (#498 root / fitbit.air.density parity)
+        // Filled-count capsule SID — Health pink when source == .appleWatch.
+        let hDens691 = app.descendants(matching: .any)["health.air.density"].firstMatch
+        var c691 = 0
+        while !hDens691.exists && c691 < 12 {
+            app.swipeDown()
+            c691 += 1
+        }
+        if !hDens691.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hDens691.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density")).count > 0
+                      || app.descendants(matching: .any)["health.air.density.legend"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.cycle"].firstMatch.exists,
+                      "health.air.density")
+        if hDens691.exists {
+            if hDens691.isHittable { hDens691.tap() }
+            else {
+                hDens691.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            }
+        }
+        saveShot("verify-health-air-density.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
