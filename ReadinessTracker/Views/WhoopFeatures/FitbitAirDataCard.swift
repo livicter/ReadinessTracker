@@ -1738,6 +1738,11 @@ struct FitbitAirDataCard: View {
             guard !vals.isEmpty else { return 0 }
             return vals.reduce(0, +) / Double(vals.count)
         }()
+        // Honest #689: appleWatch / HealthKit uses Health pink + health.air.density.spark (#514 parity).
+        let isHealthSpark = source == .appleWatch
+        let sparkAccent: Color = isHealthSpark ? Color(hex: "FF2D55") : accent
+        let sparkSID = isHealthSpark ? SurfaceID.healthAirDensitySpark : SurfaceID.fitbitAirDataDensitySpark
+        let sparkLabel = isHealthSpark ? "Health air density history spark" : "Air density history spark"
         // Honest #677: appleWatch / HealthKit uses Health pink + health.air.density.spark.mean (#556 parity).
         let isHealthMean = source == .appleWatch
         let meanColor: Color = isHealthMean ? Color(hex: "FF2D55") : RTColor.secondaryText
@@ -1765,7 +1770,7 @@ struct FitbitAirDataCard: View {
                     let scrub = points[idx].density
                     Text("\(Int((scrub * 100).rounded()))%")
                         .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(accent)
+                        .foregroundStyle(sparkAccent)
                     if densMean > 0 {
                         let dpp = (scrub - densMean) * 100
                         let sign = dpp >= 0 ? "+" : ""
@@ -1829,19 +1834,19 @@ struct FitbitAirDataCard: View {
                             x: .value("Day", pt.date),
                             y: .value("Density", pt.density)
                         )
-                        .foregroundStyle(accent.opacity(0.18))
+                        .foregroundStyle(sparkAccent.opacity(0.18))
                         LineMark(
                             x: .value("Day", pt.date),
                             y: .value("Density", pt.density)
                         )
-                        .foregroundStyle(accent)
+                        .foregroundStyle(sparkAccent)
                         .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
                         if (sparkScrubIndex ?? points.count - 1) == i {
                             PointMark(
                                 x: .value("Day", pt.date),
                                 y: .value("Density", pt.density)
                             )
-                            .foregroundStyle(accent)
+                            .foregroundStyle(sparkAccent)
                             .symbolSize(56)
                         }
                     }
@@ -1877,8 +1882,8 @@ struct FitbitAirDataCard: View {
                     .foregroundStyle(RTColor.tertiaryText)
             }
         }
-        .accessibilityIdentifier(SurfaceID.fitbitAirDataDensitySpark)
-        .accessibilityLabel("Air density history spark")
+        .accessibilityIdentifier(sparkSID)
+        .accessibilityLabel(sparkLabel)
     }
 
 
