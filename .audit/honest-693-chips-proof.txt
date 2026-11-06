@@ -1,0 +1,10 @@
+Honest #693 Health Air chips SID
+SID: health.air.chips
+Parity: fitbit.air.chips
+UITest: testFitbitAirDataCardSurface
+Result: passed (4771.979s), 0 failures
+DerivedData: /tmp/RT-DD693
+Note: hung post-pass on xcresult; killed pid 48261
+Proof PNG: .audit/verify-health-air-chips.png (from /tmp/rt-audit)
+Feature tip: ba09775
+model=deepseek-flash

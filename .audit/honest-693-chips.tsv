@@ -1,2 +1,6 @@
 ts	phase	decision	why	evidence	result
 2026-11-06T14:06:13Z	start	Honest #693 Health Air chips SID	Fitbit chips parity health.air.chips; tip c3e0f8e after #692	tip c3e0f8e / docs 08a795c	open
+2026-11-06T14:06:41Z	implement	Theme+card SID+UITest+README	smallest Fitbit chips parity change	commit ba09775	mid-ship
+2026-11-06T14:06:41Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD693	running
+2026-11-06T15:38:49Z	prove	UITest green hung-post-pass	proof gate	passed 4771.979s 0 failures /tmp/RT-DD693 killed 48261	green
+2026-11-06T15:38:49Z	land	proof PNG + receipt	bind tip	.audit/verify-health-air-chips.png + honest-693-chips-proof.txt	ready-merge
