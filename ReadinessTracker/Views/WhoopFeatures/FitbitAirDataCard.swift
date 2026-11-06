@@ -1646,12 +1646,21 @@ struct FitbitAirDataCard: View {
         return (cur, prior, (cur - prior) * 100)
     }
 
+    /// Honest #527: week-over-week density badge.
+    /// Honest #687: appleWatch / HealthKit uses Health pink + health.air.density.wow (#527 parity).
     @ViewBuilder
     private var densityWowBadge: some View {
         if let wow = densityWow {
+            let isHealth = source == .appleWatch
             let sign = wow.deltaPP >= 0 ? "+" : ""
             let tone: Color = abs(wow.deltaPP) < 0.5 ? RTColor.secondaryText
                 : (wow.deltaPP > 0 ? RTColor.optimal : RTColor.warning)
+            let wowAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+            let wowSID = isHealth ? SurfaceID.healthAirDensityWow : SurfaceID.fitbitAirDensityWow
+            let wowTitle = isHealth ? "Health WoW density" : "WoW density"
+            let wowLabel = isHealth
+                ? "Health week over week density \(sign)\(Int(wow.deltaPP.rounded())) percentage points"
+                : "Week over week density \(sign)\(Int(wow.deltaPP.rounded())) percentage points"
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -1660,7 +1669,7 @@ struct FitbitAirDataCard: View {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.left.arrow.right.circle.fill")
                             .font(.caption.weight(.semibold))
-                        Text("WoW density")
+                        Text(wowTitle)
                             .font(.caption.weight(.semibold))
                         Spacer()
                         Text("\(sign)\(Int(wow.deltaPP.rounded()))pp")
@@ -1674,7 +1683,7 @@ struct FitbitAirDataCard: View {
                             .font(.caption2.weight(.bold))
                             .foregroundStyle(RTColor.tertiaryText)
                     }
-                    .foregroundStyle(accent)
+                    .foregroundStyle(wowAccent)
                     .padding(10)
                     .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
@@ -1687,8 +1696,8 @@ struct FitbitAirDataCard: View {
                     }
                 }
             }
-            .accessibilityIdentifier(SurfaceID.fitbitAirDensityWow)
-            .accessibilityLabel("Week over week density \(sign)\(Int(wow.deltaPP.rounded())) percentage points")
+            .accessibilityIdentifier(wowSID)
+            .accessibilityLabel(wowLabel)
             .accessibilityAddTraits(.isButton)
         }
     }
