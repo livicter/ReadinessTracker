@@ -1,0 +1,12 @@
+Honest #689 Health Air density spark
+SID: health.air.density.spark
+Parity: Fitbit #514
+branch: honest-689-health-air-spark
+base tip: 122140d / docs c3c0f1f
+command: xcodebuild test -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,id=D591B9E9-451A-40C1-8D9A-87208BD8DBF3' -derivedDataPath /tmp/RT-DD689 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testFitbitAirDataCardSurface -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO
+NO -resultBundlePath
+model=deepseek-flash
+status: GREEN
+proof: .audit/verify-health-air-density-spark.png (from /tmp/rt-audit; attachment t≈3812.38s)
+UITest: passed 4567.309s, 0 failures; hung post-pass xcresult; killed 87645
+finished: 2026-11-06 ~16:58 HKT

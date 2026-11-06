@@ -11628,8 +11628,15 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.streak.cal")
         saveShot("verify-fitbit-air-density-streak-cal.png")
         // Honest #514: density history spark (same window) — assert early with legend.
-        let densSpark = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
-        XCTAssertTrue(densSpark.waitForExistence(timeout: 5), "fitbit.air.density.spark")
+        // Honest #689: appleWatch fixture uses health.air.density.spark (#514 parity).
+        let densSparkFitbit = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
+        let densSparkHealth = app.descendants(matching: .any)["health.air.density.spark"].firstMatch
+        XCTAssertTrue(densSparkFitbit.waitForExistence(timeout: 5)
+                      || densSparkHealth.waitForExistence(timeout: 3)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "density history spark")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density history spark")).count > 0,
+                      "fitbit.air.density.spark")
+        let densSpark = densSparkFitbit.exists ? densSparkFitbit : densSparkHealth
         if densSpark.exists {
             densSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
         }
@@ -11637,13 +11644,15 @@ final class SurfacesUITests: XCTestCase {
         // Honest #548: density spark min–max range
         let densRange = app.descendants(matching: .any)["fitbit.air.density.spark.range"].firstMatch
         XCTAssertTrue(densRange.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists,
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark"].firstMatch.exists,
                       "fitbit.air.density.spark.range")
         saveShot("verify-fitbit-air-density-spark-range.png")
         // Honest #556: density spark mean rule
         let densMean = app.descendants(matching: .any)["fitbit.air.density.spark.mean"].firstMatch
         XCTAssertTrue(densMean.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists,
+                      || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark"].firstMatch.exists,
                       "fitbit.air.density.spark.mean")
         if densMean.exists {
             if densMean.isHittable { densMean.tap() }
@@ -13672,6 +13681,29 @@ final class SurfacesUITests: XCTestCase {
                       || app.descendants(matching: .any)["health.air.density.wow"].firstMatch.exists,
                       "health.air.density.heat.day")
         saveShot("verify-health-air-density-heat-day.png")
+
+        // Honest #689: Health Air density spark (#514 parity)
+        // History density% spark — Health pink SID.
+        let hSpark689 = app.descendants(matching: .any)["health.air.density.spark"].firstMatch
+        var c689 = 0
+        while !hSpark689.exists && c689 < 12 {
+            app.swipeDown()
+            c689 += 1
+        }
+        if !hSpark689.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hSpark689.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density history spark")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Density ·")).count > 0
+                      || app.descendants(matching: .any)["health.air.density.spark.mean"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.spark.range"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.heat.day"].firstMatch.exists,
+                      "health.air.density.spark")
+        if hSpark689.exists {
+            hSpark689.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.5)).tap()
+        }
+        saveShot("verify-health-air-density-spark.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
