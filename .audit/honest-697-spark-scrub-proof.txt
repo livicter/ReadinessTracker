@@ -1,0 +1,11 @@
+Honest #697 Health Air spark.scrub
+SID: health.air.spark.scrub
+Parity: fitbit.air.spark.scrub / #507
+UITest: testFitbitAirDataCardSurface
+Duration: 5240.755s
+Failures: 0
+DerivedData: /tmp/RT-DD697
+Hung post-pass: killed pid 4702
+Proof: .audit/verify-health-air-spark-scrub.png
+Branch tip (pre-land): 848ceed
+model=deepseek-flash
