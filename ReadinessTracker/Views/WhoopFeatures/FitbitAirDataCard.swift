@@ -6176,8 +6176,9 @@ struct FitbitAirDataCard: View {
                         .accessibilityLabel("Spark metric \(metric.title)")
                     }
                     // Invisible marker so #510 SurfaceID is unique & discoverable
+                    // Honest #698: appleWatch uses health.air.spark.extra (fitbit.air.spark.extra parity).
                     Color.clear.frame(width: 1, height: 1)
-                        .accessibilityIdentifier(SurfaceID.fitbitAirDataSparkExtra)
+                        .accessibilityIdentifier(isHealth ? SurfaceID.healthAirDataSparkExtra : SurfaceID.fitbitAirDataSparkExtra)
                         .accessibilityLabel("Spark metric extras")
                 }
             }
