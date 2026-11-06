@@ -534,14 +534,20 @@ struct FitbitAirDataCard: View {
             .accessibilityLabel(source == .appleWatch
                                 ? "Open Health air density detail"
                                 : "Open air density detail")
+            // Honest #691: appleWatch / HealthKit uses Health pink + health.air.density (fitbit.air.density parity).
             Text("\(filledCount)/\(chips.count)")
                 .font(.caption.weight(.bold).monospacedDigit())
-                .foregroundStyle(accent)
+                .foregroundStyle(source == .appleWatch ? Color(hex: "FF2D55") : accent)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
-                .background(accent.opacity(0.12))
+                .background((source == .appleWatch ? Color(hex: "FF2D55") : accent).opacity(0.12))
                 .clipShape(Capsule())
-                .accessibilityIdentifier(SurfaceID.fitbitAirDataDensity)
+                .accessibilityIdentifier(source == .appleWatch
+                                         ? SurfaceID.healthAirDensity
+                                         : SurfaceID.fitbitAirDataDensity)
+                .accessibilityLabel(source == .appleWatch
+                                    ? "Health air density \(filledCount) of \(chips.count)"
+                                    : "Air density \(filledCount) of \(chips.count)")
         }
     }
 

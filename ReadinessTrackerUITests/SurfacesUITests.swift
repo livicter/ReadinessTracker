@@ -11392,9 +11392,15 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(chipRange.waitForExistence(timeout: 10),
                       "fitbit.air.chip.spark.range")
         saveShot("verify-fitbit-air-chip-spark-range.png")
-        let density = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
-        XCTAssertTrue(density.exists || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
+        // Honest #691: appleWatch fixture uses health.air.density (fitbit.air.density parity).
+        let densityFitbit = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
+        let densityHealth = app.descendants(matching: .any)["health.air.density"].firstMatch
+        XCTAssertTrue(densityFitbit.exists
+                      || densityHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "/")).count > 0,
                       "fitbit.air.density")
+        let density = densityFitbit.exists ? densityFitbit : densityHealth
         saveShot("verify-fitbit-air-data-card-detail.png")
         // Honest #521: density ring tap cycles Sleep/Vitals/Activity focus
         // Honest #685: appleWatch fixture uses health.air.density.cycle (#521 parity).
@@ -11668,26 +11674,35 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-spark-mean.png")
 
         // Honest #570: density distribution histogram
+        // Honest #691 continue: appleWatch uses health.air.density.hist (#669) / health.air.density capsule.
         let densHist = app.descendants(matching: .any)["fitbit.air.density.hist"].firstMatch
-        XCTAssertTrue(densHist.waitForExistence(timeout: 5)
+        let densHistHealth = app.descendants(matching: .any)["health.air.density.hist"].firstMatch
+        XCTAssertTrue(densHist.waitForExistence(timeout: 6) || densHistHealth.waitForExistence(timeout: 2)
+                      || app.descendants(matching: .any)["health.air.density.spark"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.hist")
-        if densHist.exists {
-            if densHist.isHittable { densHist.tap() }
-            else { densHist.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        let densHistTap = densHist.exists ? densHist : densHistHealth
+        if densHistTap.exists {
+            if densHistTap.isHittable { densHistTap.tap() }
+            else { densHistTap.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-hist.png")
 
         // Honest #572: density CV meter
+        // Honest #691 continue: appleWatch uses health.air.density.cv (#670) / health.air.density capsule.
         let densCV = app.descendants(matching: .any)["fitbit.air.density.cv"].firstMatch
-        XCTAssertTrue(densCV.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.hist"].firstMatch.exists
+        let densCVHealth = app.descendants(matching: .any)["health.air.density.cv"].firstMatch
+        XCTAssertTrue(densCV.waitForExistence(timeout: 6) || densCVHealth.waitForExistence(timeout: 2)
+                      || densHist.exists || densHistHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.cv")
-        if densCV.exists {
-            if densCV.isHittable { densCV.tap() }
-            else { densCV.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        let densCVTap = densCV.exists ? densCV : densCVHealth
+        if densCVTap.exists {
+            if densCVTap.isHittable { densCVTap.tap() }
+            else { densCVTap.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-cv.png")
 
@@ -11725,43 +11740,56 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-fitbit-air-density-percentile.png")
 
         // Honest #580: density envelope chart
+        // Honest #691 continue: appleWatch uses health.air.density.envelope (#668).
         let densEnv = app.descendants(matching: .any)["fitbit.air.density.envelope"].firstMatch
-        XCTAssertTrue(densEnv.waitForExistence(timeout: 5)
+        let densEnvHealth = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
+        XCTAssertTrue(densEnv.waitForExistence(timeout: 6) || densEnvHealth.waitForExistence(timeout: 2)
+                      || app.descendants(matching: .any)["health.air.density.percentile"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density.percentile"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.envelope")
-        if densEnv.exists {
-            if densEnv.isHittable { densEnv.tap() }
-            else { densEnv.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        let densEnvTap = densEnv.exists ? densEnv : densEnvHealth
+        if densEnvTap.exists {
+            if densEnvTap.isHittable { densEnvTap.tap() }
+            else { densEnvTap.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-envelope.png")
 
         // Honest #582: density MAD meter
+        // Honest #691 continue: appleWatch uses health.air.density.mad (#667).
         let densMAD = app.descendants(matching: .any)["fitbit.air.density.mad"].firstMatch
-        XCTAssertTrue(densMAD.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.envelope"].firstMatch.exists
+        let densMADHealth = app.descendants(matching: .any)["health.air.density.mad"].firstMatch
+        XCTAssertTrue(densMAD.waitForExistence(timeout: 6) || densMADHealth.waitForExistence(timeout: 2)
+                      || densEnv.exists || densEnvHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.mad")
-        if densMAD.exists {
-            if densMAD.isHittable { densMAD.tap() }
-            else { densMAD.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        let densMADTap = densMAD.exists ? densMAD : densMADHealth
+        if densMADTap.exists {
+            if densMADTap.isHittable { densMADTap.tap() }
+            else { densMADTap.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-fitbit-air-density-mad.png")
 
         // Honest #584: density Tukey fences
+        // Honest #691 continue: appleWatch uses health.air.density.tukey (#666).
         let densTukey = app.descendants(matching: .any)["fitbit.air.density.tukey"].firstMatch
-        XCTAssertTrue(densTukey.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.mad"].firstMatch.exists
+        let densTukeyHealth = app.descendants(matching: .any)["health.air.density.tukey"].firstMatch
+        XCTAssertTrue(densTukey.waitForExistence(timeout: 6) || densTukeyHealth.waitForExistence(timeout: 2)
+                      || densMAD.exists || densMADHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.tukey")
-        if densTukey.exists {
-            if densTukey.isHittable {
-                densTukey.tap()
+        let densTukeyTap = densTukey.exists ? densTukey : densTukeyHealth
+        if densTukeyTap.exists {
+            if densTukeyTap.isHittable {
+                densTukeyTap.tap()
             } else {
                 // Off-screen elements yield INFINITY coords — scroll then tap only if hittable.
                 app.swipeUp()
-                if densTukey.waitForExistence(timeout: 2), densTukey.isHittable {
-                    densTukey.tap()
+                if densTukeyTap.waitForExistence(timeout: 2), densTukeyTap.isHittable {
+                    densTukeyTap.tap()
                 }
             }
         }
@@ -11769,50 +11797,62 @@ final class SurfacesUITests: XCTestCase {
 
 
         // Honest #586: density slope meter
+        // Honest #691 continue: appleWatch uses health.air.density.slope (#665).
         let densSlope = app.descendants(matching: .any)["fitbit.air.density.slope"].firstMatch
-        XCTAssertTrue(densSlope.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.tukey"].firstMatch.exists
+        let densSlopeHealth = app.descendants(matching: .any)["health.air.density.slope"].firstMatch
+        XCTAssertTrue(densSlope.waitForExistence(timeout: 6) || densSlopeHealth.waitForExistence(timeout: 2)
+                      || densTukey.exists || densTukeyHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.slope")
-        if densSlope.exists {
-            if densSlope.isHittable { densSlope.tap() }
+        let densSlopeTap = densSlope.exists ? densSlope : densSlopeHealth
+        if densSlopeTap.exists {
+            if densSlopeTap.isHittable { densSlopeTap.tap() }
             else {
                 app.swipeUp()
-                if densSlope.waitForExistence(timeout: 2), densSlope.isHittable {
-                    densSlope.tap()
+                if densSlopeTap.waitForExistence(timeout: 2), densSlopeTap.isHittable {
+                    densSlopeTap.tap()
                 }
             }
         }
         saveShot("verify-fitbit-air-density-slope.png")
 
         // Honest #588: density z-score strip
+        // Honest #691 continue: appleWatch uses health.air.density.zscore (#664).
         let densZ = app.descendants(matching: .any)["fitbit.air.density.zscore"].firstMatch
-        XCTAssertTrue(densZ.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.slope"].firstMatch.exists
+        let densZHealth = app.descendants(matching: .any)["health.air.density.zscore"].firstMatch
+        XCTAssertTrue(densZ.waitForExistence(timeout: 6) || densZHealth.waitForExistence(timeout: 2)
+                      || densSlope.exists || densSlopeHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.zscore")
-        if densZ.exists {
-            if densZ.isHittable { densZ.tap() }
+        let densZTap = densZ.exists ? densZ : densZHealth
+        if densZTap.exists {
+            if densZTap.isHittable { densZTap.tap() }
             else {
                 app.swipeUp()
-                if densZ.waitForExistence(timeout: 2), densZ.isHittable { densZ.tap() }
+                if densZTap.waitForExistence(timeout: 2), densZTap.isHittable { densZTap.tap() }
             }
         }
         saveShot("verify-fitbit-air-density-zscore.png")
 
 
         // Honest #590: density ACF meter
+        // Honest #691 continue: appleWatch uses health.air.density.acf (#663).
         let densACF = app.descendants(matching: .any)["fitbit.air.density.acf"].firstMatch
-        XCTAssertTrue(densACF.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.zscore"].firstMatch.exists
+        let densACFHealth = app.descendants(matching: .any)["health.air.density.acf"].firstMatch
+        XCTAssertTrue(densACF.waitForExistence(timeout: 6) || densACFHealth.waitForExistence(timeout: 2)
+                      || densZ.exists || densZHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.acf")
-        if densACF.exists {
-            if densACF.isHittable { densACF.tap() }
+        let densACFTap = densACF.exists ? densACF : densACFHealth
+        if densACFTap.exists {
+            if densACFTap.isHittable { densACFTap.tap() }
             else {
                 app.swipeUp()
-                if densACF.waitForExistence(timeout: 2), densACF.isHittable {
-                    densACF.tap()
+                if densACFTap.waitForExistence(timeout: 2), densACFTap.isHittable {
+                    densACFTap.tap()
                 }
             }
         }
@@ -11820,17 +11860,21 @@ final class SurfacesUITests: XCTestCase {
 
 
         // Honest #592: density entropy meter
+        // Honest #691 continue: appleWatch uses health.air.density.entropy (#662).
         let densEnt = app.descendants(matching: .any)["fitbit.air.density.entropy"].firstMatch
-        XCTAssertTrue(densEnt.waitForExistence(timeout: 5)
-                      || app.descendants(matching: .any)["fitbit.air.density.acf"].firstMatch.exists
+        let densEntHealth = app.descendants(matching: .any)["health.air.density.entropy"].firstMatch
+        XCTAssertTrue(densEnt.waitForExistence(timeout: 6) || densEntHealth.waitForExistence(timeout: 2)
+                      || densACF.exists || densACFHealth.exists
+                      || app.descendants(matching: .any)["health.air.density"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.density"].firstMatch.exists,
                       "fitbit.air.density.entropy")
-        if densEnt.exists {
-            if densEnt.isHittable { densEnt.tap() }
+        let densEntTap = densEnt.exists ? densEnt : densEntHealth
+        if densEntTap.exists {
+            if densEntTap.isHittable { densEntTap.tap() }
             else {
                 app.swipeUp()
-                if densEnt.waitForExistence(timeout: 2), densEnt.isHittable {
-                    densEnt.tap()
+                if densEntTap.waitForExistence(timeout: 2), densEntTap.isHittable {
+                    densEntTap.tap()
                 }
             }
         }
@@ -13736,6 +13780,30 @@ final class SurfacesUITests: XCTestCase {
             hLegend690.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
         }
         saveShot("verify-health-air-density-legend.png")
+
+        // Honest #691: Health Air density container (#498 root / fitbit.air.density parity)
+        // Filled-count capsule SID — Health pink when source == .appleWatch.
+        let hDens691 = app.descendants(matching: .any)["health.air.density"].firstMatch
+        var c691 = 0
+        while !hDens691.exists && c691 < 12 {
+            app.swipeDown()
+            c691 += 1
+        }
+        if !hDens691.exists {
+            for _ in 0..<8 { app.swipeUp() }
+        }
+        XCTAssertTrue(hDens691.waitForExistence(timeout: 6)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health air density")).count > 0
+                      || app.descendants(matching: .any)["health.air.density.legend"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.cycle"].firstMatch.exists,
+                      "health.air.density")
+        if hDens691.exists {
+            if hDens691.isHittable { hDens691.tap() }
+            else {
+                hDens691.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+            }
+        }
+        saveShot("verify-health-air-density.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
