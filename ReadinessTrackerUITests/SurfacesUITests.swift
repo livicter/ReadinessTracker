@@ -11319,9 +11319,16 @@ final class SurfacesUITests: XCTestCase {
         }
         XCTAssertTrue(titleFitbit.waitForExistence(timeout: 4) || titleHealth.waitForExistence(timeout: 4),
                       "Fitbit Air / Health Air")
-        let card = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
-        XCTAssertTrue(card.waitForExistence(timeout: 6) || titleHealth.exists || titleFitbit.exists,
-                      "fitbit.air.card")
+        // Honest #692: appleWatch fixture uses health.air.card (fitbit.air.card parity).
+        let cardFitbit = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
+        let cardHealth = app.descendants(matching: .any)["health.air.card"].firstMatch
+        XCTAssertTrue(cardFitbit.waitForExistence(timeout: 6)
+                      || cardHealth.waitForExistence(timeout: 3)
+                      || titleHealth.exists
+                      || titleFitbit.exists,
+                      "fitbit.air.card / health.air.card")
+        let card = cardFitbit.exists ? cardFitbit : cardHealth
+        saveShot("verify-health-air-card.png")
         let chips = app.descendants(matching: .any)["fitbit.air.chips"].firstMatch
         XCTAssertTrue(chips.waitForExistence(timeout: 6), "fitbit.air.chips")
         // Prefer labeled Steps chip (fixture always fills steps) so selectedDetail + mini-spark mount.
@@ -14178,7 +14185,10 @@ final class SurfacesUITests: XCTestCase {
         }
         // Honest #506: air → classic MetricDetail (row under card header).
         // Card grew (#513 legend + #514 density spark) — swipeDown toward header first.
-        let airCard = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
+        // Honest #692: accept Health twin SID after root card swap.
+        let airCardFitbit = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
+        let airCardHealth = app.descendants(matching: .any)["health.air.card"].firstMatch
+        let airCard = airCardFitbit.exists ? airCardFitbit : airCardHealth
         let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
         var reanchor = 0
         while !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) && reanchor < 18 {
