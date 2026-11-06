@@ -1,0 +1,3 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T15:44:08Z	start	Honest #694 Health Air spark root SID	Fitbit spark parity health.air.spark; tip 7a1af5f after #693	tip 7a1af5f / docs 7a1af5f	open
+2026-11-06T15:44:08Z	implement	Theme+card SID+UITest+README	smallest Fitbit spark root parity change	pending commit	mid-ship
