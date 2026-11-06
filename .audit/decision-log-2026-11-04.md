@@ -50,3 +50,5 @@
 | 10:30 HKT | Honest #686 Health Air density stack | model=deepseek-flash | port Fitbit #529 → health.air.density.stack pink | mid-ship |
 | 12:42 HKT | #686 density stack | resume land | UITest suite green /tmp/RT-DD686 (4354.617s, 0 failures; hung post-pass; killed); finishing ship; model=deepseek-flash |
 | 12:42 HKT | #686 density stack | land | tip 79d7cd9 PR #715; UITest suite green /tmp/RT-DD686 (hung post-pass killed); SID health.air.density.stack; Eng Board Merged; model=deepseek-flash |
+| 12:45 HKT | Honest #687 Health Air density wow | model=deepseek-flash | port Fitbit #527 → health.air.density.wow pink | mid-ship |
+| 14:03 HKT | #687 density wow | resume land | UITest suite green /tmp/RT-DD687 (4206.282s, 0 failures; hung post-pass; killed); finishing ship; model=deepseek-flash |

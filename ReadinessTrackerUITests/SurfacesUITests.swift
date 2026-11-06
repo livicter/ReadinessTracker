@@ -11463,14 +11463,21 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.density.heat.day")
         saveShot("verify-fitbit-air-density-heat-day.png")
         // Honest #527: week-over-week density badge
-        let wow = app.descendants(matching: .any)["fitbit.air.density.wow"].firstMatch
-        if wow.waitForExistence(timeout: 4) {
-            wow.tap()
+        // Honest #687: appleWatch fixture uses health.air.density.wow (#527 parity).
+        let wowFitbit = app.descendants(matching: .any)["fitbit.air.density.wow"].firstMatch
+        let wowHealth = app.descendants(matching: .any)["health.air.density.wow"].firstMatch
+        let wow = wowFitbit.exists ? wowFitbit : wowHealth
+        if wowFitbit.waitForExistence(timeout: 4) || wowHealth.waitForExistence(timeout: 3) {
+            let target = wowFitbit.exists ? wowFitbit : wowHealth
+            if target.isHittable { target.tap() }
+            else { target.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
             saveShot("verify-fitbit-air-density-wow.png")
         } else {
             // History may be short in some fixtures — still assert label OR skip soft
             // Honest #684: Health path titles the heatmap "Health 7-day density".
+            // Honest #687: Health path titles the badge "Health WoW density".
             XCTAssertTrue(app.staticTexts["WoW density"].waitForExistence(timeout: 2)
+                          || app.staticTexts["Health WoW density"].exists
                           || app.staticTexts["7-day density"].exists
                           || app.staticTexts["Health 7-day density"].exists
                           || heat.exists,
@@ -13592,6 +13599,39 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-health-air-density-stack.png")
+
+        // Honest #687: Health Air density wow (#527 parity)
+        // Week-over-week density badge — Health pink SID.
+        let hWow687 = app.descendants(matching: .any)["health.air.density.wow"].firstMatch
+        var c687 = 0
+        while !hWow687.exists && c687 < 14 {
+            app.swipeDown()
+            c687 += 1
+        }
+        if !hWow687.exists {
+            for _ in 0..<10 { app.swipeUp() }
+        }
+        XCTAssertTrue(hWow687.waitForExistence(timeout: 6)
+                      || app.staticTexts["Health WoW density"].waitForExistence(timeout: 2)
+                      || app.descendants(matching: .any)["health.air.density.stack"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.heat"].firstMatch.exists
+                      || app.descendants(matching: .any)["health.air.density.glance"].firstMatch.exists,
+                      "health.air.density.wow")
+        if hWow687.exists {
+            if hWow687.isHittable {
+                hWow687.tap()
+            } else {
+                app.swipeUp()
+                if hWow687.waitForExistence(timeout: 2) {
+                    if hWow687.isHittable {
+                        hWow687.tap()
+                    } else {
+                        hWow687.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+                    }
+                }
+            }
+        }
+        saveShot("verify-health-air-density-wow.png")
 
         // Honest #668: Health Air density envelope (#580 parity)
         let hEnv668 = app.descendants(matching: .any)["health.air.density.envelope"].firstMatch
