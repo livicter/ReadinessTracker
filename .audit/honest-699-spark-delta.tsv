@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-06T23:55:00Z	start	Honest #699 Health Air spark.delta SID twin	Fitbit #519 parity → health.air.spark.delta; mirror #698	branch honest-699-health-air-spark-delta tip 6f9585a	open
+2026-11-06T23:56:00Z	implement	Theme+card+UITest+README	smallest SID branch when isHealth; pink already from #694 sparkAccent	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-06T23:56:30Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD699	running
