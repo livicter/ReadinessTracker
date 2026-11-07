@@ -680,11 +680,13 @@ struct FitbitAirDataCard: View {
 
     /// Honest #513: interactive Sleep / Vitals / Activity density legend.
     /// Honest #690: appleWatch / HealthKit uses Health pink + health.air.density.legend (#513 parity).
+    /// Honest #707: appleWatch / HealthKit legend→spark link uses health.air.legend.spark (#517 parity).
     private var densityLegend: some View {
         let isHealth = source == .appleWatch
         let legendSID = isHealth ? SurfaceID.healthAirDensityLegend : SurfaceID.fitbitAirDataDensityLegend
         let legendLabel = isHealth ? "Health air density legend" : "Air density legend"
         let linkColor: Color = isHealth ? Color(hex: "FF2D55") : (focusedLegend?.color ?? accent)
+        let sparkLinkSID = isHealth ? SurfaceID.healthAirLegendSparkLink : SurfaceID.fitbitAirLegendSparkLink
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 ForEach(AirDensityCategory.allCases) { cat in
@@ -706,7 +708,7 @@ struct FitbitAirDataCard: View {
                         .clipShape(Capsule())
                 }
                 .foregroundStyle(linkColor)
-                .accessibilityIdentifier(SurfaceID.fitbitAirLegendSparkLink)
+                .accessibilityIdentifier(sparkLinkSID)
                 .accessibilityLabel("\(isHealth ? "Health " : "")Spark linked to \(focusedLegend.sparkMetric.title)")
             }
         }
