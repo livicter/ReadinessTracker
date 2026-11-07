@@ -5895,6 +5895,7 @@ struct FitbitAirDataCard: View {
     /// Honest #702: appleWatch / HealthKit scrub callout uses health.air.chip.spark.scrub (fitbit.air.chip.spark.scrub parity).
     /// Honest #703: appleWatch / HealthKit Δ vs 7d mean uses health.air.chip.spark.delta (fitbit.air.chip.spark.delta parity).
     /// Honest #704: appleWatch / HealthKit 7d mean caption uses health.air.chip.spark.mean (fitbit.air.chip.spark.mean parity).
+    /// Honest #705: appleWatch / HealthKit 7d peak caption uses health.air.chip.spark.peak (fitbit.air.chip.spark.peak parity).
     @ViewBuilder
     private func chipMiniSpark(_ chip: AirChip) -> some View {
         let isHealth = source == .appleWatch
@@ -5903,6 +5904,7 @@ struct FitbitAirDataCard: View {
         let scrubSID = isHealth ? SurfaceID.healthAirChipSparkScrub : SurfaceID.fitbitAirChipSparkScrub
         let deltaSID = isHealth ? SurfaceID.healthAirChipSparkDelta : SurfaceID.fitbitAirChipSparkDelta
         let meanSID = isHealth ? SurfaceID.healthAirChipSparkMean : SurfaceID.fitbitAirChipSparkMean
+        let peakSID = isHealth ? SurfaceID.healthAirChipSparkPeak : SurfaceID.fitbitAirChipSparkPeak
         let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
             guard let metric = chip.metric else { return nil }
             let v = QuickTrendCard.metricValue(day, metric: metric) ?? 0
@@ -5969,7 +5971,7 @@ struct FitbitAirDataCard: View {
                             .padding(.vertical, 2)
                             .background(sparkAccent.opacity(0.12))
                             .clipShape(Capsule())
-                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkPeak)
+                            .accessibilityIdentifier(peakSID)
                             .accessibilityLabel("\(chip.label) seven day peak")
                     }
                 }
