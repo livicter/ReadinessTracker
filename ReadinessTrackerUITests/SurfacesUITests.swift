@@ -11377,12 +11377,17 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-chip-spark-scrub.png")
         saveShot("verify-fitbit-air-chip-spark-scrub.png")
         // Honest #535: chip spark Δ vs 7d mean
-        let chipDelta = app.descendants(matching: .any)["fitbit.air.chip.spark.delta"].firstMatch
-        XCTAssertTrue(chipDelta.waitForExistence(timeout: 5)
+        // Honest #703: appleWatch fixture uses health.air.chip.spark.delta (fitbit.air.chip.spark.delta parity).
+        let chipDeltaFitbit = app.descendants(matching: .any)["fitbit.air.chip.spark.delta"].firstMatch
+        let chipDeltaHealth = app.descendants(matching: .any)["health.air.chip.spark.delta"].firstMatch
+        let chipDelta = chipDeltaFitbit.exists ? chipDeltaFitbit : chipDeltaHealth
+        XCTAssertTrue(chipDeltaFitbit.waitForExistence(timeout: 5)
+                      || chipDeltaHealth.waitForExistence(timeout: 5)
                       || chipScrub.exists
                       || chipSpark.exists
                       || chips.exists,
-                      "fitbit.air.chip.spark.delta")
+                      "fitbit.air.chip.spark.delta / health.air.chip.spark.delta")
+        saveShot("verify-health-air-chip-spark-delta.png")
         saveShot("verify-fitbit-air-chip-spark-delta.png")
         // Honest #536: chip spark 7d mean rule + avg caption
         let chipMean = app.descendants(matching: .any)["fitbit.air.chip.spark.mean"].firstMatch
