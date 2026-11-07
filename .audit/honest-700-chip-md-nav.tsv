@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T01:30:00Z	start	Honest #700 Health Air chip.md.nav SID twin	Fitbit #506 parity → health.air.chip.md.nav; mirror #699	branch honest-700-health-air-chip-md-nav tip a4e7cb3	open
+2026-11-07T01:31:00Z	implement	Theme+card+UITest+README	smallest SID+pink branch when isHealth; mirror #699/#693	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T01:32:00Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD700	running
