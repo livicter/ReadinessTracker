@@ -11362,14 +11362,19 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-chip-spark.png")
         saveShot("verify-fitbit-air-chip-mini-spark.png")
         // Honest #532: scrub value callout on chip mini spark
+        // Honest #702: appleWatch fixture uses health.air.chip.spark.scrub (fitbit.air.chip.spark.scrub parity).
         if chipSpark.exists {
             chipSpark.coordinate(withNormalizedOffset: CGVector(dx: 0.7, dy: 0.6)).tap()
         }
-        let chipScrub = app.descendants(matching: .any)["fitbit.air.chip.spark.scrub"].firstMatch
-        XCTAssertTrue(chipScrub.waitForExistence(timeout: 5)
+        let chipScrubFitbit = app.descendants(matching: .any)["fitbit.air.chip.spark.scrub"].firstMatch
+        let chipScrubHealth = app.descendants(matching: .any)["health.air.chip.spark.scrub"].firstMatch
+        let chipScrub = chipScrubFitbit.exists ? chipScrubFitbit : chipScrubHealth
+        XCTAssertTrue(chipScrubFitbit.waitForExistence(timeout: 5)
+                      || chipScrubHealth.waitForExistence(timeout: 5)
                       || chipSpark.exists
                       || chips.exists,
-                      "fitbit.air.chip.spark.scrub")
+                      "fitbit.air.chip.spark.scrub / health.air.chip.spark.scrub")
+        saveShot("verify-health-air-chip-spark-scrub.png")
         saveShot("verify-fitbit-air-chip-spark-scrub.png")
         // Honest #535: chip spark Δ vs 7d mean
         let chipDelta = app.descendants(matching: .any)["fitbit.air.chip.spark.delta"].firstMatch

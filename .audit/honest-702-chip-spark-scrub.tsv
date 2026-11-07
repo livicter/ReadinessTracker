@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T05:03:12Z	start	Honest #702 Health Air chip.spark.scrub SID twin	Fitbit #532 parity → health.air.chip.spark.scrub; mirror #701	branch honest-702-health-air-chip-spark-scrub tip 5220a84	open
+2026-11-07T05:03:12Z	implement	Theme+card+UITest+README	smallest scrubSID branch when isHealth; mirror #701	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T05:03:12Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD702	running
+2026-11-07T06:30:21Z	prove	UITest green 4945.322s / 0 failures	testFitbitAirDataCardSurface passed; hung post-pass killed	/tmp/RT-DD702-log.txt	green
+2026-11-07T06:32:00Z	land	proof PNG copied + commit/PR next	SID health.air.chip.spark.scrub	.audit/verify-health-air-chip-spark-scrub.png	landing
