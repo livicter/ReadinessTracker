@@ -10409,6 +10409,21 @@ final class SurfacesUITests: XCTestCase {
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.2)).tap()
         }
         saveShot("verify-readiness-load-simulator.png")
+        // Honest #708: appleWatch fixture uses health.air.strip (fitbit.air.strip / #497 parity).
+        let stripFitbit = app.descendants(matching: .any)["fitbit.air.strip"].firstMatch
+        let stripHealth = app.descendants(matching: .any)["health.air.strip"].firstMatch
+        var stripN = 0
+        while !stripFitbit.exists && !stripHealth.exists && stripN < 14 {
+            app.swipeUp()
+            stripN += 1
+        }
+        XCTAssertTrue(stripFitbit.waitForExistence(timeout: 5)
+                      || stripHealth.waitForExistence(timeout: 5)
+                      || app.staticTexts["Health air data"].exists
+                      || app.staticTexts["Fitbit air data"].exists,
+                      "fitbit.air.strip / health.air.strip")
+        saveShot("verify-health-air-strip.png")
+        saveShot("verify-fitbit-air-strip.png")
         let tasks = app.descendants(matching: .any)["sim.load.tasks"].firstMatch
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")

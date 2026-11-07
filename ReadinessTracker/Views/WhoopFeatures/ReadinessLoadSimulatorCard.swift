@@ -98,7 +98,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private var fitbitAirChips: [FitbitAirChip] {
-        guard source == .fitbit else { return [] }
+        // Honest #708: Health (appleWatch) also surfaces air field chips (fitbit.air.strip parity / #497).
         return FitbitAirChip.chips(from: data)
     }
 
@@ -4660,9 +4660,15 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("\(cat.title) air \(n) of \(den)")
     }
 
+    /// Honest #497: Fitbit air field strip.
+    /// Honest #708: appleWatch / HealthKit uses health.air.strip (#497 parity).
     private var fitbitAirStrip: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Fitbit air data")
+        let isHealth = source == .appleWatch
+        let stripSID = isHealth ? SurfaceID.healthAirDataStrip : SurfaceID.fitbitAirDataStrip
+        let title = isHealth ? "Health air data" : "Fitbit air data"
+        let label = isHealth ? "Health air data fields" : "Fitbit air data fields"
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(title)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(RTColor.secondaryText)
             ScrollView(.horizontal, showsIndicators: false) {
@@ -4683,8 +4689,8 @@ struct ReadinessLoadSimulatorCard: View {
                     }
                 }
             }
-            .accessibilityIdentifier(SurfaceID.fitbitAirDataStrip)
-            .accessibilityLabel("Fitbit air data fields")
+            .accessibilityIdentifier(stripSID)
+            .accessibilityLabel(label)
         }
     }
 
