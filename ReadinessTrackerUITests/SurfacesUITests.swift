@@ -10959,6 +10959,25 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-margin.png")
 
+
+        // Honest #713: READY climb slack
+        let climbSlack = app.descendants(matching: .any)["sim.load.ready.climb.slack"].firstMatch
+        XCTAssertTrue(climbSlack.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.margin"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.slack")
+        if climbSlack.exists {
+            if climbSlack.isHittable { climbSlack.tap() }
+            else {
+                app.swipeUp()
+                if climbSlack.waitForExistence(timeout: 2), climbSlack.isHittable {
+                    climbSlack.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-slack.png")
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)

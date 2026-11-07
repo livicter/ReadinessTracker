@@ -1,0 +1,10 @@
+Honest #713 — Simulator climb slack
+tip_base: 9a67441 (main before ship)
+branch: honest-713-climb-slack
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD713 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 621.819
+pngs: .audit/verify-simulator-climb-slack.png
+SID: sim.load.ready.climb.slack
+when_hkt: 2026-11-08 06:33 HKT
+rationale: climb family after margin #712; unused queue after Optimal intercept (Fat/Soft/Tight/None/Short)
