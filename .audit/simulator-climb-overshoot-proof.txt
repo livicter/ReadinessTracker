@@ -1,0 +1,10 @@
+Honest #714 — Simulator climb overshoot
+tip_base: 8f4a49d (main before ship)
+branch: honest-714-climb-overshoot
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD714 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 626.027
+pngs: .audit/verify-simulator-climb-overshoot.png
+SID: sim.load.ready.climb.overshoot
+when_hkt: 2026-11-08 06:59 HKT
+rationale: climb family after slack #713; full-queue READY vs Optimal (High/Soft/Exact/Short)
