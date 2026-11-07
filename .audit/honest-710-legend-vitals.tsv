@@ -2,3 +2,5 @@ ts	phase	decision	why	evidence	result
 2026-11-07T17:59:27Z	start	Honest #710 Health Air legend.vitals SID twin	Fitbit #513 vitals pill → health.air.legend.vitals; mirror #709 sleep	branch honest-710-health-air-legend-vitals	open
 2026-11-07T17:59:27Z	implement	Theme+card+UITest+README	smallest isHealth legend pill Theme constant for vitals	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
 2026-11-07T17:59:27Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD710	running
+2026-11-07T19:52:21Z	prove	UITest suite green	0 failures hung post-pass killed	/tmp/RT-DD710 6231.500s	pass
+2026-11-07T19:52:21Z	land	proof PNG + decision-log	SID health.air.legend.vitals	.audit/verify-health-air-legend-vitals.png	ready-pr

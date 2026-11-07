@@ -152,3 +152,5 @@
 | 01:57 HKT | #709 Health Air legend.sleep | land | tip 4717209 PR #739; UITest suite green /tmp/RT-DD709 (5920.799s, 0 failures; hung post-pass killed); SID health.air.legend.sleep; Eng Board Merged; model=deepseek-flash |
 | 01:59 HKT | Honest #710 Health Air legend.vitals | model=deepseek-flash | port #513 vitals pill → health.air.legend.vitals; mirror #709 | mid-ship |
 | 01:59 HKT | Honest #710 Health Air legend.vitals | prove | started UITest /tmp/RT-DD710; model=deepseek-flash | mid-ship |
+| 03:52 HKT | #710 Health Air legend.vitals | prove | UITest suite green /tmp/RT-DD710 (6231.500s, 0 failures; hung post-pass; killed); model=deepseek-flash |
+| 03:52 HKT | #710 Health Air legend.vitals | land | proof PNG + receipt; SID health.air.legend.vitals; PR squash next; model=deepseek-flash |
