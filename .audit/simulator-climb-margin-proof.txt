@@ -1,0 +1,10 @@
+Honest #712 — Simulator climb margin
+tip_base: da8ef45 (main before ship)
+branch: honest-712-climb-margin
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD712 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 613.601
+pngs: .audit/verify-simulator-climb-margin.png
+SID: sim.load.ready.climb.margin
+when_hkt: 2026-11-08 06:10 HKT
+rationale: Fitbit Air twins exhausted after #711 legend.activity; next LoadSim climb.margin after intercept #639
