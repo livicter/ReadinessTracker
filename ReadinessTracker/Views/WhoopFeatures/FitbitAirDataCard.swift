@@ -5892,11 +5892,13 @@ struct FitbitAirDataCard: View {
 
     /// Honest #531/#532: 7-day mini spark for the selected air chip; scrub syncs main spark.
     /// Honest #701: appleWatch / HealthKit uses Health pink + health.air.chip.spark (fitbit.air.chip.spark parity).
+    /// Honest #702: appleWatch / HealthKit scrub callout uses health.air.chip.spark.scrub (fitbit.air.chip.spark.scrub parity).
     @ViewBuilder
     private func chipMiniSpark(_ chip: AirChip) -> some View {
         let isHealth = source == .appleWatch
         let sparkAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
         let sparkSID = isHealth ? SurfaceID.healthAirChipMiniSpark : SurfaceID.fitbitAirChipMiniSpark
+        let scrubSID = isHealth ? SurfaceID.healthAirChipSparkScrub : SurfaceID.fitbitAirChipSparkScrub
         let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
             guard let metric = chip.metric else { return nil }
             let v = QuickTrendCard.metricValue(day, metric: metric) ?? 0
@@ -5931,7 +5933,7 @@ struct FitbitAirDataCard: View {
                         Text(chipSparkValueText(chip, scrubPt.value))
                             .font(.caption2.weight(.bold).monospacedDigit())
                             .foregroundStyle(sparkAccent)
-                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkScrub)
+                            .accessibilityIdentifier(scrubSID)
                             .accessibilityLabel("\(chip.label) scrub \(chipSparkValueText(chip, scrubPt.value))")
                     }
                     if let d = deltaVsMean {
