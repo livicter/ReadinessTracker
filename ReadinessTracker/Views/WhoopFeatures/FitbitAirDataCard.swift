@@ -674,9 +674,11 @@ struct FitbitAirDataCard: View {
             )
         }
         .buttonStyle(.plain)
-        // Honest #709: appleWatch / HealthKit legend pills use health.air.legend.* (#513 sleep pill parity).
+        // Honest #709/#710: appleWatch / HealthKit legend pills use health.air.legend.* (#513 parity).
         .accessibilityIdentifier(isHealth
-            ? (cat == .sleep ? SurfaceID.healthAirLegendSleep : "health.air.legend.\(cat.rawValue)")
+            ? (cat == .sleep ? SurfaceID.healthAirLegendSleep
+               : cat == .vitals ? SurfaceID.healthAirLegendVitals
+               : "health.air.legend.\(cat.rawValue)")
             : "fitbit.air.legend.\(cat.rawValue)")
         .accessibilityLabel("\(isHealth ? "Health " : "")\(cat.title) density \(filled) of \(total)")
     }
@@ -685,6 +687,7 @@ struct FitbitAirDataCard: View {
     /// Honest #690: appleWatch / HealthKit uses Health pink + health.air.density.legend (#513 parity).
     /// Honest #707: appleWatch / HealthKit legend→spark link uses health.air.legend.spark (#517 parity).
     /// Honest #709: appleWatch / HealthKit legend pills use health.air.legend.sleep (#513 parity).
+    /// Honest #710: appleWatch / HealthKit legend pills use health.air.legend.vitals (#513 parity).
     private var densityLegend: some View {
         let isHealth = source == .appleWatch
         let legendSID = isHealth ? SurfaceID.healthAirDensityLegend : SurfaceID.fitbitAirDataDensityLegend
