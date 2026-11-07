@@ -11014,6 +11014,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-climb-hold.png")
 
 
+        // Honest #716: READY climb ceiling
+        let climbCeiling = app.descendants(matching: .any)["sim.load.ready.climb.ceiling"].firstMatch
+        XCTAssertTrue(climbCeiling.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.hold"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.ceiling")
+        if climbCeiling.exists {
+            if climbCeiling.isHittable { climbCeiling.tap() }
+            else {
+                app.swipeUp()
+                if climbCeiling.waitForExistence(timeout: 2), climbCeiling.isHittable {
+                    climbCeiling.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-ceiling.png")
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
