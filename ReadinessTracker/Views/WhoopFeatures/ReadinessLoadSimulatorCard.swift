@@ -154,6 +154,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbSlackDial
                 readyClimbOvershootDial
                 readyClimbHoldDial
+                readyClimbCeilingDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -5094,6 +5095,152 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
+
+
+
+
+
+    /// Honest #716: READY climb ceiling — headroom from full-queue READY to absolute 100.
+    @ViewBuilder
+    private var readyClimbCeilingDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbCeilingBody(pending: pending)
+        }
+    }
+
+    private func readyClimbCeilingBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let hardCap = 100
+        var run = start
+        var path: [Int] = [start]
+        var hitIdx: Int? = start >= hardCap ? 0 : nil
+        for (k, t) in pending.enumerated() {
+            run = min(hardCap, run + t.readyDelta)
+            path.append(run)
+            if hitIdx == nil, run >= hardCap {
+                hitIdx = k + 1  // path index after this task
+            }
+        }
+        let endReady = path.last ?? start
+        let headroom = hardCap - endReady
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let stepLabel: String
+        if let i = hitIdx {
+            stepLabel = i == 0 ? "Already" : "Step \(i)"
+        } else {
+            stepLabel = "End"
+        }
+        let verb: String
+        let tone: Color
+        if headroom == 0 {
+            verb = "Cap"; tone = RTColor.optimal
+        } else if headroom <= 5 {
+            verb = "Near"; tone = RTColor.good
+        } else if headroom <= 14 {
+            verb = "Room"; tone = RTColor.caution
+        } else {
+            verb = "Wide"; tone = RTColor.warning
+        }
+        let disp = headroom == 0 ? "100" : "−\(headroom)"
+        // dial fill: closer to cap → fuller (map headroom 0…20 → 1…0)
+        let progress = min(1.0, max(0.0, 1.0 - Double(headroom) / 20.0))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.to.line.circle")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb ceiling")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progress))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text(headroom == 0 ? "cap" : "room")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("READY \(endReady)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("· Cap \(hardCap)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text(stepLabel)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let filled = Double(endReady) / Double(hardCap)
+                        let roomFrac = Double(headroom) / Double(hardCap)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12)).frame(height: 8)
+                            // climb to end READY
+                            Capsule()
+                                .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                .frame(width: max(4, w * filled), height: 8)
+                            // remaining headroom to hard cap
+                            if headroom > 0 {
+                                Capsule()
+                                    .fill(tone.opacity(0.28))
+                                    .frame(width: max(2, w * roomFrac), height: 8)
+                                    .offset(x: w * filled)
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 16)
+                    Text(headroom == 0
+                         ? "full-queue hits hard ceiling · \(sourceLabel)"
+                         : "headroom to hard ceiling after queue · \(sourceLabel)")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbCeiling)
+        .accessibilityLabel("Climb ceiling \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
+
 
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).

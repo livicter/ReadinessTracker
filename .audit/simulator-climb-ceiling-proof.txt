@@ -1,0 +1,10 @@
+Honest #716 — Simulator climb ceiling
+tip_base: 8a55941 (main before ship)
+branch: honest-716-climb-ceiling
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD716 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 638.829
+pngs: .audit/verify-simulator-climb-ceiling.png
+SID: sim.load.ready.climb.ceiling
+when_hkt: 2026-11-08 07:39 HKT
+rationale: climb family after hold #715; headroom from full-queue READY to hard ceiling 100
