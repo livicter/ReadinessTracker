@@ -11489,8 +11489,11 @@ final class SurfacesUITests: XCTestCase {
         let legend = legendFitbit.exists ? legendFitbit : legendHealth
         // Honest #517: tap Sleep pill (stable id) so spark link cue appears
         // Honest #707: appleWatch fixture uses health.air.legend.spark (fitbit.air.legend.spark parity).
-        let sleepPill = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
-        if sleepPill.waitForExistence(timeout: 3) {
+        // Honest #709: appleWatch fixture uses health.air.legend.sleep (fitbit.air.legend.sleep / #513 parity).
+        let sleepPillFitbit = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
+        let sleepPillHealth = app.descendants(matching: .any)["health.air.legend.sleep"].firstMatch
+        let sleepPill = sleepPillFitbit.exists ? sleepPillFitbit : sleepPillHealth
+        if sleepPillFitbit.waitForExistence(timeout: 3) || sleepPillHealth.waitForExistence(timeout: 3) {
             sleepPill.tap()
         } else if legend.exists {
             legend.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
@@ -11505,6 +11508,11 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "linked")).count > 0,
                       "fitbit.air.legend.spark / health.air.legend.spark")
         saveShot("verify-health-air-legend-spark.png")
+        XCTAssertTrue(sleepPillFitbit.exists || sleepPillHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Sleep density")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep density")).count > 0,
+                      "fitbit.air.legend.sleep / health.air.legend.sleep")
+        saveShot("verify-health-air-legend-sleep.png")
         saveShot("verify-fitbit-air-legend-spark-link.png")
         // Honest #529: density category stacked bar
         // Honest #686: appleWatch fixture uses health.air.density.stack (#529 parity).
@@ -13842,12 +13850,20 @@ final class SurfacesUITests: XCTestCase {
                       || app.descendants(matching: .any)["health.air.density.spark"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.density.stack"].firstMatch.exists,
                       "health.air.density.legend")
-        let sleepPill690 = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
-        if sleepPill690.waitForExistence(timeout: 3) {
+        // Honest #709: Health legend Sleep pill SID (fitbit.air.legend.sleep / #513 parity).
+        let sleepPill690Fitbit = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
+        let sleepPill690Health = app.descendants(matching: .any)["health.air.legend.sleep"].firstMatch
+        let sleepPill690 = sleepPill690Fitbit.exists ? sleepPill690Fitbit : sleepPill690Health
+        if sleepPill690Fitbit.waitForExistence(timeout: 3) || sleepPill690Health.waitForExistence(timeout: 3) {
             sleepPill690.tap()
         } else if hLegend690.exists {
             hLegend690.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.25)).tap()
         }
+        XCTAssertTrue(sleepPill690Fitbit.exists || sleepPill690Health.exists
+                      || hLegend690.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Sleep density")).count > 0,
+                      "health.air.legend.sleep")
+        saveShot("verify-health-air-legend-sleep.png")
         saveShot("verify-health-air-density-legend.png")
 
         // Honest #691: Health Air density container (#498 root / fitbit.air.density parity)
