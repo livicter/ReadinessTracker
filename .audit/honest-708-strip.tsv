@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T15:40:43Z	start	Honest #708 Health Air strip SID twin	Fitbit #497 parity → health.air.strip; last chip/legend/strip twin	branch honest-708-health-air-strip tip 038186e	open
+2026-11-07T15:40:43Z	implement	Theme+LoadSimulator+UITest+README	air chips for Health + stripSID branch; assert in testReadinessLoadSimulatorSurface	Theme.swift ReadinessLoadSimulatorCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T15:40:43Z	prove	started UITest testReadinessLoadSimulatorSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD708	running
