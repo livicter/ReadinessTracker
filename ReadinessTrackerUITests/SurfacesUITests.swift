@@ -11351,10 +11351,15 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-fitbit-air-data-card.png")
         // Honest #531: selected chip 7d mini spark (hard — needed for #544 range)
-        let chipSpark = app.descendants(matching: .any)["fitbit.air.chip.spark"].firstMatch
-        XCTAssertTrue(chipSpark.waitForExistence(timeout: 10)
+        // Honest #701: appleWatch fixture uses health.air.chip.spark (fitbit.air.chip.spark parity).
+        let chipSparkFitbit = app.descendants(matching: .any)["fitbit.air.chip.spark"].firstMatch
+        let chipSparkHealth = app.descendants(matching: .any)["health.air.chip.spark"].firstMatch
+        let chipSpark = chipSparkFitbit.exists ? chipSparkFitbit : chipSparkHealth
+        XCTAssertTrue(chipSparkFitbit.waitForExistence(timeout: 10)
+                      || chipSparkHealth.waitForExistence(timeout: 10)
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "7d")).count > 0,
-                      "fitbit.air.chip.spark after Steps select")
+                      "fitbit.air.chip.spark / health.air.chip.spark after Steps select")
+        saveShot("verify-health-air-chip-spark.png")
         saveShot("verify-fitbit-air-chip-mini-spark.png")
         // Honest #532: scrub value callout on chip mini spark
         if chipSpark.exists {
