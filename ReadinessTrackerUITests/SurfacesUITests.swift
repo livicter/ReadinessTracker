@@ -14231,32 +14231,36 @@ final class SurfacesUITests: XCTestCase {
         // Honest #506: air → classic MetricDetail (row under card header).
         // Card grew (#513 legend + #514 density spark) — swipeDown toward header first.
         // Honest #692: accept Health twin SID after root card swap.
+        // Honest #700: appleWatch fixture uses health.air.chip.md.nav (fitbit.air.chip.md.nav parity).
         let airCardFitbit = app.descendants(matching: .any)["fitbit.air.card"].firstMatch
         let airCardHealth = app.descendants(matching: .any)["health.air.card"].firstMatch
         let airCard = airCardFitbit.exists ? airCardFitbit : airCardHealth
-        let chipNav = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
+        let chipNavFitbit = app.descendants(matching: .any)["fitbit.air.chip.md.nav"].firstMatch
+        let chipNavHealth = app.descendants(matching: .any)["health.air.chip.md.nav"].firstMatch
+        let chipNav = chipNavFitbit.exists ? chipNavFitbit : chipNavHealth
         var reanchor = 0
-        while !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) && reanchor < 18 {
+        while !(titleFitbit.isHittable || titleHealth.isHittable || chipNavFitbit.isHittable || chipNavHealth.isHittable) && reanchor < 18 {
             app.swipeDown()
             reanchor += 1
         }
-        if !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) {
+        if !(titleFitbit.isHittable || titleHealth.isHittable || chipNavFitbit.isHittable || chipNavHealth.isHittable) {
             reanchor = 0
-            while !(titleFitbit.isHittable || titleHealth.isHittable || chipNav.isHittable) && reanchor < 12 {
+            while !(titleFitbit.isHittable || titleHealth.isHittable || chipNavFitbit.isHittable || chipNavHealth.isHittable) && reanchor < 12 {
                 app.swipeUp()
                 reanchor += 1
             }
         }
         XCTAssertTrue(
-            titleFitbit.exists || titleHealth.exists || airCard.exists || chipNav.exists,
+            titleFitbit.exists || titleHealth.exists || airCard.exists || chipNavFitbit.exists || chipNavHealth.exists,
             "Air card on-screen"
         )
-        // Honest #693: accept Health twin SID after chips root swap.
-        XCTAssertTrue(chipNav.waitForExistence(timeout: 5)
+        // Honest #693/#700: accept Health twin SID after chips / chip.md.nav swap.
+        XCTAssertTrue(chipNavFitbit.waitForExistence(timeout: 5)
+                      || chipNavHealth.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["fitbit.air.density.omega"].firstMatch.exists
                       || app.descendants(matching: .any)["fitbit.air.chips"].firstMatch.exists
                       || app.descendants(matching: .any)["health.air.chips"].firstMatch.exists,
-                      "fitbit.air.chip.md.nav")
+                      "fitbit.air.chip.md.nav / health.air.chip.md.nav")
         let link = app.buttons["Steps metric detail"].firstMatch
         let stepsLabel = app.staticTexts["Steps detail"].firstMatch
         // One nudge so the nav row under the title enters the hit rect.
@@ -14290,8 +14294,9 @@ final class SurfacesUITests: XCTestCase {
                 || app.descendants(matching: .any)["metric.detail"].firstMatch.waitForExistence(timeout: 6)
                 || app.otherElements["metric.detail"].waitForExistence(timeout: 3)
         }
+        saveShot("verify-health-air-chip-md-nav.png")
         saveShot("verify-fitbit-air-chip-metric-detail.png")
-        XCTAssertTrue(landed || chipNav.exists, "fitbit.air.chip.md.nav → metric.detail")
+        XCTAssertTrue(landed || chipNavFitbit.exists || chipNavHealth.exists, "fitbit.air.chip.md.nav / health.air.chip.md.nav → metric.detail")
         app.navigationBars.buttons.element(boundBy: 0).tap()
     }
 

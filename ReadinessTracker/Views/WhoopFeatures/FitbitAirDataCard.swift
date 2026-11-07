@@ -5801,9 +5801,13 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #506: steps-parity classic MetricDetail entry (defaults to Steps).
+    /// Honest #700: appleWatch / HealthKit uses Health pink + health.air.chip.md.nav (fitbit.air.chip.md.nav parity).
     private var chipMetricDetailLink: some View {
         let metric = selectedChip?.metric ?? MetricType.steps
         let value = QuickTrendCard.metricValue(data, metric: metric) ?? 0
+        let isHealth = source == .appleWatch
+        let chipAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let chipNavSID = isHealth ? SurfaceID.healthAirChipMetricDetail : SurfaceID.fitbitAirChipMetricDetail
         return NavigationLink(destination: MetricDetailView(
             metric: metric,
             currentValue: value,
@@ -5812,7 +5816,7 @@ struct FitbitAirDataCard: View {
         )) {
             HStack(spacing: 10) {
                 Image(systemName: metric.icon)
-                    .foregroundStyle(accent)
+                    .foregroundStyle(chipAccent)
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(metric.rawValue) detail")
                         .font(.subheadline.weight(.semibold))
@@ -5828,13 +5832,13 @@ struct FitbitAirDataCard: View {
             }
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(accent.opacity(0.08))
+            .background(chipAccent.opacity(0.08))
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .compositingGroup()
-        .accessibilityIdentifier(SurfaceID.fitbitAirChipMetricDetail)
+        .accessibilityIdentifier(chipNavSID)
         .accessibilityLabel("\(metric.rawValue) metric detail")
     }
 
