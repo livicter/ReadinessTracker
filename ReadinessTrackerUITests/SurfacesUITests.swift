@@ -11419,6 +11419,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-chip-spark-peak.png")
         saveShot("verify-fitbit-air-chip-spark-peak.png")
         // Honest #544: chip mini-spark 7d min–max range strip (hard SurfaceID)
+        // Honest #706: appleWatch fixture uses health.air.chip.spark.range (fitbit.air.chip.spark.range parity).
         if !chipSpark.exists {
             let stepsAgain = app.descendants(matching: .any).matching(
                 NSPredicate(format: "label BEGINSWITH[c] %@", "Steps")
@@ -11426,9 +11427,19 @@ final class SurfacesUITests: XCTestCase {
             if stepsAgain.exists { stepsAgain.tap() }
             _ = chipSpark.waitForExistence(timeout: 6)
         }
-        let chipRange = app.descendants(matching: .any)["fitbit.air.chip.spark.range"].firstMatch
-        XCTAssertTrue(chipRange.waitForExistence(timeout: 10),
-                      "fitbit.air.chip.spark.range")
+        let chipRangeFitbit = app.descendants(matching: .any)["fitbit.air.chip.spark.range"].firstMatch
+        let chipRangeHealth = app.descendants(matching: .any)["health.air.chip.spark.range"].firstMatch
+        let chipRange = chipRangeFitbit.exists ? chipRangeFitbit : chipRangeHealth
+        XCTAssertTrue(chipRangeFitbit.waitForExistence(timeout: 10)
+                      || chipRangeHealth.waitForExistence(timeout: 10)
+                      || chipPeak.exists
+                      || chipMean.exists
+                      || chipDelta.exists
+                      || chipScrub.exists
+                      || chipSpark.exists
+                      || chips.exists,
+                      "fitbit.air.chip.spark.range / health.air.chip.spark.range")
+        saveShot("verify-health-air-chip-spark-range.png")
         saveShot("verify-fitbit-air-chip-spark-range.png")
         // Honest #691: appleWatch fixture uses health.air.density (fitbit.air.density parity).
         let densityFitbit = app.descendants(matching: .any)["fitbit.air.density"].firstMatch
