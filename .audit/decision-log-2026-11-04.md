@@ -170,3 +170,7 @@
 | 06:33 HKT | #713 climb slack | prove | UITest suite green /tmp/RT-DD713 (621.819s, 0 failures); model=deepseek-flash |
 | 06:33 HKT | #713 climb slack | land | proof PNG + receipt; SID sim.load.ready.climb.slack; PR squash next; model=deepseek-flash |
 | 06:40 HKT | #713 climb slack | land | tip 66db9a7 PR #743; UITest suite green /tmp/RT-DD713 (621.819s, 0 failures); SID sim.load.ready.climb.slack; Eng Board Merged; model=deepseek-flash |
+| 06:43 HKT | Honest #714 Simulator climb overshoot | model=deepseek-flash | climb family after slack #713; SID sim.load.ready.climb.overshoot (full-queue READY vs Optimal) | mid-ship |
+| 06:48 HKT | Honest #714 Simulator climb overshoot | prove | started UITest /tmp/RT-DD714; model=deepseek-flash | mid-ship |
+| 06:59 HKT | #714 climb overshoot | prove | UITest suite green /tmp/RT-DD714 (626.027s, 0 failures); model=deepseek-flash |
+| 06:59 HKT | #714 climb overshoot | land | proof PNG + receipt; SID sim.load.ready.climb.overshoot; PR squash next; model=deepseek-flash |

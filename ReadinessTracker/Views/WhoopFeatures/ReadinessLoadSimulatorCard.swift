@@ -152,6 +152,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbInterceptDial
                 readyClimbMarginDial
                 readyClimbSlackDial
+                readyClimbOvershootDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -4810,6 +4811,142 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
+
+    /// Honest #714: READY climb overshoot — full-queue READY vs Optimal after folding all pending.
+    @ViewBuilder
+    private var readyClimbOvershootDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbOvershootBody(pending: pending)
+        }
+    }
+
+    private func readyClimbOvershootBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let endReady = path.last ?? start
+        let overshoot = endReady - target
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let verb: String
+        let tone: Color
+        if overshoot >= 8 {
+            verb = "High"; tone = RTColor.optimal
+        } else if overshoot >= 1 {
+            verb = "Soft"; tone = RTColor.good
+        } else if overshoot == 0 {
+            verb = "Exact"; tone = RTColor.caution
+        } else {
+            verb = "Short"; tone = RTColor.warning
+        }
+        let disp = overshoot >= 0 ? "+\(overshoot)" : "\(overshoot)"
+        // dial fill: map overshoot −15…+15 → 0…1
+        let progress = min(1.0, max(0.0, Double(overshoot + 15) / 30.0))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.up.right.circle")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb overshoot")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progress))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("vs Opt")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Ceil \(endReady)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("· Opt \(target)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text("Full queue")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let mid = w / 2
+                        let maxPts = 15.0
+                        let fill = mid * min(1.0, abs(Double(overshoot)) / maxPts)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12)).frame(height: 8)
+                            Rectangle()
+                                .fill(RTColor.optimal.opacity(0.85))
+                                .frame(width: 2, height: 14)
+                                .position(x: mid, y: 4)
+                            if overshoot >= 0 {
+                                Capsule()
+                                    .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: max(4, fill), height: 8)
+                                    .offset(x: mid)
+                            } else {
+                                Capsule()
+                                    .fill(LinearGradient(colors: [tone, accent.opacity(0.55)], startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: max(4, fill), height: 8)
+                                    .offset(x: mid - fill)
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 16)
+                    Text(overshoot >= 0
+                         ? "full-queue overshoot past Optimal · \(sourceLabel)"
+                         : "full-queue short of Optimal · \(sourceLabel)")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbOvershoot)
+        .accessibilityLabel("Climb overshoot \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
 
 
 
