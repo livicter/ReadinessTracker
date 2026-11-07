@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T19:54:42Z	start	Honest #711 Health Air legend.activity SID twin	Fitbit #513 activity pill → health.air.legend.activity; mirror #710 vitals	branch honest-711-health-air-legend-activity	open
+2026-11-07T19:54:42Z	implement	Theme+card+UITest+README	smallest isHealth legend pill Theme constant for activity	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T19:54:42Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD711	running

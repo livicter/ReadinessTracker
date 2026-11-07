@@ -11527,6 +11527,20 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Vitals density")).count > 0,
                       "fitbit.air.legend.vitals / health.air.legend.vitals")
         saveShot("verify-health-air-legend-vitals.png")
+        // Honest #711: appleWatch fixture uses health.air.legend.activity (fitbit.air.legend.activity / #513 parity).
+        let activityPillFitbit = app.descendants(matching: .any)["fitbit.air.legend.activity"].firstMatch
+        let activityPillHealth = app.descendants(matching: .any)["health.air.legend.activity"].firstMatch
+        let activityPill = activityPillFitbit.exists ? activityPillFitbit : activityPillHealth
+        if activityPillFitbit.waitForExistence(timeout: 3) || activityPillHealth.waitForExistence(timeout: 3) {
+            activityPill.tap()
+        } else if legend.exists {
+            legend.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.25)).tap()
+        }
+        XCTAssertTrue(activityPillFitbit.exists || activityPillHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Activity density")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Activity density")).count > 0,
+                      "fitbit.air.legend.activity / health.air.legend.activity")
+        saveShot("verify-health-air-legend-activity.png")
         saveShot("verify-fitbit-air-legend-spark-link.png")
         // Honest #529: density category stacked bar
         // Honest #686: appleWatch fixture uses health.air.density.stack (#529 parity).
@@ -13892,6 +13906,20 @@ final class SurfacesUITests: XCTestCase {
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Vitals density")).count > 0,
                       "health.air.legend.vitals")
         saveShot("verify-health-air-legend-vitals.png")
+        // Honest #711: Health legend Activity pill SID (fitbit.air.legend.activity / #513 parity).
+        let activityPill690Fitbit = app.descendants(matching: .any)["fitbit.air.legend.activity"].firstMatch
+        let activityPill690Health = app.descendants(matching: .any)["health.air.legend.activity"].firstMatch
+        let activityPill690 = activityPill690Fitbit.exists ? activityPill690Fitbit : activityPill690Health
+        if activityPill690Fitbit.waitForExistence(timeout: 3) || activityPill690Health.waitForExistence(timeout: 3) {
+            activityPill690.tap()
+        } else if hLegend690.exists {
+            hLegend690.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.25)).tap()
+        }
+        XCTAssertTrue(activityPill690Fitbit.exists || activityPill690Health.exists
+                      || hLegend690.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health Activity density")).count > 0,
+                      "health.air.legend.activity")
+        saveShot("verify-health-air-legend-activity.png")
         saveShot("verify-health-air-density-legend.png")
 
         // Honest #691: Health Air density container (#498 root / fitbit.air.density parity)
