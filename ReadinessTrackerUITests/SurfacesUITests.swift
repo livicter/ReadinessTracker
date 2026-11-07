@@ -11404,14 +11404,19 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-chip-spark-mean.png")
         saveShot("verify-fitbit-air-chip-spark-mean.png")
         // Honest #537: chip spark 7d peak marker
-        let chipPeak = app.descendants(matching: .any)["fitbit.air.chip.spark.peak"].firstMatch
-        XCTAssertTrue(chipPeak.waitForExistence(timeout: 5)
+        // Honest #705: appleWatch fixture uses health.air.chip.spark.peak (fitbit.air.chip.spark.peak parity).
+        let chipPeakFitbit = app.descendants(matching: .any)["fitbit.air.chip.spark.peak"].firstMatch
+        let chipPeakHealth = app.descendants(matching: .any)["health.air.chip.spark.peak"].firstMatch
+        let chipPeak = chipPeakFitbit.exists ? chipPeakFitbit : chipPeakHealth
+        XCTAssertTrue(chipPeakFitbit.waitForExistence(timeout: 5)
+                      || chipPeakHealth.waitForExistence(timeout: 5)
                       || chipMean.exists
                       || chipDelta.exists
                       || chipScrub.exists
                       || chipSpark.exists
                       || chips.exists,
-                      "fitbit.air.chip.spark.peak")
+                      "fitbit.air.chip.spark.peak / health.air.chip.spark.peak")
+        saveShot("verify-health-air-chip-spark-peak.png")
         saveShot("verify-fitbit-air-chip-spark-peak.png")
         // Honest #544: chip mini-spark 7d min–max range strip (hard SurfaceID)
         if !chipSpark.exists {
