@@ -1,0 +1,6 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T08:13:21Z	start	Honest #704 Health Air chip.spark.mean SID twin	Fitbit #536 parity → health.air.chip.spark.mean; mirror #703	branch honest-704-health-air-chip-spark-mean tip 6aa4905	open
+2026-11-07T08:13:21Z	implement	Theme+card+UITest+README	smallest meanSID branch when isHealth; mirror #703	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T08:13:21Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD704	running
+2026-11-07T09:49:16Z	prove	UITest suite green 5189.749s / 0 failures; hung post-pass killed	suite passed then xcresult hang	/tmp/RT-DD704	green
+2026-11-07T09:49:16Z	land	proof PNG copied + commit/PR next	SID health.air.chip.spark.mean	.audit/verify-health-air-chip-spark-mean.png	landing
