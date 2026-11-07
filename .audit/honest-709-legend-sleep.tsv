@@ -2,3 +2,5 @@ ts	phase	decision	why	evidence	result
 2026-11-07T16:01:55Z	start	Honest #709 Health Air legend.sleep SID twin	last Fitbit Air card SID without Health twin; Fitbit #513 parity → health.air.legend.sleep	branch honest-709-health-air-legend-sleep	open
 2026-11-07T16:01:55Z	implement	Theme+card+UITest+README	smallest isHealth legend pill prefix; sleep Theme constant	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
 2026-11-07T16:01:55Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD709	running
+2026-11-07T17:45:56Z	prove	UITest suite green	testFitbitAirDataCardSurface 5920.799s / 0 failures; hung post-pass; killed	/tmp/RT-DD709-log.txt	green
+2026-11-07T17:54:20Z	land	proof PNG + decision-log	SID health.air.legend.sleep; Eng Board next	.audit/verify-health-air-legend-sleep.png	mid-ship
