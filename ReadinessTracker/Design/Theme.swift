@@ -412,6 +412,7 @@ enum SurfaceID {
     static let readinessSimulatorClimbGlide = "sim.load.ready.climb.glide"  // Honest #626
     static let readinessSimulatorClimbIntercept = "sim.load.ready.climb.intercept"  // Honest #639
     static let fitbitAirChipSparkRange = "fitbit.air.chip.spark.range"  // Honest #544
+    static let healthAirChipSparkRange = "health.air.chip.spark.range"  // Honest #706
     static let fitbitAirChipMiniSpark = "fitbit.air.chip.spark"  // Honest #531
     static let healthAirChipMiniSpark = "health.air.chip.spark"  // Honest #701
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532

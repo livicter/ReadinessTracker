@@ -1,0 +1,4 @@
+ts	phase	decision	why	evidence	result
+2026-11-07T11:43:02Z	start	Honest #706 Health Air chip.spark.range SID twin	Fitbit #544 parity → health.air.chip.spark.range; mirror #705	branch honest-706-health-air-chip-spark-range tip e1560ea	open
+2026-11-07T11:43:02Z	implement	Theme+card+UITest+README	smallest rangeSID branch when isHealth; mirror #705	Theme.swift FitbitAirDataCard.swift SurfacesUITests.swift README.md	mid-ship
+2026-11-07T11:43:02Z	prove	started UITest testFitbitAirDataCardSurface on iPhone 17 Pro	proof gate needs fresh receipt	/tmp/RT-DD706	running

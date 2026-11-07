@@ -5896,6 +5896,7 @@ struct FitbitAirDataCard: View {
     /// Honest #703: appleWatch / HealthKit Δ vs 7d mean uses health.air.chip.spark.delta (fitbit.air.chip.spark.delta parity).
     /// Honest #704: appleWatch / HealthKit 7d mean caption uses health.air.chip.spark.mean (fitbit.air.chip.spark.mean parity).
     /// Honest #705: appleWatch / HealthKit 7d peak caption uses health.air.chip.spark.peak (fitbit.air.chip.spark.peak parity).
+    /// Honest #706: appleWatch / HealthKit 7d min–max range strip uses health.air.chip.spark.range (fitbit.air.chip.spark.range parity).
     @ViewBuilder
     private func chipMiniSpark(_ chip: AirChip) -> some View {
         let isHealth = source == .appleWatch
@@ -5905,6 +5906,7 @@ struct FitbitAirDataCard: View {
         let deltaSID = isHealth ? SurfaceID.healthAirChipSparkDelta : SurfaceID.fitbitAirChipSparkDelta
         let meanSID = isHealth ? SurfaceID.healthAirChipSparkMean : SurfaceID.fitbitAirChipSparkMean
         let peakSID = isHealth ? SurfaceID.healthAirChipSparkPeak : SurfaceID.fitbitAirChipSparkPeak
+        let rangeSID = isHealth ? SurfaceID.healthAirChipSparkRange : SurfaceID.fitbitAirChipSparkRange
         let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
             guard let metric = chip.metric else { return nil }
             let v = QuickTrendCard.metricValue(day, metric: metric) ?? 0
@@ -5985,7 +5987,7 @@ struct FitbitAirDataCard: View {
                             .padding(.vertical, 2)
                             .background(RTColor.secondaryText.opacity(0.10))
                             .clipShape(Capsule())
-                            .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkRange)
+                            .accessibilityIdentifier(rangeSID)
                             .accessibilityLabel("\(chip.label) seven day range")
                         GeometryReader { geo in
                             let span = max(max7 - min7, 0.0001)
