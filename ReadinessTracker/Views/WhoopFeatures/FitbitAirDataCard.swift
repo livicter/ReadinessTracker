@@ -5891,8 +5891,12 @@ struct FitbitAirDataCard: View {
     }
 
     /// Honest #531/#532: 7-day mini spark for the selected air chip; scrub syncs main spark.
+    /// Honest #701: appleWatch / HealthKit uses Health pink + health.air.chip.spark (fitbit.air.chip.spark parity).
     @ViewBuilder
     private func chipMiniSpark(_ chip: AirChip) -> some View {
+        let isHealth = source == .appleWatch
+        let sparkAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
+        let sparkSID = isHealth ? SurfaceID.healthAirChipMiniSpark : SurfaceID.fitbitAirChipMiniSpark
         let points: [(date: Date, value: Double)] = history.suffix(7).compactMap { day in
             guard let metric = chip.metric else { return nil }
             let v = QuickTrendCard.metricValue(day, metric: metric) ?? 0
@@ -5926,7 +5930,7 @@ struct FitbitAirDataCard: View {
                     if let scrubPt {
                         Text(chipSparkValueText(chip, scrubPt.value))
                             .font(.caption2.weight(.bold).monospacedDigit())
-                            .foregroundStyle(accent)
+                            .foregroundStyle(sparkAccent)
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkScrub)
                             .accessibilityLabel("\(chip.label) scrub \(chipSparkValueText(chip, scrubPt.value))")
                     }
@@ -5954,10 +5958,10 @@ struct FitbitAirDataCard: View {
                     if let peakPt {
                         Text("peak \(chipSparkValueText(chip, peakPt.value))")
                             .font(.caption2.weight(.semibold).monospacedDigit())
-                            .foregroundStyle(accent)
+                            .foregroundStyle(sparkAccent)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(accent.opacity(0.12))
+                            .background(sparkAccent.opacity(0.12))
                             .clipShape(Capsule())
                             .accessibilityIdentifier(SurfaceID.fitbitAirChipSparkPeak)
                             .accessibilityLabel("\(chip.label) seven day peak")
@@ -5983,10 +5987,10 @@ struct FitbitAirDataCard: View {
                             }()
                             ZStack(alignment: .leading) {
                                 Capsule()
-                                    .fill(accent.opacity(0.18))
+                                    .fill(sparkAccent.opacity(0.18))
                                     .frame(height: 6)
                                 Capsule()
-                                    .fill(accent)
+                                    .fill(sparkAccent)
                                     .frame(width: max(6, geo.size.width * 0.08), height: 6)
                                     .offset(x: max(0, min(geo.size.width - 6, geo.size.width * scrubFrac - 3)))
                             }
@@ -6005,19 +6009,19 @@ struct FitbitAirDataCard: View {
                             x: .value("Day", pt.date),
                             y: .value(chip.label, pt.value)
                         )
-                        .foregroundStyle(accent.opacity(0.2))
+                        .foregroundStyle(sparkAccent.opacity(0.2))
                         LineMark(
                             x: .value("Day", pt.date),
                             y: .value(chip.label, pt.value)
                         )
-                        .foregroundStyle(accent)
+                        .foregroundStyle(sparkAccent)
                         .lineStyle(StrokeStyle(lineWidth: 1.5, lineCap: .round))
                         if scrubClamped == i {
                             PointMark(
                                 x: .value("Day", pt.date),
                                 y: .value(chip.label, pt.value)
                             )
-                            .foregroundStyle(accent)
+                            .foregroundStyle(sparkAccent)
                             .symbolSize(48)
                         }
                         if peakIndex == i {
@@ -6025,7 +6029,7 @@ struct FitbitAirDataCard: View {
                                 x: .value("Day", pt.date),
                                 y: .value(chip.label, pt.value)
                             )
-                            .foregroundStyle(accent.opacity(scrubClamped == i ? 0.0 : 1.0))
+                            .foregroundStyle(sparkAccent.opacity(scrubClamped == i ? 0.0 : 1.0))
                             .symbolSize(scrubClamped == i ? 0 : 36)
                             .symbol(Circle())
                         }
@@ -6063,7 +6067,7 @@ struct FitbitAirDataCard: View {
             }
             .padding(8)
             .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            .accessibilityIdentifier(SurfaceID.fitbitAirChipMiniSpark)
+            .accessibilityIdentifier(sparkSID)
             .accessibilityLabel("\(chip.label) seven day spark")
             .accessibilityHint("Drag to scrub and sync the main air spark")
         }
