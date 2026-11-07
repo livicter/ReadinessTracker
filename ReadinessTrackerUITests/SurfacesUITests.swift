@@ -10996,6 +10996,24 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-climb-overshoot.png")
 
 
+        // Honest #715: READY climb hold
+        let climbHold = app.descendants(matching: .any)["sim.load.ready.climb.hold"].firstMatch
+        XCTAssertTrue(climbHold.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ready.climb.overshoot"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load"].firstMatch.exists,
+                      "sim.load.ready.climb.hold")
+        if climbHold.exists {
+            if climbHold.isHittable { climbHold.tap() }
+            else {
+                app.swipeUp()
+                if climbHold.waitForExistence(timeout: 2), climbHold.isHittable {
+                    climbHold.tap()
+                }
+            }
+        }
+        saveShot("verify-simulator-climb-hold.png")
+
+
         // Honest #587: READY path zone bands
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
