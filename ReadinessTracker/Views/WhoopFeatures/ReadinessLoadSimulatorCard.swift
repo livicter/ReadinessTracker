@@ -153,6 +153,7 @@ struct ReadinessLoadSimulatorCard: View {
                 readyClimbMarginDial
                 readyClimbSlackDial
                 readyClimbOvershootDial
+                readyClimbHoldDial
                 if !fitbitAirChips.isEmpty {
                     fitbitAirStrip
                 }
@@ -4948,6 +4949,151 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
+
+
+
+    /// Honest #715: READY climb hold — consecutive path steps at/above Optimal after intercept.
+    @ViewBuilder
+    private var readyClimbHoldDial: some View {
+        let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
+        if pending.isEmpty {
+            EmptyView()
+        } else {
+            readyClimbHoldBody(pending: pending)
+        }
+    }
+
+    private func readyClimbHoldBody(pending: [SimulatorTask]) -> some View {
+        let start = projectedCoupled
+        let target = 85
+        var run = start
+        var path: [Int] = [start]
+        for t in pending {
+            run = min(100, run + t.readyDelta)
+            path.append(run)
+        }
+        let interceptIdx = path.firstIndex(where: { $0 >= target })
+        let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let hold: Int
+        let stepLabel: String
+        let holdReady: Int
+        if let i = interceptIdx {
+            // path points from intercept through end stay ≥ Optimal (monotone climb)
+            hold = path.count - i
+            holdReady = path[i]
+            stepLabel = i == 0 ? "Already" : "Step \(i)"
+        } else {
+            hold = 0
+            holdReady = path.last ?? start
+            stepLabel = "End"
+        }
+        let verb: String
+        let tone: Color
+        if interceptIdx == nil {
+            verb = "None"; tone = RTColor.warning
+        } else if hold >= 4 {
+            verb = "Locked"; tone = RTColor.optimal
+        } else if hold >= 2 {
+            verb = "Steady"; tone = RTColor.good
+        } else {
+            verb = "Brief"; tone = RTColor.caution
+        }
+        let disp = "\(hold)"
+        let denom = max(1, path.count)
+        let progress = min(1.0, Double(hold) / Double(denom))
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "pause.circle")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Text("Climb hold")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(accent)
+                Spacer()
+                Text("\(sourceLabel) · \(verb)")
+                    .font(.caption.weight(.bold).monospacedDigit())
+                    .foregroundStyle(tone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(tone.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(RTColor.tertiaryText.opacity(0.15), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(progress))
+                        .stroke(
+                            LinearGradient(colors: [accent, tone], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                        )
+                        .frame(width: 72, height: 72)
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 0) {
+                        Text(disp)
+                            .font(.caption.weight(.bold).monospacedDigit())
+                            .foregroundStyle(tone)
+                        Text("steps")
+                            .font(.system(size: 8, weight: .semibold))
+                            .foregroundStyle(RTColor.tertiaryText)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Hold \(hold)")
+                            .font(.caption2.weight(.bold).monospacedDigit())
+                            .foregroundStyle(accent)
+                        Text("· READY \(holdReady)")
+                            .font(.caption2.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(RTColor.secondaryText)
+                        Spacer()
+                        Text(stepLabel)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(RTColor.secondaryText)
+                    }
+                    GeometryReader { geo in
+                        let w = max(geo.size.width, 1)
+                        let pre = interceptIdx.map { Double($0) / Double(denom) } ?? 1.0
+                        let holdFrac = Double(hold) / Double(denom)
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(RTColor.tertiaryText.opacity(0.12)).frame(height: 8)
+                            // climb prefix before Optimal
+                            Capsule()
+                                .fill(accent.opacity(0.35))
+                                .frame(width: max(4, w * pre), height: 8)
+                            // Optimal hold window
+                            if hold > 0 {
+                                Capsule()
+                                    .fill(LinearGradient(colors: [accent.opacity(0.55), tone], startPoint: .leading, endPoint: .trailing))
+                                    .frame(width: max(4, w * holdFrac), height: 8)
+                                    .offset(x: w * pre)
+                            }
+                        }
+                        .frame(maxHeight: .infinity, alignment: .center)
+                    }
+                    .frame(height: 16)
+                    Text(interceptIdx == nil
+                         ? "no Optimal intercept · \(sourceLabel)"
+                         : "Optimal hold after intercept · \(sourceLabel)")
+                        .font(.caption2)
+                        .foregroundStyle(RTColor.tertiaryText)
+                }
+            }
+        }
+        .padding(10)
+        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(accent.opacity(0.28), lineWidth: 1)
+        )
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbHold)
+        .accessibilityLabel("Climb hold \(verb) \(disp)")
+        .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
+        .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
+    }
 
 
     /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
