@@ -10579,7 +10579,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-zones.png")
 
-        // Honest #583: zone jump rail
+        // Honest #583 / #758: zone jump rail (WHOOP wells)
         let zoneJump = app.descendants(matching: .any)["sim.load.zone.jump"].firstMatch
         XCTAssertTrue(zoneJump.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.zones"].firstMatch.exists
