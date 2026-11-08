@@ -1,0 +1,10 @@
+Honest #717 — Simulator gauge
+tip_base: 24c6a85 (main before ship)
+branch: honest-717-sim-gauge
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD717 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 669.201
+pngs: .audit/verify-simulator-gauge.png
+SID: sim.load.gauge
+when_hkt: 2026-11-08 08:02 HKT
+rationale: foundational LoadSim gauge after climb family; WHOOP zone-banded arcs + baseline tick + Δ chip

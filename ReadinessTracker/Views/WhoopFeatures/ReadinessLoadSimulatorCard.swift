@@ -200,18 +200,44 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
+    /// Honest #717: WHOOP-parity zone-banded projection gauge (Poor·Fair·Good·Optimal arcs + baseline tick).
     private var projectionHero: some View {
-        HStack(alignment: .center, spacing: 16) {
+        let zones: [(lo: Double, hi: Double, color: Color)] = [
+            (0, 60, RTColor.warning),
+            (60, 70, RTColor.caution),
+            (70, 85, RTColor.good),
+            (85, 100, RTColor.optimal)
+        ]
+        let baseFrac = min(1.0, max(0.0, Double(baseline) / 100.0))
+        let deltaVsBase = focusedRingValue - baseline
+        return HStack(alignment: .center, spacing: 16) {
             ZStack {
+                // Track
                 Circle()
                     .stroke(RTColor.divider, lineWidth: 10)
+                // Zone band arcs (outer thin ring) — WHOOP recovery zones
+                ForEach(Array(zones.enumerated()), id: \.offset) { _, z in
+                    Circle()
+                        .trim(from: CGFloat(z.lo / 100.0), to: CGFloat(z.hi / 100.0))
+                        .stroke(z.color.opacity(0.45), style: StrokeStyle(lineWidth: 4, lineCap: .butt))
+                        .rotationEffect(.degrees(-90))
+                        .padding(6)
+                }
+                // Live fill
                 Circle()
                     .trim(from: 0, to: CGFloat(focusedRingValue) / 100)
                     .stroke(focusedRing.color, style: StrokeStyle(lineWidth: 10, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.25), value: focusedRingValue)
                     .animation(.easeInOut(duration: 0.25), value: focusedRing)
-                VStack(spacing: 2) {
+                // Baseline tick (radial)
+                Capsule()
+                    .fill(RTColor.secondaryText)
+                    .frame(width: 2.5, height: 12)
+                    .offset(y: -48)
+                    .rotationEffect(.degrees(360.0 * baseFrac))
+                    .accessibilityHidden(true)
+                VStack(spacing: 1) {
                     Text("\(focusedRingValue)")
                         .font(.system(size: 28, weight: .bold, design: .rounded).monospacedDigit())
                         .foregroundStyle(RTColor.primaryText)
@@ -219,14 +245,15 @@ struct ReadinessLoadSimulatorCard: View {
                     Text(focusedRing.title.uppercased())
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(focusedRing.color)
+                    Text(deltaVsBase >= 0 ? "+\(deltaVsBase)" : "\(deltaVsBase)")
+                        .font(.system(size: 9, weight: .bold, design: .rounded).monospacedDigit())
+                        .foregroundStyle(deltaVsBase >= 0 ? RTColor.optimal : RTColor.warning)
                 }
-                // Keep legacy gauge SurfaceID while #511 tint id rides on the stack
-                Color.clear.frame(width: 1, height: 1)
-                    .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorGauge)
             }
+            .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorGauge)
+            .accessibilityLabel("Projected \(focusedRing.title) \(focusedRingValue), baseline \(baseline), delta \(deltaVsBase)")
             .frame(width: 96, height: 96)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorRingTint)
-            .accessibilityLabel("Projected \(focusedRing.title) \(focusedRingValue)")
 
             VStack(alignment: .leading, spacing: 8) {
                 labeledValue("Tonight", "\(baseline)", "baseline")

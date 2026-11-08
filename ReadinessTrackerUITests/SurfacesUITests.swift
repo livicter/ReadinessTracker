@@ -10403,6 +10403,16 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(title.waitForExistence(timeout: 8), "Load Simulator")
         let card = app.descendants(matching: .any)["sim.load.md.nav"].firstMatch
         XCTAssertTrue(card.waitForExistence(timeout: 6) || title.exists, "sim.load.md.nav")
+        // Honest #717: WHOOP-parity zone-banded projection gauge
+        let gauge = app.descendants(matching: .any)["sim.load.gauge"].firstMatch
+        XCTAssertTrue(gauge.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.ring.tint"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load.md.nav"].firstMatch.exists,
+                      "sim.load.gauge")
+        if gauge.exists {
+            if gauge.isHittable { gauge.tap() }
+        }
+        saveShot("verify-simulator-gauge.png")
         let controls = app.descendants(matching: .any)["sim.load.controls"].firstMatch
         if controls.exists {
             // Nudge first slider via coordinate to prove interactivity.
