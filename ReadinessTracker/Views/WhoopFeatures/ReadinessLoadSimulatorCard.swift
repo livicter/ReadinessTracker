@@ -509,6 +509,7 @@ struct ReadinessLoadSimulatorCard: View {
     /// Honest #518 / #722: WHOOP action well (idle ghost/hairline; seeded filled accent).
     private var seedAirBlock: some View {
         let isSeeded = airSeededSummary != nil
+        let isForecastSeeded = airSeededSummary?.hasPrefix("Seeded from forecast") == true
         return VStack(alignment: .leading, spacing: 8) {
             Button {
                 Haptic.selectionChanged()
@@ -542,7 +543,7 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityLabel("Seed simulator from air data")
             .animation(.easeInOut(duration: 0.2), value: isSeeded)
 
-            // Honest #547: seed levers from air density tomorrow forecast
+            // Honest #547 / #723: WHOOP action well (idle ghost/hairline; forecast-seeded filled accent).
             Button {
                 Haptic.selectionChanged()
                 seedFromDensityForecast()
@@ -557,21 +558,23 @@ struct ReadinessLoadSimulatorCard: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(accent.opacity(0.15))
+                        .background(isForecastSeeded ? Color.white.opacity(0.2) : accent.opacity(0.15))
                         .clipShape(Capsule())
                 }
-                .foregroundStyle(accent)
+                .foregroundStyle(isForecastSeeded ? Color.white : RTColor.secondaryText)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
-                .background(accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(isForecastSeeded ? accent : accent.opacity(0.08))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(accent.opacity(0.35), lineWidth: 1)
+                        .stroke(isForecastSeeded ? Color.clear : accent.opacity(0.28), lineWidth: 1)
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedForecast)
             .accessibilityLabel("Seed simulator from density forecast")
+            .animation(.easeInOut(duration: 0.2), value: isForecastSeeded)
 
             if let airSeededSummary {
                 HStack(spacing: 6) {
@@ -623,7 +626,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #547: nudge levers from linear air-density tomorrow forecast.
+    /// Honest #547 / #723: nudge levers from linear air-density tomorrow forecast.
     private func seedFromDensityForecast() {
         let days = Array(history.suffix(7))
         guard days.count >= 3 else {

@@ -11304,7 +11304,7 @@ final class SurfacesUITests: XCTestCase {
         if seedAir.exists { seedAir.tap() }
         saveShot("verify-readiness-load-simulator-seed-air.png")
         saveShot("verify-simulator-seed-air.png")
-        // Honest #547: seed from density forecast
+        // Honest #547 / #723: seed from density forecast (WHOOP action well)
         let seedForecast = app.descendants(matching: .any)["sim.load.seed.forecast"].firstMatch
         XCTAssertTrue(seedForecast.waitForExistence(timeout: 5)
                       || seedAir.exists
@@ -11312,6 +11312,7 @@ final class SurfacesUITests: XCTestCase {
                       "sim.load.seed.forecast")
         if seedForecast.exists { seedForecast.tap() }
         saveShot("verify-readiness-load-simulator-seed-forecast.png")
+        saveShot("verify-simulator-seed-forecast.png")
         // Honest #520: A/B snapshot compare
         let ab = app.descendants(matching: .any)["sim.load.ab.snap"].firstMatch
         XCTAssertTrue(ab.waitForExistence(timeout: 5)
