@@ -1368,7 +1368,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #583: zone jump rail — baseline → projected READY zone (Google Health graphics).
+    /// Honest #583 / #758: zone jump rail — baseline → projected READY zone (WHOOP wells; Google Health graphics).
     private var zoneJumpRail: some View {
         let zones: [(label: String, lo: Int, hi: Int, color: Color)] = [
             ("Poor", 0, 49, Color(hex: "FF375F")),
@@ -1382,6 +1382,8 @@ struct ReadinessLoadSimulatorCard: View {
         let from = zone(for: baseline)
         let to = zone(for: projectedCoupled)
         let d = projectedCoupled - baseline
+        let zoneJumpIsActive = projectedCoupled >= 50
+        let wellTone: Color = zoneJumpIsActive ? to.color : RTColor.secondaryText
         let jumped = from.label != to.label
         let tone: Color = d > 0 ? RTColor.optimal : (d < 0 ? Color(hex: "FF375F") : RTColor.secondaryText)
         let verb = jumped
@@ -1450,10 +1452,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(zoneJumpIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorZoneJump)
         .accessibilityLabel("Zone jump \(from.label) to \(to.label), delta \(d >= 0 ? "+" : "")\(d)")

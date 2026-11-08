@@ -383,3 +383,8 @@
 | 06:58 HKT | Honest #757 Simulator ready zones | prove | started UITest /tmp/RT-DD757; model=deepseek-flash | mid-ship |
 | 07:17 HKT | #757 Simulator ready zones | prove | UITest suite green /tmp/RT-DD757 (820.326s, 0 failures; observer 833.797s); model=deepseek-flash |
 | 07:17 HKT | #757 Simulator ready zones | land | proof PNG + receipt; SID sim.load.ready.zones; PR squash next; model=deepseek-flash |
+
+| 07:31 HKT | Honest #758 Simulator zone jump | model=deepseek-flash | restyle existing sim.load.zone.jump after ready zones #757; WHOOP ghost/active wells; mechanical pattern-copy of #757 wells applied locally (no separate model iterate needed) | mid-ship |
+| 07:31 HKT | Honest #758 Simulator zone jump | prove | starting UITest /tmp/RT-DD758; model=deepseek-flash | mid-ship |
+| 07:50 HKT | #758 Simulator zone jump | prove | UITest suite green /tmp/RT-DD758 (766.829s, 0 failures; observer 780.350s); model=deepseek-flash |
+| 07:50 HKT | #758 Simulator zone jump | land | proof PNG + receipt; SID sim.load.zone.jump; PR squash next; model=deepseek-flash |
