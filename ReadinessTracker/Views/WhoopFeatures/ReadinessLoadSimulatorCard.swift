@@ -1202,7 +1202,7 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("READY path \(baseline) to \(ceiling)")
     }
 
-    /// Honest #587: READY path zone bands — Base→Scrub→Tasks→Ceil ticks on zone rail (Google Health graphics).
+    /// Honest #587 / #756: READY path zone bands — Base→Scrub→Tasks→Ceil ticks on zone rail (WHOOP wells; Google Health graphics).
     private var readyPathZoneBands: some View {
         let totalLift = tasks.map(\.readyDelta).reduce(0, +)
         let ceiling = min(100, projected + totalLift)
@@ -1222,6 +1222,8 @@ struct ReadinessLoadSimulatorCard: View {
             zones.first { score >= $0.lo && score <= $0.hi }?.color ?? zones[0].color
         }
         let endZone = zones.first { ceiling >= $0.lo && ceiling <= $0.hi } ?? zones[0]
+        let pathZonesIsActive = ceiling >= 50
+        let wellTone: Color = pathZonesIsActive ? endZone.color : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.xyaxis.line")
@@ -1278,10 +1280,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(pathZonesIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorPathZoneBands)
         .accessibilityLabel("Path zones to \(endZone.label), ceiling \(ceiling)")

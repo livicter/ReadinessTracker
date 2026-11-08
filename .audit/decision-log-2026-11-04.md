@@ -372,3 +372,9 @@
 | 05:52 HKT | Honest #755 Simulator climb ceiling | prove | started UITest /tmp/RT-DD755; model=deepseek-flash | mid-ship |
 | 06:11 HKT | #755 Simulator climb ceiling | prove | UITest suite green /tmp/RT-DD755 (764.512s, 0 failures; observer 779.508s); model=deepseek-flash |
 | 06:11 HKT | #755 Simulator climb ceiling | land | proof PNG + receipt; SID sim.load.ready.climb.ceiling; PR squash next; model=deepseek-flash |
+
+| 06:29 HKT | Honest #756 Simulator path zones | model=deepseek-flash | restyle existing sim.load.path.zones after climb ceiling #755; WHOOP ghost/active wells; mechanical pattern-copy of #755 wells applied locally (no separate model iterate needed) | mid-ship |
+| 06:29 HKT | Honest #756 Simulator path zones | prove | started UITest /tmp/RT-DD756; model=deepseek-flash | mid-ship |
+| 06:47 HKT | #756 Simulator path zones | prove | UITest suite green /tmp/RT-DD756 (781.605s, 0 failures; observer 795.520s); model=deepseek-flash |
+| 06:47 HKT | #756 Simulator path zones | land | proof PNG + receipt; SID sim.load.path.zones; PR squash next; model=deepseek-flash |
+
