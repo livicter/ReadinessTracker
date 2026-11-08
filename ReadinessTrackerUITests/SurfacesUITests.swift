@@ -10912,7 +10912,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-surplus.png")
 
-        // Honest #623: READY climb runway
+        // Honest #623 / #748: READY climb runway (WHOOP wells)
         let climbRunway = app.descendants(matching: .any)["sim.load.ready.climb.runway"].firstMatch
         XCTAssertTrue(climbRunway.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.climb.surplus"].firstMatch.exists

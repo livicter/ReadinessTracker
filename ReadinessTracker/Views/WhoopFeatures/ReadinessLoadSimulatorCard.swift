@@ -4249,7 +4249,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #623: READY climb runway — fraction of gap-to-Optimal covered by pending queue (Fitbit/Health graphics).
+    /// Honest #623 / #748: READY climb runway — fraction of gap-to-Optimal covered by pending queue (Fitbit/Health graphics; WHOOP wells).
     @ViewBuilder
     private var readyClimbRunwayDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -4286,6 +4286,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Hold"; tone = RTColor.warning
         }
+        let climbRunwayIsActive = (verb != "Hold")
+        let wellTone: Color = climbRunwayIsActive ? tone : RTColor.secondaryText
         let disp = String(format: "%.0f%%", covered * 100)
         let lo = max(0, min(start, peak, target) - 4)
         let hi = min(100, max(start, peak, target) + 4)
@@ -4415,10 +4417,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbRunwayIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbRunway)
         .accessibilityLabel("Climb runway \(verb) \(disp)")
