@@ -10775,7 +10775,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-seed-confidence.png")
 
 
-        // Honest #607: READY momentum gauge
+        // Honest #607 / #740: READY momentum gauge (WHOOP wells)
         let readyMom = app.descendants(matching: .any)["sim.load.ready.momentum"].firstMatch
         XCTAssertTrue(readyMom.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.seed.confidence"].firstMatch.exists

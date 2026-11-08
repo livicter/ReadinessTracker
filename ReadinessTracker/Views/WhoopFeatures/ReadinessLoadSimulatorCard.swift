@@ -3034,7 +3034,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #607: READY momentum gauge — signed lever thrust + task lift (Fitbit/GH graphics).
+    /// Honest #607 / #740: READY momentum gauge — signed lever thrust + task lift (WHOOP wells; Fitbit/GH graphics).
     @ViewBuilder
     private var readyMomentumGauge: some View {
         let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
@@ -3057,6 +3057,8 @@ struct ReadinessLoadSimulatorCard: View {
             verb = "Steady"; tone = RTColor.good
         }
         let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let momIsActive = abs(momentum) >= 2.5
+        let wellTone: Color = momIsActive ? tone : RTColor.secondaryText
         let signed = momentum >= 0
             ? String(format: "+%.1f", momentum)
             : String(format: "%.1f", momentum)
@@ -3156,10 +3158,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(momIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyMomentum)
         .accessibilityLabel("READY momentum \(verb) \(signed)")
