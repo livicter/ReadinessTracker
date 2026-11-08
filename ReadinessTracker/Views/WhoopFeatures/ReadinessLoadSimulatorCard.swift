@@ -2373,7 +2373,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #595: READY headroom dial — ceiling − coupled remaining lift (richer sim / Google Health graphics).
+    /// Honest #595 / #734: READY headroom dial — ceiling − coupled remaining lift (WHOOP wells; richer sim / Google Health graphics).
     @ViewBuilder
     private var readyHeadroomDial: some View {
         let totalLift = tasks.map(\.readyDelta).reduce(0, +)
@@ -2384,6 +2384,10 @@ struct ReadinessLoadSimulatorCard: View {
         let tone: Color = headroom <= 2 ? RTColor.optimal : (headroom <= 6 ? RTColor.good : accent)
         let verb = headroom <= 2 ? "Tight" : (headroom <= 6 ? "Open" : "Wide")
         let frac = ceiling > projected ? Double(secured) / Double(max(1, ceiling - projected)) : 1.0
+        let headroomIsActive = secured > 0
+        let wellTone: Color = headroomIsActive
+            ? (headroom <= 2 ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "gauge.with.dots.needle.67percent")
@@ -2460,10 +2464,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(headroomIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyHeadroom)
         .accessibilityLabel("READY headroom \(verb), \(headroom) points left")

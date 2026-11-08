@@ -10667,7 +10667,7 @@ final class SurfacesUITests: XCTestCase {
 
 
 
-        // Honest #595: READY headroom dial
+        // Honest #595 / #734: READY headroom dial (WHOOP wells)
         let headroom = app.descendants(matching: .any)["sim.load.ready.headroom"].firstMatch
         XCTAssertTrue(headroom.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.air.radar"].firstMatch.exists
