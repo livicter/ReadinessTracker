@@ -403,7 +403,7 @@ enum SurfaceID {
     static let readinessSimulatorGHTriad = "sim.load.gh.triad"  // Honest #599 / #736
     static let readinessSimulatorTaskRingMix = "sim.load.task.rings"  // Honest #601 / #737
     static let readinessSimulatorBatchLift = "sim.load.tasks.batch.lift"  // Honest #603 / #738
-    static let readinessSimulatorSeedConfidence = "sim.load.seed.confidence"  // Honest #605
+    static let readinessSimulatorSeedConfidence = "sim.load.seed.confidence"  // Honest #605 / #739
     static let readinessSimulatorReadyMomentum = "sim.load.ready.momentum"  // Honest #607
     static let readinessSimulatorReadyBuffer = "sim.load.ready.buffer"  // Honest #609
     static let readinessSimulatorTaskEfficiency = "sim.load.tasks.efficiency"  // Honest #611

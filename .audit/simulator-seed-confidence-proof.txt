@@ -1,0 +1,12 @@
+Honest #739 — Simulator seed confidence
+tip_base: 4dbbb13
+branch: honest-739-sim-seed-confidence
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD739 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 767.957
+observer_s: 780.643
+pngs: .audit/verify-simulator-seed-confidence.png
+SID: sim.load.seed.confidence
+when_hkt: 2026-11-08 21:48 HKT
+rationale: restyle existing LoadSim seed confidence dial after batch lift #738; WHOOP ghost/active/optimal wells; no new SID or READY formula; idle = Low (conf < 45%), active = OK (45–72%), High (>=72%) uses optimal tone; mechanical pattern-copy of #738 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: first run passed (no launch-flake retry); xcodebuild TEST EXECUTE SUCCEEDED; Test Case passed 767.957s, 0 failures; IDETestOperationsObserverDebug 780.643s

@@ -2915,7 +2915,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #605: air-seed confidence dial — today fill vs 7d mean (Fitbit/GH + richer sim graphics).
+    /// Honest #605 / #739: air-seed confidence dial — today fill vs 7d mean trust (WHOOP wells; Fitbit/GH + richer sim graphics).
     @ViewBuilder
     private var seedConfidenceDial: some View {
         let chips = AirChip.all(from: data)
@@ -2950,6 +2950,10 @@ struct ReadinessLoadSimulatorCard: View {
             verb = "Low"; tone = RTColor.warning
         }
         let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let seedConfIsActive = conf >= 0.45
+        let wellTone: Color = seedConfIsActive
+            ? (conf >= 0.72 ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "checkmark.shield.fill")
@@ -3020,10 +3024,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(seedConfIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedConfidence)
         .accessibilityLabel("Seed confidence \(verb) \(pct) percent")

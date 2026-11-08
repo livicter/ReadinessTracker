@@ -10757,7 +10757,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-batch-lift.png")
 
 
-        // Honest #605: seed confidence dial
+        // Honest #605 / #739: seed confidence dial (WHOOP wells)
         let seedConf = app.descendants(matching: .any)["sim.load.seed.confidence"].firstMatch
         XCTAssertTrue(seedConf.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks.batch.lift"].firstMatch.exists

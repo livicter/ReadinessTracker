@@ -273,3 +273,8 @@
 | 20:56 HKT | Honest #738 Simulator batch lift | prove | started UITest /tmp/RT-DD738; model=deepseek-flash | mid-ship |
 | 21:14 HKT | #738 Simulator batch lift | prove | UITest suite green /tmp/RT-DD738 (769.910s, 0 failures); model=deepseek-flash |
 | 21:16 HKT | #738 Simulator batch lift | land | proof PNG + receipt; SID sim.load.tasks.batch.lift; PR squash next; model=deepseek-flash |
+| 21:29 HKT | Honest #739 Simulator seed confidence | model=deepseek-flash | restyle existing sim.load.seed.confidence after batch lift #738; WHOOP ghost/active/optimal wells; mechanical pattern-copy of #738 wells applied locally (no separate model iterate needed) | mid-ship |
+| 21:29 HKT | Honest #739 Simulator seed confidence | prove | started UITest /tmp/RT-DD739; model=deepseek-flash | mid-ship |
+| 21:48 HKT | #739 Simulator seed confidence | prove | UITest suite green /tmp/RT-DD739 (767.957s, 0 failures; observer 780.643s); model=deepseek-flash |
+| 21:48 HKT | #739 Simulator seed confidence | land | proof PNG + receipt; SID sim.load.seed.confidence; PR squash next; model=deepseek-flash |
+
