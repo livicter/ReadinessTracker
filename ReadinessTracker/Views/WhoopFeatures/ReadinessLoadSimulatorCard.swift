@@ -2288,7 +2288,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #591: task impact share stack — proportional READY lift per task (Google Health graphics).
+    /// Honest #591 / #732: task impact share stack — proportional READY lift per task (WHOOP wells; Google Health graphics).
     @ViewBuilder
     private var taskImpactShareStack: some View {
         let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
@@ -2304,6 +2304,9 @@ struct ReadinessLoadSimulatorCard: View {
         let secured = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
         let pct = Int((Double(secured) / Double(total) * 100).rounded())
         let tone: Color = pct >= 70 ? RTColor.optimal : (pct >= 40 ? RTColor.good : accent)
+        let shareIsActive = !completedTaskIDs.isEmpty
+        let allChecked = ordered.allSatisfy { completedTaskIDs.contains($0.id) }
+        let wellTone = shareIsActive ? (allChecked ? RTColor.optimal : accent) : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.doc.horizontal.fill")
@@ -2357,10 +2360,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(shareIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskImpactShare)
         .accessibilityLabel("Impact share \(pct) percent, secured +\(secured) of +\(total)")
