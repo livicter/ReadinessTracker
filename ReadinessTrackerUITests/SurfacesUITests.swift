@@ -10413,11 +10413,22 @@ final class SurfacesUITests: XCTestCase {
             if gauge.isHittable { gauge.tap() }
         }
         saveShot("verify-simulator-gauge.png")
+        // Honest #718: WHOOP-parity bipolar sliders + live READY Δ
         let controls = app.descendants(matching: .any)["sim.load.controls"].firstMatch
+        XCTAssertTrue(controls.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.gauge"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load.md.nav"].firstMatch.exists,
+                      "sim.load.controls")
+        var controlSwipes = 0
+        while controls.exists && !isOnScreen(controls) && controlSwipes < 10 {
+            app.swipeUp()
+            controlSwipes += 1
+        }
         if controls.exists {
             // Nudge first slider via coordinate to prove interactivity.
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.2)).tap()
         }
+        saveShot("verify-simulator-controls.png")
         saveShot("verify-readiness-load-simulator.png")
         // Honest #708: appleWatch fixture uses health.air.strip (fitbit.air.strip / #497 parity).
         let stripFitbit = app.descendants(matching: .any)["fitbit.air.strip"].firstMatch

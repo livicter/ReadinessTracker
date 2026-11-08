@@ -1,0 +1,10 @@
+Honest #718 — Simulator controls
+tip_base: 9a0bfec (main before ship)
+branch: honest-718-sim-controls
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD718 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 686.470
+pngs: .audit/verify-simulator-controls.png
+SID: sim.load.controls
+when_hkt: 2026-11-08 09:36 HKT
+rationale: foundational LoadSim controls after gauge #717; WHOOP-parity bipolar sliders + live READY Δ via project() vs all-zero

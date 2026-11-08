@@ -189,3 +189,7 @@
 | 07:45 HKT | Honest #717 Simulator gauge | prove | started UITest /tmp/RT-DD717; model=deepseek-flash | mid-ship |
 | 08:02 HKT | #717 Simulator gauge | prove | UITest suite green /tmp/RT-DD717 (669.201s, 0 failures); model=deepseek-flash |
 | 08:03 HKT | #717 Simulator gauge | land | proof PNG + receipt; SID sim.load.gauge; PR squash next; model=deepseek-flash |
+| 09:00 HKT | Honest #718 Simulator controls | model=deepseek-flash | foundational sim.load.controls after gauge #717; WHOOP-parity bipolar sliders + live READY Δ | mid-ship |
+| 09:04 HKT | Honest #718 Simulator controls | prove | started UITest /tmp/RT-DD718; model=deepseek-flash | mid-ship |
+| 09:36 HKT | #718 Simulator controls | prove | UITest suite green /tmp/RT-DD718 (686.470s, 0 failures); model=deepseek-flash |
+| 09:37 HKT | #718 Simulator controls | land | proof PNG + receipt; SID sim.load.controls; PR squash next; model=deepseek-flash |

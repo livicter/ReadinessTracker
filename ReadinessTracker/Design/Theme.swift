@@ -190,7 +190,7 @@ enum SurfaceID {
     static let coachingFeed = "coaching.feed"
     static let readinessLoadSimulatorCard = "sim.load.md.nav"  // unique md.nav / interactive sim
     static let readinessLoadSimulatorGauge = "sim.load.gauge"  // Honest #717
-    static let readinessLoadSimulatorControls = "sim.load.controls"
+    static let readinessLoadSimulatorControls = "sim.load.controls"  // Honest #718
     static let readinessLoadSimulatorSpark = "sim.load.spark"
     static let readinessSimulatorTasks = "sim.load.tasks"
     static let readinessSimulatorTaskProgress = "sim.load.tasks.progress"  // Honest #499
