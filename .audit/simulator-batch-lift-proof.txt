@@ -1,0 +1,11 @@
+Honest #738 — Simulator batch lift
+tip_base: 453c559
+branch: honest-738-sim-batch-lift
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD738 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 769.910
+pngs: .audit/verify-simulator-batch-lift.png
+SID: sim.load.tasks.batch.lift
+when_hkt: 2026-11-08 21:14 HKT
+rationale: restyle existing LoadSim batch lift preview after task ring mix #737; WHOOP ghost/active wells; no new SID or READY formula; all-checked already hides widget (existing EmptyView); mechanical pattern-copy of #737 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: first run passed (no launch-flake retry); xcodebuild exit 0; xcresult Passed failedTests=0 passedTests=1; IDETestOperationsObserverDebug 769.910s

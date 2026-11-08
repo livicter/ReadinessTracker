@@ -10739,7 +10739,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-task-ring-mix.png")
 
 
-        // Honest #603: batch lift preview
+        // Honest #603 / #738: batch lift preview (WHOOP wells)
         let batchLift = app.descendants(matching: .any)["sim.load.tasks.batch.lift"].firstMatch
         XCTAssertTrue(batchLift.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.task.rings"].firstMatch.exists
