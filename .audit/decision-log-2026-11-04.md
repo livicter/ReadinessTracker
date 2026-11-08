@@ -249,3 +249,7 @@
 | 17:31 HKT | Honest #732 Simulator task impact share | prove | started UITest /tmp/RT-DD732; model=deepseek-flash | mid-ship |
 | 17:47 HKT | #732 Simulator task impact share | prove | UITest suite green /tmp/RT-DD732 (762.977s, 0 failures); model=deepseek-flash |
 | 17:48 HKT | #732 Simulator task impact share | land | proof PNG + receipt; SID sim.load.tasks.impactshare; PR squash next; model=deepseek-flash |
+| 17:58 HKT | Honest #733 Simulator air coverage radar | model=deepseek-flash | restyle existing sim.load.air.radar after task impact share #732; WHOOP ghost/active wells | mid-ship |
+| 18:04 HKT | Honest #733 Simulator air coverage radar | prove | started UITest /tmp/RT-DD733; model=deepseek-flash | mid-ship |
+| 18:17 HKT | #733 Simulator air coverage radar | prove | UITest suite green /tmp/RT-DD733 (769.923s, 0 failures); model=deepseek-flash |
+| 18:17 HKT | #733 Simulator air coverage radar | land | proof PNG + receipt; SID sim.load.air.radar; PR squash next; model=deepseek-flash |

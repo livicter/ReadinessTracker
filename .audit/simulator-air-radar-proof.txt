@@ -1,0 +1,11 @@
+Honest #733 — Simulator air coverage radar
+tip_base: 2ab707c (main before ship)
+branch: honest-733-sim-air-radar
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD733 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 769.923
+pngs: .audit/verify-simulator-air-radar.png
+SID: sim.load.air.radar
+when_hkt: 2026-11-08 18:17 HKT
+rationale: restyle existing LoadSim air coverage radar after task impact share #732; WHOOP ghost/active wells; no new SID or fill formula
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

@@ -5416,7 +5416,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #593: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (richer sim + GH parity).
+    /// Honest #593 / #733: Fitbit / Google Health air coverage radar — Sleep/Vitals/Move fill (WHOOP wells; richer sim + GH parity).
     @ViewBuilder
     private var airCoverageRadar: some View {
         let chips = AirChip.all(from: data)
@@ -5433,6 +5433,9 @@ struct ReadinessLoadSimulatorCard: View {
         let pct = Int((Double(filled) / Double(total) * 100).rounded())
         let tone: Color = pct >= 70 ? RTColor.optimal : (pct >= 40 ? RTColor.good : accent)
         let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let radarIsActive = filled > 0
+        let allFilled = filled >= total
+        let wellTone = radarIsActive ? (allFilled ? RTColor.optimal : accent) : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "dot.radiowaves.left.and.right")
@@ -5487,10 +5490,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(radarIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorAirRadar)
         .accessibilityLabel("Air coverage \(pct) percent, \(filled) of \(total) fields")
