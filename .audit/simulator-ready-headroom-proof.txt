@@ -1,0 +1,11 @@
+Honest #734 — Simulator READY headroom dial
+tip_base: 22b86d5
+branch: honest-734-sim-ready-headroom
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD734 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 771.330
+pngs: .audit/verify-simulator-ready-headroom.png
+SID: sim.load.ready.headroom
+when_hkt: 2026-11-08 18:43 HKT
+rationale: restyle existing LoadSim READY headroom dial after air coverage radar #733; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

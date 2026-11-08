@@ -253,3 +253,7 @@
 | 18:04 HKT | Honest #733 Simulator air coverage radar | prove | started UITest /tmp/RT-DD733; model=deepseek-flash | mid-ship |
 | 18:17 HKT | #733 Simulator air coverage radar | prove | UITest suite green /tmp/RT-DD733 (769.923s, 0 failures); model=deepseek-flash |
 | 18:17 HKT | #733 Simulator air coverage radar | land | proof PNG + receipt; SID sim.load.air.radar; PR squash next; model=deepseek-flash |
+| 18:24 HKT | Honest #734 Simulator READY headroom | model=deepseek-flash | restyle existing sim.load.ready.headroom after air coverage radar #733; WHOOP ghost/active wells | mid-ship |
+| 18:24 HKT | Honest #734 Simulator READY headroom | prove | started UITest /tmp/RT-DD734; model=deepseek-flash | mid-ship |
+| 18:43 HKT | #734 Simulator READY headroom | prove | UITest suite green /tmp/RT-DD734 (771.330s, 0 failures); model=deepseek-flash |
+| 18:43 HKT | #734 Simulator READY headroom | land | proof PNG + receipt; SID sim.load.ready.headroom; PR squash next; model=deepseek-flash |
