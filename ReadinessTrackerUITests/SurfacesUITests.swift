@@ -10592,7 +10592,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-zone-jump.png")
 
 
-        // Honest #585: task impact ladder
+        // Honest #585 / #730: task impact ladder (WHOOP wells)
         let impactLadder = app.descendants(matching: .any)["sim.load.tasks.ladder"].firstMatch
         XCTAssertTrue(impactLadder.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks.waterfall"].firstMatch.exists

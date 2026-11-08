@@ -2120,7 +2120,7 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Task waterfall READY \(projected) to \(ceiling)")
     }
 
-    /// Honest #585: task impact ladder — ranked READY-lift bars (Google Health graphics / richer sim tasks).
+    /// Honest #585 / #730: task impact ladder — ranked READY-lift bars (WHOOP wells; Google Health graphics / richer sim tasks).
     @ViewBuilder
     private var taskImpactLadder: some View {
         let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
@@ -2135,6 +2135,9 @@ struct ReadinessLoadSimulatorCard: View {
         let maxD = max(1, ordered.map(\.readyDelta).max() ?? 1)
         let pending = ordered.filter { !completedTaskIDs.contains($0.id) }
         let remain = pending.reduce(0) { $0 + $1.readyDelta }
+        let ladderIsActive = !completedTaskIDs.isEmpty
+        let allChecked = ordered.allSatisfy { completedTaskIDs.contains($0.id) }
+        let wellTone = ladderIsActive ? (allChecked ? RTColor.optimal : accent) : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "list.number")
@@ -2196,10 +2199,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(ladderIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLadder)
         .accessibilityLabel("Impact ladder \(remain) READY points remaining")
