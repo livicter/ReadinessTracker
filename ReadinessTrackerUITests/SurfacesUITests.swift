@@ -10963,7 +10963,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-intercept.png")
 
-        // Honest #712: READY climb margin
+        // Honest #712 / #751: READY climb margin (WHOOP wells)
         let climbMargin = app.descendants(matching: .any)["sim.load.ready.climb.margin"].firstMatch
         XCTAssertTrue(climbMargin.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.climb.intercept"].firstMatch.exists

@@ -4742,7 +4742,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #712: READY climb margin — Optimal clearance at intercept (or queue end if short).
+    /// Honest #712 / #751: READY climb margin — Optimal clearance at intercept (or queue end if short; WHOOP wells).
     @ViewBuilder
     private var readyClimbMarginDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -4788,6 +4788,8 @@ struct ReadinessLoadSimulatorCard: View {
         let disp = margin >= 0 ? "+\(margin)" : "\(margin)"
         // dial fill: map margin −15…+15 → 0…1
         let progress = min(1.0, max(0.0, Double(margin + 15) / 30.0))
+        let climbMarginIsActive = margin >= 0
+        let wellTone: Color = climbMarginIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "plus.forwardslash.minus")
@@ -4878,10 +4880,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbMarginIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbMargin)
         .accessibilityLabel("Climb margin \(verb) \(disp)")
