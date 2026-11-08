@@ -1,0 +1,11 @@
+Honest #730 — Simulator task ladder
+tip_base: da1a802 (main before ship)
+branch: honest-730-sim-tasks-ladder
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD730 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 766.233
+pngs: .audit/verify-simulator-task-ladder.png
+SID: sim.load.tasks.ladder
+when_hkt: 2026-11-08 16:45 HKT
+rationale: restyle existing LoadSim task ladder after task waterfall #729; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry)

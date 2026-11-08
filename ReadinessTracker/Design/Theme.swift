@@ -297,7 +297,7 @@ enum SurfaceID {
     static let fitbitAirDensityMAD = "fitbit.air.density.mad"  // Honest #582
     static let readinessSimulatorZoneJump = "sim.load.zone.jump"  // Honest #583
     static let fitbitAirDensityTukey = "fitbit.air.density.tukey"  // Honest #584
-    static let readinessSimulatorTaskLadder = "sim.load.tasks.ladder"  // Honest #585
+    static let readinessSimulatorTaskLadder = "sim.load.tasks.ladder"  // Honest #585 / #730
     static let fitbitAirDensitySlope = "fitbit.air.density.slope"  // Honest #586
     static let readinessSimulatorPathZoneBands = "sim.load.path.zones"  // Honest #587
     static let fitbitAirDensityZScore = "fitbit.air.density.zscore"  // Honest #588

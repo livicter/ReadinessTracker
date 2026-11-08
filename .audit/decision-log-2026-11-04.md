@@ -237,3 +237,7 @@
 | 15:56 HKT | Honest #729 Simulator task waterfall | prove | started UITest /tmp/RT-DD729; model=deepseek-flash | mid-ship |
 | 16:14 HKT | #729 Simulator task waterfall | prove | UITest suite green /tmp/RT-DD729 (769.164s, 0 failures); model=deepseek-flash |
 | 16:14 HKT | #729 Simulator task waterfall | land | proof PNG + receipt; SID sim.load.tasks.waterfall; PR squash next; model=deepseek-flash |
+| 16:26 HKT | Honest #730 Simulator task ladder | model=deepseek-flash | restyle existing sim.load.tasks.ladder after #729 task waterfall; WHOOP ghost/active wells | mid-ship |
+| 16:31 HKT | Honest #730 Simulator task ladder | prove | started UITest /tmp/RT-DD730; model=deepseek-flash | mid-ship |
+| 16:45 HKT | #730 Simulator task ladder | prove | UITest suite green /tmp/RT-DD730 (766.233s, 0 failures); model=deepseek-flash |
+| 16:45 HKT | #730 Simulator task ladder | land | proof PNG + receipt; SID sim.load.tasks.ladder; PR squash next; model=deepseek-flash |
