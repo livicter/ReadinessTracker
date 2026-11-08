@@ -11291,7 +11291,7 @@ final class SurfacesUITests: XCTestCase {
         } else {
             saveShot("verify-simulator-presets.png")
         }
-        // Honest #518: seed levers from Fitbit/Health air vs 7d mean
+        // Honest #518 / #722: seed levers from Fitbit/Health air vs 7d mean (WHOOP action well)
         let seedAir = app.descendants(matching: .any)["sim.load.seed.air"].firstMatch
         var seedN = 0
         while !seedAir.exists && seedN < 8 {
@@ -11303,6 +11303,7 @@ final class SurfacesUITests: XCTestCase {
                       "sim.load.seed.air")
         if seedAir.exists { seedAir.tap() }
         saveShot("verify-readiness-load-simulator-seed-air.png")
+        saveShot("verify-simulator-seed-air.png")
         // Honest #547: seed from density forecast
         let seedForecast = app.descendants(matching: .any)["sim.load.seed.forecast"].firstMatch
         XCTAssertTrue(seedForecast.waitForExistence(timeout: 5)

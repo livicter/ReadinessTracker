@@ -1,0 +1,11 @@
+Honest #722 — Simulator seed air
+tip_base: a56bac0 (main before ship)
+branch: honest-722-sim-seed-air
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD722 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 773.583
+pngs: .audit/verify-simulator-seed-air.png
+SID: sim.load.seed.air
+when_hkt: 2026-11-08 12:16 HKT
+rationale: foundational LoadSim seed-from-air after presets #721; WHOOP-parity action well; no new SID or READY formula
+note: first run passed (no launch-flake retry)

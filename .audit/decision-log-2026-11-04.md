@@ -205,3 +205,7 @@
 | 11:04 HKT | Honest #721 Simulator presets | prove | started UITest /tmp/RT-DD721; model=deepseek-flash | mid-ship |
 | 11:45 HKT | #721 Simulator presets | prove | UITest suite green /tmp/RT-DD721-retry1 (986.551s, 0 failures); model=deepseek-flash |
 | 11:45 HKT | #721 Simulator presets | land | proof PNG + receipt; SID sim.load.presets; PR squash next; model=deepseek-flash |
+| 11:58 HKT | Honest #722 Simulator seed air | model=deepseek-flash | foundational sim.load.seed.air after presets #721; WHOOP-parity action well | mid-ship |
+| 11:59 HKT | Honest #722 Simulator seed air | prove | started UITest /tmp/RT-DD722; model=deepseek-flash | mid-ship |
+| 12:17 HKT | #722 Simulator seed air | prove | UITest suite green /tmp/RT-DD722 (773.583s, 0 failures); model=deepseek-flash |
+| 12:17 HKT | #722 Simulator seed air | land | proof PNG + receipt; SID sim.load.seed.air; PR squash next; model=deepseek-flash |

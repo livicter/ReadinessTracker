@@ -230,7 +230,7 @@ enum SurfaceID {
     static let healthAirLegendSleep = "health.air.legend.sleep"  // Honest #709
     static let healthAirLegendVitals = "health.air.legend.vitals"  // Honest #710
     static let healthAirLegendActivity = "health.air.legend.activity"  // Honest #711
-    static let readinessSimulatorSeedAir = "sim.load.seed.air"  // Honest #518
+    static let readinessSimulatorSeedAir = "sim.load.seed.air"  // Honest #518 / #722
     static let fitbitAirDataSparkDelta = "fitbit.air.spark.delta"  // Honest #519
     static let healthAirDataSparkDelta = "health.air.spark.delta"  // Honest #699
     static let readinessSimulatorABSnapshot = "sim.load.ab.snap"  // Honest #520

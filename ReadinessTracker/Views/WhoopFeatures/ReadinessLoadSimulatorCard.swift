@@ -506,9 +506,10 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
-    /// Honest #518: denser Fitbit/Health air → simulator integration.
+    /// Honest #518 / #722: WHOOP action well (idle ghost/hairline; seeded filled accent).
     private var seedAirBlock: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let isSeeded = airSeededSummary != nil
+        return VStack(alignment: .leading, spacing: 8) {
             Button {
                 Haptic.selectionChanged()
                 seedFromAir()
@@ -523,24 +524,23 @@ struct ReadinessLoadSimulatorCard: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(Color.white.opacity(0.2))
+                        .background(isSeeded ? Color.white.opacity(0.2) : accent.opacity(0.15))
                         .clipShape(Capsule())
                 }
-                .foregroundStyle(Color.white)
+                .foregroundStyle(isSeeded ? Color.white : RTColor.secondaryText)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
-                .background(
-                    LinearGradient(
-                        colors: [accent, Color(hex: "64D2FF")],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                .background(isSeeded ? accent : accent.opacity(0.08))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(isSeeded ? Color.clear : accent.opacity(0.28), lineWidth: 1)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedAir)
             .accessibilityLabel("Seed simulator from air data")
+            .animation(.easeInOut(duration: 0.2), value: isSeeded)
 
             // Honest #547: seed levers from air density tomorrow forecast
             Button {
