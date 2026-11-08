@@ -1,0 +1,11 @@
+Honest #737 — Simulator task ring mix
+tip_base: f2c8843
+branch: honest-737-sim-task-rings
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD737 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 773.239
+pngs: .audit/verify-simulator-task-ring-mix.png
+SID: sim.load.task.rings
+when_hkt: 2026-11-08 20:45 HKT
+rationale: restyle existing LoadSim task ring mix after GH triad #736; WHOOP ghost/active wells; no new SID or READY formula; mechanical pattern-copy of #736 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

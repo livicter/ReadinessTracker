@@ -2705,7 +2705,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #601: task ring mix — pending READYΔ attributed to Sleep/Gym/Work (richer sim/tasks graphics).
+    /// Honest #601 / #737: task ring mix — pending READYΔ attributed to Sleep/Gym/Work (WHOOP wells; richer sim/tasks graphics).
     @ViewBuilder
     private var taskRingMix: some View {
         if tasks.isEmpty {
@@ -2744,6 +2744,11 @@ struct ReadinessLoadSimulatorCard: View {
         let top = groups.enumerated().max(by: { lifts[$0.offset] < lifts[$1.offset] })
         let verb = pending.isEmpty ? "Cleared" : (top.map { $0.element.label } ?? "Mixed")
         let tone = top.map { $0.element.color } ?? accent
+        let ringsIsActive = !completedTaskIDs.isEmpty
+        let allChecked = pending.isEmpty
+        let wellTone: Color = ringsIsActive
+            ? (allChecked ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "circle.grid.cross.fill")
@@ -2796,10 +2801,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(ringsIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRingMix)
         .accessibilityLabel("Task ring mix \(verb)")

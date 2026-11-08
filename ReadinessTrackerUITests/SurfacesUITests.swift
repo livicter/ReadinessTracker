@@ -10721,7 +10721,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-gh-triad.png")
 
 
-        // Honest #601: task ring mix
+        // Honest #601 / #737: task ring mix (WHOOP wells)
         let ringMix = app.descendants(matching: .any)["sim.load.task.rings"].firstMatch
         XCTAssertTrue(ringMix.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.gh.triad"].firstMatch.exists
