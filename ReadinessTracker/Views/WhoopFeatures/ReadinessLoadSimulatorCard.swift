@@ -3505,7 +3505,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: completedTaskIDs)
     }
 
-    /// Honest #613: READY climb forecast — cumulative lift path from unchecked tasks (Fitbit/GH richer sim).
+    /// Honest #613 / #743: READY climb forecast — cumulative lift path from unchecked tasks (WHOOP wells).
     @ViewBuilder
     private var readyClimbForecast: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -3550,6 +3550,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Nudge"; tone = accent
         }
+        let climbIsActive = (verb != "Nudge")
+        let wellTone: Color = climbIsActive ? tone : RTColor.secondaryText
         let lo = max(0, min(start, end) - 5)
         let hi = min(100, max(start, end) + 5)
         let span = max(1, hi - lo)
@@ -3652,10 +3654,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyClimb)
         .accessibilityLabel("READY climb \(verb) \(start) to \(end)")
