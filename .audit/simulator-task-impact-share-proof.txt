@@ -1,0 +1,11 @@
+Honest #732 — Simulator task impact share
+tip_base: 57ad1cf (main before ship)
+branch: honest-732-sim-tasks-impactshare
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD732 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 762.977
+pngs: .audit/verify-simulator-task-impact-share.png
+SID: sim.load.tasks.impactshare
+when_hkt: 2026-11-08 17:47 HKT
+rationale: restyle existing LoadSim task impact share after READY pace #731; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

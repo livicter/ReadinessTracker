@@ -10625,7 +10625,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-pace.png")
 
 
-        // Honest #591: task impact share stack
+        // Honest #591 / #732: task impact share stack (WHOOP wells)
         let impactShare = app.descendants(matching: .any)["sim.load.tasks.impactshare"].firstMatch
         XCTAssertTrue(impactShare.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.pace"].firstMatch.exists
