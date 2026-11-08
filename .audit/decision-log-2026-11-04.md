@@ -261,3 +261,7 @@
 | 19:01 HKT | Honest #735 Simulator READY burndown | prove | started UITest /tmp/RT-DD735; model=deepseek-flash | mid-ship |
 | 19:20 HKT | #735 Simulator READY burndown | prove | UITest suite green /tmp/RT-DD735 (815.211s, 0 failures); model=deepseek-flash |
 | 19:21 HKT | #735 Simulator READY burndown | land | proof PNG + receipt; SID sim.load.ready.burndown; PR squash next; model=deepseek-flash |
+| 19:31 HKT | Honest #736 Simulator GH triad | model=deepseek-flash | restyle existing sim.load.gh.triad after READY burndown #735; WHOOP ghost/active wells; mechanical pattern-copy of #735 wells applied locally (no separate model iterate needed) | mid-ship |
+| 19:31 HKT | Honest #736 Simulator GH triad | prove | started UITest /tmp/RT-DD736; model=deepseek-flash | mid-ship |
+| 19:50 HKT | #736 Simulator GH triad | prove | UITest suite green /tmp/RT-DD736 (769.576s, 0 failures); model=deepseek-flash |
+| 19:50 HKT | #736 Simulator GH triad | land | proof PNG + receipt; SID sim.load.gh.triad; PR squash next; model=deepseek-flash |
