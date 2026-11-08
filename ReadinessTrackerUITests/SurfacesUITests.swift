@@ -10646,7 +10646,7 @@ final class SurfacesUITests: XCTestCase {
 
 
 
-        // Honest #593: air coverage radar (Fitbit / Google Health)
+        // Honest #593 / #733: air coverage radar (Fitbit / Google Health; WHOOP wells)
         let airRadar = app.descendants(matching: .any)["sim.load.air.radar"].firstMatch
         XCTAssertTrue(airRadar.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks.impactshare"].firstMatch.exists
