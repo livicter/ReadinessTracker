@@ -11181,7 +11181,18 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-lever-sensitivity.png")
         // Honest #499: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
+        // Honest #720: WHOOP-parity task row (check-well + accent rail)
+        var rowSwipes = 0
+        while row.exists && !isOnScreen(row) && rowSwipes < 10 {
+            app.swipeUp()
+            rowSwipes += 1
+        }
+        XCTAssertTrue(row.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load.md.nav"].firstMatch.exists,
+                      "sim.load.tasks.row")
         if row.exists { row.tap() }
+        saveShot("verify-simulator-tasks-row.png")
         let progress = app.descendants(matching: .any)["sim.load.tasks.progress"].firstMatch
         XCTAssertTrue(progress.exists || tasks.exists, "sim.load.tasks.progress")
         // Honest #719: WHOOP-parity segmented task completion bar

@@ -5915,21 +5915,40 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private func taskImpactRow(_ task: SimulatorTask) -> some View {
+        // Honest #720: WHOOP-parity task row (check-well + accent rail)
         let isDone = completedTaskIDs.contains(task.id)
+        let railTint = isDone ? RTColor.optimal : accent
+        let rowFill = isDone
+            ? RTColor.optimal.opacity(0.12)
+            : RTColor.surfaceHighlight.opacity(0.65)
         return Button {
             Haptic.selectionChanged()
             if isDone { completedTaskIDs.remove(task.id) }
             else { completedTaskIDs.insert(task.id) }
         } label: {
             HStack(alignment: .top, spacing: 10) {
-                Image(systemName: isDone ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(isDone ? RTColor.optimal : accent)
-                    .frame(width: 22)
+                Group {
+                    if isDone {
+                        Image(systemName: "checkmark.circle.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.white, RTColor.optimal)
+                            .font(.system(size: 22, weight: .semibold))
+                    } else {
+                        ZStack {
+                            Circle()
+                                .fill(accent.opacity(0.18))
+                            Image(systemName: "circle")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(accent)
+                        }
+                        .frame(width: 22, height: 22)
+                    }
+                }
+                .frame(width: 22, height: 22)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(task.title)
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(RTColor.primaryText)
+                        .foregroundStyle(isDone ? RTColor.secondaryText : RTColor.primaryText)
                         .strikethrough(isDone, color: RTColor.secondaryText)
                     Text(task.detail)
                         .font(.caption)
@@ -5951,10 +5970,16 @@ struct ReadinessLoadSimulatorCard: View {
                 }
             }
             .padding(10)
-            .background(RTColor.surfaceHighlight.opacity(isDone ? 0.35 : 0.65))
+            .background(rowFill)
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(railTint)
+                    .frame(width: 3)
+            }
             .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
         }
         .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.2), value: isDone)
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRow)
         .accessibilityLabel("\(task.title), +\(task.readyDelta) READY\(isDone ? ", done" : "")")
     }

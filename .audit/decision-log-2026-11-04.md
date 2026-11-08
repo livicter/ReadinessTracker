@@ -197,3 +197,7 @@
 | 09:58 HKT | Honest #719 Simulator tasks.bar | prove | started UITest /tmp/RT-DD719; model=deepseek-flash | mid-ship |
 | 10:15 HKT | #719 Simulator tasks.bar | prove | UITest suite green /tmp/RT-DD719 (701.817s, 0 failures); model=deepseek-flash |
 | 10:16 HKT | #719 Simulator tasks.bar | land | proof PNG + receipt; SID sim.load.tasks.bar; PR squash next; model=deepseek-flash |
+| 10:32 HKT | Honest #720 Simulator tasks.row | model=deepseek-flash | foundational sim.load.tasks.row after tasks.bar #719; WHOOP-parity check-well + accent rail | mid-ship |
+| 10:32 HKT | Honest #720 Simulator tasks.row | prove | started UITest /tmp/RT-DD720; model=deepseek-flash | mid-ship |
+| 10:49 HKT | #720 Simulator tasks.row | prove | UITest suite green /tmp/RT-DD720 (723.867s, 0 failures); model=deepseek-flash |
+| 10:49 HKT | #720 Simulator tasks.row | land | proof PNG + receipt; SID sim.load.tasks.row; PR squash next; model=deepseek-flash |
