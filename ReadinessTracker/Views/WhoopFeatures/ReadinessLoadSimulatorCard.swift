@@ -3332,7 +3332,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #611: task efficiency dial — lift captured vs checks (Fitbit/GH richer sim graphics).
+    /// Honest #611 / #742: task efficiency dial — lift captured vs checks (WHOOP wells; Fitbit/GH richer sim graphics).
     @ViewBuilder
     private var taskEfficiencyDial: some View {
         if tasks.isEmpty {
@@ -3372,6 +3372,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Low yield"; tone = RTColor.warning
         }
+        let effIsActive = checked != 0
+        let wellTone: Color = effIsActive ? tone : RTColor.secondaryText
         let effDisp = String(format: "%.2f×", eff)
         let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
         return VStack(alignment: .leading, spacing: 8) {
@@ -3493,10 +3495,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(effIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskEfficiency)
         .accessibilityLabel("Task efficiency \(verb) \(effDisp)")

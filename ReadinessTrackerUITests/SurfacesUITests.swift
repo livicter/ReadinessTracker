@@ -10811,7 +10811,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-buffer.png")
 
 
-        // Honest #611: task efficiency
+        // Honest #611 / #742: task efficiency (WHOOP wells)
         let taskEff = app.descendants(matching: .any)["sim.load.tasks.efficiency"].firstMatch
         XCTAssertTrue(taskEff.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch.exists

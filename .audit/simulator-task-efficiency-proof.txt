@@ -1,0 +1,12 @@
+Honest #742 — Simulator task efficiency
+tip_base: 39f60d7
+branch: honest-742-sim-task-efficiency
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -derivedDataPath /tmp/RT-DD742 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 770.997
+observer_s: 784.557
+pngs: .audit/verify-simulator-task-efficiency.png
+SID: sim.load.tasks.efficiency
+when_hkt: 2026-11-08 23:17 HKT
+rationale: restyle existing LoadSim task efficiency after READY zone buffer #741; WHOOP ghost/active/Sharp wells; no new SID or efficiency formula; idle = Ready (checked==0) ghost/hairline 8%/28%; active = On track / Diffuse / Low yield 14% fill + 28% hairline (good / caution / warning); Sharp (eff >= 1.25) = 14% fill + 28% hairline (optimal); mechanical pattern-copy of #741 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: destination name=iPhone 17 Pro,OS=26.5 (no id); xcodebuild exit 0; Test Case passed 770.997s, 0 failures; xcresult wall 784.557s (finish-start); pipeline stdout truncated so observer taken from xcresult startTime/finishTime
