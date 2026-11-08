@@ -752,7 +752,7 @@ struct ReadinessLoadSimulatorCard: View {
             }
             .animation(.easeInOut(duration: 0.2), value: snapA != nil)
 
-            // Honest #530: freeze live as Snap B
+            // Honest #530 / #725: WHOOP wells (idle ghost/hairline; saved filled optimal; Recall secondary).
             HStack(spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -760,10 +760,14 @@ struct ReadinessLoadSimulatorCard: View {
                 } label: {
                     Text(snapB == nil ? "Save B" : "Update B")
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(snapB == nil ? RTColor.secondaryText : Color.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 9)
-                        .background(RTColor.optimal.opacity(0.9))
+                        .background(snapB == nil ? RTColor.optimal.opacity(0.08) : RTColor.optimal)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(snapB == nil ? RTColor.optimal.opacity(0.28) : Color.clear, lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -785,11 +789,16 @@ struct ReadinessLoadSimulatorCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 9)
                         .background(RTColor.optimal.opacity(snapB == nil ? 0.08 : 0.14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(RTColor.optimal.opacity(0.28), lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .disabled(snapB == nil)
             }
+            .animation(.easeInOut(duration: 0.2), value: snapB != nil)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorSnapB)
             .accessibilityLabel("Simulator save snapshot B")
 

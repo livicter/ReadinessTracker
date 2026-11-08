@@ -11325,7 +11325,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-readiness-load-simulator-ab-snapshot.png")
         saveShot("verify-simulator-ab-snap.png")
-        // Honest #530: Save B snapshot row
+        // Honest #530 / #725: Save B snapshot row (WHOOP wells)
         let snapB = app.descendants(matching: .any)["sim.load.ab.snapb"].firstMatch
         XCTAssertTrue(snapB.waitForExistence(timeout: 5)
                       || app.staticTexts["Save B"].waitForExistence(timeout: 3)
@@ -11337,6 +11337,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Save B"].tap()
         }
         saveShot("verify-readiness-load-simulator-snap-b.png")
+        saveShot("verify-simulator-ab-snapb.png")
         // Honest #533: A−B lever diff chips (needs Save A + Save B)
         let leverDiff = app.descendants(matching: .any)["sim.load.ab.leverdiff"].firstMatch
         XCTAssertTrue(leverDiff.waitForExistence(timeout: 5)
