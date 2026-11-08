@@ -1,0 +1,12 @@
+Honest #743 — Simulator READY climb
+tip_base: b7dd618
+branch: honest-743-sim-ready-climb
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -derivedDataPath /tmp/RT-DD743 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 773.909
+observer_s: 787.633
+pngs: .audit/verify-simulator-ready-climb.png
+SID: sim.load.ready.climb
+when_hkt: 2026-11-08 23:45 HKT
+rationale: restyle existing LoadSim READY climb forecast after task efficiency #742; WHOOP ghost/active/Climb wells; no new SID or climb formula; idle = Nudge (gain < 3) ghost/hairline 8%/28%; active = Step (gain >= 3) 14% fill + 28% hairline (good); Climb (gain >= 6) or Zone-up = 14% fill + 28% hairline (optimal); mechanical pattern-copy of #742 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: destination name=iPhone 17 Pro,OS=26.5 (no id); xcodebuild exit 0; Test Case passed 773.909s, 0 failures; xcresult wall 787.633s (IDETestOperationsObserverDebug elapsed); pipeline stdout truncated so observer taken from xcodebuild observer line

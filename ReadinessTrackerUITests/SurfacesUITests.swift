@@ -10827,7 +10827,7 @@ final class SurfacesUITests: XCTestCase {
             }
         }
         saveShot("verify-simulator-task-efficiency.png")
-        // Honest #613: READY climb forecast
+        // Honest #613 / #743: READY climb forecast (WHOOP wells)
         let readyClimb = app.descendants(matching: .any)["sim.load.ready.climb"].firstMatch
         XCTAssertTrue(readyClimb.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch.exists
