@@ -3665,7 +3665,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #615: READY zone handoff rail — Now→Peak markers on Poor·Fair·Good·Optimal ribbon (graphics + Fitbit/GH).
+    /// Honest #615 / #744: READY zone handoff rail — Now→Peak markers on Poor·Fair·Good·Optimal ribbon (graphics + Fitbit/GH; WHOOP wells).
     @ViewBuilder
     private var readyHandoffRail: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -3710,6 +3710,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Parked"; tone = accent
         }
+        let handoffIsActive = (verb != "Parked")
+        let wellTone: Color = handoffIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.arrow.right.circle.fill")
@@ -3801,10 +3803,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(handoffIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyHandoff)
         .accessibilityLabel("READY handoff \(verb) \(start) to \(peak)")
