@@ -4593,7 +4593,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #639: READY climb intercept — first queue step that crosses Optimal (richer sim graphics).
+    /// Honest #639 / #750: READY climb intercept — first queue step that crosses Optimal (Fitbit/Health graphics; WHOOP wells).
     @ViewBuilder
     private var readyClimbInterceptDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -4631,6 +4631,8 @@ struct ReadinessLoadSimulatorCard: View {
         let progress = hit
             ? 1.0
             : min(1.0, max(0.0, Double(end - start) / Double(max(1, target - start))))
+        let climbInterceptIsActive = hit
+        let wellTone: Color = climbInterceptIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "scope")
@@ -4729,10 +4731,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbInterceptIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbIntercept)
         .accessibilityLabel("Climb intercept \(stepLabel) \(readyLabel)")

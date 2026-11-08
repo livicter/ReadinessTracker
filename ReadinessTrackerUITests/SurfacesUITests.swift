@@ -10946,7 +10946,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-climb-glide.png")
 
-        // Honest #639: READY climb intercept
+        // Honest #639 / #750: READY climb intercept (WHOOP wells)
         let climbIntercept = app.descendants(matching: .any)["sim.load.ready.climb.intercept"].firstMatch
         XCTAssertTrue(climbIntercept.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.climb.glide"].firstMatch.exists
