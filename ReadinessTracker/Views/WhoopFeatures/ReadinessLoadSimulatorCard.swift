@@ -2813,7 +2813,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #603: next-batch lift preview — combined READYΔ of next 2 impact tasks (richer sim/tasks).
+    /// Honest #603 / #738: next-batch lift preview — combined READYΔ of next 2 impact tasks (WHOOP wells; richer sim/tasks).
     @ViewBuilder
     private var taskBatchLiftPreview: some View {
         let unchecked = tasks.filter { !completedTaskIDs.contains($0.id) }
@@ -2830,6 +2830,8 @@ struct ReadinessLoadSimulatorCard: View {
         let lift = batch.map(\.readyDelta).reduce(0, +)
         let after = min(100, projectedCoupled + lift)
         let tone: Color = lift >= 6 ? RTColor.optimal : (lift >= 3 ? RTColor.good : accent)
+        let batchIsActive = !completedTaskIDs.isEmpty
+        let wellTone: Color = batchIsActive ? accent : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "bolt.horizontal.fill")
@@ -2901,10 +2903,10 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityLabel("Apply batch lift plus \(lift) READY")
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(batchIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorBatchLift)
         .accessibilityLabel("Batch lift plus \(lift) to \(after)")

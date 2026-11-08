@@ -269,3 +269,7 @@
 | 20:27 HKT | Honest #737 Simulator task ring mix | prove | started UITest /tmp/RT-DD737; model=deepseek-flash | mid-ship |
 | 20:45 HKT | #737 Simulator task ring mix | prove | UITest suite green /tmp/RT-DD737 (773.239s, 0 failures); model=deepseek-flash |
 | 20:46 HKT | #737 Simulator task ring mix | land | proof PNG + receipt; SID sim.load.task.rings; PR squash next; model=deepseek-flash |
+| 20:56 HKT | Honest #738 Simulator batch lift | model=deepseek-flash | restyle existing sim.load.tasks.batch.lift after task ring mix #737; WHOOP ghost/active wells; mechanical pattern-copy of #737 wells applied locally (no separate model iterate needed) | mid-ship |
+| 20:56 HKT | Honest #738 Simulator batch lift | prove | started UITest /tmp/RT-DD738; model=deepseek-flash | mid-ship |
+| 21:14 HKT | #738 Simulator batch lift | prove | UITest suite green /tmp/RT-DD738 (769.910s, 0 failures); model=deepseek-flash |
+| 21:16 HKT | #738 Simulator batch lift | land | proof PNG + receipt; SID sim.load.tasks.batch.lift; PR squash next; model=deepseek-flash |
