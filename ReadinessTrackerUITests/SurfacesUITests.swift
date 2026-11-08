@@ -11053,7 +11053,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-climb-ceiling.png")
 
 
-        // Honest #587: READY path zone bands
+        // Honest #587 / #756: READY path zone bands (WHOOP wells)
         let pathZones = app.descendants(matching: .any)["sim.load.path.zones"].firstMatch
         XCTAssertTrue(pathZones.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
