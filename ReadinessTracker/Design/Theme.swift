@@ -411,7 +411,7 @@ enum SurfaceID {
     static let readinessSimulatorReadyHandoff = "sim.load.ready.handoff"  // Honest #615 / #744
     static let readinessSimulatorClimbPace = "sim.load.ready.climb.pace"  // Honest #617 / #745
     static let readinessSimulatorClimbETA = "sim.load.ready.climb.eta"  // Honest #619 / #746
-    static let readinessSimulatorClimbSurplus = "sim.load.ready.climb.surplus"  // Honest #621
+    static let readinessSimulatorClimbSurplus = "sim.load.ready.climb.surplus"  // Honest #621 / #747
     static let readinessSimulatorClimbRunway = "sim.load.ready.climb.runway"  // Honest #623
     static let readinessSimulatorClimbGlide = "sim.load.ready.climb.glide"  // Honest #626
     static let readinessSimulatorClimbIntercept = "sim.load.ready.climb.intercept"  // Honest #639
