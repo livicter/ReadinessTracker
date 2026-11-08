@@ -1,0 +1,11 @@
+Honest #735 — Simulator READY burn-down spark
+tip_base: 59e00fd
+branch: honest-735-sim-ready-burndown
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD735 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 815.211
+pngs: .audit/verify-simulator-ready-burndown.png
+SID: sim.load.ready.burndown
+when_hkt: 2026-11-08 19:20 HKT
+rationale: restyle existing LoadSim READY burn-down spark after READY headroom #734; WHOOP ghost/active wells; no new SID or READY formula; mechanical pattern-copy of #734 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

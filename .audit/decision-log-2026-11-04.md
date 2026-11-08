@@ -257,3 +257,7 @@
 | 18:24 HKT | Honest #734 Simulator READY headroom | prove | started UITest /tmp/RT-DD734; model=deepseek-flash | mid-ship |
 | 18:43 HKT | #734 Simulator READY headroom | prove | UITest suite green /tmp/RT-DD734 (771.330s, 0 failures); model=deepseek-flash |
 | 18:43 HKT | #734 Simulator READY headroom | land | proof PNG + receipt; SID sim.load.ready.headroom; PR squash next; model=deepseek-flash |
+| 19:01 HKT | Honest #735 Simulator READY burndown | model=deepseek-flash | restyle existing sim.load.ready.burndown after READY headroom #734; WHOOP ghost/active wells; mechanical pattern-copy of #734 wells applied locally (no separate model iterate needed) | mid-ship |
+| 19:01 HKT | Honest #735 Simulator READY burndown | prove | started UITest /tmp/RT-DD735; model=deepseek-flash | mid-ship |
+| 19:20 HKT | #735 Simulator READY burndown | prove | UITest suite green /tmp/RT-DD735 (815.211s, 0 failures); model=deepseek-flash |
+| 19:21 HKT | #735 Simulator READY burndown | land | proof PNG + receipt; SID sim.load.ready.burndown; PR squash next; model=deepseek-flash |

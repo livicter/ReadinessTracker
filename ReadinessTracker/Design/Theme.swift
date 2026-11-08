@@ -399,7 +399,7 @@ enum SurfaceID {
     static let healthAirGapsProgress = "health.air.gaps.progress"  // Honest #637
     static let healthAirGapsCategories = "health.air.gaps.categories"  // Honest #637
     static let readinessSimulatorReadyHeadroom = "sim.load.ready.headroom"  // Honest #595 / #734
-    static let readinessSimulatorReadyBurndown = "sim.load.ready.burndown"  // Honest #597
+    static let readinessSimulatorReadyBurndown = "sim.load.ready.burndown"  // Honest #597 / #735
     static let readinessSimulatorGHTriad = "sim.load.gh.triad"  // Honest #599
     static let readinessSimulatorTaskRingMix = "sim.load.task.rings"  // Honest #601
     static let readinessSimulatorBatchLift = "sim.load.tasks.batch.lift"  // Honest #603

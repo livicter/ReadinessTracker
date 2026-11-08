@@ -10685,7 +10685,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-headroom.png")
 
 
-        // Honest #597: READY burn-down spark
+        // Honest #597 / #735: READY burn-down spark (WHOOP wells)
         let burndown = app.descendants(matching: .any)["sim.load.ready.burndown"].firstMatch
         XCTAssertTrue(burndown.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.headroom"].firstMatch.exists
