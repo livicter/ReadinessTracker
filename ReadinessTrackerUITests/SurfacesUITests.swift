@@ -10981,7 +10981,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-climb-margin.png")
 
 
-        // Honest #713: READY climb slack
+        // Honest #713 / #752: READY climb slack (WHOOP wells)
         let climbSlack = app.descendants(matching: .any)["sim.load.ready.climb.slack"].firstMatch
         XCTAssertTrue(climbSlack.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.climb.margin"].firstMatch.exists
