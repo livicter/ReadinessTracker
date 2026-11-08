@@ -10861,7 +10861,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-handoff.png")
 
-        // Honest #617: READY climb pace
+        // Honest #617 / #745: READY climb pace (WHOOP wells)
         let climbPace = app.descendants(matching: .any)["sim.load.ready.climb.pace"].firstMatch
         XCTAssertTrue(climbPace.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.handoff"].firstMatch.exists
