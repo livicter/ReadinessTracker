@@ -1,0 +1,11 @@
+Honest #724 — Simulator A/B snap
+tip_base: 9de9dec (main before ship)
+branch: honest-724-sim-ab-snap
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD724 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 785.120
+pngs: .audit/verify-simulator-ab-snap.png
+SID: sim.load.ab.snap
+when_hkt: 2026-11-08 13:17 HKT
+rationale: foundational LoadSim A/B snapshot A-row after seed.forecast #723; WHOOP idle-ghost / saved-fill wells on Save A / Update A / Recall A / Clear; no new SID or READY formula
+note: first run passed (no launch-flake retry)
