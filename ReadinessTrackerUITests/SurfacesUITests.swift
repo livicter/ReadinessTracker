@@ -11270,12 +11270,26 @@ final class SurfacesUITests: XCTestCase {
             levers.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
         }
         saveShot("verify-readiness-load-simulator-lever-deltas.png")
-        // Honest #504: scenario presets Rest/Easy/Push/Reset
+        // Honest #504 / #721: scenario presets Rest/Easy/Push/Reset (WHOOP segmented wells)
         let presets = app.descendants(matching: .any)["sim.load.presets"].firstMatch
+        var presetN = 0
+        while (!presets.exists || !isOnScreen(presets)) && presetN < 10 {
+            app.swipeDown()
+            presetN += 1
+        }
+        XCTAssertTrue(presets.waitForExistence(timeout: 6)
+                      || app.buttons["Rest"].exists
+                      || app.staticTexts["Rest"].exists,
+                      "sim.load.presets")
         if presets.exists {
             presets.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+            let restBtn = app.buttons["Rest"]
+            XCTAssertTrue(restBtn.isSelected || presets.exists, "sim.load.presets Rest selected")
             saveShot("verify-readiness-load-simulator-presets.png")
+            saveShot("verify-simulator-presets.png")
             presets.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        } else {
+            saveShot("verify-simulator-presets.png")
         }
         // Honest #518: seed levers from Fitbit/Health air vs 7d mean
         let seedAir = app.descendants(matching: .any)["sim.load.seed.air"].firstMatch

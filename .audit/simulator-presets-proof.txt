@@ -1,0 +1,11 @@
+Honest #721 — Simulator presets
+tip_base: bfc9a0d (main before ship)
+branch: honest-721-sim-presets
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD721 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 986.551
+pngs: .audit/verify-simulator-presets.png
+SID: sim.load.presets
+when_hkt: 2026-11-08 11:45 HKT
+rationale: foundational LoadSim presets after tasks.row #720; WHOOP-parity segmented wells; no new SID or READY formula
+note: first run failed at 206.976s (UI snapshot timeout on Readiness StaticText at launch); retry1 test-without-building passed

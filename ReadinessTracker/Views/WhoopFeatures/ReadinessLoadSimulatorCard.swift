@@ -434,26 +434,61 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Lever sensitivity \(sumLabel)")
     }
 
-    /// Honest #504: scenario presets + reset for richer simulation.
+    /// Honest #721: WHOOP-parity segmented preset wells (selected fill vs ghost/hairline; Reset secondary).
     private var simulatorPresets: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             ForEach(SimulatorPreset.allCases) { preset in
+                let isSelected = matchesPreset(preset)
+                let isReset = preset == .reset
                 Button {
                     Haptic.selectionChanged()
                     apply(preset)
                 } label: {
                     Text(preset.title)
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(preset == .reset ? RTColor.secondaryText : Color.white)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(preset == .reset ? RTColor.surfaceHighlight : accent.opacity(0.85))
-                        .clipShape(Capsule())
+                        .foregroundStyle(
+                            isReset
+                                ? (isSelected ? RTColor.primaryText : RTColor.secondaryText)
+                                : (isSelected ? Color.white : RTColor.secondaryText)
+                        )
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(
+                            isReset
+                                ? (isSelected ? RTColor.surfaceHighlight : Color.clear)
+                                : (isSelected ? accent : accent.opacity(0.08))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(
+                                    isReset
+                                        ? RTColor.divider
+                                        : (isSelected ? Color.clear : accent.opacity(0.28)),
+                                    lineWidth: 1
+                                )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(preset.title)
+                .accessibilityAddTraits(isSelected ? [.isSelected] : [])
             }
         }
         .accessibilityIdentifier(SurfaceID.readinessSimulatorPresets)
+        .animation(.easeInOut(duration: 0.2), value: matchesPresetToken)
+    }
+
+    /// Lever values match a preset exactly — no new READY formula.
+    private func matchesPreset(_ preset: SimulatorPreset) -> Bool {
+        sleepDelta == preset.sleep
+            && hrvDelta == preset.hrv
+            && strainDelta == preset.strain
+            && rhrDelta == preset.rhr
+            && spo2Delta == preset.spo2
+    }
+
+    private var matchesPresetToken: String {
+        SimulatorPreset.allCases.first(where: matchesPreset)?.rawValue ?? "custom"
     }
 
     private func apply(_ preset: SimulatorPreset) {
