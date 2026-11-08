@@ -1,0 +1,11 @@
+Honest #726 — Simulator A/B lever diff
+tip_base: 69c35aa (main before ship)
+branch: honest-726-sim-ab-leverdiff
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD726 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 762.581
+pngs: .audit/verify-simulator-ab-leverdiff.png .audit/verify-readiness-load-simulator-ab-lever-diff.png
+SID: sim.load.ab.leverdiff
+when_hkt: 2026-11-08 14:41 HKT
+rationale: restyle existing LoadSim A/B lever-diff chips after snap B #725; WHOOP focused-fill / unfocused ghost-or-recall wells; no new SID or READY formula
+note: first run passed (no launch-flake retry)

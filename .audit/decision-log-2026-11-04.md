@@ -221,3 +221,7 @@
 | 13:54 HKT | Honest #725 Simulator A/B snap B | prove | started UITest /tmp/RT-DD725; model=deepseek-flash | mid-ship |
 | 14:13 HKT | #725 Simulator A/B snap B | prove | UITest suite green /tmp/RT-DD725 (772.008s, 0 failures); model=deepseek-flash |
 | 14:13 HKT | #725 Simulator A/B snap B | land | proof PNG + receipt; SID sim.load.ab.snapb; PR squash next; model=deepseek-flash |
+| 14:23 HKT | Honest #726 Simulator A/B lever diff | model=deepseek-flash | restyle existing sim.load.ab.leverdiff chips after #725 snap B; WHOOP focused-fill / unfocused ghost-or-recall wells | mid-ship |
+| 14:23 HKT | Honest #726 Simulator A/B lever diff | prove | started UITest /tmp/RT-DD726; model=deepseek-flash | mid-ship |
+| 14:42 HKT | #726 Simulator A/B lever diff | prove | UITest suite green /tmp/RT-DD726 (762.581s, 0 failures); model=deepseek-flash |
+| 14:42 HKT | #726 Simulator A/B lever diff | land | proof PNG + receipt; SID sim.load.ab.leverdiff; PR squash next; model=deepseek-flash |

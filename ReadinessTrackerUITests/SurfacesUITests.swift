@@ -11338,7 +11338,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-readiness-load-simulator-snap-b.png")
         saveShot("verify-simulator-ab-snapb.png")
-        // Honest #533: A−B lever diff chips (needs Save A + Save B)
+        // Honest #533 / #726: A−B lever diff chips (WHOOP wells; needs Save A + Save B)
         let leverDiff = app.descendants(matching: .any)["sim.load.ab.leverdiff"].firstMatch
         XCTAssertTrue(leverDiff.waitForExistence(timeout: 5)
                       || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "levers")).count > 0
@@ -11348,6 +11348,7 @@ final class SurfacesUITests: XCTestCase {
             leverDiff.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.6)).tap()
         }
         saveShot("verify-readiness-load-simulator-ab-lever-diff.png")
+        saveShot("verify-simulator-ab-leverdiff.png")
         // Honest #508: projected Gym/Work/Sleep ring chips
         let rings = app.descendants(matching: .any)["sim.load.rings"].firstMatch
         XCTAssertTrue(rings.waitForExistence(timeout: 5), "sim.load.rings")

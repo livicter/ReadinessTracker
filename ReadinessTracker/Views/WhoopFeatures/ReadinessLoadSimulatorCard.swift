@@ -825,7 +825,7 @@ struct ReadinessLoadSimulatorCard: View {
                         .background((d >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.14))
                         .clipShape(Capsule())
                 }
-                // Honest #533: per-lever A−B (or A−Live) deltas
+                // Honest #533 / #726: per-lever A−B (or A−Live) deltas (WHOOP wells)
                 abLeverDiffRow(a: a, b: snapB)
             } else {
                 Text("Save A + B, scrub levers, compare Δ")
@@ -839,7 +839,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #533: interactive A−B lever delta chips (tap focuses lever).
+    /// Honest #533 / #726: interactive A−B lever delta chips (tap focuses lever; WHOOP wells).
     @ViewBuilder
     private func abLeverDiffRow(
         a: (sleep: Double, hrv: Double, strain: Double, rhr: Double, spo2: Double, ready: Int),
@@ -861,6 +861,8 @@ struct ReadinessLoadSimulatorCard: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(pairs, id: \.0.id) { kind, delta in
+                        let focused = focusedLever == kind
+                        let isZero = delta == 0
                         Button {
                             Haptic.selectionChanged()
                             focusedLever = kind
@@ -873,10 +875,14 @@ struct ReadinessLoadSimulatorCard: View {
                                 Text(abLeverDeltaText(kind, delta))
                                     .font(.caption2.weight(.bold).monospacedDigit())
                             }
-                            .foregroundStyle(focusedLever == kind ? Color.white : kind.color)
+                            .foregroundStyle(focused ? Color.white : kind.color)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 8)
-                            .background(focusedLever == kind ? kind.color : kind.color.opacity(0.12))
+                            .background(focused ? kind.color : kind.color.opacity(isZero ? 0.08 : 0.14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .stroke(focused ? Color.clear : kind.color.opacity(0.28), lineWidth: 1)
+                            )
                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                         }
                         .buttonStyle(.plain)
@@ -885,6 +891,8 @@ struct ReadinessLoadSimulatorCard: View {
                 }
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: focusedLever)
+        .animation(.easeInOut(duration: 0.2), value: pairs.map { $0.1 == 0 })
         .accessibilityIdentifier(SurfaceID.readinessSimulatorABLeverDiff)
         .accessibilityLabel("Simulator A B lever deltas")
     }
