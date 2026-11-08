@@ -2000,7 +2000,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #565: READY task waterfall — cumulative lift per task toward ceiling (Google Health graphics).
+    /// Honest #565 / #729: READY task waterfall — cumulative lift per task toward ceiling (WHOOP wells).
     @ViewBuilder
     private var readyTaskWaterfall: some View {
         let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
@@ -2030,6 +2030,9 @@ struct ReadinessLoadSimulatorCard: View {
             ))
         }
         let ceiling = steps.last?.ready ?? projected
+        let waterfallIsActive = !completedTaskIDs.isEmpty
+        let allChecked = ordered.allSatisfy { completedTaskIDs.contains($0.id) }
+        let wellTone = waterfallIsActive ? (allChecked ? RTColor.optimal : accent) : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.xaxis.ascending")
@@ -2108,10 +2111,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(waterfallIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskWaterfall)
         .accessibilityLabel("Task waterfall READY \(projected) to \(ceiling)")
