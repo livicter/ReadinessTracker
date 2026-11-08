@@ -10703,7 +10703,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-burndown.png")
 
 
-        // Honest #599: GH triad balance
+        // Honest #599 / #736: GH triad balance (WHOOP wells)
         let ghTriad = app.descendants(matching: .any)["sim.load.gh.triad"].firstMatch
         XCTAssertTrue(ghTriad.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.burndown"].firstMatch.exists

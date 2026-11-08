@@ -2589,7 +2589,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #599: Google Health Sleep·Vitals·Move triad — balance meters on Load Simulator (GH parity / graphics).
+    /// Honest #599 / #736: Google Health Sleep·Vitals·Move triad — balance meters on Load Simulator (WHOOP wells; GH parity / graphics).
     @ViewBuilder
     private var ghTriadBalance: some View {
         let chips = AirChip.all(from: data)
@@ -2620,6 +2620,11 @@ struct ReadinessLoadSimulatorCard: View {
             verb = "Skewed"; tone = RTColor.warning
         }
         let sourceLabel = source == .fitbit ? "Fitbit/GH" : "Health"
+        let allFilled = fills.allSatisfy { $0 >= 1 }
+        let triadIsActive = (fills.max() ?? 0) > 0
+        let wellTone: Color = triadIsActive
+            ? (allFilled ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "triangle.fill")
@@ -2688,10 +2693,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(triadIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorGHTriad)
         .accessibilityLabel("Google Health triad \(verb)")
