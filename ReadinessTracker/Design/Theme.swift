@@ -210,7 +210,7 @@ enum SurfaceID {
     static let recommendationTaskRow = "recommendations.task.row"
     static let fitbitAirDataSparkPeriod = "fitbit.air.spark.period"  // Honest #503
     static let healthAirDataSparkPeriod = "health.air.spark.period"  // Honest #695
-    static let readinessSimulatorPresets = "sim.load.presets"  // Honest #504
+    static let readinessSimulatorPresets = "sim.load.presets"  // Honest #504 / #721
     static let fitbitAirDataSparkMetric = "fitbit.air.spark.metric"  // Honest #505
     static let healthAirDataSparkMetric = "health.air.spark.metric"  // Honest #696
     static let fitbitAirChipMetricDetail = "fitbit.air.chip.md.nav"  // Honest #506
