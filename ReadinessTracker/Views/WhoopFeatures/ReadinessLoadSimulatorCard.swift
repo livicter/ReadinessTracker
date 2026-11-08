@@ -3940,7 +3940,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #619: READY climb ETA — unchecked tasks to Optimal (≥85) with cumulative spark (Fitbit/GH graphics).
+    /// Honest #619 / #746: READY climb ETA — unchecked tasks to Optimal (≥85) with cumulative spark (Fitbit/GH graphics; WHOOP wells).
     @ViewBuilder
     private var readyClimbETADial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -3979,6 +3979,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Short"; tone = RTColor.warning
         }
+        let climbEtaIsActive = (verb != "Short")
+        let wellTone: Color = climbEtaIsActive ? tone : RTColor.secondaryText
         let etaDisp = start >= target ? "0" : (reached ? "\(need)" : "\(pending.count)+")
         let lo = max(0, min(start, run, target) - 4)
         let hi = min(100, max(start, run, target) + 4)
@@ -4082,10 +4084,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbEtaIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbETA)
         .accessibilityLabel("Climb ETA \(verb) \(etaDisp) tasks")
