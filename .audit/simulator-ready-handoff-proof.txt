@@ -1,0 +1,12 @@
+Honest #744 — Simulator READY handoff
+tip_base: b8ccf8e
+branch: honest-744-sim-ready-handoff
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -derivedDataPath /tmp/RT-DD744 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 774.177
+observer_s: 787.654
+pngs: .audit/verify-simulator-ready-handoff.png
+SID: sim.load.ready.handoff
+when_hkt: 2026-11-09 00:15 HKT
+rationale: restyle existing LoadSim READY handoff rail after READY climb #743; WHOOP ghost/active/Handoff/Slip wells; no new SID or handoff formula; idle = Parked (peak == start) ghost/hairline 8%/28%; active = Hold (same-zone lift) 14% fill + 28% hairline (start-zone tone); Handoff (zone-cross up) 14% fill + 28% hairline (peak-zone tone); Slip (peak < start) 14% fill + 28% hairline (warning); mechanical pattern-copy of #743 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: destination name=iPhone 17 Pro,OS=26.5 (no id); xcodebuild exit 0; Test Case passed 774.177s, 0 failures; xcresult wall 787.654s (IDETestOperationsObserverDebug elapsed); pipeline stdout truncated so observer taken from xcodebuild observer line
