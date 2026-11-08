@@ -5861,9 +5861,52 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLiftSpark)
                 .accessibilityLabel("READY lift spark, +\(lift) checked")
             }
-            ProgressView(value: Double(done), total: Double(max(1, tasks.count)))
-                .tint(accent)
-                .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
+            // Honest #719: WHOOP-parity segmented task completion bar
+            let taskTotal = tasks.count
+            let allTasksDone = !ordered.isEmpty
+                ? ordered.allSatisfy { completedTaskIDs.contains($0.id) }
+                : (taskTotal > 0 && done == taskTotal)
+            let barTint = allTasksDone ? RTColor.optimal : accent
+            let barPercent = taskTotal > 0
+                ? Int((Double(done) / Double(taskTotal) * 100).rounded())
+                : 0
+            HStack(alignment: .center, spacing: 8) {
+                Group {
+                    if !ordered.isEmpty {
+                        HStack(spacing: 3) {
+                            ForEach(ordered) { task in
+                                RoundedRectangle(cornerRadius: 3, style: .continuous)
+                                    .fill(completedTaskIDs.contains(task.id) ? barTint : barTint.opacity(0.18))
+                                    .frame(height: 8)
+                            }
+                        }
+                    } else {
+                        GeometryReader { geo in
+                            let frac = taskTotal > 0 ? Double(done) / Double(taskTotal) : 0
+                            ZStack(alignment: .leading) {
+                                Capsule()
+                                    .fill(barTint.opacity(0.18))
+                                    .frame(height: 8)
+                                Capsule()
+                                    .fill(barTint)
+                                    .frame(width: max(0, geo.size.width * CGFloat(frac)), height: 8)
+                            }
+                            .frame(maxHeight: .infinity, alignment: .center)
+                        }
+                    }
+                }
+                .frame(height: 8)
+                Text("\(done)/\(taskTotal)")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(barTint)
+                Text("\(barPercent)%")
+                    .font(.caption2.weight(.bold).monospacedDigit())
+                    .foregroundStyle(RTColor.secondaryText)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
+            .accessibilityLabel("\(done)/\(taskTotal)")
+            .animation(.easeInOut(duration: 0.2), value: done)
             ForEach(ordered) { task in
                 taskImpactRow(task)
             }

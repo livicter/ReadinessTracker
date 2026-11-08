@@ -193,3 +193,7 @@
 | 09:04 HKT | Honest #718 Simulator controls | prove | started UITest /tmp/RT-DD718; model=deepseek-flash | mid-ship |
 | 09:36 HKT | #718 Simulator controls | prove | UITest suite green /tmp/RT-DD718 (686.470s, 0 failures); model=deepseek-flash |
 | 09:37 HKT | #718 Simulator controls | land | proof PNG + receipt; SID sim.load.controls; PR squash next; model=deepseek-flash |
+| 09:58 HKT | Honest #719 Simulator tasks.bar | model=deepseek-flash | foundational sim.load.tasks.bar after controls #718; WHOOP-parity segmented completion bar | mid-ship |
+| 09:58 HKT | Honest #719 Simulator tasks.bar | prove | started UITest /tmp/RT-DD719; model=deepseek-flash | mid-ship |
+| 10:15 HKT | #719 Simulator tasks.bar | prove | UITest suite green /tmp/RT-DD719 (701.817s, 0 failures); model=deepseek-flash |
+| 10:16 HKT | #719 Simulator tasks.bar | land | proof PNG + receipt; SID sim.load.tasks.bar; PR squash next; model=deepseek-flash |

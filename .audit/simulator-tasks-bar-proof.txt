@@ -1,0 +1,10 @@
+Honest #719 — Simulator tasks bar
+tip_base: 543af0b (main before ship)
+branch: honest-719-sim-tasks-bar
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD719 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 701.817
+pngs: .audit/verify-simulator-tasks-bar.png
+SID: sim.load.tasks.bar
+when_hkt: 2026-11-08 10:15 HKT
+rationale: foundational LoadSim tasks.bar after controls #718; WHOOP-parity segmented completion bar from completedTaskIDs + done/tasks.count caption
