@@ -1,2 +1,3 @@
-Honest #601: Simulator task ring mix
+Honest #601 / #737: Simulator task ring mix (WHOOP wells)
 SurfaceID sim.load.task.rings
+Proof: .audit/verify-simulator-task-ring-mix.png
