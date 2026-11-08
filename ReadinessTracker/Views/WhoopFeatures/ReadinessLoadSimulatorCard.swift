@@ -1292,7 +1292,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #569: READY zone strip — Poor/Fair/Good/Optimal band + live marker (Google Health graphics).
+    /// Honest #569 / #757: READY zone strip — Poor/Fair/Good/Optimal band + live marker (WHOOP wells; Google Health graphics).
     private var readyZoneStrip: some View {
         let score = projectedCoupled
         let zones: [(label: String, lo: Int, hi: Int, color: Color)] = [
@@ -1302,6 +1302,8 @@ struct ReadinessLoadSimulatorCard: View {
             ("Optimal", 85, 100, RTColor.optimal)
         ]
         let active = zones.first { score >= $0.lo && score <= $0.hi } ?? zones[0]
+        let readyZonesIsActive = score >= 50
+        let wellTone: Color = readyZonesIsActive ? active.color : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.doc.horizontal")
@@ -1355,10 +1357,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(readyZonesIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyZones)
         .accessibilityLabel("READY zones \(active.label) \(score)")
