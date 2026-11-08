@@ -5037,7 +5037,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #714: READY climb overshoot — full-queue READY vs Optimal after folding all pending.
+    /// Honest #714 / #753: READY climb overshoot — full-queue READY vs Optimal after folding all pending (WHOOP wells).
     @ViewBuilder
     private var readyClimbOvershootDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -5074,6 +5074,8 @@ struct ReadinessLoadSimulatorCard: View {
         let disp = overshoot >= 0 ? "+\(overshoot)" : "\(overshoot)"
         // dial fill: map overshoot −15…+15 → 0…1
         let progress = min(1.0, max(0.0, Double(overshoot + 15) / 30.0))
+        let climbOvershootIsActive = overshoot >= 0
+        let wellTone: Color = climbOvershootIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.up.right.circle")
@@ -5162,10 +5164,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbOvershootIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbOvershoot)
         .accessibilityLabel("Climb overshoot \(verb) \(disp)")
