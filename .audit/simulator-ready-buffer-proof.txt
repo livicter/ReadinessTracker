@@ -1,0 +1,12 @@
+Honest #741 — Simulator READY zone buffer
+tip_base: a1e41fa
+branch: honest-741-sim-ready-buffer
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -derivedDataPath /tmp/RT-DD741 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 771.987
+observer_s: 785.497
+pngs: .audit/verify-simulator-ready-buffer.png
+SID: sim.load.ready.buffer
+when_hkt: 2026-11-08 22:42 HKT
+rationale: restyle existing LoadSim READY zone buffer after READY momentum #740; WHOOP ghost/active/optimal wells; no new SID or READY formula; idle = Hold (verb == "Hold") ghost/hairline 8%/28%; active = Climb 14% fill + 28% hairline (good); Near/Capped = 14% fill + 28% hairline (optimal); mechanical pattern-copy of #740 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: destination name=iPhone 17 Pro,OS=26.5 (no id); xcodebuild TEST EXECUTE SUCCEEDED; Test Case passed 771.987s, 0 failures; IDETestOperationsObserverDebug 785.497s
