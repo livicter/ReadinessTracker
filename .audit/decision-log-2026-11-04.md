@@ -213,3 +213,7 @@
 | 12:22 HKT | Honest #723 Simulator seed forecast | prove | started UITest /tmp/RT-DD723; model=deepseek-flash | mid-ship |
 | 12:40 HKT | #723 Simulator seed forecast | prove | UITest suite green /tmp/RT-DD723 (789.892s, 0 failures); model=deepseek-flash |
 | 12:40 HKT | #723 Simulator seed forecast | land | proof PNG + receipt; SID sim.load.seed.forecast; PR squash next; model=deepseek-flash |
+| 12:58 HKT | Honest #724 Simulator A/B snap | model=deepseek-flash | foundational sim.load.ab.snap after seed.forecast #723; WHOOP idle-ghost / saved-fill wells on A-row | mid-ship |
+| 12:59 HKT | Honest #724 Simulator A/B snap | prove | started UITest /tmp/RT-DD724; model=deepseek-flash | mid-ship |
+| 13:17 HKT | #724 Simulator A/B snap | prove | UITest suite green /tmp/RT-DD724 (785.120s, 0 failures); model=deepseek-flash |
+| 13:19 HKT | #724 Simulator A/B snap | land | proof PNG + receipt; SID sim.load.ab.snap; PR squash next; model=deepseek-flash |

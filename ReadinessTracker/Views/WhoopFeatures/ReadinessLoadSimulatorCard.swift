@@ -682,9 +682,10 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
-    /// Honest #520: richer simulation — save A, compare live B READY delta.
+    /// Honest #520 / #724: richer simulation — save A, compare live B READY delta (WHOOP wells on A-row).
     private var abSnapshotBlock: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Honest #520 / #724: WHOOP wells (idle ghost/hairline; saved filled accent; Clear secondary).
             HStack(spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -692,10 +693,14 @@ struct ReadinessLoadSimulatorCard: View {
                 } label: {
                     Text(snapA == nil ? "Save A" : "Update A")
                         .font(.caption.weight(.bold))
-                        .foregroundStyle(Color.white)
+                        .foregroundStyle(snapA == nil ? RTColor.secondaryText : Color.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 9)
-                        .background(accent)
+                        .background(snapA == nil ? accent.opacity(0.08) : accent)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(snapA == nil ? accent.opacity(0.28) : Color.clear, lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -717,6 +722,10 @@ struct ReadinessLoadSimulatorCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 9)
                         .background(accent.opacity(snapA == nil ? 0.08 : 0.14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(accent.opacity(0.28), lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
@@ -733,10 +742,15 @@ struct ReadinessLoadSimulatorCard: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 9)
                         .background(RTColor.surfaceHighlight)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .stroke(RTColor.divider, lineWidth: 1)
+                        )
                         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                 }
                 .buttonStyle(.plain)
             }
+            .animation(.easeInOut(duration: 0.2), value: snapA != nil)
 
             // Honest #530: freeze live as Snap B
             HStack(spacing: 8) {

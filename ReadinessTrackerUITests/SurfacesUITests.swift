@@ -11313,7 +11313,7 @@ final class SurfacesUITests: XCTestCase {
         if seedForecast.exists { seedForecast.tap() }
         saveShot("verify-readiness-load-simulator-seed-forecast.png")
         saveShot("verify-simulator-seed-forecast.png")
-        // Honest #520: A/B snapshot compare
+        // Honest #520 / #724: A/B snapshot compare (WHOOP wells)
         let ab = app.descendants(matching: .any)["sim.load.ab.snap"].firstMatch
         XCTAssertTrue(ab.waitForExistence(timeout: 5)
                       || app.staticTexts["Save A"].waitForExistence(timeout: 3),
@@ -11324,6 +11324,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Save A"].tap()
         }
         saveShot("verify-readiness-load-simulator-ab-snapshot.png")
+        saveShot("verify-simulator-ab-snap.png")
         // Honest #530: Save B snapshot row
         let snapB = app.descendants(matching: .any)["sim.load.ab.snapb"].firstMatch
         XCTAssertTrue(snapB.waitForExistence(timeout: 5)
