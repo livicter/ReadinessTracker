@@ -1,0 +1,11 @@
+Honest #723 — Simulator seed forecast
+tip_base: 444297f (main before ship)
+branch: honest-723-sim-seed-forecast
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD723 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 789.892
+pngs: .audit/verify-simulator-seed-forecast.png
+SID: sim.load.seed.forecast
+when_hkt: 2026-11-08 12:40 HKT
+rationale: foundational LoadSim seed-from-forecast after seed.air #722; WHOOP-parity action well; no new SID or READY formula
+note: first run passed (no launch-flake retry)
