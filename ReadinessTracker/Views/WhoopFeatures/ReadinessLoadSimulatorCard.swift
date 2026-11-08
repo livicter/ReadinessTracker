@@ -2476,7 +2476,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #597: READY burn-down spark — remaining task lift if completed by impact (richer sim / GH tasks).
+    /// Honest #597 / #735: READY burn-down spark — remaining task lift if completed by impact (richer sim / GH tasks).
     @ViewBuilder
     private var readyBurndownSpark: some View {
         let ordered = tasks.sorted { $0.readyDelta > $1.readyDelta }
@@ -2499,6 +2499,10 @@ struct ReadinessLoadSimulatorCard: View {
         let doneN = ordered.filter { completedTaskIDs.contains($0.id) }.count
         let tone: Color = left == 0 ? RTColor.optimal : (left <= max(2, totalLift / 3) ? RTColor.good : accent)
         let verb = left == 0 ? "Cleared" : (doneN == 0 ? "Pending" : "Burning")
+        let burndownIsActive = doneN > 0
+        let wellTone: Color = burndownIsActive
+            ? (left == 0 ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.line.downtrend.xyaxis")
@@ -2573,10 +2577,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(burndownIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyBurndown)
         .accessibilityLabel("READY burn-down \(verb), \(left) points left")
