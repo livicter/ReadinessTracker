@@ -1926,11 +1926,15 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #563: READY composition stack — baseline + lever Δ + task lift + headroom (richer sim graphics).
+    /// Honest #563 / #728: READY composition stack — baseline + lever Δ + task lift + headroom (WHOOP wells).
     private var readyCompositionStack: some View {
         let leverLift = projected - baseline
         let taskLift = projectedCoupled - projected
         let headroom = max(0, 100 - projectedCoupled)
+        let stackIsActive = leverLift != 0 || taskLift != 0
+        let wellTone: Color = stackIsActive
+            ? (headroom == 0 ? RTColor.optimal : accent)
+            : RTColor.secondaryText
         let segments: [(label: String, value: Int, color: Color)] = [
             ("Base", max(0, baseline), accent),
             ("Levers", max(0, leverLift), RTColor.good),
@@ -1968,7 +1972,11 @@ struct ReadinessLoadSimulatorCard: View {
                 .frame(maxHeight: .infinity, alignment: .center)
             }
             .frame(height: 14)
-            .background(RTColor.tertiaryText.opacity(0.12), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            .background(RTColor.secondaryText.opacity(0.08), in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .stroke(RTColor.secondaryText.opacity(0.28), lineWidth: 1)
+            )
             HStack(spacing: 10) {
                 ForEach(Array(segments.enumerated()), id: \.offset) { _, seg in
                     HStack(spacing: 4) {
@@ -1982,10 +1990,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(stackIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyStack)
         .accessibilityLabel("READY stack \(projectedCoupled) of 100")

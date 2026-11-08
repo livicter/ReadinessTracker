@@ -1,0 +1,11 @@
+Honest #728 — Simulator READY stack
+tip_base: b9da9a3 (main before ship)
+branch: honest-728-sim-ready-stack
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD728 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 760.611
+pngs: .audit/verify-simulator-ready-stack.png
+SID: sim.load.ready.stack
+when_hkt: 2026-11-08 15:44 HKT
+rationale: restyle existing LoadSim READY composition stack after A/B ready delta #727; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry)
