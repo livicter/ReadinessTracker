@@ -1,0 +1,10 @@
+Honest #720 — Simulator tasks row
+tip_base: b081fb7 (main before ship)
+branch: honest-720-sim-tasks-row
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD720 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 723.867
+pngs: .audit/verify-simulator-tasks-row.png
+SID: sim.load.tasks.row
+when_hkt: 2026-11-08 10:49 HKT
+rationale: foundational LoadSim tasks.row after tasks.bar #719; WHOOP-parity check-well + accent rail; no new SID or READY formula
