@@ -1,0 +1,11 @@
+Honest #731 — Simulator READY pace
+tip_base: 75171b7 (main before ship)
+branch: honest-731-sim-ready-pace
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD731 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 765.868
+pngs: .audit/verify-simulator-ready-pace.png
+SID: sim.load.ready.pace
+when_hkt: 2026-11-08 17:16 HKT
+rationale: restyle existing LoadSim READY pace after task ladder #730; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry); xcodebuild printed TEST EXECUTE SUCCEEDED

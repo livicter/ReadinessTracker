@@ -10609,7 +10609,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-ladder.png")
 
-        // Honest #589: READY pace meter
+        // Honest #589 / #731: READY pace meter (WHOOP wells)
         let readyPace = app.descendants(matching: .any)["sim.load.ready.pace"].firstMatch
         XCTAssertTrue(readyPace.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks.ladder"].firstMatch.exists

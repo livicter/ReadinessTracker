@@ -241,3 +241,7 @@
 | 16:31 HKT | Honest #730 Simulator task ladder | prove | started UITest /tmp/RT-DD730; model=deepseek-flash | mid-ship |
 | 16:45 HKT | #730 Simulator task ladder | prove | UITest suite green /tmp/RT-DD730 (766.233s, 0 failures); model=deepseek-flash |
 | 16:45 HKT | #730 Simulator task ladder | land | proof PNG + receipt; SID sim.load.tasks.ladder; PR squash next; model=deepseek-flash |
+| 16:58 HKT | Honest #731 Simulator READY pace | model=deepseek-flash | restyle existing sim.load.ready.pace after task ladder #730; WHOOP ghost/active wells | mid-ship |
+| 16:59 HKT | Honest #731 Simulator READY pace | prove | started UITest /tmp/RT-DD731; model=deepseek-flash | mid-ship |
+| 17:16 HKT | #731 READY pace | prove | UITest suite green /tmp/RT-DD731 (765.868s, 0 failures); model=deepseek-flash |
+| 17:18 HKT | #731 READY pace | land | proof PNG + receipt; SID sim.load.ready.pace; PR squash next; model=deepseek-flash |
