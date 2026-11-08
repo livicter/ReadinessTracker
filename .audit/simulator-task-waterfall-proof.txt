@@ -1,0 +1,11 @@
+Honest #729 — Simulator task waterfall
+tip_base: 1cc547a (main before ship)
+branch: honest-729-sim-tasks-waterfall
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD729 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 769.164
+pngs: .audit/verify-simulator-task-waterfall.png
+SID: sim.load.tasks.waterfall
+when_hkt: 2026-11-08 16:14 HKT
+rationale: restyle existing LoadSim task waterfall after READY stack #728; WHOOP ghost/active wells; no new SID or READY formula
+note: first run passed (no launch-flake retry)

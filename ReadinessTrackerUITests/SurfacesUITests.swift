@@ -11156,7 +11156,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ready-stack.png")
 
-        // Honest #565: READY task waterfall
+        // Honest #565 / #729: READY task waterfall (WHOOP wells)
         let waterfall = app.descendants(matching: .any)["sim.load.tasks.waterfall"].firstMatch
         XCTAssertTrue(waterfall.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch.exists
