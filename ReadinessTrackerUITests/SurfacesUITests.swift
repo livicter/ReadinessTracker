@@ -10793,7 +10793,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-ready-momentum.png")
 
 
-        // Honest #609: READY zone buffer
+        // Honest #609 / #741: READY zone buffer (WHOOP wells)
         let readyBuf = app.descendants(matching: .any)["sim.load.ready.buffer"].firstMatch
         XCTAssertTrue(readyBuf.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.momentum"].firstMatch.exists

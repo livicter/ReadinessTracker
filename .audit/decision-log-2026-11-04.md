@@ -282,3 +282,9 @@
 | 21:53 HKT | Honest #740 Simulator READY momentum | prove | started UITest /tmp/RT-DD740; model=deepseek-flash | mid-ship |
 | 22:13 HKT | #740 Simulator READY momentum | prove | UITest suite green /tmp/RT-DD740 (770.289s, 0 failures; observer 782.993s); model=deepseek-flash |
 | 22:13 HKT | #740 Simulator READY momentum | land | proof PNG + receipt; SID sim.load.ready.momentum; PR squash next; model=deepseek-flash |
+
+| 22:24 HKT | Honest #741 Simulator READY zone buffer | model=deepseek-flash | restyle existing sim.load.ready.buffer after READY momentum #740; WHOOP ghost/active/optimal wells; mechanical pattern-copy of #740 wells applied locally (no separate model iterate needed) | mid-ship |
+| 22:24 HKT | Honest #741 Simulator READY zone buffer | prove | started UITest /tmp/RT-DD741; model=deepseek-flash | mid-ship |
+
+| 22:42 HKT | #741 Simulator READY zone buffer | prove | UITest suite green /tmp/RT-DD741 (771.987s, 0 failures; observer 785.497s); model=deepseek-flash |
+| 22:43 HKT | #741 Simulator READY zone buffer | land | proof PNG + receipt; SID sim.load.ready.buffer; PR squash next; model=deepseek-flash |

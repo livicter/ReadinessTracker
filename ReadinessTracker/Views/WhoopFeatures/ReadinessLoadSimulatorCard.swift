@@ -3178,7 +3178,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #609: READY zone buffer — pts to next zone up/down (Fitbit/GH graphics).
+    /// Honest #609 / #741: READY zone buffer — pts to next zone up/down (WHOOP wells; Fitbit/GH graphics).
     @ViewBuilder
     private var readyZoneBuffer: some View {
         let score = projectedCoupled
@@ -3210,6 +3210,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Hold"; tone = cur.3
         }
+        let bufIsActive = verb != "Hold"
+        let wellTone: Color = bufIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.up.to.line.compact")
@@ -3316,10 +3318,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(bufIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorReadyBuffer)
         .accessibilityLabel("READY zone buffer \(verb) \(cur.0) \(score)")
