@@ -4428,7 +4428,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #626: READY climb glide — actual queue path vs linear glide to Optimal (Fitbit/Health graphics).
+    /// Honest #626 / #749: READY climb glide — actual queue path vs linear glide to Optimal (Fitbit/Health graphics; WHOOP wells).
     @ViewBuilder
     private var readyClimbGlideDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -4473,6 +4473,8 @@ struct ReadinessLoadSimulatorCard: View {
         } else {
             verb = "Below"; tone = RTColor.warning
         }
+        let climbGlideIsActive = (verb != "Below")
+        let wellTone: Color = climbGlideIsActive ? tone : RTColor.secondaryText
         let disp = String(format: "%+.1f", meanDev)
         let lo = max(0, min(start, path.max() ?? start, target, glideEnd) - 4)
         let hi = min(100, max(start, path.max() ?? start, target, glideEnd) + 4)
@@ -4580,10 +4582,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbGlideIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbGlide)
         .accessibilityLabel("Climb glide \(verb) \(disp)")
