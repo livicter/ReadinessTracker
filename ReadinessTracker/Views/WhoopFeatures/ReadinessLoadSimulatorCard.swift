@@ -880,6 +880,7 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Projected ring chips")
     }
 
+    /// Honest #718: WHOOP-parity bipolar sliders + live per-lever READY Δ (via `project()` vs all-zero).
     private var interactiveControls: some View {
         VStack(spacing: 14) {
             simulatorSlider(
@@ -888,7 +889,8 @@ struct ReadinessLoadSimulatorCard: View {
                 value: $sleepDelta,
                 range: -2...2,
                 step: 0.25,
-                tint: RTColor.sleep
+                tint: RTColor.sleep,
+                readyDelta: isolatedReadyDelta(sleep: sleepDelta)
             )
             simulatorSlider(
                 title: "HRV",
@@ -896,7 +898,8 @@ struct ReadinessLoadSimulatorCard: View {
                 value: $hrvDelta,
                 range: -20...20,
                 step: 1,
-                tint: RTColor.hrv
+                tint: RTColor.hrv,
+                readyDelta: isolatedReadyDelta(hrv: hrvDelta)
             )
             simulatorSlider(
                 title: "Strain",
@@ -904,7 +907,8 @@ struct ReadinessLoadSimulatorCard: View {
                 value: $strainDelta,
                 range: -6...6,
                 step: 0.5,
-                tint: RTColor.strain
+                tint: RTColor.strain,
+                readyDelta: isolatedReadyDelta(strain: strainDelta)
             )
             simulatorSlider(
                 title: "RHR",
@@ -912,7 +916,8 @@ struct ReadinessLoadSimulatorCard: View {
                 value: $rhrDelta,
                 range: -10...10,
                 step: 1,
-                tint: Color(hex: "FF375F")
+                tint: Color(hex: "FF375F"),
+                readyDelta: isolatedReadyDelta(rhr: rhrDelta)
             )
             simulatorSlider(
                 title: "SpO₂",
@@ -920,32 +925,80 @@ struct ReadinessLoadSimulatorCard: View {
                 value: $spo2Delta,
                 range: -3...3,
                 step: 0.5,
-                tint: Color(hex: "64D2FF")
+                tint: Color(hex: "64D2FF"),
+                readyDelta: isolatedReadyDelta(spo2: spo2Delta)
             )
         }
         .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorControls)
     }
 
+    /// Isolated lever READY Δ: `project(this lever)` minus `project(all-zero)`.
+    private func isolatedReadyDelta(sleep: Double = 0, hrv: Double = 0, strain: Double = 0, rhr: Double = 0, spo2: Double = 0) -> Int {
+        project(sleep: sleep, hrv: hrv, strain: strain, rhr: rhr, spo2: spo2)
+            - project(sleep: 0, hrv: 0, strain: 0, rhr: 0, spo2: 0)
+    }
+
+    /// Honest #718: center-zero tick + signed fill, plus live READY contribution from `project()`.
     private func simulatorSlider(
         title: String,
         unit: String,
         value: Binding<Double>,
         range: ClosedRange<Double>,
         step: Double,
-        tint: Color
+        tint: Color,
+        readyDelta: Int
     ) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        let signedValue = String(format: "%@%.2g %@", value.wrappedValue >= 0 ? "+" : "", value.wrappedValue, unit)
+        let signedReady = readyDelta >= 0 ? "+\(readyDelta)" : "\(readyDelta)"
+        return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(RTColor.primaryText)
                 Spacer()
-                Text(String(format: "%@%.2g %@", value.wrappedValue >= 0 ? "+" : "", value.wrappedValue, unit))
+                Text(signedValue)
                     .font(.caption.monospacedDigit().weight(.semibold))
                     .foregroundStyle(tint)
+                Text("READY \(signedReady)")
+                    .font(.system(size: 9, weight: .bold, design: .rounded).monospacedDigit())
+                    .foregroundStyle(readyDelta >= 0 ? RTColor.optimal : RTColor.warning)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background((readyDelta >= 0 ? RTColor.optimal : RTColor.warning).opacity(0.12))
+                    .clipShape(Capsule())
             }
-            Slider(value: value, in: range, step: step)
-                .tint(tint)
+            ZStack {
+                GeometryReader { geo in
+                    let w = max(geo.size.width, 1)
+                    let span = max(range.upperBound - range.lowerBound, 0.0001)
+                    let zeroX = CGFloat((0 - range.lowerBound) / span) * w
+                    let valueX = CGFloat((value.wrappedValue - range.lowerBound) / span) * w
+                    let fillX = min(zeroX, valueX)
+                    let fillW = abs(valueX - zeroX)
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(RTColor.divider)
+                            .frame(height: 5)
+                        Capsule()
+                            .fill(tint)
+                            .frame(width: max(fillW, value.wrappedValue == 0 ? 0 : 2), height: 5)
+                            .offset(x: fillX)
+                        // Center-zero tick
+                        Capsule()
+                            .fill(RTColor.secondaryText)
+                            .frame(width: 2, height: 14)
+                            .offset(x: zeroX - 1)
+                            .accessibilityHidden(true)
+                    }
+                    .frame(maxHeight: .infinity, alignment: .center)
+                }
+                .padding(.horizontal, 16)
+                Slider(value: value, in: range, step: step)
+                    .tint(Color.clear)
+                    .accessibilityLabel(title)
+                    .accessibilityValue("\(signedValue), READY \(signedReady) versus zero levers")
+            }
+            .frame(height: 32)
         }
     }
 
