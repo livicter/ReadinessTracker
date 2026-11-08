@@ -10567,7 +10567,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-path-spark.png")
 
-        // Honest #569: READY zone strip
+        // Honest #569 / #757: READY zone strip (WHOOP wells)
         let zones = app.descendants(matching: .any)["sim.load.ready.zones"].firstMatch
         XCTAssertTrue(zones.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
