@@ -5178,7 +5178,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #715: READY climb hold — consecutive path steps at/above Optimal after intercept.
+    /// Honest #715 / #754: READY climb hold — consecutive path steps at/above Optimal after intercept (WHOOP wells).
     @ViewBuilder
     private var readyClimbHoldDial: some View {
         let pending = tasks.filter { !completedTaskIDs.contains($0.id) }.sorted { $0.readyDelta > $1.readyDelta }
@@ -5227,6 +5227,8 @@ struct ReadinessLoadSimulatorCard: View {
         let disp = "\(hold)"
         let denom = max(1, path.count)
         let progress = min(1.0, Double(hold) / Double(denom))
+        let climbHoldIsActive = interceptIdx != nil
+        let wellTone: Color = climbHoldIsActive ? tone : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "pause.circle")
@@ -5310,10 +5312,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(climbHoldIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorClimbHold)
         .accessibilityLabel("Climb hold \(verb) \(disp)")
