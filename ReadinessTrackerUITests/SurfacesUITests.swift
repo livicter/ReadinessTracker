@@ -11184,6 +11184,21 @@ final class SurfacesUITests: XCTestCase {
         if row.exists { row.tap() }
         let progress = app.descendants(matching: .any)["sim.load.tasks.progress"].firstMatch
         XCTAssertTrue(progress.exists || tasks.exists, "sim.load.tasks.progress")
+        // Honest #719: WHOOP-parity segmented task completion bar
+        let tasksBar = app.descendants(matching: .any)["sim.load.tasks.bar"].firstMatch
+        var barSwipes = 0
+        while tasksBar.exists && !isOnScreen(tasksBar) && barSwipes < 10 {
+            app.swipeUp()
+            barSwipes += 1
+        }
+        XCTAssertTrue(tasksBar.waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["sim.load.tasks"].firstMatch.exists
+                      || app.descendants(matching: .any)["sim.load.md.nav"].firstMatch.exists,
+                      "sim.load.tasks.bar")
+        if tasksBar.exists {
+            if tasksBar.isHittable { tasksBar.tap() }
+        }
+        saveShot("verify-simulator-tasks-bar.png")
         // Honest #528: checked-task lift couples into projection gauge
         var coupledN = 0
         let coupled = app.descendants(matching: .any)["sim.load.tasks.coupled"].firstMatch
