@@ -11144,7 +11144,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ab-ready-delta.png")
 
-        // Honest #563: READY composition stack
+        // Honest #563 / #728: READY composition stack (WHOOP wells)
         let readyStack = app.descendants(matching: .any)["sim.load.ready.stack"].firstMatch
         XCTAssertTrue(readyStack.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.path.spark"].firstMatch.exists
