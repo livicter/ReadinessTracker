@@ -1849,7 +1849,7 @@ struct ReadinessLoadSimulatorCard: View {
 
 
 
-    /// Honest #581: A/B READY delta gauge — Snap A vs B/Live (or Base→Live) (Google Health graphics).
+    /// Honest #581 / #727: A/B READY delta gauge — Snap A vs B/Live (or Base→Live) (WHOOP wells / dual-tick span).
     private var abReadyDeltaGauge: some View {
         let aReady = snapA?.ready ?? baseline
         let bReady = snapB?.ready ?? projectedCoupled
@@ -1879,7 +1879,10 @@ struct ReadinessLoadSimulatorCard: View {
                 let aX = CGFloat(min(100, max(0, aReady))) / 100 * w
                 let bX = CGFloat(min(100, max(0, bReady))) / 100 * w
                 ZStack(alignment: .leading) {
-                    Capsule().fill(accent.opacity(0.12)).frame(height: 14)
+                    Capsule()
+                        .fill(RTColor.secondaryText.opacity(0.08))
+                        .frame(height: 14)
+                        .overlay(Capsule().stroke(RTColor.secondaryText.opacity(0.28), lineWidth: 1))
                     // span between A and B
                     let lo = min(aX, bX)
                     let hi = max(aX, bX)
@@ -1910,10 +1913,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(tone.opacity(d == 0 ? 0.08 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(tone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorABReadyDelta)
         .accessibilityLabel("A B READY delta \(d >= 0 ? "+" : "")\(d)")

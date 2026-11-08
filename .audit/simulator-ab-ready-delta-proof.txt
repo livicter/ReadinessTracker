@@ -1,0 +1,11 @@
+Honest #727 — Simulator A/B ready delta
+tip_base: 6f279c0 (main before ship)
+branch: honest-727-sim-ab-ready-delta
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD727 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 773.915
+pngs: .audit/verify-simulator-ab-ready-delta.png
+SID: sim.load.ab.ready.delta
+when_hkt: 2026-11-08 15:16 HKT
+rationale: restyle existing LoadSim A/B READY delta dual-tick span gauge after lever diff #726; WHOOP ghost/signed wells; no new SID or READY formula
+note: first run passed (no launch-flake retry)

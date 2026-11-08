@@ -225,3 +225,7 @@
 | 14:23 HKT | Honest #726 Simulator A/B lever diff | prove | started UITest /tmp/RT-DD726; model=deepseek-flash | mid-ship |
 | 14:42 HKT | #726 Simulator A/B lever diff | prove | UITest suite green /tmp/RT-DD726 (762.581s, 0 failures); model=deepseek-flash |
 | 14:42 HKT | #726 Simulator A/B lever diff | land | proof PNG + receipt; SID sim.load.ab.leverdiff; PR squash next; model=deepseek-flash |
+| 14:57 HKT | Honest #727 Simulator A/B ready delta | model=deepseek-flash | restyle existing sim.load.ab.ready.delta dual-tick span gauge after #726 lever diff; WHOOP ghost/signed wells | mid-ship |
+| 14:58 HKT | Honest #727 Simulator A/B ready delta | prove | started UITest /tmp/RT-DD727; model=deepseek-flash | mid-ship |
+| 15:16 HKT | #727 Simulator A/B ready delta | prove | UITest suite green /tmp/RT-DD727 (773.915s, 0 failures); model=deepseek-flash |
+| 15:16 HKT | #727 Simulator A/B ready delta | land | proof PNG + receipt; SID sim.load.ab.ready.delta; PR squash next; model=deepseek-flash |

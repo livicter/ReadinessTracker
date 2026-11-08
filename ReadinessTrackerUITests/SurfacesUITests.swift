@@ -11132,7 +11132,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-lever-polarity.png")
 
-        // Honest #581: A/B READY delta gauge
+        // Honest #581 / #727: A/B READY delta gauge (WHOOP wells / dual-tick span)
         let abDelta = app.descendants(matching: .any)["sim.load.ab.ready.delta"].firstMatch
         XCTAssertTrue(abDelta.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.lever.polarity"].firstMatch.exists
