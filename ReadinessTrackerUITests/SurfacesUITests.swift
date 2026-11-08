@@ -11017,7 +11017,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-climb-overshoot.png")
 
 
-        // Honest #715: READY climb hold
+        // Honest #715 / #754: READY climb hold (WHOOP wells)
         let climbHold = app.descendants(matching: .any)["sim.load.ready.climb.hold"].firstMatch
         XCTAssertTrue(climbHold.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.climb.overshoot"].firstMatch.exists

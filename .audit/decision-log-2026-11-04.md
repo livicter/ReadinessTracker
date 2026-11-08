@@ -360,3 +360,10 @@
 
 | 05:16 HKT | #753 Simulator climb overshoot | prove | UITest suite green /tmp/RT-DD753 (774.355s, 0 failures; observer 788.465s); model=deepseek-flash |
 | 05:16 HKT | #753 Simulator climb overshoot | land | proof PNG + receipt; SID sim.load.ready.climb.overshoot; PR squash next; model=deepseek-flash |
+
+| 05:24 HKT | Honest #754 Simulator climb hold | model=deepseek-flash | restyle existing sim.load.ready.climb.hold after climb overshoot #753; WHOOP ghost/active wells; mechanical pattern-copy of #753 wells applied locally (no separate model iterate needed) | mid-ship |
+| 05:24 HKT | Honest #754 Simulator climb hold | prove | started UITest /tmp/RT-DD754; model=deepseek-flash | mid-ship |
+
+| 05:42 HKT | #754 Simulator climb hold | prove | UITest suite green /tmp/RT-DD754 (765.045s, 0 failures; observer 779.052s); model=deepseek-flash |
+| 05:42 HKT | #754 Simulator climb hold | land | proof PNG + receipt; SID sim.load.ready.climb.hold; PR squash next; model=deepseek-flash |
+
