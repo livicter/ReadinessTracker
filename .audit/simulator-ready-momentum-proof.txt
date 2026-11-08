@@ -1,0 +1,12 @@
+Honest #740 — Simulator READY momentum
+tip_base: af81dbb
+branch: honest-740-sim-ready-momentum
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' -derivedDataPath /tmp/RT-DD740 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 770.289
+observer_s: 782.993
+pngs: .audit/verify-simulator-ready-momentum.png
+SID: sim.load.ready.momentum
+when_hkt: 2026-11-08 22:13 HKT
+rationale: restyle existing LoadSim READY momentum gauge after seed confidence #739; WHOOP ghost/active/optimal wells; no new SID or READY formula; idle = Steady (|momentum| < 2.5), active = Falling (momentum <= -2.5) warning tone, Rising (>= 2.5) uses optimal tone; mechanical pattern-copy of #739 wells applied locally (no separate model iterate needed); model=deepseek-flash
+note: first destination lookup failed (OS:latest vs 26.5 when id was also passed); retry with name=iPhone 17 Pro,OS=26.5 passed; xcodebuild TEST EXECUTE SUCCEEDED; Test Case passed 770.289s, 0 failures; IDETestOperationsObserverDebug 782.993s
