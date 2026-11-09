@@ -10555,7 +10555,7 @@ final class SurfacesUITests: XCTestCase {
             else { ceiling.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-tasks-ceiling.png")
-        // Honest #561: READY path spark
+        // Honest #561 / #766: READY path spark (WHOOP wells)
         let pathSpark = app.descendants(matching: .any)["sim.load.path.spark"].firstMatch
         XCTAssertTrue(pathSpark.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.spark"].firstMatch.exists
