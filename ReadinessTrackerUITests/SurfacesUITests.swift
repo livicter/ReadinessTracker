@@ -10511,7 +10511,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Check next"].tap()
         }
         saveShot("verify-simulator-check-next.png")
-        // Honest #553: Undo last READY-impact checked task
+        // Honest #553 / #770: Undo last READY-impact checked task (WHOOP wells)
         let undoLast = app.descendants(matching: .any)["sim.load.tasks.undolast"].firstMatch
         XCTAssertTrue(undoLast.waitForExistence(timeout: 5)
                       || tasks.exists
