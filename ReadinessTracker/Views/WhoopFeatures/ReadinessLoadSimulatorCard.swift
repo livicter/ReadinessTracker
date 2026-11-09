@@ -362,13 +362,17 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("\(lever.title) \(label)")
     }
 
-    /// Honest #567: lever sensitivity bars — per-lever READY contribution Chart (Google Health graphics).
+    /// Honest #567 / #764: lever sensitivity bars — per-lever READY contribution Chart (WHOOP wells; Google Health graphics).
     private var leverSensitivityBars: some View {
         let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
             (lever, lever.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta))
         }
         let sum = rows.map(\.1).reduce(0, +)
         let sumLabel = sum >= 0 ? String(format: "Σ +%.1f", sum) : String(format: "Σ %.1f", sum)
+        let leverSensitivityIsActive = rows.contains { $0.1 != 0 }
+        let wellTone: Color = leverSensitivityIsActive
+            ? (sum < 0 ? Color(hex: "FF375F") : (sum > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.fill")
@@ -425,10 +429,10 @@ struct ReadinessLoadSimulatorCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(leverSensitivityIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverSensitivity)
         .accessibilityLabel("Lever sensitivity \(sumLabel)")

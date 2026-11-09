@@ -11168,7 +11168,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-waterfall.png")
 
-        // Honest #567: lever sensitivity bars
+        // Honest #567 / #764: lever sensitivity bars (WHOOP wells)
         let leverSens = app.descendants(matching: .any)["sim.load.lever.sensitivity"].firstMatch
         XCTAssertTrue(leverSens.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.delta.levers"].firstMatch.exists

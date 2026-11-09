@@ -418,3 +418,9 @@
 
 | 13:44 HKT | #763 Simulator lever polarity | prove | UITest suite green /tmp/RT-DD763 (774.925s, 0 failures; observer 789.220s); model=deepseek-flash |
 | 13:44 HKT | #763 Simulator lever polarity | land | proof PNG + receipt; SID sim.load.lever.polarity; PR squash next; model=deepseek-flash |
+
+| 14:01 HKT | Honest #764 Simulator lever sensitivity | model=deepseek-flash | restyle existing sim.load.lever.sensitivity after lever polarity #763; WHOOP ghost/active wells; mechanical pattern-copy of #763 wells applied locally (no separate model iterate needed) | mid-ship |
+| 14:01 HKT | Honest #764 Simulator lever sensitivity | prove | starting UITest /tmp/RT-DD764; model=deepseek-flash | mid-ship |
+
+| 14:20 HKT | #764 Simulator lever sensitivity | prove | UITest suite green /tmp/RT-DD764 (779.737s, 0 failures; observer 793.945s); model=deepseek-flash |
+| 14:20 HKT | #764 Simulator lever sensitivity | land | proof PNG + receipt; SID sim.load.lever.sensitivity; PR squash next; model=deepseek-flash |
