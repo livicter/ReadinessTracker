@@ -5956,10 +5956,14 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksNextPreview)
                 .accessibilityLabel("Next task \(next.title), +\(next.readyDelta) READY")
             }
-            // Honest #559: projected READY ceiling if all remaining tasks checked
+            // Honest #559 / #767: projected READY ceiling if all remaining tasks checked (WHOOP wells; Google Health graphics).
             let ceilingReady = min(100, projected + totalLift)
             let nowReady = projectedCoupled
             let ceilFrac = ceilingReady > 0 ? Double(nowReady) / Double(ceilingReady) : 0
+            let ceilingIsIdle = done == 0 && remain > 0
+            let wellTone: Color = ceilingIsIdle
+                ? RTColor.secondaryText
+                : (ceilingReady < nowReady ? Color(hex: "FF375F") : (remain == 0 ? RTColor.optimal : accent))
             Button {
                 Haptic.selectionChanged()
                 // Check all remaining (ceiling path)
@@ -5971,11 +5975,11 @@ struct ReadinessLoadSimulatorCard: View {
                     HStack(spacing: 8) {
                         Image(systemName: "arrow.up.to.line.circle.fill")
                             .font(.title3)
-                            .foregroundStyle(accent)
+                            .foregroundStyle(wellTone)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Ceiling · READY \(ceilingReady)")
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(accent)
+                                .foregroundStyle(wellTone)
                             Text(remain == 0
                                  ? "All tasks folded · at ceiling"
                                  : "Now \(nowReady) · +\(remain) left to ceiling")
@@ -5986,10 +5990,10 @@ struct ReadinessLoadSimulatorCard: View {
                         Spacer(minLength: 0)
                         Text(remain == 0 ? "Done" : "Fill")
                             .font(.caption.weight(.bold))
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(wellTone)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(remain == 0 ? RTColor.optimal : accent)
+                            .background(wellTone.opacity(0.12))
                             .clipShape(Capsule())
                     }
                     // Dual-rail: now (filled) vs ceiling (track)
@@ -6016,11 +6020,10 @@ struct ReadinessLoadSimulatorCard: View {
                     .frame(height: 16)
                 }
                 .padding(10)
-                .background(accent.opacity(0.08))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .background(wellTone.opacity(ceilingIsIdle ? 0.08 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(accent.opacity(0.3), lineWidth: 1)
+                        .stroke(wellTone.opacity(0.28), lineWidth: 1)
                 )
             }
             .buttonStyle(.plain)
