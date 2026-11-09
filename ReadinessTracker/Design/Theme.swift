@@ -291,7 +291,7 @@ enum SurfaceID {
     static let fitbitAirDensityIQR = "fitbit.air.density.iqr"  // Honest #576
     static let readinessSimulatorRingParity = "sim.load.ring.parity"  // Honest #577 / #762
     static let fitbitAirDensityPercentile = "fitbit.air.density.percentile"  // Honest #578
-    static let readinessSimulatorLeverPolarity = "sim.load.lever.polarity"  // Honest #579
+    static let readinessSimulatorLeverPolarity = "sim.load.lever.polarity"  // Honest #579 / #763
     static let fitbitAirDensityEnvelope = "fitbit.air.density.envelope"  // Honest #580
     static let readinessSimulatorABReadyDelta = "sim.load.ab.ready.delta"  // Honest #581 / #727
     static let fitbitAirDensityMAD = "fitbit.air.density.mad"  // Honest #582

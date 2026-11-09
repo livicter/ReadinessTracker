@@ -1799,7 +1799,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #579: lever polarity strip — signed horizontal READY contributions (Google Health graphics).
+    /// Honest #579 / #763: lever polarity strip — signed horizontal READY contributions (WHOOP wells; Google Health graphics).
     private var leverPolarityStrip: some View {
         let rows: [(SimLeverKind, Double)] = SimLeverKind.allCases.map { lever in
             (lever, lever.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta))
@@ -1807,6 +1807,11 @@ struct ReadinessLoadSimulatorCard: View {
         let maxAbs = max(1.0, rows.map { abs($0.1) }.max() ?? 1)
         let push = rows.filter { $0.1 > 0 }.map(\.1).reduce(0, +)
         let pull = rows.filter { $0.1 < 0 }.map(\.1).reduce(0, +)
+        let leverPolarityIsActive = rows.contains { $0.1 != 0 }
+        let net = push + pull
+        let wellTone: Color = leverPolarityIsActive
+            ? (net < 0 ? Color(hex: "FF375F") : (net > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "arrow.left.arrow.right")
@@ -1853,10 +1858,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(leverPolarityIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverPolarity)
         .accessibilityLabel("Lever polarity push \(String(format: "%.1f", push)) pull \(String(format: "%.1f", pull))")
