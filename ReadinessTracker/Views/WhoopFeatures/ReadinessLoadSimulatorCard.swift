@@ -1560,7 +1560,7 @@ struct ReadinessLoadSimulatorCard: View {
         .animation(.easeInOut(duration: 0.25), value: projectedCoupled)
     }
 
-    /// Honest #573: task completion radial — donut of checked vs remaining READY lift (Google Health graphics).
+    /// Honest #573 / #760: task completion radial — donut of checked vs remaining READY lift (WHOOP wells; Google Health graphics).
     private var taskCompletionRadial: some View {
         let ordered = tasks
         let totalLift = max(1, ordered.map(\.readyDelta).reduce(0, +))
@@ -1569,6 +1569,8 @@ struct ReadinessLoadSimulatorCard: View {
         let frac = Double(doneLift) / Double(totalLift)
         let doneN = ordered.filter { completedTaskIDs.contains($0.id) }.count
         let totalN = max(1, ordered.count)
+        let radialIsActive = doneLift > 0
+        let wellTone: Color = radialIsActive ? (frac >= 1 ? RTColor.optimal : accent) : RTColor.secondaryText
         return HStack(spacing: 14) {
             ZStack {
                 Circle()
@@ -1629,10 +1631,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(radialIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskRadial)
         .accessibilityLabel("Task radial \(doneN) of \(totalN), lift \(Int((frac * 100).rounded())) percent")
