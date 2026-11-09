@@ -1464,12 +1464,14 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #571: seed vs live delta rail — tonight baseline vs scrubbed READY (Fitbit Air / Google Health graphics).
+    /// Honest #571 / #759: seed vs live delta rail — tonight baseline vs scrubbed READY (WHOOP wells; Fitbit Air / Google Health graphics).
     private var seedLiveDeltaRail: some View {
         let seed = baseline
         let live = projectedCoupled
         let delta = live - seed
         let tone: Color = delta >= 0 ? RTColor.optimal : Color(hex: "FF375F")
+        let seedDeltaIsActive = delta != 0
+        let wellTone: Color = seedDeltaIsActive ? tone : RTColor.secondaryText
         let deltaLabel = delta >= 0 ? "+\(delta)" : "\(delta)"
         // Optional air density context (Fitbit / Google Health parity)
         let airChips = FitbitAirChip.chips(from: data)
@@ -1548,10 +1550,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(seedDeltaIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorSeedDelta)
         .accessibilityLabel("Seed \(seed) versus live \(live), delta \(deltaLabel)")
