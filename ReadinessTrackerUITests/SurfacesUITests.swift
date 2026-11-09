@@ -11210,7 +11210,7 @@ final class SurfacesUITests: XCTestCase {
             if tasksBar.isHittable { tasksBar.tap() }
         }
         saveShot("verify-simulator-tasks-bar.png")
-        // Honest #528: checked-task lift couples into projection gauge
+        // Honest #528 / #765: checked-task lift couples into projection gauge (WHOOP wells)
         var coupledN = 0
         let coupled = app.descendants(matching: .any)["sim.load.tasks.coupled"].firstMatch
         while !coupled.exists && coupledN < 6 {
