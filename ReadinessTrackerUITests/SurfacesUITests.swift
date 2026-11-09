@@ -11120,7 +11120,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ring-parity.png")
 
-        // Honest #579: lever polarity strip
+        // Honest #579 / #763: lever polarity strip (WHOOP wells)
         let leverPol = app.descendants(matching: .any)["sim.load.lever.polarity"].firstMatch
         XCTAssertTrue(leverPol.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ring.parity"].firstMatch.exists
