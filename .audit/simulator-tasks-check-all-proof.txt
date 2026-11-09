@@ -1,0 +1,11 @@
+Honest #776 — Simulator tasks check all (WHOOP wells)
+tip_base: 83ebcd0 (main before ship)
+branch: honest-776-sim-tasks-checkall
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD776 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 772.929
+observer_s: 786.427
+pngs: .audit/verify-readiness-load-simulator-tasks-check-all.png
+SID: sim.load.tasks.checkall
+when_hkt: 2026-11-10 00:29 HKT
+rationale: chrome-only WHOOP wells on existing Honest #539 Check all/Clear capsule after task sort #775; idle ghost/hairline 8/28 secondaryText; active complete 14/28 optimal; active negative 14/28 strain; else 14/28 accent; Check all/Clear math unchanged; model=deepseek-flash

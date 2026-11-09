@@ -10449,7 +10449,7 @@ final class SurfacesUITests: XCTestCase {
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")
         saveShot("verify-readiness-load-simulator-tasks.png")
-        // Honest #539: Check all / Clear tasks control
+        // Honest #539 / #776: Check all / Clear tasks control (WHOOP wells)
         let checkAll = app.descendants(matching: .any)["sim.load.tasks.checkall"].firstMatch
         XCTAssertTrue(checkAll.waitForExistence(timeout: 5)
                       || tasks.exists

@@ -5742,7 +5742,16 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityLabel(sortTasksByImpact
                                     ? "Task sort by impact on, tap for default order"
                                     : "Sort tasks by READY impact")
-                // Honest #539: one-tap check / clear all tasks
+                // Honest #539 / #776: one-tap check / clear all tasks (WHOOP wells; Google Health graphics).
+                let checkAllIsIdle = ordered.isEmpty
+                let checkAllAllChecked = done == ordered.count && !ordered.isEmpty
+                let checkAllLift = ordered.reduce(0) { $0 + $1.readyDelta }
+                let checkAllWellTone: Color = {
+                    if checkAllIsIdle { return RTColor.secondaryText }
+                    if checkAllAllChecked { return RTColor.optimal }
+                    if checkAllLift < 0 { return Color(hex: "FF375F") }
+                    return accent
+                }()
                 Button {
                     Haptic.selectionChanged()
                     if done == ordered.count && !ordered.isEmpty {
@@ -5753,11 +5762,11 @@ struct ReadinessLoadSimulatorCard: View {
                 } label: {
                     Text(done == ordered.count && !ordered.isEmpty ? "Clear" : "Check all")
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(accent)
+                        .foregroundStyle(checkAllWellTone)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(accent.opacity(0.12))
-                        .clipShape(Capsule())
+                        .background(checkAllWellTone.opacity(checkAllIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(checkAllWellTone.opacity(0.28), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckAll)
