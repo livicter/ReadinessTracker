@@ -11072,7 +11072,7 @@ final class SurfacesUITests: XCTestCase {
 
 
 
-        // Honest #571: seed vs live delta rail
+        // Honest #571 / #759: seed vs live delta rail (WHOOP wells)
         let seedDelta = app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch
         XCTAssertTrue(seedDelta.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ready.zones"].firstMatch.exists
