@@ -1134,7 +1134,7 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
 
-    /// Honest #561: READY path spark — baseline → projected → coupled → ceiling (richer sim graphics).
+    /// Honest #561 / #766: READY path spark — baseline → projected → coupled → ceiling (WHOOP wells; Google Health graphics).
     private var readyPathSpark: some View {
         let totalLift = tasks.map(\.readyDelta).reduce(0, +)
         let ceiling = min(100, projected + totalLift)
@@ -1144,6 +1144,11 @@ struct ReadinessLoadSimulatorCard: View {
             ("Tasks", projectedCoupled),
             ("Ceil", ceiling)
         ]
+        let sparkIsActive = projected != baseline || projectedCoupled != baseline || ceiling != baseline
+        let pathDelta = ceiling - baseline
+        let wellTone: Color = sparkIsActive
+            ? (pathDelta < 0 ? Color(hex: "FF375F") : (pathDelta > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "point.topleft.down.to.point.bottomright.curvepath.fill")
@@ -1155,10 +1160,10 @@ struct ReadinessLoadSimulatorCard: View {
                 Spacer()
                 Text("\(baseline)→\(ceiling)")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(RTColor.optimal)
+                    .foregroundStyle(wellTone)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(RTColor.optimal.opacity(0.12))
+                    .background(wellTone.opacity(0.12))
                     .clipShape(Capsule())
             }
             Chart {
@@ -1201,12 +1206,12 @@ struct ReadinessLoadSimulatorCard: View {
             .animation(.easeInOut(duration: 0.25), value: ceiling)
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(sparkIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
-                .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
+        .accessibilityIdentifier(SurfaceID.readinessSimulatorPathSpark)
         .accessibilityLabel("READY path \(baseline) to \(ceiling)")
     }
 

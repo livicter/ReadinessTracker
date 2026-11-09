@@ -273,7 +273,7 @@ enum SurfaceID {
     static let fitbitAirDensityForecastVsMean = "fitbit.air.density.forecast.vsmean"  // Honest #558
     static let readinessSimulatorTasksCeiling = "sim.load.tasks.ceiling"  // Honest #559
     static let fitbitAirDensityForecastConf = "fitbit.air.density.forecast.conf"  // Honest #560
-    static let readinessSimulatorPathSpark = "sim.load.path.spark"  // Honest #561
+    static let readinessSimulatorPathSpark = "sim.load.path.spark"  // Honest #561 / #766
     static let fitbitAirDensityForecastHorizon = "fitbit.air.density.forecast.horizon"  // Honest #562
     static let readinessSimulatorReadyStack = "sim.load.ready.stack"  // Honest #563 / #728
     static let fitbitAirDensityForecastResidual = "fitbit.air.density.forecast.residual"  // Honest #564
