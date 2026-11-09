@@ -986,9 +986,19 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Projected ring chips")
     }
 
-    /// Honest #718: WHOOP-parity bipolar sliders + live per-lever READY Δ (via `project()` vs all-zero).
+    /// Honest #718 / #783: WHOOP-parity bipolar sliders + live per-lever READY Δ (via `project()` vs all-zero; WHOOP wells; Google Health graphics).
     private var interactiveControls: some View {
-        VStack(spacing: 14) {
+        // Well tone follows combined lever READY Δ vs all-zero (same isolation as
+        // per-slider READY capsules). Idle = all five levers at 0. Mixed =
+        // some nonzero levers whose isolated contributions cancel (combined == 0).
+        let combinedReadyDelta = isolatedReadyDelta(
+            sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta
+        )
+        let leversAreActive = sleepDelta != 0 || hrvDelta != 0 || strainDelta != 0 || rhrDelta != 0 || spo2Delta != 0
+        let wellTone: Color = leversAreActive
+            ? (combinedReadyDelta < 0 ? Color(hex: "FF375F") : (combinedReadyDelta > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
+        return VStack(spacing: 14) {
             simulatorSlider(
                 title: "Sleep",
                 unit: "h",
@@ -1035,6 +1045,12 @@ struct ReadinessLoadSimulatorCard: View {
                 readyDelta: isolatedReadyDelta(spo2: spo2Delta)
             )
         }
+        .padding(10)
+        .background(wellTone.opacity(leversAreActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
+        )
         .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorControls)
     }
 
