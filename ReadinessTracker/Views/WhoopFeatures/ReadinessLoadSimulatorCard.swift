@@ -1640,7 +1640,7 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Task radial \(doneN) of \(totalN), lift \(Int((frac * 100).rounded())) percent")
     }
 
-    /// Honest #575: ring delta bars — Gym/Work/Sleep/READY vs tonight baseline (Google Health graphics).
+    /// Honest #575 / #761: ring delta bars — Gym/Work/Sleep/READY vs tonight baseline (WHOOP wells; Google Health graphics).
     private var ringDeltaBars: some View {
         struct Row: Identifiable {
             let id: String
@@ -1656,6 +1656,11 @@ struct ReadinessLoadSimulatorCard: View {
             .init(id: "work", title: "Work", base: scores.cognitive, live: projectedWork, color: Color(red: 52/255, green: 199/255, blue: 89/255)),
             .init(id: "sleep", title: "Sleep", base: scores.breakdown.sleepScore, live: projectedSleep, color: Color(hex: "5E5CE6"))
         ]
+        let ringDeltasIsActive = rows.contains { $0.delta != 0 }
+        let readyDelta = projectedCoupled - baseline
+        let wellTone: Color = ringDeltasIsActive
+            ? (readyDelta < 0 ? Color(hex: "FF375F") : (readyDelta > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.doc.horizontal.fill")
@@ -1710,10 +1715,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(ringDeltasIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorRingDeltas)
         .accessibilityLabel("Ring deltas versus tonight baseline")
