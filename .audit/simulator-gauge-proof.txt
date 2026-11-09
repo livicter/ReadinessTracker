@@ -1,10 +1,11 @@
-Honest #717 — Simulator gauge
-tip_base: 24c6a85 (main before ship)
-branch: honest-717-sim-gauge
-command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD717 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+Honest #784 — Simulator gauge (WHOOP wells)
+tip_base: 4a0f364 (main before ship)
+branch: honest-784-sim-gauge
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD784 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
 result: Passed (failedTests=0, passedTests=1)
-duration_s: 669.201
+duration_s: 780.149
+observer_s: 793.206
 pngs: .audit/verify-simulator-gauge.png
 SID: sim.load.gauge
-when_hkt: 2026-11-08 08:02 HKT
-rationale: foundational LoadSim gauge after climb family; WHOOP zone-banded arcs + baseline tick + Δ chip
+when_hkt: 2026-11-10 06:51 HKT
+rationale: chrome-only WHOOP wells on existing Honest #717 zone-banded projection gauge after controls #783; idle (focused-ring delta vs tonight baseline == 0) ghost/hairline 8/28 secondaryText; active negative (delta < 0) 14/28 strain; active positive (delta > 0) 14/28 optimal; zone arcs/baseline tick/fill/copy/identifiers/interaction/accessibilityIdentifier unchanged; UITest shots the gauge before slider taps so proof PNG is expected to show the idle well; mechanical pattern-copy of #783 control outer wells / #782 spark-tint focused-ring delta vs tonight baseline applied locally; model=deepseek-flash

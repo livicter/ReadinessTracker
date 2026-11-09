@@ -200,7 +200,7 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
-    /// Honest #717: WHOOP-parity zone-banded projection gauge (Poor·Fair·Good·Optimal arcs + baseline tick).
+    /// Honest #717 / #784: WHOOP-parity zone-banded projection gauge (Poor·Fair·Good·Optimal arcs + baseline tick; WHOOP wells; Google Health graphics).
     private var projectionHero: some View {
         let zones: [(lo: Double, hi: Double, color: Color)] = [
             (0, 60, RTColor.warning),
@@ -210,6 +210,12 @@ struct ReadinessLoadSimulatorCard: View {
         ]
         let baseFrac = min(1.0, max(0.0, Double(baseline) / 100.0))
         let deltaVsBase = focusedRingValue - baseline
+        // Well tone follows focused-ring value vs tonight baseline (same delta
+        // already shown on the gauge Δ chip). Idle = no projection change.
+        let gaugeIsActive = deltaVsBase != 0
+        let gaugeWellTone: Color = gaugeIsActive
+            ? (deltaVsBase < 0 ? Color(hex: "FF375F") : RTColor.optimal)
+            : RTColor.secondaryText
         return HStack(alignment: .center, spacing: 16) {
             ZStack {
                 // Track
@@ -254,6 +260,12 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityLabel("Projected \(focusedRing.title) \(focusedRingValue), baseline \(baseline), delta \(deltaVsBase)")
             .frame(width: 96, height: 96)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorRingTint)
+            .padding(10)
+            .background(gaugeWellTone.opacity(gaugeIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(gaugeWellTone.opacity(0.28), lineWidth: 1)
+            )
 
             VStack(alignment: .leading, spacing: 8) {
                 labeledValue("Tonight", "\(baseline)", "baseline")

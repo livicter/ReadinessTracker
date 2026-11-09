@@ -540,3 +540,8 @@
 
 | 05:57 HKT | #783 Simulator controls | prove | UITest suite green /tmp/RT-DD783 (778.470s, 0 failures; observer 790.700s); model=deepseek-flash |
 | 05:57 HKT | #783 Simulator controls | land | proof PNG + receipt; SID sim.load.controls; PR squash next; model=deepseek-flash |
+
+| 06:32 HKT | Honest #784 Simulator gauge | model=deepseek-flash | restyle existing sim.load.gauge after controls #783; WHOOP ghost/active wells; mechanical pattern-copy of #783 control outer wells / #782 spark-tint focused-ring delta vs tonight baseline applied locally (no separate model iterate needed) | mid-ship |
+| 06:32 HKT | Honest #784 Simulator gauge | prove | starting UITest /tmp/RT-DD784; model=deepseek-flash | mid-ship |
+| 06:51 HKT | #784 Simulator gauge | prove | UITest suite green /tmp/RT-DD784 (780.149s, 0 failures; observer 793.206s); model=deepseek-flash |
+| 06:51 HKT | #784 Simulator gauge | land | proof PNG + receipt; SID sim.load.gauge; PR squash next; model=deepseek-flash |
