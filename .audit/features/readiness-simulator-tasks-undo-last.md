@@ -1,7 +1,7 @@
-# readiness-simulator-tasks-undo-last
+# Honest #553 / #770: Simulator task undo last (WHOOP wells)
 
-Honest #553. Capsule **Undo last** on ReadinessLoadSimulatorCard Today’s tasks row.
-Visible when ≥1 task is checked. Tap removes the highest `readyDelta` checked task
-in the current ordered list (impact sort / air filter aware).
-
+Always-visible Undo last capsule on Today’s tasks action row.
+Tap unchecks the highest `readyDelta` checked task (no-op when none).
+Idle (no checked READY-impact task / undoTarget == nil) = ghost/hairline 8/28 using secondaryText; active negative (undoTarget.readyDelta < 0) = 14/28 strain; active positive (undoTarget.readyDelta >= 0) = 14/28 accent.
 SurfaceID: `sim.load.tasks.undolast`
+Proof: UITest → `.audit/verify-simulator-undo-last.png`

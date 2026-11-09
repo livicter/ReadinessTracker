@@ -5802,27 +5802,31 @@ struct ReadinessLoadSimulatorCard: View {
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckNext)
                     .accessibilityLabel("Check next READY-impact task")
                 }
-                // Honest #553: undo last — uncheck highest READY-impact checked task
-                if ordered.contains(where: { completedTaskIDs.contains($0.id) }) {
-                    Button {
-                        Haptic.selectionChanged()
-                        let checked = ordered.filter { completedTaskIDs.contains($0.id) }
-                        if let last = checked.sorted(by: { $0.readyDelta > $1.readyDelta }).first {
-                            completedTaskIDs.remove(last.id)
-                        }
-                    } label: {
-                        Text("Undo last")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(accent)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(accent.opacity(0.12))
-                            .clipShape(Capsule())
+                // Honest #553 / #770: undo last — uncheck highest READY-impact checked task (WHOOP wells; Google Health graphics).
+                let undoTarget = ordered.filter { completedTaskIDs.contains($0.id) }
+                    .sorted(by: { $0.readyDelta > $1.readyDelta }).first
+                let undoIsIdle = undoTarget == nil
+                let undoWellTone: Color = {
+                    guard let last = undoTarget else { return RTColor.secondaryText }
+                    return last.readyDelta < 0 ? Color(hex: "FF375F") : accent
+                }()
+                Button {
+                    Haptic.selectionChanged()
+                    if let last = undoTarget {
+                        completedTaskIDs.remove(last.id)
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksUndoLast)
-                    .accessibilityLabel("Undo last checked READY-impact task")
+                } label: {
+                    Text("Undo last")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(undoWellTone)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(undoWellTone.opacity(undoIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(undoWellTone.opacity(0.28), lineWidth: 1))
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksUndoLast)
+                .accessibilityLabel("Undo last checked READY-impact task")
                 Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
                     .foregroundStyle(accent)
