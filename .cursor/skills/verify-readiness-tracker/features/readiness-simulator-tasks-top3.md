@@ -1,11 +1,15 @@
-# Simulator tasks Top 3 READY-impact (Honest #545)
+# Simulator tasks Top 3 READY-impact
 
-## Why
-Check-all is coarse — one tap should check the three highest-impact tasks for richer sim workflows.
+## Sub-features
+- One-tap check of the three highest READY-impact tasks (toggles off if all three are already checked)
+- WHOOP wells: idle (empty top-3) ghost/hairline 8/28 secondaryText; active complete (all top-3 checked) 14/28 optimal; active negative (top-3 lift < 0) 14/28 strain `FF375F`; active partial 14/28 accent
+- SurfaceID `sim.load.tasks.top3`
 
-## Surface
-- `sim.load.tasks.top3`
+## How to get to it (user POV)
+Today → Load Simulator card → scroll to Today’s tasks → Top 3 capsule among the task chrome controls.
 
-## Verify
-- `testReadinessLoadSimulatorSurface`
-- `.audit/verify-readiness-load-simulator-tasks-top3.png`
+## Driving it with the harness
+`testReadinessLoadSimulatorSurface` waits for `sim.load.tasks.top3`, taps it, `saveShot("verify-readiness-load-simulator-tasks-top3.png")`.
+
+## Gotchas
+This ship restyles the capsule chrome only — check/uncheck math is unchanged.

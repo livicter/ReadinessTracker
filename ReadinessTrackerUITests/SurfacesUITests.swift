@@ -10487,7 +10487,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["All"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-airfilter.png")
-        // Honest #545: Top 3 READY-impact check
+        // Honest #545 / #773: Top 3 READY-impact check (WHOOP wells)
         let top3 = app.descendants(matching: .any)["sim.load.tasks.top3"].firstMatch
         XCTAssertTrue(top3.waitForExistence(timeout: 5)
                       || tasks.exists
