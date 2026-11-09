@@ -927,9 +927,20 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
+    /// Honest #508 / #781: projected Gym / Work / Sleep / READY chips (WHOOP wells; Google Health graphics).
     private var projectedRingChips: some View {
-
-        VStack(alignment: .leading, spacing: 8) {
+        // Well tone follows #761 ring-deltas READY-delta convention (not sum of ring deltas).
+        // READY chip on this surface shows uncoupled `projected` (Honest #508), so
+        // readyDelta = projected - baseline (scores.general), not projectedCoupled.
+        let readyDelta = projected - baseline
+        let gymDelta = projectedGym - scores.gym
+        let workDelta = projectedWork - scores.cognitive
+        let sleepRingDelta = projectedSleep - scores.breakdown.sleepScore
+        let ringsAreActive = readyDelta != 0 || gymDelta != 0 || workDelta != 0 || sleepRingDelta != 0
+        let wellTone: Color = ringsAreActive
+            ? (readyDelta < 0 ? Color(hex: "FF375F") : (readyDelta > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
+        return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 ForEach(SimRingKind.allCases) { kind in
                     let value: Int = {
@@ -965,6 +976,12 @@ struct ReadinessLoadSimulatorCard: View {
                 .font(.caption)
                 .foregroundStyle(RTColor.secondaryText)
         }
+        .padding(10)
+        .background(wellTone.opacity(ringsAreActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
+        )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorRings)
         .accessibilityLabel("Projected ring chips")
     }

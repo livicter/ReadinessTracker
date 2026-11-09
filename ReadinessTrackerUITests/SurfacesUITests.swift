@@ -11356,7 +11356,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-readiness-load-simulator-ab-lever-diff.png")
         saveShot("verify-simulator-ab-leverdiff.png")
-        // Honest #508: projected Gym/Work/Sleep ring chips
+        // Honest #508 / #781: projected Gym/Work/Sleep ring chips (WHOOP wells)
         let rings = app.descendants(matching: .any)["sim.load.rings"].firstMatch
         XCTAssertTrue(rings.waitForExistence(timeout: 5), "sim.load.rings")
         if rings.isHittable {

@@ -1,0 +1,11 @@
+Honest #781 — Simulator rings (WHOOP wells)
+tip_base: 865a9a3 (main before ship)
+branch: honest-781-sim-rings-wells
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD781 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 773.823
+observer_s: 786.672
+pngs: .audit/verify-readiness-load-simulator-rings.png
+SID: sim.load.rings
+when_hkt: 2026-11-10 04:56 HKT
+rationale: chrome-only WHOOP wells on existing Honest #508 projected ring chips after lever deltas #780; idle (all four ring deltas == 0) ghost/hairline 8/28 secondaryText; active negative (some nonzero AND READY delta < 0) 14/28 strain; active positive (some nonzero AND READY delta > 0) 14/28 optimal; active mixed (some nonzero AND READY delta == 0) 14/28 accent; well tone follows #761 ring-deltas READY-delta convention (not sum of ring deltas); readyDelta = projected - baseline because this surface's READY chip shows uncoupled projected (not projectedCoupled); copy/chip interaction/focus/visibility/accessibilityIdentifier unchanged; mechanical pattern-copy of #780 lever-delta outer wells / #761 READY-delta tone applied locally; model=deepseek-flash
