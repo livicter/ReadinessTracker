@@ -1,0 +1,11 @@
+Honest #775 — Simulator tasks sort (WHOOP wells)
+tip_base: 2e110f6 (main before ship)
+branch: honest-775-sim-tasks-sort
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD775 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 777.367
+observer_s: 789.620
+pngs: .audit/verify-readiness-load-simulator-tasks-sort.png
+SID: sim.load.tasks.sort
+when_hkt: 2026-11-09 23:53 HKT
+rationale: chrome-only WHOOP wells on existing Honest #541 Sort/Impact capsule after task air filter #774; idle ghost/hairline 8/28 secondaryText; active 14/28 accent; sort toggle math unchanged; model=deepseek-flash

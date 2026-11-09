@@ -10461,7 +10461,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Check all"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-check-all.png")
-        // Honest #541: sort tasks by READY impact
+        // Honest #541 / #775: sort tasks by READY impact (WHOOP wells)
         let sortImpact = app.descendants(matching: .any)["sim.load.tasks.sort"].firstMatch
         XCTAssertTrue(sortImpact.waitForExistence(timeout: 5)
                       || tasks.exists
