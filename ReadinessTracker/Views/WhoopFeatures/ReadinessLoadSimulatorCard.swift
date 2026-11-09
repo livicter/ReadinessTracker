@@ -310,9 +310,15 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
-    /// Honest #516: per-lever READY contribution chips (interactive).
+    /// Honest #516 / #780: per-lever READY contribution chips (interactive) (WHOOP wells; Google Health graphics).
     private var leverDeltaChips: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        let rows = SimLeverKind.allCases.map { $0.contribution(sleep: sleepDelta, hrv: hrvDelta, strain: strainDelta, rhr: rhrDelta, spo2: spo2Delta) }
+        let leversAreActive = rows.contains { $0 != 0 }
+        let sum = rows.reduce(0, +)
+        let wellTone: Color = leversAreActive
+            ? (sum < 0 ? Color(hex: "FF375F") : (sum > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
+        return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Lever deltas")
                     .font(.caption.weight(.semibold))
@@ -334,6 +340,12 @@ struct ReadinessLoadSimulatorCard: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .padding(10)
+        .background(wellTone.opacity(leversAreActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
+        )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorLeverDeltas)
         .accessibilityLabel("Lever deltas")
     }

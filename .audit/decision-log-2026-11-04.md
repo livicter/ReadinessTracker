@@ -516,3 +516,9 @@
 
 | 03:30 HKT | #779 Simulator task progress | prove | UITest suite green /tmp/RT-DD779 (782.749s, 0 failures; observer 809.493s); model=deepseek-flash |
 | 03:30 HKT | #779 Simulator task progress | land | proof PNG + receipt; SID sim.load.tasks.progress; PR squash next; model=deepseek-flash |
+
+| 04:07 HKT | Honest #780 Simulator lever deltas | model=deepseek-flash | restyle existing sim.load.delta.levers after task progress #779; WHOOP ghost/active wells; mechanical pattern-copy of #764 lever-sensitivity outer wells / recent #779 capsule wells applied locally (no separate model iterate needed) | mid-ship |
+| 04:07 HKT | Honest #780 Simulator lever deltas | prove | starting UITest /tmp/RT-DD780; model=deepseek-flash | mid-ship |
+
+| 04:25 HKT | #780 Simulator lever deltas | prove | UITest suite green /tmp/RT-DD780 (771.877s, 0 failures; observer 799.456s); model=deepseek-flash |
+| 04:25 HKT | #780 Simulator lever deltas | land | proof PNG + receipt; SID sim.load.delta.levers; PR squash next; model=deepseek-flash |

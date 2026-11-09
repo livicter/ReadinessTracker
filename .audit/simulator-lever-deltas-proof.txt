@@ -1,0 +1,11 @@
+Honest #780 — Simulator lever deltas (WHOOP wells)
+tip_base: fb12471 (main before ship)
+branch: honest-780-lever-deltas
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD780 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 771.877
+observer_s: 799.456
+pngs: .audit/verify-readiness-load-simulator-lever-deltas.png
+SID: sim.load.delta.levers
+when_hkt: 2026-11-10 04:25 HKT
+rationale: chrome-only WHOOP wells on existing Honest #516 lever delta chips after task progress #779; idle (all contributions == 0) ghost/hairline 8/28 secondaryText; active negative (sum < 0) 14/28 strain; active positive (sum > 0) 14/28 optimal; active mixed (sum == 0 but some nonzero) 14/28 accent; copy/chip interaction/visibility/accessibilityIdentifier unchanged; mechanical pattern-copy of #764 lever-sensitivity outer wells / recent #779 capsule wells applied locally; model=deepseek-flash
