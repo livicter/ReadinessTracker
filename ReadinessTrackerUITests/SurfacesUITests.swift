@@ -11241,7 +11241,7 @@ final class SurfacesUITests: XCTestCase {
             "sim.load.tasks.impact / READY lift"
         )
         saveShot("verify-readiness-load-simulator-task-impact.png")
-        // Honest #549: READY lift spark bars
+        // Honest #549 / #772: READY lift spark bars (WHOOP wells)
         let liftSpark = app.descendants(matching: .any)["sim.load.tasks.liftspark"].firstMatch
         XCTAssertTrue(liftSpark.waitForExistence(timeout: 5)
                       || impact.exists
