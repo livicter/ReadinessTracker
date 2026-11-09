@@ -11108,7 +11108,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-ring-deltas.png")
 
-        // Honest #577: ring parity meters
+        // Honest #577 / #762: ring parity meters (WHOOP wells)
         let ringParity = app.descendants(matching: .any)["sim.load.ring.parity"].firstMatch
         XCTAssertTrue(ringParity.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.ring.deltas"].firstMatch.exists

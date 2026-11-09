@@ -1724,7 +1724,7 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("Ring deltas versus tonight baseline")
     }
 
-    /// Honest #577: ring parity meters — baseline ghost + live fill per ring (Google Health graphics).
+    /// Honest #577 / #762: ring parity meters — baseline ghost + live fill per ring (WHOOP wells; Google Health graphics).
     private var ringParityMeters: some View {
         struct Row: Identifiable {
             let id: String
@@ -1739,6 +1739,11 @@ struct ReadinessLoadSimulatorCard: View {
             .init(id: "work", title: "Work", base: scores.cognitive, live: projectedWork, color: Color(red: 52/255, green: 199/255, blue: 89/255)),
             .init(id: "sleep", title: "Sleep", base: scores.breakdown.sleepScore, live: projectedSleep, color: Color(hex: "5E5CE6"))
         ]
+        let ringParityIsActive = rows.contains { $0.live != $0.base }
+        let readyDelta = projectedCoupled - baseline
+        let wellTone: Color = ringParityIsActive
+            ? (readyDelta < 0 ? Color(hex: "FF375F") : (readyDelta > 0 ? RTColor.optimal : accent))
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "align.horizontal.left.fill")
@@ -1784,10 +1789,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
         }
         .padding(10)
-        .background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(wellTone.opacity(ringParityIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(accent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorRingParity)
         .accessibilityLabel("Ring parity baseline versus live")
