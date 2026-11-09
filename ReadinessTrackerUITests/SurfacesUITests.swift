@@ -11179,7 +11179,7 @@ final class SurfacesUITests: XCTestCase {
             else { leverSens.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-lever-sensitivity.png")
-        // Honest #499: checkable tasks + RHR/SpO2 levers.
+        // Honest #499 / #779: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
         // Honest #720: WHOOP-parity task row (check-well + accent rail)
         var rowSwipes = 0
@@ -11195,6 +11195,13 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-tasks-row.png")
         let progress = app.descendants(matching: .any)["sim.load.tasks.progress"].firstMatch
         XCTAssertTrue(progress.exists || tasks.exists, "sim.load.tasks.progress")
+        // Honest #499 / #779: task progress count (WHOOP wells)
+        var progressSwipes = 0
+        while progress.exists && !isOnScreen(progress) && progressSwipes < 10 {
+            app.swipeUp()
+            progressSwipes += 1
+        }
+        saveShot("verify-simulator-tasks-progress.png")
         // Honest #719: WHOOP-parity segmented task completion bar
         let tasksBar = app.descendants(matching: .any)["sim.load.tasks.bar"].firstMatch
         var barSwipes = 0
