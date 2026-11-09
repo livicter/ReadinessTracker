@@ -11084,7 +11084,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-seed-delta.png")
 
-        // Honest #573: task completion radial
+        // Honest #573 / #760: task completion radial (WHOOP wells)
         let taskRadial = app.descendants(matching: .any)["sim.load.tasks.radial"].firstMatch
         XCTAssertTrue(taskRadial.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.seed.delta"].firstMatch.exists
