@@ -5853,9 +5853,20 @@ struct ReadinessLoadSimulatorCard: View {
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksUndoLast)
                 .accessibilityLabel("Undo last checked READY-impact task")
+                // Honest #499 / #779: task progress count (WHOOP wells; Google Health graphics).
+                let progressIsIdle = (done == 0)
+                let progressWellTone: Color = {
+                    if progressIsIdle { return RTColor.secondaryText }
+                    if done == ordered.count && ordered.count > 0 { return RTColor.optimal }
+                    return accent
+                }()
                 Text("\(done)/\(ordered.count)")
                     .font(.caption2.weight(.bold).monospacedDigit())
-                    .foregroundStyle(accent)
+                    .foregroundStyle(progressWellTone)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(progressWellTone.opacity(progressIsIdle ? 0.08 : 0.14), in: Capsule())
+                    .overlay(Capsule().stroke(progressWellTone.opacity(0.28), lineWidth: 1))
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
             }
             // Honest #523 / #777: air-gap task cue (WHOOP wells; Google Health graphics).

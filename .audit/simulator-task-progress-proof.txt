@@ -1,0 +1,11 @@
+Honest #779 — Simulator task progress (WHOOP wells)
+tip_base: 02753b3 (main before ship)
+branch: honest-779-sim-tasks-progress
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD779 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 782.749
+observer_s: 809.493
+pngs: .audit/verify-simulator-tasks-progress.png
+SID: sim.load.tasks.progress
+when_hkt: 2026-11-10 03:30 HKT
+rationale: chrome-only WHOOP wells on existing Honest #499 task progress count capsule after task impact #778; idle ghost/hairline 8/28 secondaryText; active complete (done == ordered.count && ordered.count > 0) 14/28 optimal; else (partial) 14/28 accent; progress copy/visibility/accessibilityIdentifier unchanged; idle (done == 0) checked before complete so empty list is not optimal; model=deepseek-flash
