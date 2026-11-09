@@ -11096,7 +11096,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-task-radial.png")
 
-        // Honest #575: ring delta bars
+        // Honest #575 / #761: ring delta bars (WHOOP wells)
         let ringDeltas = app.descendants(matching: .any)["sim.load.ring.deltas"].firstMatch
         XCTAssertTrue(ringDeltas.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks.radial"].firstMatch.exists
