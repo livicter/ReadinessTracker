@@ -11248,7 +11248,7 @@ final class SurfacesUITests: XCTestCase {
                       || liftLabel.exists,
                       "sim.load.tasks.liftspark")
         saveShot("verify-readiness-load-simulator-task-lift-spark.png")
-        // Honest #523: air-gap tasks cue (optional when gaps exist in fixture)
+        // Honest #523 / #777: air-gap tasks cue (WHOOP wells; optional when gaps exist in fixture)
         let airGaps = app.descendants(matching: .any)["sim.load.tasks.airgaps"].firstMatch
         if airGaps.waitForExistence(timeout: 3) {
             saveShot("verify-readiness-load-simulator-airgap-tasks.png")

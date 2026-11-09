@@ -5858,9 +5858,19 @@ struct ReadinessLoadSimulatorCard: View {
                     .foregroundStyle(accent)
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgress)
             }
-            // Honest #523: air-gap task cue
-            let airGapCount = tasks.filter { $0.id.hasPrefix("air-") || $0.id.contains("air") }.count
+            // Honest #523 / #777: air-gap task cue (WHOOP wells; Google Health graphics).
+            let airGapItems = tasks.filter { $0.id.hasPrefix("air-") || $0.id.contains("air") }
+            let airGapCount = airGapItems.count
+            let airGapDone = airGapItems.filter { completedTaskIDs.contains($0.id) }.count
+            let airGapLift = airGapItems.reduce(0) { $0 + $1.readyDelta }
             if airGapCount > 0 {
+                let airGapIsIdle = airGapDone == 0
+                let airGapWellTone: Color = {
+                    if airGapIsIdle { return RTColor.secondaryText }
+                    if airGapDone == airGapCount { return RTColor.optimal }
+                    if airGapLift < 0 { return Color(hex: "FF375F") }
+                    return accent
+                }()
                 HStack(spacing: 6) {
                     Image(systemName: "wind")
                         .font(.caption2.weight(.bold))
@@ -5871,10 +5881,10 @@ struct ReadinessLoadSimulatorCard: View {
                         .font(.caption2.weight(.bold))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(accent.opacity(0.14))
-                        .clipShape(Capsule())
+                        .background(airGapWellTone.opacity(airGapIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(airGapWellTone.opacity(0.28), lineWidth: 1))
                 }
-                .foregroundStyle(accent)
+                .foregroundStyle(airGapWellTone)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorAirGapTasks)
                 .accessibilityLabel("\(airGapCount) air gap tasks")
             }

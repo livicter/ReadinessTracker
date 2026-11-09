@@ -1,0 +1,11 @@
+Honest #777 — Simulator air-gap tasks (WHOOP wells)
+tip_base: 22f72d8 (main before ship)
+branch: honest-777-sim-tasks-airgaps
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD777 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 772.196
+observer_s: 785.568
+pngs: .audit/verify-readiness-load-simulator-airgap-tasks.png
+SID: sim.load.tasks.airgaps
+when_hkt: 2026-11-10 01:29 HKT
+rationale: chrome-only WHOOP wells on existing Honest #523 air-gap task cue after task check all #776; idle ghost/hairline 8/28 secondaryText; active complete 14/28 optimal; active negative 14/28 strain; else (partial) 14/28 accent; air-gap count/visibility/copy unchanged; model=deepseek-flash
