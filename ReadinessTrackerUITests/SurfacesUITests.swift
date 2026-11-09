@@ -10545,7 +10545,7 @@ final class SurfacesUITests: XCTestCase {
             else { nextPrev.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-next-preview.png")
-        // Honest #559: projected READY ceiling dual-rail
+        // Honest #559 / #767: projected READY ceiling dual-rail (WHOOP wells)
         let ceiling = app.descendants(matching: .any)["sim.load.tasks.ceiling"].firstMatch
         XCTAssertTrue(ceiling.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.tasks"].firstMatch.exists,
