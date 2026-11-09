@@ -10474,7 +10474,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Sort"].tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-sort.png")
-        // Honest #543: air-gap task filter All/Air
+        // Honest #543 / #774: air-gap task filter All/Air (WHOOP wells)
         let airFilter = app.descendants(matching: .any)["sim.load.tasks.airfilter"].firstMatch
         XCTAssertTrue(airFilter.waitForExistence(timeout: 5)
                       || tasks.exists
