@@ -545,3 +545,8 @@
 | 06:32 HKT | Honest #784 Simulator gauge | prove | starting UITest /tmp/RT-DD784; model=deepseek-flash | mid-ship |
 | 06:51 HKT | #784 Simulator gauge | prove | UITest suite green /tmp/RT-DD784 (780.149s, 0 failures; observer 793.206s); model=deepseek-flash |
 | 06:51 HKT | #784 Simulator gauge | land | proof PNG + receipt; SID sim.load.gauge; PR squash next; model=deepseek-flash |
+
+| 07:01 HKT | Honest #785 Simulator task bar | model=deepseek-flash | restyle existing sim.load.tasks.bar after gauge #784; WHOOP ghost/active wells; mechanical pattern-copy of #784 outer wells applied locally (no separate model iterate needed) | mid-ship |
+| 07:01 HKT | Honest #785 Simulator task bar | prove | starting UITest /tmp/RT-DD785; model=deepseek-flash | mid-ship |
+| 07:20 HKT | #785 Simulator task bar | prove | UITest suite green /tmp/RT-DD785 (773.069s, 0 failures; observer 785.288s); model=deepseek-flash |
+| 07:20 HKT | #785 Simulator task bar | land | proof PNG + receipt; SID sim.load.tasks.bar; PR squash next; model=deepseek-flash |

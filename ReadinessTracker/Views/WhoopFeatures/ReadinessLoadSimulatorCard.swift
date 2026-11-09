@@ -6205,7 +6205,7 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLiftSpark)
                 .accessibilityLabel("READY lift spark, +\(lift) checked")
             }
-            // Honest #719: WHOOP-parity segmented task completion bar
+            // Honest #719 / #785: WHOOP-parity segmented task completion bar (WHOOP wells)
             let taskTotal = tasks.count
             let allTasksDone = !ordered.isEmpty
                 ? ordered.allSatisfy { completedTaskIDs.contains($0.id) }
@@ -6214,6 +6214,10 @@ struct ReadinessLoadSimulatorCard: View {
             let barPercent = taskTotal > 0
                 ? Int((Double(done) / Double(taskTotal) * 100).rounded())
                 : 0
+            let barIsActive = taskTotal > 0 && done > 0
+            let barWellTone: Color = !barIsActive
+                ? RTColor.secondaryText
+                : (allTasksDone ? RTColor.optimal : accent)
             HStack(alignment: .center, spacing: 8) {
                 Group {
                     if !ordered.isEmpty {
@@ -6250,6 +6254,12 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityElement(children: .ignore)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskProgressBar)
             .accessibilityLabel("\(done)/\(taskTotal)")
+            .padding(10)
+            .background(barWellTone.opacity(barIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(barWellTone.opacity(0.28), lineWidth: 1)
+            )
             .animation(.easeInOut(duration: 0.2), value: done)
             ForEach(ordered) { task in
                 taskImpactRow(task)

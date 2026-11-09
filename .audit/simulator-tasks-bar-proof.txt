@@ -1,10 +1,11 @@
-Honest #719 — Simulator tasks bar
-tip_base: 543af0b (main before ship)
-branch: honest-719-sim-tasks-bar
-command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD719 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+Honest #785 — Simulator task bar (WHOOP wells)
+tip_base: c8dbae6 (main before ship)
+branch: honest-785-sim-tasks-bar
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD785 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
 result: Passed (failedTests=0, passedTests=1)
-duration_s: 701.817
+duration_s: 773.069
+observer_s: 785.288
 pngs: .audit/verify-simulator-tasks-bar.png
 SID: sim.load.tasks.bar
-when_hkt: 2026-11-08 10:15 HKT
-rationale: foundational LoadSim tasks.bar after controls #718; WHOOP-parity segmented completion bar from completedTaskIDs + done/tasks.count caption
+when_hkt: 2026-11-10 07:20 HKT
+rationale: chrome-only WHOOP wells on existing Honest #719 segmented task completion bar after gauge #784; idle (taskTotal == 0 OR done == 0 / none checked) ghost/hairline 8/28 secondaryText; active complete (allTasksDone) 14/28 optimal; else (partial progress, some but not all checked) 14/28 accent; segment fill math/caption/interaction/accessibilityLabel/accessibilityIdentifier/READY formula/completedTaskIDs toggle math unchanged; mechanical pattern-copy of #784 outer wells applied locally; model=deepseek-flash
