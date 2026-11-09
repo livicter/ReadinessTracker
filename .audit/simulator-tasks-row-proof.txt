@@ -1,10 +1,11 @@
-Honest #720 — Simulator tasks row
-tip_base: b081fb7 (main before ship)
-branch: honest-720-sim-tasks-row
-command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD720 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+Honest #786 — Simulator task row (WHOOP wells)
+tip_base: fe39920 (main before ship)
+branch: honest-786-sim-tasks-row
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD786 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
 result: Passed (failedTests=0, passedTests=1)
-duration_s: 723.867
+duration_s: 789.625
+observer_s: 802.488
 pngs: .audit/verify-simulator-tasks-row.png
 SID: sim.load.tasks.row
-when_hkt: 2026-11-08 10:49 HKT
-rationale: foundational LoadSim tasks.row after tasks.bar #719; WHOOP-parity check-well + accent rail; no new SID or READY formula
+when_hkt: 2026-11-10 07:56 HKT
+rationale: chrome-only WHOOP wells on existing Honest #720 task row after task bar #785; idle (!isDone) ghost/hairline 8/28 secondaryText; active complete (isDone && readyDelta >= 0) 14/28 optimal; active negative (isDone && readyDelta < 0) 14/28 strain; check-well/rail/toggle/SID/labels/READY formula unchanged; mechanical pattern-copy of #785 outer wells applied locally; model=deepseek-flash

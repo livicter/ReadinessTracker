@@ -6269,12 +6269,12 @@ struct ReadinessLoadSimulatorCard: View {
     }
 
     private func taskImpactRow(_ task: SimulatorTask) -> some View {
-        // Honest #720: WHOOP-parity task row (check-well + accent rail)
+        // Honest #720 / #786: WHOOP-parity task row (check-well + accent rail; WHOOP wells)
         let isDone = completedTaskIDs.contains(task.id)
         let railTint = isDone ? RTColor.optimal : accent
-        let rowFill = isDone
-            ? RTColor.optimal.opacity(0.12)
-            : RTColor.surfaceHighlight.opacity(0.65)
+        let rowWellTone: Color = !isDone
+            ? RTColor.secondaryText
+            : (task.readyDelta < 0 ? Color(hex: "FF375F") : RTColor.optimal)
         return Button {
             Haptic.selectionChanged()
             if isDone { completedTaskIDs.remove(task.id) }
@@ -6324,13 +6324,17 @@ struct ReadinessLoadSimulatorCard: View {
                 }
             }
             .padding(10)
-            .background(rowFill)
+            .background(rowWellTone.opacity(isDone ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(alignment: .leading) {
                 Rectangle()
                     .fill(railTint)
                     .frame(width: 3)
             }
             .clipShape(RoundedRectangle(cornerRadius: AppleTheme.cornerRadiusMedium, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(rowWellTone.opacity(0.28), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
         .animation(.easeInOut(duration: 0.2), value: isDone)

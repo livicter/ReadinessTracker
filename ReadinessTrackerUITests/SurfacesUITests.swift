@@ -11181,7 +11181,7 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-simulator-lever-sensitivity.png")
         // Honest #499 / #779: checkable tasks + RHR/SpO2 levers.
         let row = app.descendants(matching: .any)["sim.load.tasks.row"].firstMatch
-        // Honest #720: WHOOP-parity task row (check-well + accent rail)
+        // Honest #720 / #786: WHOOP-parity task row (check-well + accent rail; WHOOP wells)
         var rowSwipes = 0
         while row.exists && !isOnScreen(row) && rowSwipes < 10 {
             app.swipeUp()
