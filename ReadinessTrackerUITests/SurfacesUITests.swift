@@ -10413,7 +10413,7 @@ final class SurfacesUITests: XCTestCase {
             if gauge.isHittable { gauge.tap() }
         }
         saveShot("verify-simulator-gauge.png")
-        // Honest #718: WHOOP-parity bipolar sliders + live READY Δ
+        // Honest #718 / #783: WHOOP-parity bipolar sliders + live READY Δ (WHOOP wells)
         let controls = app.descendants(matching: .any)["sim.load.controls"].firstMatch
         XCTAssertTrue(controls.waitForExistence(timeout: 5)
                       || app.descendants(matching: .any)["sim.load.gauge"].firstMatch.exists

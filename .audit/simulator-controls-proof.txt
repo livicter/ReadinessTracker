@@ -1,10 +1,11 @@
-Honest #718 — Simulator controls
-tip_base: 9a0bfec (main before ship)
-branch: honest-718-sim-controls
-command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD718 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+Honest #783 — Simulator controls (WHOOP wells)
+tip_base: e31e655 (main before ship)
+branch: honest-783-sim-controls
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD783 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
 result: Passed (failedTests=0, passedTests=1)
-duration_s: 686.470
+duration_s: 778.470
+observer_s: 790.700
 pngs: .audit/verify-simulator-controls.png
 SID: sim.load.controls
-when_hkt: 2026-11-08 09:36 HKT
-rationale: foundational LoadSim controls after gauge #717; WHOOP-parity bipolar sliders + live READY Δ via project() vs all-zero
+when_hkt: 2026-11-10 05:57 HKT
+rationale: chrome-only WHOOP wells on existing Honest #718 bipolar sliders after spark tint #782; idle (all five levers at 0) ghost/hairline 8/28 secondaryText; active negative (combined isolated READY Δ < 0) 14/28 strain; active positive (combined isolated READY Δ > 0) 14/28 optimal; active mixed (some nonzero levers whose isolated contributions cancel) 14/28 accent; slider internals/copy/tints/identifiers/interaction/accessibilityIdentifier unchanged; UITest taps first slider so proof PNG is expected to show the active well; mechanical pattern-copy of #781 ring outer wells / combined lever READY Δ vs all-zero applied locally; model=deepseek-flash

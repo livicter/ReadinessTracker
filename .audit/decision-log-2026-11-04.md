@@ -535,4 +535,8 @@
 | 05:28 HKT | #782 Simulator spark tint | prove | UITest suite green /tmp/RT-DD782 (778.202s, 0 failures; observer 791.255s); model=deepseek-flash |
 | 05:28 HKT | #782 Simulator spark tint | land | proof PNG + receipt; SID sim.load.spark.tint; PR squash next; model=deepseek-flash |
 
+| 05:37 HKT | Honest #783 Simulator controls | model=deepseek-flash | restyle existing sim.load.controls after spark tint #782; WHOOP ghost/active wells; mechanical pattern-copy of #781 ring outer wells / combined lever READY Δ vs all-zero applied locally (no separate model iterate needed) | mid-ship |
+| 05:37 HKT | Honest #783 Simulator controls | prove | starting UITest /tmp/RT-DD783; model=deepseek-flash | mid-ship |
 
+| 05:57 HKT | #783 Simulator controls | prove | UITest suite green /tmp/RT-DD783 (778.470s, 0 failures; observer 790.700s); model=deepseek-flash |
+| 05:57 HKT | #783 Simulator controls | land | proof PNG + receipt; SID sim.load.controls; PR squash next; model=deepseek-flash |
