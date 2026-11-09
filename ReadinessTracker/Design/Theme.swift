@@ -195,7 +195,7 @@ enum SurfaceID {
     static let readinessSimulatorTasks = "sim.load.tasks"
     static let readinessSimulatorTaskProgress = "sim.load.tasks.progress"  // Honest #499 / #779
     static let readinessSimulatorTaskProgressBar = "sim.load.tasks.bar"  // Honest #719 / #785
-    static let readinessSimulatorTaskRow = "sim.load.tasks.row"  // Honest #720
+    static let readinessSimulatorTaskRow = "sim.load.tasks.row"  // Honest #720 / #786
     static let interactiveRecoveryDialCard = "balance.dial.card"  // Honest #500
     static let interactiveRecoveryDial = "balance.dial"
     static let interactiveRecoveryDialKnob = "balance.dial.knob"
