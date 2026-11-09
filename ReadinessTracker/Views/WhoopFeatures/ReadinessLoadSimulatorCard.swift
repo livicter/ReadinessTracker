@@ -6050,7 +6050,11 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCeiling)
             .accessibilityLabel("READY ceiling \(ceilingReady), now \(nowReady), remain +\(remain)")
 
-            // Honest #549: cumulative READY lift spark (bars tint when checked)
+            // Honest #549 / #772: cumulative READY lift spark (bars tint when checked; WHOOP wells; Google Health graphics).
+            let liftSparkIsActive = ordered.contains { completedTaskIDs.contains($0.id) && $0.readyDelta != 0 }
+            let liftSparkWellTone: Color = liftSparkIsActive
+                ? (lift < 0 ? Color(hex: "FF375F") : (lift > 0 ? RTColor.optimal : accent))
+                : RTColor.secondaryText
             if !ordered.isEmpty {
                 Chart {
                     ForEach(Array(ordered.enumerated()), id: \.element.id) { _, task in
@@ -6071,6 +6075,12 @@ struct ReadinessLoadSimulatorCard: View {
                     }
                 }
                 .frame(height: 56)
+                .padding(10)
+                .background(liftSparkWellTone.opacity(liftSparkIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(liftSparkWellTone.opacity(0.28), lineWidth: 1)
+                )
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskLiftSpark)
                 .accessibilityLabel("READY lift spark, +\(lift) checked")
             }
