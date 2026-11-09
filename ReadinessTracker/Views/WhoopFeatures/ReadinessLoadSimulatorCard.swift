@@ -5722,18 +5722,20 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityLabel(showAirGapTasksOnly
                                     ? "Showing air gap tasks only, tap for all"
                                     : "Show all tasks, tap for air gaps only")
-                // Honest #541: sort by READY impact
+                // Honest #541 / #775: sort by READY impact (WHOOP wells; Google Health graphics).
+                let sortIsIdle = !sortTasksByImpact
+                let sortWellTone: Color = sortIsIdle ? RTColor.secondaryText : accent
                 Button {
                     Haptic.selectionChanged()
                     sortTasksByImpact.toggle()
                 } label: {
                     Text(sortTasksByImpact ? "Impact ↓" : "Sort")
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(sortTasksByImpact ? Color.white : accent)
+                        .foregroundStyle(sortWellTone)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(sortTasksByImpact ? accent : accent.opacity(0.12))
-                        .clipShape(Capsule())
+                        .background(sortWellTone.opacity(sortIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(sortWellTone.opacity(0.28), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksSort)
