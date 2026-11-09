@@ -1,0 +1,11 @@
+Honest #782 — Simulator spark tint (WHOOP wells)
+tip_base: 76249d6 (main before ship)
+branch: honest-782-sim-spark-tint
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD782 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 778.202
+observer_s: 791.255
+pngs: .audit/verify-readiness-load-simulator-spark-tint.png
+SID: sim.load.spark.tint (legacy sim.load.spark retained on Chart)
+when_hkt: 2026-11-10 05:28 HKT
+rationale: chrome-only WHOOP wells on existing Honest #512 projection map after rings #781; idle (focusedRingValue == baseline) ghost/hairline 8/28 secondaryText; active negative (focusedRingValue < baseline) 14/28 strain; active positive (focusedRingValue > baseline) 14/28 optimal; no mixed state (single signed delta vs tonight baseline); do not use “any bar != baseline” because the map always shows -2h/+1h/+HRV/−RHR scenarios; copy/header tint Circle/Chart bar tint/identifiers/interaction/visibility/accessibilityLabel unchanged; mechanical pattern-copy of #781 ring outer wells applied locally; model=deepseek-flash
