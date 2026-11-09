@@ -1108,7 +1108,7 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
-    /// Honest #512: projection map bars tint to focused ring.
+    /// Honest #512 / #782: projection map bars tint to focused ring (WHOOP wells; Google Health graphics).
     private var sparkProjection: some View {
         let scrubValue = Double(focusedRingValue)
         let points: [(label: String, value: Double)] = [
@@ -1119,6 +1119,14 @@ struct ReadinessLoadSimulatorCard: View {
             ("−RHR", Double(project(sleep: 0, hrv: 0, strain: 0, rhr: -5, spo2: 0))),
             ("Scrub", scrubValue)
         ]
+        // Well tone follows focused-ring delta vs tonight baseline (same idea as
+        // #781 rings' READY-delta convention, but for `focusedRingValue`).
+        // Do not use "any bar != baseline" — the map always shows -2h/+1h/+HRV/−RHR
+        // scenarios, so that would never be idle. No mixed state (single signed delta).
+        let isActive = focusedRingValue != baseline
+        let wellTone: Color = isActive
+            ? (focusedRingValue < baseline ? Color(hex: "FF375F") : RTColor.optimal)
+            : RTColor.secondaryText
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("Projection map · \(focusedRing.title)")
@@ -1160,6 +1168,12 @@ struct ReadinessLoadSimulatorCard: View {
             .accessibilityIdentifier(SurfaceID.readinessLoadSimulatorSpark)
             .accessibilityLabel("Readiness projection map")
         }
+        .padding(10)
+        .background(wellTone.opacity(isActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
+        )
     }
 
 
