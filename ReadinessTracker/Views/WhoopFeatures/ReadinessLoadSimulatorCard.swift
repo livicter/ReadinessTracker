@@ -262,6 +262,10 @@ struct ReadinessLoadSimulatorCard: View {
                     deltaCoupledVsBaseline >= 0 ? "+\(deltaCoupledVsBaseline)" : "\(deltaCoupledVsBaseline)",
                     "vs baseline"
                 )
+                let coupledIsActive = taskReadyLift != 0
+                let wellTone: Color = taskReadyLift < 0
+                    ? Color(hex: "FF375F")
+                    : (taskReadyLift > 0 ? RTColor.optimal : RTColor.secondaryText)
                 HStack(spacing: 6) {
                     Image(systemName: "checklist")
                         .font(.caption2.weight(.bold))
@@ -271,11 +275,11 @@ struct ReadinessLoadSimulatorCard: View {
                         .font(.caption2)
                         .foregroundStyle(RTColor.tertiaryText)
                 }
-                .foregroundStyle(taskReadyLift > 0 ? RTColor.optimal : accent)
+                .foregroundStyle(coupledIsActive ? wellTone : accent)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background((taskReadyLift > 0 ? RTColor.optimal : accent).opacity(0.12))
-                .clipShape(Capsule())
+                .background(wellTone.opacity(coupledIsActive ? 0.14 : 0.08), in: Capsule())
+                .overlay(Capsule().stroke(wellTone.opacity(0.28), lineWidth: 1))
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskCoupled)
                 .accessibilityLabel(taskReadyLift > 0
                                     ? "Tasks plus \(taskReadyLift) in gauge"
