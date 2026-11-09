@@ -11264,7 +11264,7 @@ final class SurfacesUITests: XCTestCase {
             XCTAssertTrue(tasks.exists || tasksTitle.exists, "sim.load.tasks (airgaps optional)")
             saveShot("verify-readiness-load-simulator-airgap-tasks.png")
         }
-        // Honest #516: lever delta contribution chips
+        // Honest #516 / #780: lever delta contribution chips (WHOOP wells)
         let levers = app.descendants(matching: .any)["sim.load.delta.levers"].firstMatch
         var leverN = 0
         while !levers.exists && leverN < 8 {

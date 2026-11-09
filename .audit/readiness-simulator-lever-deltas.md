@@ -1,4 +1,6 @@
-Honest #516: Simulator lever READY deltas
-SurfaceID sim.load.delta.levers
-Proof: UITest testReadinessLoadSimulatorSurface PASS iPhone 17 Pro 26.5
-.audit/verify-readiness-load-simulator-lever-deltas.png
+# Honest #516 / #780: Simulator lever deltas (WHOOP wells)
+
+Per-lever READY contribution chips (interactive). Visibility, copy, chip interaction, and accessibilityIdentifier unchanged.
+Idle (all contributions == 0) = ghost/hairline 8/28 using secondaryText; active negative (sum < 0) = 14/28 strain; active positive (sum > 0) = 14/28 optimal; active mixed (sum == 0 but some nonzero) = 14/28 accent.
+SurfaceID: `sim.load.delta.levers`
+Proof: `.audit/verify-readiness-load-simulator-lever-deltas.png`
