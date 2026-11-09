@@ -1,11 +1,15 @@
-# Simulator tasks air-gap filter (Honest #543)
+# Simulator tasks air-gap filter
 
-## Why
-Mix of habit + air-gap tasks — filter to Fitbit/Health gaps for denser integration.
+## Sub-features
+- Toggle Today’s tasks between all tasks and air-gap (Fitbit/Health) tasks only
+- WHOOP wells: idle (filter off / All) ghost/hairline 8/28 secondaryText; active (filter on / Air) 14/28 accent
+- SurfaceID `sim.load.tasks.airfilter`
 
-## Surface
-- `sim.load.tasks.airfilter`
+## How to get to it (user POV)
+Today → Load Simulator card → scroll to Today’s tasks → All/Air capsule among the task chrome controls.
 
-## Verify
-- `testReadinessLoadSimulatorSurface`
-- `.audit/verify-readiness-load-simulator-tasks-airfilter.png`
+## Driving it with the harness
+`testReadinessLoadSimulatorSurface` waits for `sim.load.tasks.airfilter`, taps it, `saveShot("verify-readiness-load-simulator-tasks-airfilter.png")`.
+
+## Gotchas
+This ship restyles the capsule chrome only — All/Air toggle math is unchanged.

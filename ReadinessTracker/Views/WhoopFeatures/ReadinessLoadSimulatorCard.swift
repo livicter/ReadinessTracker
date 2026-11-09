@@ -5702,18 +5702,20 @@ struct ReadinessLoadSimulatorCard: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(RTColor.secondaryText)
                 Spacer()
-                // Honest #543: air-gap-only filter (Fitbit/Health integration)
+                // Honest #543 / #774: air-gap-only filter (WHOOP wells; Google Health graphics).
+                let airFilterIsIdle = !showAirGapTasksOnly
+                let airFilterWellTone: Color = airFilterIsIdle ? RTColor.secondaryText : accent
                 Button {
                     Haptic.selectionChanged()
                     showAirGapTasksOnly.toggle()
                 } label: {
                     Text(showAirGapTasksOnly ? "Air" : "All")
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(showAirGapTasksOnly ? Color.white : accent)
+                        .foregroundStyle(airFilterWellTone)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(showAirGapTasksOnly ? accent : accent.opacity(0.12))
-                        .clipShape(Capsule())
+                        .background(airFilterWellTone.opacity(airFilterIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(airFilterWellTone.opacity(0.28), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksAirFilter)
