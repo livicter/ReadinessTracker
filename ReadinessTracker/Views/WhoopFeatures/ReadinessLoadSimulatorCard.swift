@@ -5760,23 +5760,32 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityLabel(done == ordered.count && !ordered.isEmpty
                                     ? "Clear all simulator tasks"
                                     : "Check all simulator tasks")
-                // Honest #545: check top-3 READY-impact tasks (richer sim)
+                // Honest #545 / #773: check top-3 READY-impact tasks (WHOOP wells; Google Health graphics).
+                let top3 = Array(ordered.sorted { $0.readyDelta > $1.readyDelta }.prefix(3))
+                let top3IsIdle = top3.isEmpty
+                let top3AllChecked = !top3.isEmpty && top3.allSatisfy({ completedTaskIDs.contains($0.id) })
+                let top3Lift = top3.reduce(0) { $0 + $1.readyDelta }
+                let top3WellTone: Color = {
+                    if top3IsIdle { return RTColor.secondaryText }
+                    if top3AllChecked { return RTColor.optimal }
+                    if top3Lift < 0 { return Color(hex: "FF375F") }
+                    return accent
+                }()
                 Button {
                     Haptic.selectionChanged()
-                    let top = Array(ordered.sorted { $0.readyDelta > $1.readyDelta }.prefix(3))
-                    if !top.isEmpty && top.allSatisfy({ completedTaskIDs.contains($0.id) }) {
-                        for t in top { completedTaskIDs.remove(t.id) }
+                    if !top3.isEmpty && top3AllChecked {
+                        for t in top3 { completedTaskIDs.remove(t.id) }
                     } else {
-                        for t in top { completedTaskIDs.insert(t.id) }
+                        for t in top3 { completedTaskIDs.insert(t.id) }
                     }
                 } label: {
                     Text("Top 3")
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(accent)
+                        .foregroundStyle(top3WellTone)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(accent.opacity(0.12))
-                        .clipShape(Capsule())
+                        .background(top3WellTone.opacity(top3IsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(top3WellTone.opacity(0.28), lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksTop3)
