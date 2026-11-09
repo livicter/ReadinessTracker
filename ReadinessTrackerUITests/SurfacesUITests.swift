@@ -11227,7 +11227,7 @@ final class SurfacesUITests: XCTestCase {
             controls.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.85)).tap()
         }
         saveShot("verify-readiness-load-simulator-tasks-check.png")
-        // Honest #515: READY lift impact strip (scroll tasks into view if needed)
+        // Honest #515 / #778: READY lift impact strip (WHOOP wells; scroll tasks into view if needed)
         var impactN = 0
         let impact = app.descendants(matching: .any)["sim.load.tasks.impact"].firstMatch
         let liftLabel = app.staticTexts["READY lift"]
