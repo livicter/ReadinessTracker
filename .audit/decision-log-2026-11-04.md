@@ -442,3 +442,9 @@
 
 | 19:50 HKT | #767 Simulator task ceiling | prove | UITest suite green /tmp/RT-DD767 (769.709s, 0 failures; observer 783.173s); model=deepseek-flash |
 | 19:50 HKT | #767 Simulator task ceiling | land | proof PNG + receipt; SID sim.load.tasks.ceiling; PR squash next; model=deepseek-flash |
+
+| 19:56 HKT | Honest #768 Simulator task next preview | model=deepseek-flash | restyle existing sim.load.tasks.nextpreview after task ceiling #767; WHOOP ghost/active wells; mechanical pattern-copy of #767 wells applied locally (no separate model iterate needed) | mid-ship |
+| 19:56 HKT | Honest #768 Simulator task next preview | prove | starting UITest /tmp/RT-DD768; model=deepseek-flash | mid-ship |
+
+| 20:16 HKT | #768 Simulator task next preview | prove | UITest suite green /tmp/RT-DD768 (785.582s, 0 failures; observer 799.939s); model=deepseek-flash |
+| 20:16 HKT | #768 Simulator task next preview | land | proof PNG + receipt; SID sim.load.tasks.nextpreview; PR squash next; model=deepseek-flash |

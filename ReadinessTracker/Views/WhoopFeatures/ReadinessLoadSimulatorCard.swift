@@ -5915,9 +5915,13 @@ struct ReadinessLoadSimulatorCard: View {
             .buttonStyle(.plain)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksRemainLift)
             .accessibilityLabel("READY lift progress +\(lift) of +\(totalLift), remain +\(remain)")
-            // Honest #557: next READY-impact task preview chip
+            // Honest #557 / #768: next READY-impact task preview chip (WHOOP wells; Google Health graphics).
             if let next = ordered.filter({ !completedTaskIDs.contains($0.id) })
                 .sorted(by: { $0.readyDelta > $1.readyDelta }).first {
+                let previewIsIdle = done == 0
+                let wellTone: Color = previewIsIdle
+                    ? RTColor.secondaryText
+                    : (next.readyDelta < 0 ? Color(hex: "FF375F") : accent)
                 Button {
                     Haptic.selectionChanged()
                     completedTaskIDs.insert(next.id)
@@ -5925,11 +5929,11 @@ struct ReadinessLoadSimulatorCard: View {
                     HStack(spacing: 10) {
                         Image(systemName: "arrow.forward.circle.fill")
                             .font(.title3)
-                            .foregroundStyle(accent)
+                            .foregroundStyle(wellTone)
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Next · +\(next.readyDelta) READY")
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(accent)
+                                .foregroundStyle(wellTone)
                             Text(next.title)
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(RTColor.primaryText)
@@ -5938,18 +5942,17 @@ struct ReadinessLoadSimulatorCard: View {
                         Spacer(minLength: 0)
                         Text("Check")
                             .font(.caption.weight(.bold))
-                            .foregroundStyle(Color.white)
+                            .foregroundStyle(wellTone)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(accent)
+                            .background(wellTone.opacity(0.12))
                             .clipShape(Capsule())
                     }
                     .padding(10)
-                    .background(accent.opacity(0.10))
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .background(wellTone.opacity(previewIsIdle ? 0.08 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(accent.opacity(0.35), lineWidth: 1)
+                            .stroke(wellTone.opacity(0.28), lineWidth: 1)
                     )
                 }
                 .buttonStyle(.plain)

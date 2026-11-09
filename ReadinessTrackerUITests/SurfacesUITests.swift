@@ -10534,7 +10534,7 @@ final class SurfacesUITests: XCTestCase {
             else { remainLift.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
         }
         saveShot("verify-simulator-remain-lift.png")
-        // Honest #557: next READY-impact task preview
+        // Honest #557 / #768: next READY-impact task preview (WHOOP wells)
         let nextPrev = app.descendants(matching: .any)["sim.load.tasks.nextpreview"].firstMatch
         XCTAssertTrue(nextPrev.waitForExistence(timeout: 5)
                       || tasks.exists
