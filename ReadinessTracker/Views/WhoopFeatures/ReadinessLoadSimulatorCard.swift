@@ -5865,10 +5865,14 @@ struct ReadinessLoadSimulatorCard: View {
                     .accessibilityLabel("READY lift +\(lift)")
             }
             .accessibilityElement(children: .contain)
-            // Honest #555: remaining READY-lift gauge (richer sim graphics)
+            // Honest #555 / #769: remaining READY-lift gauge (WHOOP wells; Google Health graphics).
             let totalLift = ordered.map(\.readyDelta).reduce(0, +)
             let remain = max(0, totalLift - lift)
             let frac = totalLift > 0 ? Double(lift) / Double(totalLift) : 0
+            let remainLiftIsIdle = done == 0 && remain > 0
+            let remainLiftWellTone: Color = remainLiftIsIdle
+                ? RTColor.secondaryText
+                : (lift < 0 ? Color(hex: "FF375F") : (remain == 0 ? RTColor.optimal : accent))
             Button {
                 Haptic.selectionChanged()
                 let unchecked = ordered.filter { !completedTaskIDs.contains($0.id) }
@@ -5884,13 +5888,13 @@ struct ReadinessLoadSimulatorCard: View {
                         Spacer(minLength: 0)
                         Text("+\(lift)/+\(totalLift)")
                             .font(.caption2.weight(.bold).monospacedDigit())
-                            .foregroundStyle(accent)
+                            .foregroundStyle(remainLiftWellTone)
                         Text(remain == 0 ? "done" : "remain +\(remain)")
                             .font(.caption2.weight(.bold).monospacedDigit())
-                            .foregroundStyle(remain == 0 ? RTColor.optimal : RTColor.secondaryText)
+                            .foregroundStyle(remainLiftWellTone)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 3)
-                            .background((remain == 0 ? RTColor.optimal : accent).opacity(0.12))
+                            .background(remainLiftWellTone.opacity(0.12))
                             .clipShape(Capsule())
                     }
                     GeometryReader { geo in
@@ -5910,7 +5914,12 @@ struct ReadinessLoadSimulatorCard: View {
                     }
                     .frame(height: 14)
                 }
-                .padding(.vertical, 4)
+                .padding(10)
+                .background(remainLiftWellTone.opacity(remainLiftIsIdle ? 0.08 : 0.14), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(remainLiftWellTone.opacity(0.28), lineWidth: 1)
+                )
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksRemainLift)

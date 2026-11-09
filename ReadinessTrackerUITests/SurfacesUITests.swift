@@ -10523,7 +10523,7 @@ final class SurfacesUITests: XCTestCase {
             app.staticTexts["Undo last"].tap()
         }
         saveShot("verify-simulator-undo-last.png")
-        // Honest #555: remaining READY-lift gauge
+        // Honest #555 / #769: remaining READY-lift gauge (WHOOP wells)
         let remainLift = app.descendants(matching: .any)["sim.load.tasks.remainlift"].firstMatch
         XCTAssertTrue(remainLift.waitForExistence(timeout: 5)
                       || tasks.exists
