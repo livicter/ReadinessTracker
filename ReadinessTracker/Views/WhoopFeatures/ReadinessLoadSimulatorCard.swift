@@ -5781,27 +5781,31 @@ struct ReadinessLoadSimulatorCard: View {
                 .buttonStyle(.plain)
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksTop3)
                 .accessibilityLabel("Check top three READY impact tasks")
-                // Honest #551: check next highest READY-impact unchecked task
-                if ordered.contains(where: { !completedTaskIDs.contains($0.id) }) {
-                    Button {
-                        Haptic.selectionChanged()
-                        let unchecked = ordered.filter { !completedTaskIDs.contains($0.id) }
-                        if let next = unchecked.sorted(by: { $0.readyDelta > $1.readyDelta }).first {
-                            completedTaskIDs.insert(next.id)
-                        }
-                    } label: {
-                        Text("Check next")
-                            .font(.caption2.weight(.bold))
-                            .foregroundStyle(accent)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(accent.opacity(0.12))
-                            .clipShape(Capsule())
+                // Honest #551 / #771: check next highest READY-impact unchecked task (WHOOP wells; Google Health graphics).
+                let nextTarget = ordered.filter { !completedTaskIDs.contains($0.id) }
+                    .sorted(by: { $0.readyDelta > $1.readyDelta }).first
+                let checkNextIsIdle = nextTarget == nil
+                let checkNextWellTone: Color = {
+                    guard let next = nextTarget else { return RTColor.secondaryText }
+                    return next.readyDelta < 0 ? Color(hex: "FF375F") : accent
+                }()
+                Button {
+                    Haptic.selectionChanged()
+                    if let next = nextTarget {
+                        completedTaskIDs.insert(next.id)
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckNext)
-                    .accessibilityLabel("Check next READY-impact task")
+                } label: {
+                    Text("Check next")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(checkNextWellTone)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(checkNextWellTone.opacity(checkNextIsIdle ? 0.08 : 0.14), in: Capsule())
+                        .overlay(Capsule().stroke(checkNextWellTone.opacity(0.28), lineWidth: 1))
                 }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier(SurfaceID.readinessSimulatorTasksCheckNext)
+                .accessibilityLabel("Check next READY-impact task")
                 // Honest #553 / #770: undo last — uncheck highest READY-impact checked task (WHOOP wells; Google Health graphics).
                 let undoTarget = ordered.filter { completedTaskIDs.contains($0.id) }
                     .sorted(by: { $0.readyDelta > $1.readyDelta }).first
