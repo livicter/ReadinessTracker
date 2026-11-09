@@ -5888,7 +5888,14 @@ struct ReadinessLoadSimulatorCard: View {
                 .accessibilityIdentifier(SurfaceID.readinessSimulatorAirGapTasks)
                 .accessibilityLabel("\(airGapCount) air gap tasks")
             }
-            // Honest #515: cumulative READY impact from checked tasks
+            // Honest #515 / #778: cumulative READY impact from checked tasks (WHOOP wells; Google Health graphics).
+            let impactIsIdle = lift == 0
+            let impactWellTone: Color = {
+                if impactIsIdle { return RTColor.secondaryText }
+                if done == ordered.count { return RTColor.optimal }
+                if lift < 0 { return Color(hex: "FF375F") }
+                return accent
+            }()
             HStack(spacing: 8) {
                 Text("READY lift")
                     .font(.caption.weight(.semibold))
@@ -5896,11 +5903,11 @@ struct ReadinessLoadSimulatorCard: View {
                 Spacer()
                 Text(lift == 0 ? "Tap tasks" : "+\(lift)")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(lift > 0 ? RTColor.optimal : accent)
+                    .foregroundStyle(impactWellTone)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background((lift > 0 ? RTColor.optimal : accent).opacity(0.12))
-                    .clipShape(Capsule())
+                    .background(impactWellTone.opacity(impactIsIdle ? 0.08 : 0.14), in: Capsule())
+                    .overlay(Capsule().stroke(impactWellTone.opacity(0.28), lineWidth: 1))
                     .accessibilityIdentifier(SurfaceID.readinessSimulatorTaskImpact)
                     .accessibilityLabel("READY lift +\(lift)")
             }

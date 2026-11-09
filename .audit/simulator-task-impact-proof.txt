@@ -1,0 +1,11 @@
+Honest #778 — Simulator task impact (WHOOP wells)
+tip_base: 3195781 (main before ship)
+branch: honest-778-sim-tasks-impact
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD778 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 774.701
+observer_s: 787.827
+pngs: .audit/verify-readiness-load-simulator-task-impact.png
+SID: sim.load.tasks.impact
+when_hkt: 2026-11-10 02:23 HKT
+rationale: chrome-only WHOOP wells on existing Honest #515 READY lift capsule after air-gap tasks #777; idle ghost/hairline 8/28 secondaryText; active complete 14/28 optimal; active negative 14/28 strain; else (partial) 14/28 accent; READY lift copy/visibility/accessibility unchanged; model=deepseek-flash
