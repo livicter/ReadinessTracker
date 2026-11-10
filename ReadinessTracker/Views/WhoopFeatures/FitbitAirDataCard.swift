@@ -1677,6 +1677,13 @@ struct FitbitAirDataCard: View {
 
     /// Honest #538: density streak badge (≥ threshold consecutive days).
     /// Honest #682: appleWatch / HealthKit uses Health pink + health.air.density.streak (#538 parity).
+    /// Honest #797: WHOOP wells on the existing streak badge button.
+    /// Idle unused: badge mounts only when current > 0 or best > 0.
+    /// Active complete (current >= 3) 14/28 optimal;
+    /// active negative (current == 0, broken streak with a historical best) 14/28 strain;
+    /// else/partial (current 1–2) 14/28 accent.
+    /// Inner day capsule keeps its existing tone. Calendar dots
+    /// (streak.cal) are unchanged. Copy, SID, a11y, and expand-toggle math unchanged.
     @ViewBuilder
     private var densityStreakBadge: some View {
         if let streak = densityStreak {
@@ -1688,6 +1695,12 @@ struct FitbitAirDataCard: View {
             let streakLabel = isHealth
                 ? "Health density streak \(streak.current) days"
                 : "Density streak \(streak.current) days"
+            let wellBroken = streak.current == 0
+            let wellComplete = streak.current >= 3
+            let wellTone: Color = wellBroken
+                ? RTColor.strain
+                : (wellComplete ? RTColor.optimal : accent)
+            let wellFill: Color = wellTone.opacity(0.14)
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -1712,7 +1725,11 @@ struct FitbitAirDataCard: View {
                     }
                     .foregroundStyle(streakAccent)
                     .padding(10)
-                    .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(wellTone.opacity(0.28), lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 // Honest #546: 14d calendar dots (≥ threshold = filled)

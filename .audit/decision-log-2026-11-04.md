@@ -632,3 +632,12 @@
 
 | 16:27 HKT | #796 density forecast badge | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD796 (781.899s, 0 failures; observer 789.008s); model=deepseek-flash |
 | 16:27 HKT | #796 density forecast badge | land | proof PNG + receipt; SID fitbit.air.density.forecast / health.air.density.forecast; PR squash next; model=deepseek-flash |
+
+| 16:34 HKT | Honest #797 density streak badge | model=deepseek-flash | restyle existing fitbit.air.density.streak / health.air.density.streak after density forecast #796; WHOOP wells on the badge button; idle unused (badge mounts only when current > 0 or best > 0); active complete (current >= 3) 14/28 optimal; active negative (current == 0, broken streak with a historical best) 14/28 strain; else/partial (current 1–2) 14/28 accent; inner day capsule keeps existing tone; calendar dots (streak.cal) unchanged; mechanical pattern-copy of #796 applied locally (no separate model iterate needed) | mid-ship |
+| 16:34 HKT | Honest #797 density streak badge | prove | starting build-for-testing /tmp/RT-DD797; model=deepseek-flash | mid-ship |
+| 16:39 HKT | #797 density streak badge | prove | starting tight UITest testDensityStreakBadge /tmp/RT-DD797; model=deepseek-flash | mid-ship |
+| 16:43 HKT | #797 density streak badge | prove | UITest testDensityStreakBadge green /tmp/RT-DD797 (182.304s, 0 failures; observer 195.016s); proof /tmp/rt-audit/verify-density-streak.png (health.air.density.streak); model=deepseek-flash |
+| 16:43 HKT | #797 density streak badge | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD797; model=deepseek-flash | mid-ship |
+
+| 16:56 HKT | #797 density streak badge | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD797 (782.429s, 0 failures; observer 787.927s); model=deepseek-flash |
+| 16:56 HKT | #797 density streak badge | land | proof PNG + receipt; SID fitbit.air.density.streak / health.air.density.streak; PR squash next; model=deepseek-flash |
