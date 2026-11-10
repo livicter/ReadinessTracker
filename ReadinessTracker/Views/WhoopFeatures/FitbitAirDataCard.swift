@@ -818,6 +818,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #525/#526: interactive 7-day density heatmap; tap selects day + scrub spark.
     /// Honest #684: appleWatch / HealthKit uses Health pink + health.air.density.heat (#525 parity).
+    /// Honest #794: WHOOP cell chrome; heat intensity fill (0.25 / 0.55 / 0.9) preserved.
     private var densityHeatmap: some View {
         let days = Array(history.suffix(7))
         let isHealth = source == .appleWatch
@@ -835,6 +836,21 @@ struct FitbitAirDataCard: View {
                     let filled = dayChips.filter(\.filled).count
                     let dens = dayChips.isEmpty ? 0.0 : Double(filled) / Double(dayChips.count)
                     let selected = selectedHeatDayOffset == i
+                    // Honest #794: WHOOP cell chrome on existing density heatmap.
+                    // Intensity fill (0.25 / 0.55 / 0.9) stays the heat encoding
+                    // and is not replaced by a uniform 8/14 wash. Idle (dens == 0)
+                    // uses ghost/hairline 8/28 secondaryText in place of the empty
+                    // surfaceHighlight. Active complete (dens == 1) 28% optimal
+                    // hairline; else/partial 28% accent hairline. Selected keeps a
+                    // thicker hairline. No negative state (density is non-negative).
+                    let cellIsActive = dens > 0
+                    let cellComplete = !dayChips.isEmpty && filled >= dayChips.count
+                    let cellWellTone: Color = !cellIsActive
+                        ? RTColor.secondaryText
+                        : (cellComplete ? RTColor.optimal : heatAccent)
+                    let cellFill: Color = !cellIsActive
+                        ? RTColor.secondaryText.opacity(0.08)
+                        : heatmapColor(dens, heatAccent: heatAccent)
                     Button {
                         Haptic.selectionChanged()
                         selectedHeatDayOffset = selectedHeatDayOffset == i ? nil : i
@@ -847,7 +863,7 @@ struct FitbitAirDataCard: View {
                     } label: {
                         VStack(spacing: 4) {
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(heatmapColor(dens, heatAccent: heatAccent))
+                                .fill(cellFill)
                                 .frame(height: 36)
                                 .overlay(
                                     Text("\(Int((dens * 100).rounded()))")
@@ -856,7 +872,7 @@ struct FitbitAirDataCard: View {
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                        .stroke(selected ? heatAccent : Color.clear, lineWidth: 2)
+                                        .stroke(cellWellTone.opacity(0.28), lineWidth: selected ? 1.5 : 1)
                                 )
                             Text(day.date, format: .dateTime.weekday(.narrow))
                                 .font(.caption2.weight(.semibold))
