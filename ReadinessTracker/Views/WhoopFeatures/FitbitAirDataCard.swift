@@ -5681,6 +5681,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #554: interactive category fill gauges under air gaps (Google Health / Fitbit parity).
     /// Honest #637: HealthKit / appleWatch uses health.air.gaps.categories SID.
+    /// Honest #790: WHOOP wells on existing Fitbit/Health air-gaps category gauges.
     private var gapsCategoryGauges: some View {
         HStack(spacing: 8) {
             ForEach(AirDensityCategory.allCases) { cat in
@@ -5688,6 +5689,18 @@ struct FitbitAirDataCard: View {
                 let total = cat.chipIDs.count
                 let ratio = cat.fillRatio(in: chips)
                 let gapsInCat = gapChips.filter { cat.chipIDs.contains($0.id) }
+                let on = focusedLegend == cat
+                // Honest #790: WHOOP wells on existing air-gaps category gauges.
+                // Idle (filled == 0) ghost/hairline 8/28 secondaryText;
+                // active complete (filled == total) 14/28 optimal;
+                // else/partial 14/28 accent. No negative state (fill is non-negative).
+                // Focus keeps a thicker hairline; inverted white-on-solid fill dropped so
+                // label contrast holds on the translucent well.
+                let gaugeIsActive = filled > 0
+                let gaugeComplete = total > 0 && filled >= total
+                let gaugeWellTone: Color = !gaugeIsActive
+                    ? RTColor.secondaryText
+                    : (gaugeComplete ? RTColor.optimal : accent)
                 Button {
                     Haptic.selectionChanged()
                     if focusedLegend == cat {
@@ -5708,19 +5721,19 @@ struct FitbitAirDataCard: View {
                                 .frame(width: 6, height: 6)
                             Text(cat.shortTitle)
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(focusedLegend == cat ? Color.white : RTColor.primaryText)
+                                .foregroundStyle(RTColor.primaryText)
                             Spacer(minLength: 0)
                             Text("\(filled)/\(total)")
                                 .font(.caption2.weight(.bold).monospacedDigit())
-                                .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.95) : cat.color)
+                                .foregroundStyle(cat.color)
                         }
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
                                 Capsule()
-                                    .fill(cat.color.opacity(focusedLegend == cat ? 0.35 : 0.18))
+                                    .fill(cat.color.opacity(on ? 0.35 : 0.18))
                                     .frame(height: 7)
                                 Capsule()
-                                    .fill(focusedLegend == cat ? Color.white : cat.color)
+                                    .fill(cat.color)
                                     .frame(width: max(7, geo.size.width * CGFloat(ratio)), height: 7)
                             }
                             .frame(maxHeight: .infinity, alignment: .center)
@@ -5730,13 +5743,10 @@ struct FitbitAirDataCard: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 8)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(focusedLegend == cat ? cat.color : cat.color.opacity(0.10))
-                    )
+                    .background(gaugeWellTone.opacity(gaugeIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(focusedLegend == cat ? cat.color.opacity(0.85) : Color.clear, lineWidth: 1)
+                            .stroke(gaugeWellTone.opacity(0.28), lineWidth: on ? 1.5 : 1)
                     )
                 }
                 .buttonStyle(.plain)
