@@ -286,7 +286,7 @@ enum SurfaceID {
     static let readinessSimulatorSeedDelta = "sim.load.seed.delta"  // Honest #571 / #759
     static let fitbitAirDensityCV = "fitbit.air.density.cv"  // Honest #572 / #802
     static let readinessSimulatorTaskRadial = "sim.load.tasks.radial"  // Honest #573 / #760
-    static let fitbitAirDensitySkew = "fitbit.air.density.skew"  // Honest #574
+    static let fitbitAirDensitySkew = "fitbit.air.density.skew"  // Honest #574 / #803
     static let readinessSimulatorRingDeltas = "sim.load.ring.deltas"  // Honest #575 / #761
     static let fitbitAirDensityIQR = "fitbit.air.density.iqr"  // Honest #576
     static let readinessSimulatorRingParity = "sim.load.ring.parity"  // Honest #577 / #762
@@ -352,7 +352,7 @@ enum SurfaceID {
     static let healthAirDensityPercentile = "health.air.density.percentile"  // Honest #656
     static let healthAirDensityGini = "health.air.density.gini"  // Honest #657
     static let healthAirDensityIQR = "health.air.density.iqr"  // Honest #658
-    static let healthAirDensitySkew = "health.air.density.skew"  // Honest #659
+    static let healthAirDensitySkew = "health.air.density.skew"  // Honest #659 / #803
     static let healthAirDensitySpan = "health.air.density.span"  // Honest #660
     static let healthAirDensityKurtosis = "health.air.density.kurtosis"  // Honest #661
     static let healthAirDensityEntropy = "health.air.density.entropy"  // Honest #662

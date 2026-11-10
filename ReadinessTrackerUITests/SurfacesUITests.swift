@@ -18805,6 +18805,80 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if cvHealth.exists { saveShot("verify-health-air-density-cv.png") }
     }
 
+    /// Honest #803: WHOOP wells on existing density skew meter.
+    /// Tight path to fitbit.air.density.skew / health.air.density.skew
+    /// on the Air card (immediately after the CV meter). Avoids the long
+    /// testFitbitAirDataCardSurface walk that hangs on spark swipe-down
+    /// after Honest #790. Do not add extra swipes after the meter is
+    /// on-screen — a #802 follow-up that did so overscrolled into the
+    /// later stack. Never use a CONTAINS fallback (run 1 was a false
+    /// green: 711.618s / observer 723.938s, proof was Swim Strokes).
+    ///
+    /// Walk history: isOnScreen/isHittable on the Air title stopped
+    /// after 16 swipeUps on a bogus off-screen frame (runs 1–3). Run 4
+    /// used long 0.78→0.18 swipes looking only at exact inner titles
+    /// and failed 691.415s / observer 729.534s after 60 swipes never
+    /// saw "Density skew" / "Health Density skew". Two likely causes:
+    /// the 0.78 start sits on the floating Today tab bar, and the
+    /// meter container's accessibilityLabel hides the inner title
+    /// StaticTexts. This walk stays on the Today tab, uses app.swipeUp
+    /// (center, clear of the tab bar), and looks for the exact SIDs
+    /// only (timeout 0.1, one identifier predicate, no CONTAINS).
+    func testDensitySkew() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.skew",
+                        "fitbit.air.density.skew")
+        ).firstMatch
+        let skewFitbit = app.descendants(matching: .any)["fitbit.air.density.skew"].firstMatch
+        let skewHealth = app.descendants(matching: .any)["health.air.density.skew"].firstMatch
+
+        var n = 0
+        while !meterVisible(meter) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+
+        // If the SID exists but the well sits under the tab bar, a few
+        // upper-third nudges. Stop as soon as it is on-screen — no extra
+        // crop swipes.
+        var h = 0
+        while meterExistsNow(meter) && !meterVisible(meter) && h < 6 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+
+        XCTAssertTrue(meterVisible(meter),
+                      "fitbit.air.density.skew / health.air.density.skew")
+        saveShot("verify-density-skew.png")
+        if meterExistsNow(skewFitbit) { saveShot("verify-fitbit-air-density-skew.png") }
+        if meterExistsNow(skewHealth) { saveShot("verify-health-air-density-skew.png") }
+    }
+
+    private func meterExistsNow(_ el: XCUIElement) -> Bool {
+        el.waitForExistence(timeout: 0.1)
+    }
+
+    /// The SID can surface as a small Image (the meter glyph) rather than
+    /// the full well; run 6 found health.air.density.skew as an Image but
+    /// height > 20 never passed across 80 swipeUps. Accept a real
+    /// non-empty frame that intersects the content band, or isHittable.
+    private func meterVisible(_ el: XCUIElement) -> Bool {
+        guard meterExistsNow(el) else { return false }
+        if el.isHittable { return true }
+        let frame = el.frame
+        let window = app.windows.firstMatch.frame
+        guard window.width > 0, frame.height > 4, frame.width > 4 else { return false }
+        let visible = window.insetBy(dx: 0, dy: 90)
+        return frame.intersects(visible)
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]
