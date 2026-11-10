@@ -12536,7 +12536,7 @@ final class SurfacesUITests: XCTestCase {
             else { app.swipeUp() }
         }
         saveShot("verify-fitbit-air-density-detail-gainpain.png")
-        // Honest #631: category density overlays
+        // Honest #631 / #791: category density overlays (WHOOP wells)
         let densCatsFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.cats"].firstMatch
         let densCatsHealth = app.descendants(matching: .any)["health.air.density.detail.cats"].firstMatch
         let densCats = densCatsFitbit.exists ? densCatsFitbit : densCatsHealth
@@ -12555,6 +12555,7 @@ final class SurfacesUITests: XCTestCase {
                       || densDetailHealth.exists,
                       "fitbit.air.density.detail.cats")
         saveShot("verify-fitbit-air-density-detail-cats.png")
+        saveShot("verify-density-cats.png")
         // Honest #636: scrub readout chip
         let densReadoutFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.scrub.readout"].firstMatch
         let densReadoutHealthShared = app.descendants(matching: .any)["health.air.density.detail.scrub.readout"].firstMatch
@@ -14247,7 +14248,7 @@ final class SurfacesUITests: XCTestCase {
 
 
 
-        // Honest #633: Health Air category density overlays (#631 parity)
+        // Honest #633 / #791: Health Air category density overlays (#631 parity; WHOOP wells)
         let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
         var c633 = 0
         while !cats633.exists && c633 < 10 {
@@ -14265,6 +14266,7 @@ final class SurfacesUITests: XCTestCase {
             moveToggle.tap()
         }
         saveShot("verify-health-air-density-cats.png")
+        saveShot("verify-density-cats.png")
 
         // Honest #634: Health Air period picker 7/14/30d
         let period634 = app.descendants(matching: .any)["health.air.density.period"].firstMatch
@@ -14335,6 +14337,7 @@ final class SurfacesUITests: XCTestCase {
                       || app.descendants(matching: .any)["health.air.density.detail.scrub"].firstMatch.exists,
                       "health.air.density.detail.cats")
         saveShot("verify-health-air-density-detail-cats.png")
+        saveShot("verify-density-cats.png")
         // Honest #636: Health scrub readout
         let readout636 = app.descendants(matching: .any)["health.air.density.detail.scrub.readout"].firstMatch
         if readout636.waitForExistence(timeout: 3) {
@@ -18242,6 +18245,73 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         _ = app.staticTexts["Notifications"].exists
         _ = app.staticTexts["Refresh Health Data"].exists || app.staticTexts["Export CSV"].exists
         saveShot("verify-settings-insights.png")
+    }
+
+    /// Honest #791: WHOOP wells on existing density category overlay chips.
+    /// Tight path to the chips (detail sheet + on-card Health glance) without the
+    /// long testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    func testDensityCategoryOverlayChips() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        var n = 0
+        while !(titleFitbit.exists || titleHealth.exists) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(titleFitbit.waitForExistence(timeout: 4) || titleHealth.waitForExistence(timeout: 4),
+                      "Fitbit Air / Health Air")
+
+        // Detail sheet cats sit near the density header (faster than scrolling every meter).
+        let densDetailOpenFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.open"].firstMatch
+        let densDetailOpenHealth = app.descendants(matching: .any)["health.air.density.detail.open"].firstMatch
+        var o = 0
+        while !(densDetailOpenFitbit.exists || densDetailOpenHealth.exists) && o < 16 {
+            app.swipeUp()
+            o += 1
+        }
+        let openBtn = densDetailOpenFitbit.exists ? densDetailOpenFitbit : densDetailOpenHealth
+        if openBtn.waitForExistence(timeout: 4) {
+            if !openBtn.isHittable {
+                for _ in 0..<6 { app.swipeDown() }
+            }
+            if openBtn.isHittable || openBtn.exists {
+                openBtn.tap()
+            }
+        }
+        let densCatsFitbit = app.descendants(matching: .any)["fitbit.air.density.detail.cats"].firstMatch
+        let densCatsHealth = app.descendants(matching: .any)["health.air.density.detail.cats"].firstMatch
+        var c = 0
+        while !(densCatsFitbit.exists || densCatsHealth.exists) && c < 10 {
+            app.swipeUp()
+            c += 1
+        }
+        let densCats = densCatsFitbit.exists ? densCatsFitbit : densCatsHealth
+        if densCats.waitForExistence(timeout: 4) {
+            if densCats.isHittable { densCats.tap() }
+            else { app.swipeUp() }
+        }
+        XCTAssertTrue(densCatsFitbit.exists || densCatsHealth.exists
+                      || densDetailOpenFitbit.exists || densDetailOpenHealth.exists,
+                      "fitbit.air.density.detail.cats / health.air.density.detail.cats")
+        saveShot("verify-density-cats.png")
+        if densCatsFitbit.exists { saveShot("verify-fitbit-air-density-detail-cats.png") }
+        if densCatsHealth.exists { saveShot("verify-health-air-density-detail-cats.png") }
+
+        if app.buttons["Done"].waitForExistence(timeout: 3) {
+            app.buttons["Done"].tap()
+        }
+
+        // On-card Health overlay chips live under health.air.density.glance (after the meter stack).
+        let cats633 = app.descendants(matching: .any)["health.air.density.cats"].firstMatch
+        var c633 = 0
+        while !cats633.exists && c633 < 24 {
+            app.swipeUp()
+            c633 += 1
+        }
+        if cats633.waitForExistence(timeout: 4) {
+            saveShot("verify-health-air-density-cats.png")
+        }
     }
 
     private func revealText(_ text: String) {

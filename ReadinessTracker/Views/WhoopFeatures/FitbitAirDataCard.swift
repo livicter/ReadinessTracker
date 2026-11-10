@@ -348,7 +348,7 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("Health Air density glance")
     }
 
-    /// Honest #633: Health Air category density overlays (Sleep / Vitals / Move).
+    /// Honest #633 / #791: Health Air category density overlays (Sleep / Vitals / Move; WHOOP wells).
     private func healthCategoryOverlay(days: [DailyHealthData], active: Int, healthAccent: Color) -> some View {
         let catSeries: [(cat: AirDensityCategory, points: [(date: Date, density: Double)])] = AirDensityCategory.allCases.map { cat in
             let pts = days.map { day -> (date: Date, density: Double) in
@@ -460,6 +460,17 @@ struct FitbitAirDataCard: View {
                             if healthVisibleCats.contains(cat) {
                                 let chips = AirChip.all(from: days[active])
                                 let r = cat.fillRatio(in: chips)
+                                // Honest #791: WHOOP wells on existing density category overlay chips.
+                                // Idle (filled == 0) ghost/hairline 8/28 secondaryText;
+                                // active complete (filled == total) 14/28 optimal;
+                                // else/partial 14/28 accent. No negative state (fill is non-negative).
+                                let filled = cat.filledCount(in: chips)
+                                let total = cat.chipIDs.count
+                                let chipIsActive = filled > 0
+                                let chipComplete = total > 0 && filled >= total
+                                let chipWellTone: Color = !chipIsActive
+                                    ? RTColor.secondaryText
+                                    : (chipComplete ? RTColor.optimal : healthAccent)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(cat.shortTitle)
                                         .font(.caption2.weight(.semibold))
@@ -470,7 +481,11 @@ struct FitbitAirDataCard: View {
                                 }
                                 .padding(8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(cat.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .background(chipWellTone.opacity(chipIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(chipWellTone.opacity(0.28), lineWidth: 1)
+                                )
                             }
                         }
                     }
@@ -6818,7 +6833,7 @@ struct FitbitAirDensityDetailSheet: View {
         }
     }
 
-    /// Honest #631: Sleep / Vitals / Move density overlays (Google Health multi-series).
+    /// Honest #631 / #791: Sleep / Vitals / Move density overlays (Google Health multi-series; WHOOP wells).
     private var categoryOverlay: some View {
         let catSeries: [(cat: AirDensityCategory, points: [(date: Date, density: Double)])] = AirDensityCategory.allCases.map { cat in
             let pts = days.map { day -> (date: Date, density: Double) in
@@ -6923,6 +6938,17 @@ struct FitbitAirDensityDetailSheet: View {
                             if visibleCats.contains(cat) {
                                 let chips = AirChip.all(from: days[activeIndex])
                                 let r = cat.fillRatio(in: chips)
+                                // Honest #791: WHOOP wells on existing density category overlay chips.
+                                // Idle (filled == 0) ghost/hairline 8/28 secondaryText;
+                                // active complete (filled == total) 14/28 optimal;
+                                // else/partial 14/28 accent. No negative state (fill is non-negative).
+                                let filled = cat.filledCount(in: chips)
+                                let total = cat.chipIDs.count
+                                let chipIsActive = filled > 0
+                                let chipComplete = total > 0 && filled >= total
+                                let chipWellTone: Color = !chipIsActive
+                                    ? RTColor.secondaryText
+                                    : (chipComplete ? RTColor.optimal : accent)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(cat.shortTitle)
                                         .font(.caption2.weight(.semibold))
@@ -6933,7 +6959,11 @@ struct FitbitAirDensityDetailSheet: View {
                                 }
                                 .padding(8)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(cat.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .background(chipWellTone.opacity(chipIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                        .stroke(chipWellTone.opacity(0.28), lineWidth: 1)
+                                )
                             }
                         }
                     }
