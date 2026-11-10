@@ -1,4 +1,3 @@
-Honest #529: Fitbit Air density category stack
+Honest #529 / #793: Fitbit Air density category stack (WHOOP wells)
 SurfaceID fitbit.air.density.stack
-Proof: UITest testFitbitAirDataCardSurface PASS iPhone 17 Pro 26.5
-.audit/verify-fitbit-air-density-stack.png
+Proof: UITest testDensityStackedBar → .audit/verify-density-stack.png / .audit/verify-fitbit-air-density-stack.png

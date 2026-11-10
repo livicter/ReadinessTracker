@@ -1,7 +1,7 @@
-# Honest #686: Health Air density stack
+# Honest #686 / #793: Health Air density stack (WHOOP wells)
 
-Density category stacked bar (Sleep / Vitals / Activity) — Health pink / Google Health graphics.
+Density category stacked bar (Sleep / Vitals / Activity) — chrome-only WHOOP wells.
 SurfaceID: `health.air.density.stack`
 Parity: Fitbit #529 (`fitbit.air.density.stack`)
-Proof: `.audit/verify-health-air-density-stack.png`
+Proof: `.audit/verify-density-stack.png` / `.audit/verify-health-air-density-stack.png`
 model=deepseek-flash

@@ -600,3 +600,11 @@
 | 14:13 HKT | #792 density legend pills | prove | root cause: Air SIDs exist off-screen at launch so exists-only loops never scrolled; isOnScreen(title) then at most 4 swipes to the pills; recapture; model=deepseek-flash |
 | 14:17 HKT | #792 density legend pills | prove | UITest testDensityLegendPills green /tmp/RT-DD792 (194.185s, 0 failures; observer 198.856s); proof .audit/verify-density-legend.png (Health Sleep 1/1, Vitals 5/5, Move 6/6 complete, optimal 14/28, 105949 hits of (227,247,232)); model=deepseek-flash |
 | 14:17 HKT | #792 density legend pills | land | proof PNG + receipt; SID fitbit.air.density.legend / health.air.density.legend / fitbit.air.legend.* / health.air.legend.*; PR squash next; model=deepseek-flash |
+
+| 14:26 HKT | Honest #793 density stacked bar | model=deepseek-flash | restyle existing fitbit.air.density.stack / health.air.density.stack after density legend #792; WHOOP ghost/active wells; solid 0.85/0.35 fills and white labels dropped so contrast holds; category identity stays on label color; mechanical pattern-copy of #792 fill-complete tones applied locally (no separate model iterate needed) | mid-ship |
+| 14:26 HKT | Honest #793 density stacked bar | prove | starting build-for-testing /tmp/RT-DD793; model=deepseek-flash | mid-ship |
+| 14:36 HKT | #793 density stacked bar | prove | starting tight UITest testDensityStackedBar /tmp/RT-DD793; model=deepseek-flash | mid-ship |
+| 14:36 HKT | #793 density stacked bar | prove | UITest testDensityStackedBar green /tmp/RT-DD793 (187.602s, 0 failures; observer 199.812s); proof .audit/verify-density-stack.png (Health stack SLP/VIT/MOV complete, optimal 14/28 well fill 172976 hits of (227,247,232); category-colored labels readable); model=deepseek-flash |
+| 14:37 HKT | #793 density stacked bar | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD793; model=deepseek-flash | mid-ship |
+| 14:52 HKT | #793 density stacked bar | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD793 (769.880s, 0 failures; observer 776.210s); model=deepseek-flash |
+| 14:52 HKT | #793 density stacked bar | land | proof PNG + receipt; SID fitbit.air.density.stack / health.air.density.stack; PR squash next; model=deepseek-flash |

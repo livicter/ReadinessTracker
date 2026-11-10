@@ -18355,6 +18355,40 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if sleepPillHealth.exists { saveShot("verify-health-air-legend-sleep.png") }
     }
 
+    /// Honest #793: WHOOP wells on existing density stacked bar.
+    /// Tight path to the on-card Sleep / Vitals / Move stack without the
+    /// long testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    func testDensityStackedBar() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let stackFitbit = app.descendants(matching: .any)["fitbit.air.density.stack"].firstMatch
+        let stackHealth = app.descendants(matching: .any)["health.air.density.stack"].firstMatch
+        // Stack sits directly under the density legend, just below the card title.
+        // A small number of swipes is enough; large loops overscroll the meter stack.
+        var h = 0
+        while !(isOnScreen(stackFitbit) || isOnScreen(stackHealth)) && h < 4 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(stackFitbit.exists || stackHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "air density category stack")).count > 0,
+                      "fitbit.air.density.stack / health.air.density.stack")
+        saveShot("verify-density-stack.png")
+        if stackFitbit.exists { saveShot("verify-fitbit-air-density-stack.png") }
+        if stackHealth.exists { saveShot("verify-health-air-density-stack.png") }
+    }
+
     private func revealText(_ text: String) {
         let el = app.staticTexts[text]
         var n = 0

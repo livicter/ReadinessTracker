@@ -750,14 +750,14 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel(legendLabel)
     }
 
-    /// Honest #529: interactive Sleep/Vitals/Activity stacked density bar.
+    /// Honest #529 / #793: interactive Sleep/Vitals/Activity stacked density bar (WHOOP wells).
     /// Honest #529: density category stacked bar.
     /// Honest #686: appleWatch / HealthKit uses Health pink + health.air.density.stack (#529 parity).
     private var densityStackedBar: some View {
         let isHealth = source == .appleWatch
         let stackSID = isHealth ? SurfaceID.healthAirDensityStack : SurfaceID.fitbitAirDensityStack
         let stackLabel = isHealth ? "Health air density category stack" : "Air density category stack"
-        let focusStroke: Color = isHealth ? Color(hex: "FF2D55") : Color.white.opacity(0.9)
+        let stackAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
         return GeometryReader { geo in
             let totalW = max(geo.size.width, 1)
             let weights = AirDensityCategory.allCases.map { max(0.08, $0.fillRatio(in: chips)) }
@@ -765,9 +765,21 @@ struct FitbitAirDataCard: View {
             HStack(spacing: 3) {
                 ForEach(Array(AirDensityCategory.allCases.enumerated()), id: \.element.id) { idx, cat in
                     let w = totalW * (weights[idx] / max(sum, 0.01))
-                    let fillBase = isHealth
-                        ? Color(hex: "FF2D55").opacity(0.35 + 0.22 * Double(idx))
-                        : cat.color
+                    // Honest #793: WHOOP wells on existing density stacked bar.
+                    // Idle (filled == 0) ghost/hairline 8/28 secondaryText;
+                    // active complete (filled == total) 14/28 optimal;
+                    // else/partial 14/28 accent. No negative state (fill is non-negative).
+                    // Focus keeps a thicker hairline. Solid 0.85/0.35 category fills
+                    // and inverted white labels dropped so label contrast holds on
+                    // the translucent well; category identity stays on the label color.
+                    let filled = cat.filledCount(in: chips)
+                    let total = cat.chipIDs.count
+                    let segIsActive = filled > 0
+                    let segComplete = total > 0 && filled >= total
+                    let segWellTone: Color = !segIsActive
+                        ? RTColor.secondaryText
+                        : (segComplete ? RTColor.optimal : stackAccent)
+                    let on = focusedLegend == cat
                     Button {
                         Haptic.selectionChanged()
                         focusedLegend = focusedLegend == cat ? nil : cat
@@ -781,16 +793,16 @@ struct FitbitAirDataCard: View {
                     } label: {
                         ZStack(alignment: .leading) {
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(fillBase.opacity(focusedLegend == nil || focusedLegend == cat ? 0.85 : 0.35))
+                                .fill(segWellTone.opacity(segIsActive ? 0.14 : 0.08))
                             Text(cat.shortTitle)
                                 .font(.caption2.weight(.bold))
-                                .foregroundStyle(Color.white)
+                                .foregroundStyle(cat.color)
                                 .padding(.horizontal, 6)
                         }
                         .frame(width: max(28, w - 3), height: 28)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .stroke(focusedLegend == cat ? focusStroke : Color.clear, lineWidth: 2)
+                                .stroke(segWellTone.opacity(0.28), lineWidth: on ? 1.5 : 1)
                         )
                     }
                     .buttonStyle(.plain)
