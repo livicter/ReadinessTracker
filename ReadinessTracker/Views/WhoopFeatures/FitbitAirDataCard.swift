@@ -1017,12 +1017,26 @@ struct FitbitAirDataCard: View {
             let vsSID = isHealthVs ? SurfaceID.healthAirDensityForecastVsMean : SurfaceID.fitbitAirDensityForecastVsMean
             // Honest #534: tomorrow density forecast badge.
             // Honest #683: appleWatch / HealthKit uses Health pink + health.air.density.forecast (#534 parity).
+            // Honest #796: WHOOP wells on the existing forecast badge button.
+            // Idle (abs(deltaPP) < 0.5) ghost/hairline 8/28 secondaryText;
+            // active complete (deltaPP > 0, up) 14/28 optimal;
+            // active negative (deltaPP < 0, down) 14/28 strain.
+            // Inner delta / vs-mean capsules keep their existing tone
+            // (warning for down, optimal for up). Copy, SID, a11y,
+            // and expand-toggle math unchanged.
             let isHealth = source == .appleWatch
             let forecastAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
             let forecastSID = isHealth ? SurfaceID.healthAirDensityForecast : SurfaceID.fitbitAirDensityForecast
             let forecastLabel = isHealth
                 ? "Health tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent"
                 : "Tomorrow density forecast \(Int((fc.tomorrow * 100).rounded())) percent"
+            let wellIsIdle = abs(deltaPP) < 0.5
+            let wellTone: Color = wellIsIdle
+                ? RTColor.secondaryText
+                : (deltaPP > 0 ? RTColor.optimal : RTColor.strain)
+            let wellFill: Color = wellIsIdle
+                ? RTColor.secondaryText.opacity(0.08)
+                : wellTone.opacity(0.14)
             VStack(alignment: .leading, spacing: 8) {
                 Button {
                     Haptic.selectionChanged()
@@ -1061,7 +1075,11 @@ struct FitbitAirDataCard: View {
                     }
                     .foregroundStyle(forecastAccent)
                     .padding(10)
-                    .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(wellTone.opacity(0.28), lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 if showDensityForecastDetail {

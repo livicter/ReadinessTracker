@@ -18498,6 +18498,44 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if heatDayHealth.exists { saveShot("verify-health-air-density-heat-day.png") }
     }
 
+    /// Honest #796: WHOOP wells on existing density forecast badge.
+    /// Tight path to fitbit.air.density.forecast / health.air.density.forecast
+    /// on the Air card (below heatmap + WoW). Avoids the long
+    /// testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    func testDensityForecastBadge() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let forecastFitbit = app.descendants(matching: .any)["fitbit.air.density.forecast"].firstMatch
+        let forecastHealth = app.descendants(matching: .any)["health.air.density.forecast"].firstMatch
+        let tomorrow = app.staticTexts["Tomorrow density"]
+        // Forecast sits just under the heatmap + WoW badge. Heat used at most
+        // 6 swipes from the title; a few more reach the forecast without
+        // overscrolling the meter stack.
+        var h = 0
+        while !(isOnScreen(forecastFitbit) || isOnScreen(forecastHealth) || isOnScreen(tomorrow)) && h < 10 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(forecastFitbit.exists || forecastHealth.exists
+                      || tomorrow.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "tomorrow density forecast")).count > 0,
+                      "fitbit.air.density.forecast / health.air.density.forecast")
+        saveShot("verify-density-forecast.png")
+        if forecastFitbit.exists { saveShot("verify-fitbit-air-density-forecast.png") }
+        if forecastHealth.exists { saveShot("verify-health-air-density-forecast.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

@@ -1,0 +1,15 @@
+Honest #796 — Density forecast badge (WHOOP wells)
+tip_base: de63b85 (main before ship)
+branch: honest-796-density-forecast
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD796 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityForecastBadge CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 187.217
+observer_s: 200.174
+pngs: .audit/verify-density-forecast.png
+SID: fitbit.air.density.forecast / health.air.density.forecast
+when_hkt: 2026-11-10 16:12 HKT
+rationale: chrome-only WHOOP wells on existing Honest #534 / #683 density forecast badge button after density heat.day #795; idle (abs(deltaPP) < 0.5) ghost/hairline 8/28 secondaryText; active complete (deltaPP > 0, up) 14/28 optimal; active negative (deltaPP < 0, down) 14/28 strain; inner delta/vs-mean capsules keep existing tone (warning for down, optimal for up); copy/SID/expand-toggle math and READY formula unchanged; mechanical pattern-copy of #795 applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 781.899s, 0 failures (observer 789.008s) on iPhone 17 Pro starting 16:13:54 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityForecastBadge screenshot of health.air.density.forecast (Apple Watch / HealthKit fixture; Health 7-day density, Tomorrow density 100%, +0pp vs today, vs avg +5pp). Badge button shows idle ghost/hairline 8/28 secondaryText well (flat delta); 117764 hits of (246,246,246) matching 8% of secondaryText #8E8E93 over white. Inner +0pp capsule stays secondary; vs avg +5pp capsule stays Health pink. Heatmap intensity from #794 still visible in the same frame. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then short-swipes to the forecast badge. model=deepseek-flash
+when_proof_hkt: 2026-11-10 16:12 HKT
