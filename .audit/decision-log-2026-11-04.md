@@ -719,3 +719,13 @@
 | 22:22 HKT | #805 density percentile meter | prove | UITest testDensityPercentile green /tmp/RT-DD805 (138.810s, 0 failures; observer 152.150s); proof /tmp/rt-audit/verify-density-percentile.png (health.air.density.percentile); starting testReadinessLoadSimulatorSurface; model=deepseek-flash | mid-ship |
 | 22:36 HKT | #805 density percentile meter | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD805 (824.392s, 0 failures; observer 829.488s); model=deepseek-flash |
 | 22:37 HKT | #805 density percentile meter | land | proof PNG + receipt; SID fitbit.air.density.percentile / health.air.density.percentile; PR squash next; model=deepseek-flash |
+
+| 22:42 HKT | Honest #806 density envelope chart | model=deepseek-flash | restyle existing fitbit.air.density.envelope / health.air.density.envelope after density percentile #805; WHOOP wells on the chart container only; Q1–Q3 AreaMark (meterColor.opacity(0.14)), density LineMark, and dashed median RuleMark left intact (not flattened to a uniform 8/14 wash); idle (no density > 0 in 14d window) ghost/hairline 8/28 secondaryText; active complete (has density, Tight, iqrPP <= 12) 14/28 optimal; active negative (Wide, iqrPP > 22) 14/28 strain; else/partial (Steady, 12 < iqrPP <= 22) 14/28 accent; IQR capsule keeps existing meterColor tone; mechanical pattern-copy of #805/#804 container chrome applied locally (no separate model iterate needed) | mid-ship |
+| 22:42 HKT | Honest #806 density envelope chart | prove | starting build-for-testing /tmp/RT-DD806; model=deepseek-flash | mid-ship |
+
+| 22:51 HKT | #806 density envelope chart | prove | starting tight UITest testDensityEnvelope /tmp/RT-DD806; model=deepseek-flash | mid-ship |
+
+| 22:54 HKT | #806 density envelope chart | prove | UITest testDensityEnvelope green /tmp/RT-DD806 (149.246s, 0 failures; observer 187.704s); proof /tmp/rt-audit/verify-density-envelope.png (health.air.density.envelope); starting testReadinessLoadSimulatorSurface; model=deepseek-flash | mid-ship |
+
+| 23:09 HKT | #806 density envelope chart | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD806 (832.825s, 0 failures; observer 839.391s); model=deepseek-flash |
+| 23:09 HKT | #806 density envelope chart | land | proof PNG + receipt; SID fitbit.air.density.envelope / health.air.density.envelope; PR squash next; model=deepseek-flash |
