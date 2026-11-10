@@ -1,6 +1,6 @@
-# Honest #666: Health Air density Tukey
+# Honest #666 / #808: Health Air density Tukey
 
-Fitbit #584 parity for appleWatch / HealthKit — Health pink Tukey fences (box + 1.5×IQR whiskers).
+Fitbit #584 / #808 parity for appleWatch / HealthKit — Health pink Tukey fences, chrome-only WHOOP wells on the existing container.
 SurfaceID: `health.air.density.tukey`
-Proof: `.audit/verify-health-air-density-tukey.png`
+Proof: `.audit/verify-density-tukey.png`
 model=deepseek-flash

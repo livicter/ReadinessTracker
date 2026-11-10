@@ -1,7 +1,7 @@
-# Honest #666: Health Air density Tukey
+# Honest #666 / #808: Health Air density Tukey
 
-Box + 1.5×IQR whiskers + outlier ticks (Health pink / Google Health graphics).
+Fitbit #584 / #808 parity for appleWatch / HealthKit — Health pink density Tukey fences, chrome-only WHOOP wells on the existing container.
+Idle (no density > 0) ghost/hairline 8/28 secondaryText; complete (has density, Clean, outN == 0) 14/28 optimal; negative (outN > 2) 14/28 strain; else/partial (1–2 outliers) 14/28 accent. Box, whiskers, fence caps, IQR box, median tick, and outlier dots left intact.
 SurfaceID: `health.air.density.tukey`
-Parity: Fitbit #584
-Proof: `.audit/verify-health-air-density-tukey.png`
-model=deepseek-flash
+Proof: `.audit/verify-density-tukey.png`
+UITest: `testDensityTukey`

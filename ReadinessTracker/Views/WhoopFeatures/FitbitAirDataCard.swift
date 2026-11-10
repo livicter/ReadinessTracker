@@ -2909,6 +2909,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density fences" : "Density fences"
         let meterSID = isHealth ? SurfaceID.healthAirDensityTukey : SurfaceID.fitbitAirDensityTukey
+        // Honest #808: WHOOP wells on the existing density Tukey fences container.
+        // The box + 1.5×IQR whiskers, fence caps, IQR box gradient, median tick,
+        // and outlier dots already encode the fence geometry and are left intact —
+        // not flattened to a uniform 8/14 wash.
+        // The verb capsule keeps its existing tone. Label contrast holds
+        // (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Clean, outN == 0) 14/28 optimal;
+        // active negative (outN > 2, warning / many outliers) 14/28 strain;
+        // else/partial (1–2 outliers) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (outN == 0 ? RTColor.optimal
+               : (outN > 2 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.boxplot.fill")
@@ -2986,10 +3004,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("\(meterTitle) Tukey fences \(verb), median \(Int((med * 100).rounded())) percent")

@@ -19051,6 +19051,51 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if meterExistsNow(madHealth) { saveShot("verify-health-air-density-mad.png") }
     }
 
+    func testDensityTukey() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.tukey",
+                        "fitbit.air.density.tukey")
+        ).firstMatch
+        let tukeyFitbit = app.descendants(matching: .any)["fitbit.air.density.tukey"].firstMatch
+        let tukeyHealth = app.descendants(matching: .any)["health.air.density.tukey"].firstMatch
+        let mad = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.mad",
+                        "fitbit.air.density.mad")
+        ).firstMatch
+
+        // Tukey sits immediately under MAD. Walk like #807 until
+        // meterVisible(MAD). The Tukey SID surfaces as a non-hittable
+        // Image whose frame never intersects the content band. A default
+        // 500 px/s drag has inertia — run 4's two 0.28→0.12 nudges
+        // overshot to ACF/Gini/volatility. One short slow drag (~105pt)
+        // with a hold at the end kills the flick and reveals Tukey just
+        // below MAD. Exact SID predicates only, no CONTAINS. Caption may
+        // sit under the Today tab bar (same as #807).
+        var n = 0
+        while !meterVisible(mad) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(meterVisible(mad),
+                      "health.air.density.mad / fitbit.air.density.mad (anchor for Tukey)")
+
+        let window = app.windows.firstMatch
+        let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.40))
+        let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+        start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.25)
+
+        XCTAssertTrue(meterExistsNow(meter),
+                      "fitbit.air.density.tukey / health.air.density.tukey")
+        saveShot("verify-density-tukey.png")
+        if meterExistsNow(tukeyFitbit) { saveShot("verify-fitbit-air-density-tukey.png") }
+        if meterExistsNow(tukeyHealth) { saveShot("verify-health-air-density-tukey.png") }
+    }
+
     private func meterExistsNow(_ el: XCUIElement) -> Bool {
         el.waitForExistence(timeout: 0.1)
     }
