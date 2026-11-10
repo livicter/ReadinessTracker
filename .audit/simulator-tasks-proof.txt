@@ -1,0 +1,11 @@
+Honest #788 — Simulator tasks container (WHOOP wells)
+tip_base: ff909e5 (main before ship)
+branch: honest-788-sim-tasks
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD788 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 847.793
+observer_s: 873.94
+pngs: .audit/verify-simulator-tasks.png
+SID: sim.load.tasks
+when_hkt: 2026-11-10 10:24 HKT
+rationale: chrome-only WHOOP wells on existing Honest #499 sim.load.tasks container outer wells after air strip #787; idle (no checks) ghost/hairline 8/28 secondaryText; active complete (all checked) 14/28 optimal; active negative (partial, lift < 0) 14/28 strain; else/partial 14/28 accent; inner controls/copy/SID/READY formula unchanged; air-radar inner pills still use cat.color.opacity(0.10) and remain the next sibling; mechanical pattern-copy of #784/#781 outer wells applied locally; model=deepseek-flash

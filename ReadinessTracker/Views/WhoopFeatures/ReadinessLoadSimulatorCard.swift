@@ -5762,6 +5762,7 @@ struct ReadinessLoadSimulatorCard: View {
         }
     }
 
+    /// Honest #499 / #788: checkable Today's tasks list (WHOOP wells; Google Health graphics).
     private var tasksBlock: some View {
         let base = showAirGapTasksOnly
             ? tasks.filter { $0.id.hasPrefix("air-") || $0.id.contains("air") }
@@ -5771,6 +5772,16 @@ struct ReadinessLoadSimulatorCard: View {
             : base
         let done = ordered.filter { completedTaskIDs.contains($0.id) }.count
         let lift = ordered.filter { completedTaskIDs.contains($0.id) }.map(\.readyDelta).reduce(0, +)
+        // Honest #788: WHOOP wells on the existing tasks list container.
+        // Idle (no checks) ghost/hairline 8/28 secondaryText;
+        // active complete (all checked) 14/28 optimal;
+        // active negative (partial, lift < 0) 14/28 strain;
+        // else/partial 14/28 accent.
+        let tasksContainerIsActive = done > 0
+        let tasksContainerAllComplete = !ordered.isEmpty && done == ordered.count
+        let tasksContainerWellTone: Color = !tasksContainerIsActive
+            ? RTColor.secondaryText
+            : (tasksContainerAllComplete ? RTColor.optimal : (lift < 0 ? Color(hex: "FF375F") : accent))
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Text("Today’s tasks")
@@ -6269,6 +6280,12 @@ struct ReadinessLoadSimulatorCard: View {
                 taskImpactRow(task)
             }
         }
+        .padding(10)
+        .background(tasksContainerWellTone.opacity(tasksContainerIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(tasksContainerWellTone.opacity(0.28), lineWidth: 1)
+        )
         .accessibilityIdentifier(SurfaceID.readinessSimulatorTasks)
     }
 

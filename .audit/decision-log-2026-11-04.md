@@ -560,3 +560,8 @@
 | 09:39 HKT | Honest #787 Simulator air strip | prove | starting UITest /tmp/RT-DD787; model=deepseek-flash | mid-ship |
 | 09:58 HKT | #787 Simulator air strip | prove | UITest suite green /tmp/RT-DD787 (790.308s, 0 failures; observer 803.828s); model=deepseek-flash |
 | 09:58 HKT | #787 Simulator air strip | land | proof PNG + receipt; SID fitbit.air.strip / health.air.strip; PR squash next; model=deepseek-flash |
+
+| 10:03 HKT | Honest #788 Simulator tasks container | model=deepseek-flash | restyle existing sim.load.tasks container outer wells after air strip #787; WHOOP ghost/active wells; air-radar inner pills still use cat.color.opacity(0.10) and remain the next sibling; mechanical pattern-copy of #784/#781 outer wells applied locally (no separate model iterate needed) | mid-ship |
+| 10:03 HKT | Honest #788 Simulator tasks container | prove | starting UITest /tmp/RT-DD788; model=deepseek-flash | mid-ship |
+| 10:25 HKT | #788 Simulator tasks container | prove | UITest suite green /tmp/RT-DD788 (847.793s, 0 failures; observer 873.94s); model=deepseek-flash |
+| 10:25 HKT | #788 Simulator tasks container | land | proof PNG + receipt; SID sim.load.tasks; PR squash next; model=deepseek-flash |
