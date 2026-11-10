@@ -18757,6 +18757,54 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if histHealth.exists { saveShot("verify-health-air-density-hist.png") }
     }
 
+    /// Honest #802: WHOOP wells on existing density CV meter.
+    /// Tight path to fitbit.air.density.cv / health.air.density.cv
+    /// on the Air card (immediately after the distribution hist, below
+    /// heatmap + WoW + forecast + streak + spark + hist). Avoids the long
+    /// testFitbitAirDataCardSurface walk that hangs on spark swipe-down
+    /// after Honest #790. After the Air title is on-screen, further swipes
+    /// originate in the upper third so the spark's DragGesture cannot eat
+    /// the scroll. CV sits just under the hist, so the post-title budget
+    /// is a little larger than testDensityHist's 24 short-swipes.
+    func testDensityCV() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let cvFitbit = app.descendants(matching: .any)["fitbit.air.density.cv"].firstMatch
+        let cvHealth = app.descendants(matching: .any)["health.air.density.cv"].firstMatch
+        let cvTitleFitbit = app.staticTexts["Density CV"]
+        let cvTitleHealth = app.staticTexts["Health Density CV"]
+        // CV sits just under the hist. Hist used at most 24 upper-third
+        // swipes from the title; a few more reach the CV meter. Swipes stay
+        // in the upper third so we never swipe-down on the spark.
+        var h = 0
+        while !(isOnScreen(cvFitbit) || isOnScreen(cvHealth)
+                || isOnScreen(cvTitleFitbit) || isOnScreen(cvTitleHealth)) && h < 28 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+        XCTAssertTrue(cvFitbit.exists || cvHealth.exists
+                      || cvTitleFitbit.exists || cvTitleHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "coefficient of variation")).count > 0,
+                      "fitbit.air.density.cv / health.air.density.cv")
+        saveShot("verify-density-cv.png")
+        if cvFitbit.exists { saveShot("verify-fitbit-air-density-cv.png") }
+        if cvHealth.exists { saveShot("verify-health-air-density-cv.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

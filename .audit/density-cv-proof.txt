@@ -1,0 +1,15 @@
+Honest #802 — Density CV meter (WHOOP wells)
+tip_base: f142ad4 (main before ship)
+branch: honest-802-density-cv
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD802 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityCV CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 207.121
+observer_s: 218.707
+pngs: .audit/verify-density-cv.png
+SID: fitbit.air.density.cv / health.air.density.cv
+when_hkt: 2026-11-10 19:40 HKT
+rationale: chrome-only WHOOP wells on existing Honest #572 / #670 density CV meter container after density hist #801 (CV is the next unstyled meter body after hist in visual order); ratio track already encodes the CV reading itself (barFrac = min(1, cv/0.5) fill plus meterColor→tone gradient) and is left intact — not flattened to a uniform 8/14 wash; idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText; active complete (has density, Stable, cvPP <= 15) 14/28 optimal; active negative (Volatile, cvPP > 30) 14/28 strain; else/partial (Mixed, 15 < cvPP <= 30) 14/28 accent; stability capsule keeps existing tone (Stable/optimal, Mixed/good, Volatile/warning); label contrast holds (no white text on a light wash); copy/SID/CV math and READY formula unchanged. Mechanical pattern-copy of #801 container chrome applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 775.634s, 0 failures (observer 781.663s) on iPhone 17 Pro starting 19:41:38 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityCV screenshot of health.air.density.cv (Apple Watch / HealthKit fixture). Health Density CV shows active complete 14/28 optimal well (Stable · 12%, cvPP=12 <= 15). In the CV well band (top hairline y=2209 of the 1206×2622 3x shot): 840 exact hits of (198,239,209) matching 28% of RTColor.optimal; 5160 exact hits of (227,247,232) in y=2209–2217 plus 16265 near-exact (226,246,231) in y=2220–2239 matching 14% optimal over white (the track and σ/μ caption continue under the tab bar in this frame). Zero leftover (255,240,243) 7% or (255,226,231) 14% Health-pink chrome in y=2168–2499 — the old 0.07/0.28 accent wash is gone. Stability capsule Stable · 12% stays optimal green on the light mint wash (contrast holds; not inverted white). Health Density hist (14/28 optimal, μ 95% · 14d) sits above. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then upper-third short-swipes (budget 28) to the CV meter so the spark DragGesture cannot eat a swipe-down. A later follow-up that added 3 extra swipes for a full-meter crop overscrolled into the later stack (still green 227.478s / observer 237.923s) and was reverted so the committed test matches this first receipt. model=deepseek-flash
+when_proof_hkt: 2026-11-10 19:40 HKT
