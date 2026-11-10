@@ -227,9 +227,9 @@ enum SurfaceID {
     static let readinessSimulatorLeverDeltas = "sim.load.delta.levers"  // Honest #516 / #780
     static let fitbitAirLegendSparkLink = "fitbit.air.legend.spark"  // Honest #517
     static let healthAirLegendSparkLink = "health.air.legend.spark"  // Honest #707
-    static let healthAirLegendSleep = "health.air.legend.sleep"  // Honest #709
-    static let healthAirLegendVitals = "health.air.legend.vitals"  // Honest #710
-    static let healthAirLegendActivity = "health.air.legend.activity"  // Honest #711
+    static let healthAirLegendSleep = "health.air.legend.sleep"  // Honest #709 / #792
+    static let healthAirLegendVitals = "health.air.legend.vitals"  // Honest #710 / #792
+    static let healthAirLegendActivity = "health.air.legend.activity"  // Honest #711 / #792
     static let readinessSimulatorSeedAir = "sim.load.seed.air"  // Honest #518 / #722
     static let fitbitAirDataSparkDelta = "fitbit.air.spark.delta"  // Honest #519
     static let healthAirDataSparkDelta = "health.air.spark.delta"  // Honest #699
@@ -383,7 +383,7 @@ enum SurfaceID {
     static let healthAirDensityWow = "health.air.density.wow"  // Honest #687
     static let healthAirDensityHeatDay = "health.air.density.heat.day"  // Honest #688
     static let healthAirDensitySpark = "health.air.density.spark"  // Honest #689
-    static let healthAirDensityLegend = "health.air.density.legend"  // Honest #690
+    static let healthAirDensityLegend = "health.air.density.legend"  // Honest #690 / #792
     static let healthAirDensity = "health.air.density"  // Honest #691
     static let healthAirDensityCats = "health.air.density.cats"  // Honest #633 / #791
     static let healthAirDensityPeriod = "health.air.density.period"  // Honest #634
@@ -426,7 +426,7 @@ enum SurfaceID {
     static let healthAirChipMiniSpark = "health.air.chip.spark"  // Honest #701
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532
     static let healthAirChipSparkScrub = "health.air.chip.spark.scrub"  // Honest #702
-    static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513
+    static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513 / #792
     static let fitbitAirDataDensitySpark = "fitbit.air.density.spark"  // Honest #514
     static let fitbitAirDataStrip = "fitbit.air.strip"  // Honest #497 / #787
     static let healthAirDataStrip = "health.air.strip"  // Honest #708 / #787

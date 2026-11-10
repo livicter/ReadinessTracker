@@ -587,3 +587,16 @@
 | 13:21 HKT | #791 density category overlay chips | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD791; model=deepseek-flash | mid-ship |
 | 13:34 HKT | #791 density category overlay chips | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD791 (800.389s, 0 failures; observer 811.706s); model=deepseek-flash |
 | 13:34 HKT | #791 density category overlay chips | land | proof PNG + receipt; SID health.air.density.cats / fitbit.air.density.detail.cats / health.air.density.detail.cats; PR squash next; model=deepseek-flash |
+
+| 13:39 HKT | Honest #792 density legend pills | model=deepseek-flash | restyle existing fitbit.air.density.legend / health.air.density.legend inner pills (fitbit.air.legend.* / health.air.legend.*) after density cats #791; WHOOP ghost/active wells; mechanical pattern-copy of #791 fill-complete tones applied locally (no separate model iterate needed) | mid-ship |
+| 13:39 HKT | Honest #792 density legend pills | prove | starting build-for-testing /tmp/RT-DD792; model=deepseek-flash | mid-ship |
+| 13:45 HKT | #792 density legend pills | prove | starting tight UITest testDensityLegendPills /tmp/RT-DD792; model=deepseek-flash | mid-ship |
+| 13:47 HKT | #792 density legend pills | prove | UITest testDensityLegendPills green /tmp/RT-DD792 (76.351s, 0 failures; observer 88.967s); proof .audit/verify-density-legend.png (Health legend pills, optimal 14/28 well fill 7937 hits of (227,247,232)); model=deepseek-flash |
+| 13:48 HKT | #792 density legend pills | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD792; model=deepseek-flash | mid-ship |
+| 13:49 HKT | #792 density legend pills | prove | first verify-density-legend.png was the Today readiness card (test found SIDs in hierarchy then swipe-down left the legend off-screen); test fixed to scroll legend on-screen; will recapture after LoadSim; model=deepseek-flash |
+| 14:01 HKT | #792 density legend pills | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD792 (798.916s, 0 failures; observer 804.455s); model=deepseek-flash |
+| 14:02 HKT | #792 density legend pills | prove | rebuilding tight UITest with on-screen scroll fix, recapturing verify-density-legend.png; model=deepseek-flash | mid-ship |
+| 14:06 HKT | #792 density legend pills | prove | recapture test failed 156s: legend container not hittable, 16 swipe-ups overscrolled, legend.swipeUp empty frame; retarget isOnScreen(sleep pill); model=deepseek-flash |
+| 14:13 HKT | #792 density legend pills | prove | root cause: Air SIDs exist off-screen at launch so exists-only loops never scrolled; isOnScreen(title) then at most 4 swipes to the pills; recapture; model=deepseek-flash |
+| 14:17 HKT | #792 density legend pills | prove | UITest testDensityLegendPills green /tmp/RT-DD792 (194.185s, 0 failures; observer 198.856s); proof .audit/verify-density-legend.png (Health Sleep 1/1, Vitals 5/5, Move 6/6 complete, optimal 14/28, 105949 hits of (227,247,232)); model=deepseek-flash |
+| 14:17 HKT | #792 density legend pills | land | proof PNG + receipt; SID fitbit.air.density.legend / health.air.density.legend / fitbit.air.legend.* / health.air.legend.*; PR squash next; model=deepseek-flash |

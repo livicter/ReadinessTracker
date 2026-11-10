@@ -652,6 +652,18 @@ struct FitbitAirDataCard: View {
         let pillColor: Color = isHealth
             ? Color(hex: "FF2D55").opacity(0.55 + 0.15 * Double(idx))
             : cat.color
+        // Honest #792: WHOOP wells on existing density legend pills.
+        // Idle (filled == 0) ghost/hairline 8/28 secondaryText;
+        // active complete (filled == total) 14/28 optimal;
+        // else/partial 14/28 accent. No negative state (fill is non-negative).
+        // Focus keeps a thicker hairline; inverted white-on-solid fill dropped so
+        // label contrast holds on the translucent well.
+        let pillIsActive = filled > 0
+        let pillComplete = total > 0 && filled >= total
+        let pillWellTone: Color = !pillIsActive
+            ? RTColor.secondaryText
+            : (pillComplete ? RTColor.optimal : accent)
+        let on = focusedLegend == cat
         return Button {
             Haptic.selectionChanged()
             focusedLegend = focusedLegend == cat ? nil : cat
@@ -671,21 +683,18 @@ struct FitbitAirDataCard: View {
                         .frame(width: 7, height: 7)
                     Text(cat.title)
                         .font(.caption2.weight(.bold))
-                        .foregroundStyle(focusedLegend == cat ? Color.white : RTColor.primaryText)
+                        .foregroundStyle(RTColor.primaryText)
                 }
                 Text("\(filled)/\(total)")
                     .font(.caption.weight(.bold).monospacedDigit())
-                    .foregroundStyle(focusedLegend == cat ? Color.white.opacity(0.9) : pillColor)
+                    .foregroundStyle(pillColor)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(focusedLegend == cat ? pillColor : pillColor.opacity(0.10))
-            )
+            .background(pillWellTone.opacity(pillIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(focusedLegend == cat ? pillColor.opacity(0.8) : Color.clear, lineWidth: 1)
+                    .stroke(pillWellTone.opacity(0.28), lineWidth: on ? 1.5 : 1)
             )
         }
         .buttonStyle(.plain)
@@ -699,7 +708,7 @@ struct FitbitAirDataCard: View {
         .accessibilityLabel("\(isHealth ? "Health " : "")\(cat.title) density \(filled) of \(total)")
     }
 
-    /// Honest #513: interactive Sleep / Vitals / Activity density legend.
+    /// Honest #513 / #792: interactive Sleep / Vitals / Activity density legend (WHOOP wells).
     /// Honest #690: appleWatch / HealthKit uses Health pink + health.air.density.legend (#513 parity).
     /// Honest #707: appleWatch / HealthKit legend→spark link uses health.air.legend.spark (#517 parity).
     /// Honest #709: appleWatch / HealthKit legend pills use health.air.legend.sleep (#513 parity).

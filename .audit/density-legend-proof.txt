@@ -1,0 +1,15 @@
+Honest #792 — Density legend pills (WHOOP wells)
+tip_base: e3d5813 (main before ship)
+branch: honest-792-density-legend
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD792 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityLegendPills CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 194.185
+observer_s: 198.856
+pngs: .audit/verify-density-legend.png
+SID: fitbit.air.density.legend / health.air.density.legend / fitbit.air.legend.* / health.air.legend.*
+when_hkt: 2026-11-10 14:17 HKT
+rationale: chrome-only WHOOP wells on existing Honest #513 / #690 / #709 / #710 / #711 density legend pills after density cats #791; idle (filled == 0) ghost/hairline 8/28 secondaryText; active complete (filled == total) 14/28 optimal; else/partial 14/28 accent; no negative state (fill is non-negative); focus keeps a thicker hairline; inverted white-on-solid fill dropped so label contrast holds; copy/SID/focus-toggle math/spark-link/READY formula unchanged; mechanical pattern-copy of #791 fill-complete tones applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 798.916s, 0 failures (observer 804.455s) on iPhone 17 Pro starting 13:48:25 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityLegendPills screenshot of health.air.density.legend (Apple Watch / HealthKit fixture; Sleep 1/1, Vitals 5/5, Move 6/6 complete, optimal 14/28 wells) bound as .audit/verify-density-legend.png. Well fill samples (227,247,232) = RTColor.optimal #34C759 @ 14% on white (105949 hits). First capture was a false Today-readiness shot because Air SIDs exist off-screen at launch; tight test now scrolls until the Health Air / Fitbit Air title is on-screen, then a short swipe to the pills. model=deepseek-flash
+when_proof_hkt: 2026-11-10 14:17 HKT
