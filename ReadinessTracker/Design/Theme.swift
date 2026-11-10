@@ -324,7 +324,7 @@ enum SurfaceID {
     static let fitbitAirDensityMartin = "fitbit.air.density.martin"  // Honest #624
     static let fitbitAirDensityKappa = "fitbit.air.density.kappa"  // Honest #627
     static let fitbitAirDensityGainPain = "fitbit.air.density.gainpain"  // Honest #628
-    static let fitbitAirDensityTail = "fitbit.air.density.tail"  // Honest #629
+    static let fitbitAirDensityTail = "fitbit.air.density.tail"  // Honest #629 / #800
     static let fitbitAirDensityDetailOpen = "fitbit.air.density.detail.open"  // Honest #630
     static let fitbitAirDensityDetail = "fitbit.air.density.detail"  // Honest #630
     static let fitbitAirDensityDetailScrub = "fitbit.air.density.detail.scrub"  // Honest #630
@@ -334,7 +334,7 @@ enum SurfaceID {
     static let healthAirDensityScrub = "health.air.density.scrub"  // Honest #632
     static let healthAirDensityGainPain = "health.air.density.gainpain"  // Honest #632
     static let healthAirDensityGainPainMeter = "health.air.density.gainpain.meter"  // Honest #640
-    static let healthAirDensityTail = "health.air.density.tail"  // Honest #641
+    static let healthAirDensityTail = "health.air.density.tail"  // Honest #641 / #800
     static let healthAirDensityMartin = "health.air.density.martin"  // Honest #642
     static let healthAirDensityKappa = "health.air.density.kappa"  // Honest #643
     static let healthAirDensityBurke = "health.air.density.burke"  // Honest #644

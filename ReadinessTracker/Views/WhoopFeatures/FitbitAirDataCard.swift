@@ -5530,6 +5530,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #629: density Tail Ratio — mean top-tail Δ / |mean bottom-tail Δ| (Fitbit graphics).
     /// Honest #641: appleWatch / HealthKit uses Health pink + health.air.density.tail (#629 parity).
+    /// Honest #800: WHOOP wells on the existing density tail meter container.
     @ViewBuilder
     private var densityTailMeter: some View {
         let days = Array(history.suffix(14))
@@ -5576,6 +5577,24 @@ struct FitbitAirDataCard: View {
             verb = "Left"; tone = RTColor.warning
         }
         let disp = String(format: "%.2f", ratio)
+        // Honest #800: WHOOP wells on the existing density tail meter container.
+        // The ratio track already encodes the clamped 0...4 value (accent→tone
+        // gradient fill) and the 7-bin histogram already encodes tail category
+        // (warning left / accent mid / optimal right). Those fills are left
+        // intact — not flattened to a uniform 8/14 wash. The verb capsule keeps
+        // its existing tone. Label contrast holds (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (ratio >= 2, Fat) 14/28 optimal;
+        // active negative (ratio < 0.5, Left, and has density) 14/28 strain;
+        // else/partial (Balanced / Lean) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (ratio >= 2.0 ? RTColor.optimal
+               : (ratio < 0.5 ? RTColor.strain : meterAccent))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         let dLo = min(sorted.first ?? -0.01, -1e-6)
         let dHi = max(sorted.last ?? 0.01, 1e-6)
         let dSpan = dHi - dLo
@@ -5655,10 +5674,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterAccent.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterAccent.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(sid)
         .accessibilityLabel("\(title) \(verb) \(disp)")
