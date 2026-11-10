@@ -2764,6 +2764,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #582: density MAD meter — median absolute deviation of last-14 dens (Google Health graphics).
     /// Honest #667: appleWatch / HealthKit uses Health pink + health.air.density.mad (#582 parity).
+    /// Honest #807: WHOOP wells on the existing density MAD meter container.
     @ViewBuilder
     private var densityMADMeter: some View {
         let days = Array(history.suffix(14))
@@ -2794,6 +2795,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density MAD" : "Density MAD"
         let meterSID = isHealth ? SurfaceID.healthAirDensityMAD : SurfaceID.fitbitAirDensityMAD
+        // Honest #807: WHOOP wells on the existing density MAD meter container.
+        // The ratio track already encodes the MAD reading itself (optimal/good/warning
+        // gradient capsule and tone-filled needle) and is left intact — not flattened
+        // to a uniform 8/14 wash.
+        // The verb capsule keeps its existing tone. Label contrast holds
+        // (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Stable, madPP <= 8) 14/28 optimal;
+        // active negative (Volatile, madPP > 15) 14/28 strain;
+        // else/partial (Mild, 8 < madPP <= 15) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (madPP <= 8 ? RTColor.optimal
+               : (madPP > 15 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path.ecg")
@@ -2840,10 +2859,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density MAD \(verb) \(madPP) points")

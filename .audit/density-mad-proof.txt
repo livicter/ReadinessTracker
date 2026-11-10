@@ -1,0 +1,16 @@
+Honest #807 — Density MAD meter (WHOOP wells)
+tip_base: 7685244 (main before ship)
+branch: honest-807-density-mad
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD807 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityMAD CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 130.424
+observer_s: 143.221
+pngs: .audit/verify-density-mad.png
+SID: fitbit.air.density.mad / health.air.density.mad
+when_hkt: 2026-11-10 23:22 HKT
+rationale: chrome-only WHOOP wells on existing Honest #582 / #667 density MAD meter container after density envelope #806 (MAD is the next unstyled meter body after envelope in visual order); optimal/good/warning gradient capsule and tone-filled needle already encode the MAD reading itself and are left intact — not flattened to a uniform 8/14 wash; idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText; active complete (has density, Stable, madPP <= 8) 14/28 optimal; active negative (Volatile, madPP > 15) 14/28 strain; else/partial (Mild, 8 < madPP <= 15) 14/28 accent; verb capsule keeps existing tone; label contrast holds (no white text on a light wash); copy/SID/MAD math and READY formula unchanged. accessibilityIdentifier(sid) kept so the well stays addressable. Mechanical pattern-copy of #806/#805 container chrome applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 772.594s, 0 failures (observer 778.682s) on iPhone 17 Pro. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityMAD screenshot of health.air.density.mad (Apple Watch / HealthKit fixture), 18 app.swipeUp() from Today, exact SID identifier predicate (timeout 0.1), no CONTAINS fallback. Health Density MAD shows active complete 14/28 optimal well (Stable 0pp, madPP=0 <= 8). The gradient track and green tone-filled needle (left / zero MAD) are left intact. Verb capsule stays green Stable 0pp on the light wash (contrast holds; not inverted white). Lower caption (Med % / robust scale) sits under the floating Today tab bar; title, capsule, track, and well chrome are on-screen. No extra crop swipes (same walk as #804-#806). In the MAD well band (y=2110–2265 of the 1206×2622 3x shot): 50259 exact hits of (227,247,232) matching 14% optimal over white; 28% optimal hairline sampled as (198,239,209) ×840 on the well edge (row 2144) and (202,240,212) ×812 (row 2146). Zero leftover (255,226,231)/(255,196,207)/(255,240,243) 14/28/7% Health-pink chrome pixels in that band. (255,45,85) ×155 in the band is the Health-pink MAD icon (existing meterColor glyph, not container chrome). Health Density envelope above still shows its #806 complete 14/28 optimal well (IQR 0pp). Tight test stays on Today, app.swipeUp() (center, clear of the floating tab bar) until the exact SID is hittable / on-screen, then stops (no extra crop swipes). model=deepseek-flash
+when_proof_hkt: 2026-11-10 23:22 HKT
+when_loadsim_hkt: 2026-11-10 23:36 HKT

@@ -19014,6 +19014,43 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if meterExistsNow(envHealth) { saveShot("verify-health-air-density-envelope.png") }
     }
 
+    func testDensityMAD() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.mad",
+                        "fitbit.air.density.mad")
+        ).firstMatch
+        let madFitbit = app.descendants(matching: .any)["fitbit.air.density.mad"].firstMatch
+        let madHealth = app.descendants(matching: .any)["health.air.density.mad"].firstMatch
+
+        var n = 0
+        while !meterVisible(meter) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+
+        // If the SID exists but the well sits under the tab bar, a few
+        // upper-third nudges. Stop as soon as it is on-screen — no extra
+        // crop swipes.
+        var h = 0
+        while meterExistsNow(meter) && !meterVisible(meter) && h < 6 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+
+        XCTAssertTrue(meterVisible(meter),
+                      "fitbit.air.density.mad / health.air.density.mad")
+        saveShot("verify-density-mad.png")
+        if meterExistsNow(madFitbit) { saveShot("verify-fitbit-air-density-mad.png") }
+        if meterExistsNow(madHealth) { saveShot("verify-health-air-density-mad.png") }
+    }
+
     private func meterExistsNow(_ el: XCUIElement) -> Bool {
         el.waitForExistence(timeout: 0.1)
     }
