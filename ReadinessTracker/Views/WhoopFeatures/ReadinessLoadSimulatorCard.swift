@@ -5683,6 +5683,17 @@ struct ReadinessLoadSimulatorCard: View {
         let n = cat.filledCount(in: chips)
         let den = cat.chipIDs.count
         let on = focusedAirRadar == cat
+        // Honest #789: WHOOP wells on existing air-radar category pills.
+        // Idle (n == 0) ghost/hairline 8/28 secondaryText;
+        // active complete (n == den) 14/28 optimal;
+        // else/partial 14/28 accent. No negative state (coverage is non-negative).
+        // Focus keeps a thicker hairline; inverted white-on-solid fill dropped so
+        // label contrast holds on the translucent well.
+        let pillIsActive = n > 0
+        let pillComplete = den > 0 && n >= den
+        let pillWellTone: Color = !pillIsActive
+            ? RTColor.secondaryText
+            : (pillComplete ? RTColor.optimal : accent)
         return Button {
             Haptic.selectionChanged()
             focusedAirRadar = on ? nil : cat
@@ -5696,11 +5707,11 @@ struct ReadinessLoadSimulatorCard: View {
                     .frame(width: 7, height: 7)
                 Text(cat.title)
                     .font(.caption2.weight(.bold))
-                    .foregroundStyle(on ? Color.white : RTColor.primaryText)
+                    .foregroundStyle(RTColor.primaryText)
                 Spacer(minLength: 0)
                 Text("\(n)/\(den)")
                     .font(.caption2.weight(.bold).monospacedDigit())
-                    .foregroundStyle(on ? Color.white.opacity(0.95) : cat.color)
+                    .foregroundStyle(cat.color)
                 GeometryReader { geo in
                     let w = max(geo.size.width, 1)
                     ZStack(alignment: .leading) {
@@ -5714,9 +5725,10 @@ struct ReadinessLoadSimulatorCard: View {
             }
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
-            .background(
+            .background(pillWellTone.opacity(pillIsActive ? 0.14 : 0.08), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(on ? cat.color : cat.color.opacity(0.10))
+                    .stroke(pillWellTone.opacity(0.28), lineWidth: on ? 1.5 : 1)
             )
         }
         .buttonStyle(.plain)

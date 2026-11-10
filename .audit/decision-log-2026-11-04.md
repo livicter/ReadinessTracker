@@ -565,3 +565,8 @@
 | 10:03 HKT | Honest #788 Simulator tasks container | prove | starting UITest /tmp/RT-DD788; model=deepseek-flash | mid-ship |
 | 10:25 HKT | #788 Simulator tasks container | prove | UITest suite green /tmp/RT-DD788 (847.793s, 0 failures; observer 873.94s); model=deepseek-flash |
 | 10:25 HKT | #788 Simulator tasks container | land | proof PNG + receipt; SID sim.load.tasks; PR squash next; model=deepseek-flash |
+
+| 10:30 HKT | Honest #789 Simulator air-radar pills | model=deepseek-flash | restyle existing sim.load.air.radar inner category pills after tasks container #788; WHOOP ghost/active wells; mechanical pattern-copy of #787 air-strip chip wells / #788 fill-complete tones applied locally (no separate model iterate needed) | mid-ship |
+| 10:30 HKT | Honest #789 Simulator air-radar pills | prove | starting UITest /tmp/RT-DD789; model=deepseek-flash | mid-ship |
+| 10:49 HKT | #789 Simulator air-radar pills | prove | UITest suite green /tmp/RT-DD789 (781.331s, 0 failures; observer 793.762s); model=deepseek-flash |
+| 10:49 HKT | #789 Simulator air-radar pills | land | proof PNG + receipt; SID sim.load.air.radar; PR squash next; model=deepseek-flash |
