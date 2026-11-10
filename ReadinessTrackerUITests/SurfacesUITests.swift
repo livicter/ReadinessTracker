@@ -18314,6 +18314,47 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         }
     }
 
+    /// Honest #792: WHOOP wells on existing density legend pills.
+    /// Tight path to the on-card legend (Sleep / Vitals / Activity) without the
+    /// long testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    func testDensityLegendPills() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let legendFitbit = app.descendants(matching: .any)["fitbit.air.density.legend"].firstMatch
+        let legendHealth = app.descendants(matching: .any)["health.air.density.legend"].firstMatch
+        let sleepPillFitbit = app.descendants(matching: .any)["fitbit.air.legend.sleep"].firstMatch
+        let sleepPillHealth = app.descendants(matching: .any)["health.air.legend.sleep"].firstMatch
+        let sleepPill = sleepPillFitbit.exists ? sleepPillFitbit : sleepPillHealth
+        // Legend sits under the density ring, just below the card title. A small
+        // number of swipes is enough; large loops overscroll the meter stack.
+        var h = 0
+        while !(isOnScreen(sleepPill) || isOnScreen(legendFitbit) || isOnScreen(legendHealth)) && h < 4 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(legendFitbit.exists || legendHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "air density legend")).count > 0,
+                      "fitbit.air.density.legend / health.air.density.legend")
+        XCTAssertTrue(sleepPillFitbit.exists || sleepPillHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Sleep density")).count > 0,
+                      "fitbit.air.legend.sleep / health.air.legend.sleep")
+        saveShot("verify-density-legend.png")
+        if legendFitbit.exists { saveShot("verify-fitbit-air-data-density-legend.png") }
+        if legendHealth.exists { saveShot("verify-health-air-density-legend.png") }
+        if sleepPillHealth.exists { saveShot("verify-health-air-legend-sleep.png") }
+    }
+
     private func revealText(_ text: String) {
         let el = app.staticTexts[text]
         var n = 0
