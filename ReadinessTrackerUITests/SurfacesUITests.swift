@@ -10446,10 +10446,12 @@ final class SurfacesUITests: XCTestCase {
         saveShot("verify-health-air-strip.png")
         saveShot("verify-fitbit-air-strip.png")
         saveShot("verify-simulator-air-strip.png")
+        // Honest #499 / #788: Today's tasks container (WHOOP wells)
         let tasks = app.descendants(matching: .any)["sim.load.tasks"].firstMatch
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")
         saveShot("verify-readiness-load-simulator-tasks.png")
+        saveShot("verify-simulator-tasks.png")
         // Honest #539 / #776: Check all / Clear tasks control (WHOOP wells)
         let checkAll = app.descendants(matching: .any)["sim.load.tasks.checkall"].firstMatch
         XCTAssertTrue(checkAll.waitForExistence(timeout: 5)
