@@ -282,7 +282,7 @@ enum SurfaceID {
     static let readinessSimulatorLeverSensitivity = "sim.load.lever.sensitivity"  // Honest #567 / #764
     static let fitbitAirDensityForecastBias = "fitbit.air.density.forecast.bias"  // Honest #568
     static let readinessSimulatorReadyZones = "sim.load.ready.zones"  // Honest #569 / #757
-    static let fitbitAirDensityHist = "fitbit.air.density.hist"  // Honest #570
+    static let fitbitAirDensityHist = "fitbit.air.density.hist"  // Honest #570 / #801
     static let readinessSimulatorSeedDelta = "sim.load.seed.delta"  // Honest #571 / #759
     static let fitbitAirDensityCV = "fitbit.air.density.cv"  // Honest #572
     static let readinessSimulatorTaskRadial = "sim.load.tasks.radial"  // Honest #573 / #760
@@ -362,7 +362,7 @@ enum SurfaceID {
     static let healthAirDensityTukey = "health.air.density.tukey"  // Honest #666
     static let healthAirDensityMAD = "health.air.density.mad"  // Honest #667
     static let healthAirDensityEnvelope = "health.air.density.envelope"  // Honest #668
-    static let healthAirDensityHist = "health.air.density.hist"  // Honest #669
+    static let healthAirDensityHist = "health.air.density.hist"  // Honest #669 / #801
     static let healthAirDensityCV = "health.air.density.cv"  // Honest #670
     static let healthAirDensityForecastBias = "health.air.density.forecast.bias"  // Honest #671
     static let healthAirDensityForecastHitRate = "health.air.density.forecast.hitrate"  // Honest #672
