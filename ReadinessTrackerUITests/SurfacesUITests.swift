@@ -18912,6 +18912,57 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if meterExistsNow(iqrHealth) { saveShot("verify-health-air-density-iqr.png") }
     }
 
+    /// Honest #805: WHOOP wells on existing density percentile meter.
+    /// Tight path to fitbit.air.density.percentile / health.air.density.percentile
+    /// on the Air card (immediately after the IQR meter). Avoids the
+    /// long testFitbitAirDataCardSurface walk that hangs on spark
+    /// swipe-down after Honest #790. Do not add extra swipes after the
+    /// meter is on-screen — a #802 follow-up that did so overscrolled
+    /// into the later stack. Never use a CONTAINS fallback (Honest
+    /// #803 run 1 was a false green: proof was Swim Strokes).
+    ///
+    /// Walk follows the landed #804 test: stay on the Today tab, use
+    /// app.swipeUp (center, clear of the tab bar), and look for the
+    /// exact SIDs only (timeout 0.1, one identifier predicate, no
+    /// CONTAINS, no title CONTAINS). Stop as soon as the percentile
+    /// well is on-screen.
+    func testDensityPercentile() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.percentile",
+                        "fitbit.air.density.percentile")
+        ).firstMatch
+        let pctFitbit = app.descendants(matching: .any)["fitbit.air.density.percentile"].firstMatch
+        let pctHealth = app.descendants(matching: .any)["health.air.density.percentile"].firstMatch
+
+        var n = 0
+        while !meterVisible(meter) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+
+        // If the SID exists but the well sits under the tab bar, a few
+        // upper-third nudges. Stop as soon as it is on-screen — no extra
+        // crop swipes.
+        var h = 0
+        while meterExistsNow(meter) && !meterVisible(meter) && h < 6 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+
+        XCTAssertTrue(meterVisible(meter),
+                      "fitbit.air.density.percentile / health.air.density.percentile")
+        saveShot("verify-density-percentile.png")
+        if meterExistsNow(pctFitbit) { saveShot("verify-fitbit-air-density-percentile.png") }
+        if meterExistsNow(pctHealth) { saveShot("verify-health-air-density-percentile.png") }
+    }
+
     private func meterExistsNow(_ el: XCUIElement) -> Bool {
         el.waitForExistence(timeout: 0.1)
     }
