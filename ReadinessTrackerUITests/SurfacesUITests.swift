@@ -18709,6 +18709,54 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if tailHealth.exists { saveShot("verify-health-air-density-tail.png") }
     }
 
+    /// Honest #801: WHOOP wells on existing density distribution hist.
+    /// Tight path to fitbit.air.density.hist / health.air.density.hist
+    /// on the Air card (immediately after the history spark, below
+    /// heatmap + WoW + forecast + streak). Avoids the long
+    /// testFitbitAirDataCardSurface walk that hangs on spark swipe-down
+    /// after Honest #790. After the Air title is on-screen, further swipes
+    /// originate in the upper third so the spark's DragGesture cannot eat
+    /// the scroll. Hist sits just under the spark, so the post-title budget
+    /// is a little larger than testDensityHistorySpark's 16 short-swipes.
+    func testDensityHist() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let histFitbit = app.descendants(matching: .any)["fitbit.air.density.hist"].firstMatch
+        let histHealth = app.descendants(matching: .any)["health.air.density.hist"].firstMatch
+        let histTitleFitbit = app.staticTexts["Density hist"]
+        let histTitleHealth = app.staticTexts["Health Density hist"]
+        // Hist sits just under the spark. Spark used at most 16 upper-third
+        // swipes from the title; a few more reach the hist. Swipes stay in
+        // the upper third so we never swipe-down on the spark.
+        var h = 0
+        while !(isOnScreen(histFitbit) || isOnScreen(histHealth)
+                || isOnScreen(histTitleFitbit) || isOnScreen(histTitleHealth)) && h < 24 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+        XCTAssertTrue(histFitbit.exists || histHealth.exists
+                      || histTitleFitbit.exists || histTitleHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "density histogram")).count > 0,
+                      "fitbit.air.density.hist / health.air.density.hist")
+        saveShot("verify-density-hist.png")
+        if histFitbit.exists { saveShot("verify-fitbit-air-density-hist.png") }
+        if histHealth.exists { saveShot("verify-health-air-density-hist.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

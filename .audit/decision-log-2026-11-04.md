@@ -667,3 +667,11 @@
 | 18:39 HKT | #800 density tail meter | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD800; model=deepseek-flash | mid-ship |
 | 18:54 HKT | #800 density tail meter | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD800 (784.755s, 0 failures; observer 790.142s); model=deepseek-flash |
 | 18:54 HKT | #800 density tail meter | land | proof PNG + receipt; SID fitbit.air.density.tail / health.air.density.tail; PR squash next; model=deepseek-flash |
+
+| 19:00 HKT | Honest #801 density distribution hist | model=deepseek-flash | restyle existing fitbit.air.density.hist / health.air.density.hist after density tail #800; WHOOP wells on the hist container only; 4-bin Chart opacity encoding (0.35 + 0.2 * bin.id) left intact (not flattened to a uniform 8/14 wash); idle (no density > 0 in 14d window) ghost/hairline 8/28 secondaryText; active complete (mean in the 75–100 band, meanPP >= 75) 14/28 optimal; active negative (has density, mean in the 0–24 band, meanPP < 25) 14/28 strain; else/partial (mean in 25–49 or 50–74) 14/28 accent; mean capsule keeps existing tone; mechanical pattern-copy of #800 container chrome applied locally (no separate model iterate needed) | mid-ship |
+| 19:01 HKT | Honest #801 density distribution hist | prove | starting build-for-testing /tmp/RT-DD801; model=deepseek-flash | mid-ship |
+| 19:06 HKT | #801 density distribution hist | prove | starting tight UITest testDensityHist /tmp/RT-DD801; model=deepseek-flash | mid-ship |
+| 19:11 HKT | #801 density distribution hist | prove | UITest testDensityHist green /tmp/RT-DD801 (231.961s, 0 failures; observer 244.372s); proof /tmp/rt-audit/verify-density-hist.png (health.air.density.hist); model=deepseek-flash |
+| 19:11 HKT | #801 density distribution hist | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD801; model=deepseek-flash | mid-ship |
+| 19:25 HKT | #801 density distribution hist | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD801 (802.713s, 0 failures; observer 814.863s); model=deepseek-flash |
+| 19:25 HKT | #801 density distribution hist | land | proof PNG + receipt; SID fitbit.air.density.hist / health.air.density.hist; PR squash next; model=deepseek-flash |

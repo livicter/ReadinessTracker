@@ -1,7 +1,5 @@
-# Honest #669: Health Air density hist
+# Honest #669 / #801: Health Air density hist
 
-Last-14 dens distribution histogram (Health pink / Google Health graphics).
+Fitbit #570 / #801 parity for appleWatch / HealthKit — Health pink 4-bin density hist, chrome-only WHOOP wells.
 SurfaceID: `health.air.density.hist`
-Parity: Fitbit #570
-Proof: `.audit/verify-health-air-density-hist.png`
-model=deepseek-flash
+Proof: `.audit/verify-density-hist.png`

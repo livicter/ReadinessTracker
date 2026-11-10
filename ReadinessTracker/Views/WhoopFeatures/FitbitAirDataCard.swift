@@ -2072,6 +2072,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #570: density distribution histogram — last-14 day density bins (Google Health graphics).
     /// Honest #669: appleWatch / HealthKit uses Health pink + health.air.density.hist (#570 parity).
+    /// Honest #801: WHOOP wells on the existing density distribution hist container.
     @ViewBuilder
     private var densityDistributionHist: some View {
         let days = Array(history.suffix(14))
@@ -2106,6 +2107,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density hist" : "Density hist"
         let meterSID = isHealth ? SurfaceID.healthAirDensityHist : SurfaceID.fitbitAirDensityHist
+        // Honest #801: WHOOP wells on the existing density distribution hist container.
+        // The 4-bin Chart already encodes density-band identity by bar
+        // opacity (0.35 + 0.2 * bin.id: 0–24 light → 75–100 near-solid of
+        // meterColor) and is left intact — not flattened to a uniform 8/14
+        // wash. The mean capsule keeps its existing meterColor tone. Label
+        // contrast holds (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (mean in the 75–100 band, meanPP >= 75) 14/28 optimal;
+        // active negative (has density, mean in the 0–24 band, meanPP < 25) 14/28 strain;
+        // else/partial (mean in 25–49 or 50–74) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (meanPP >= 75 ? RTColor.optimal
+               : (meanPP < 25 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.bar.xaxis")
@@ -2155,10 +2174,10 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density histogram mean \(meanPP) percent")
