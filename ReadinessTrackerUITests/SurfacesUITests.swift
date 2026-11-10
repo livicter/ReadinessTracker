@@ -18660,6 +18660,55 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if sparkHealth.exists { saveShot("verify-health-air-density-spark.png") }
     }
 
+    /// Honest #800: WHOOP wells on existing density tail meter.
+    /// Tight path to fitbit.air.density.tail / health.air.density.tail
+    /// on the Air card (below the hist → gain/pain meter stack, after
+    /// heatmap + WoW + forecast + streak + spark). Avoids the long
+    /// testFitbitAirDataCardSurface walk that hangs on spark swipe-down
+    /// after Honest #790. After the Air title is on-screen, further swipes
+    /// originate in the upper third so the spark's DragGesture cannot eat
+    /// the scroll. Tail sits far below the spark, so the post-title budget
+    /// is larger than testDensityHistorySpark's 16 short-swipes.
+    func testDensityTail() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let tailFitbit = app.descendants(matching: .any)["fitbit.air.density.tail"].firstMatch
+        let tailHealth = app.descendants(matching: .any)["health.air.density.tail"].firstMatch
+        let tailTitleFitbit = app.staticTexts["Density Tail"]
+        let tailTitleHealth = app.staticTexts["Health Density Tail"]
+        // Tail sits under the meter stack after the spark. Spark used at most
+        // 16 upper-third swipes from the title; the remaining hist → gain/pain
+        // meters need a larger budget. Swipes stay in the upper third so we
+        // never swipe-down on the spark.
+        var h = 0
+        while !(isOnScreen(tailFitbit) || isOnScreen(tailHealth)
+                || isOnScreen(tailTitleFitbit) || isOnScreen(tailTitleHealth)) && h < 64 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+        XCTAssertTrue(tailFitbit.exists || tailHealth.exists
+                      || tailTitleFitbit.exists || tailTitleHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "density tail")).count > 0,
+                      "fitbit.air.density.tail / health.air.density.tail")
+        saveShot("verify-density-tail.png")
+        if tailFitbit.exists { saveShot("verify-fitbit-air-density-tail.png") }
+        if tailHealth.exists { saveShot("verify-health-air-density-tail.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

@@ -1,0 +1,15 @@
+Honest #800 — Density tail meter (WHOOP wells)
+tip_base: ed2228d (main before ship)
+branch: honest-800-density-tail
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD800 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityTail CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 365.540
+observer_s: 378.826
+pngs: .audit/verify-density-tail.png
+SID: fitbit.air.density.tail / health.air.density.tail
+when_hkt: 2026-11-10 18:38 HKT
+rationale: chrome-only WHOOP wells on existing Honest #629 / #641 density tail meter container after density spark #799; ratio track (accent→tone gradient, clamped 0...4) and 7-bin histogram (warning left / accent mid / optimal right) left intact — not flattened to a uniform 8/14 wash; idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText; active complete (ratio >= 2, Fat) 14/28 optimal; active negative (ratio < 0.5, Left, and has density) 14/28 strain; else/partial (Balanced / Lean) 14/28 accent; verb capsule keeps existing tone; label contrast holds (no white text on a light wash); copy/SID/tail-ratio math and READY formula unchanged. Mechanical pattern-copy of #799 container chrome applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 784.755s, 0 failures (observer 790.142s) on iPhone 17 Pro starting 18:39:54 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityTail screenshot of health.air.density.tail (Apple Watch / HealthKit fixture). Health Density Tail shows else/partial 14/28 Health-pink accent well (Balanced 1.00, ratio 1.00 in 0...4, verb capsule stays RTColor.good). In the tail well band (y=1284–1774 of the 1206×2622 3x shot): 275742 hits of (255,226,231) matching 14% of #FF2D55 over white; 4948 exact hits of (255,196,207) plus antialiased neighbors on the top/bottom hairline (y=1286 / y=1770) matching 28%. Only 10 leftover (255,240,243) 7% pixels at the Gain/Pain boundary — the old 0.07/0.28 chrome is gone from this container. Ratio track gradient fill (~1/4 width) and 7-bin hist (tall mid accent bin, warning/optimal tail bins, dashed zero line) left intact, not a uniform 8/14 wash. Caption μ↑tail / |μ↓tail| · 2/13 · 14d · HealthKit; left ← → fat. Health Density Kappa (Strong +4.00) and Health Density Gain/Pain (Net+ 1.00) remain on the old 7/28 pink chrome above the tail; Health Air glance (Apple Health 100%, 14d) sits below. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then upper-third short-swipes (budget 64) to the tail so the spark DragGesture cannot eat a swipe-down. model=deepseek-flash
+when_proof_hkt: 2026-11-10 18:38 HKT

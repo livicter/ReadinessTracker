@@ -659,3 +659,11 @@
 | 18:01 HKT | #799 density history spark | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD799; model=deepseek-flash | mid-ship |
 | 18:18 HKT | #799 density history spark | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD799 (814.135s, 0 failures; observer 819.731s); model=deepseek-flash |
 | 18:18 HKT | #799 density history spark | land | proof PNG + receipt; SID fitbit.air.density.spark / health.air.density.spark; PR squash next; model=deepseek-flash |
+
+| 18:25 HKT | Honest #800 density tail meter | model=deepseek-flash | restyle existing fitbit.air.density.tail / health.air.density.tail after density spark #799; WHOOP wells on the meter container only; ratio track and 7-bin hist fills left intact (not flattened to 8/14 wash); idle (no density > 0 in 14d window) ghost/hairline 8/28 secondaryText; active complete (ratio >= 2, Fat) 14/28 optimal; active negative (ratio < 0.5, Left, and has density) 14/28 strain; else/partial (Balanced / Lean) 14/28 accent; verb capsule keeps existing tone; mechanical pattern-copy of #799 container chrome applied locally (no separate model iterate needed) | mid-ship |
+| 18:25 HKT | Honest #800 density tail meter | prove | starting build-for-testing /tmp/RT-DD800; model=deepseek-flash | mid-ship |
+| 18:32 HKT | #800 density tail meter | prove | starting tight UITest testDensityTail /tmp/RT-DD800; model=deepseek-flash | mid-ship |
+| 18:39 HKT | #800 density tail meter | prove | UITest testDensityTail green /tmp/RT-DD800 (365.540s, 0 failures; observer 378.826s); proof /tmp/rt-audit/verify-density-tail.png (health.air.density.tail); model=deepseek-flash |
+| 18:39 HKT | #800 density tail meter | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD800; model=deepseek-flash | mid-ship |
+| 18:54 HKT | #800 density tail meter | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD800 (784.755s, 0 failures; observer 790.142s); model=deepseek-flash |
+| 18:54 HKT | #800 density tail meter | land | proof PNG + receipt; SID fitbit.air.density.tail / health.air.density.tail; PR squash next; model=deepseek-flash |
