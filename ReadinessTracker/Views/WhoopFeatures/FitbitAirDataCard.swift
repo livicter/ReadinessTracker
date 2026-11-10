@@ -3310,6 +3310,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density ACF₁" : "Density ACF₁"
         let meterSID = isHealth ? SurfaceID.healthAirDensityACF : SurfaceID.fitbitAirDensityACF
+        // Honest #811: WHOOP wells on the existing density ACF₁ meter container.
+        // The lag-1 −1…+1 gradient track, zero tick, and tone-filled needle
+        // already encode the ACF reading and are left intact — not flattened
+        // to a uniform 8/14 wash.
+        // The verb capsule keeps its existing tone. Label contrast holds
+        // (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Sticky or strong Flip, abs(acf) >= 0.5) 14/28 optimal;
+        // active negative (Noise, abs(acf) < 0.2) 14/28 strain;
+        // else/partial (Mild or mild Flip, 0.2 <= abs(acf) < 0.5) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (abs(acf) >= 0.5 ? RTColor.optimal
+               : (abs(acf) < 0.2 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         let tone: Color = abs(acf) >= 0.5 ? RTColor.optimal : (abs(acf) >= 0.2 ? RTColor.good : RTColor.warning)
         let verb: String = {
             if acf >= 0.5 { return "Sticky" }
@@ -3379,10 +3397,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("\(meterTitle) autocorrelation \(verb) \(String(format: "%.2f", acf))")
