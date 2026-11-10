@@ -19096,6 +19096,52 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if meterExistsNow(tukeyHealth) { saveShot("verify-health-air-density-tukey.png") }
     }
 
+    func testDensitySlope() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.slope",
+                        "fitbit.air.density.slope")
+        ).firstMatch
+        let slopeFitbit = app.descendants(matching: .any)["fitbit.air.density.slope"].firstMatch
+        let slopeHealth = app.descendants(matching: .any)["health.air.density.slope"].firstMatch
+        let mad = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.mad",
+                        "fitbit.air.density.mad")
+        ).firstMatch
+
+        // Slope sits immediately under Tukey, which sits under MAD.
+        // Walk like #808: swipeUp until meterVisible(MAD), then one short
+        // slow drag (0.40→0.28, .slow, hold 0.25s). That crop already
+        // showed Tukey at the top and slope fully below it. Do not add a
+        // default-velocity flick (run #808-4 inertial-jumped to
+        // ACF/Gini/volatility). The slope SID, like Tukey, can surface as
+        // a non-hittable Image whose frame does not intersect the content
+        // band — assert existence after the proven walk, then confirm the
+        // PNG is the slope meter. Exact SID predicates only, no CONTAINS.
+        var n = 0
+        while !meterVisible(mad) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(meterVisible(mad),
+                      "health.air.density.mad / fitbit.air.density.mad (anchor for slope)")
+
+        let window = app.windows.firstMatch
+        let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.40))
+        let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+        start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.25)
+
+        XCTAssertTrue(meterExistsNow(meter),
+                      "fitbit.air.density.slope / health.air.density.slope")
+        saveShot("verify-density-slope.png")
+        if meterExistsNow(slopeFitbit) { saveShot("verify-fitbit-air-density-slope.png") }
+        if meterExistsNow(slopeHealth) { saveShot("verify-health-air-density-slope.png") }
+    }
+
     private func meterExistsNow(_ el: XCUIElement) -> Bool {
         el.waitForExistence(timeout: 0.1)
     }
