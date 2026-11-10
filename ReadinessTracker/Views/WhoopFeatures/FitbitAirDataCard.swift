@@ -3063,6 +3063,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density slope" : "Density slope"
         let meterSID = isHealth ? SurfaceID.healthAirDensitySlope : SurfaceID.fitbitAirDensitySlope
+        // Honest #809: WHOOP wells on the existing density slope meter container.
+        // The dens spark PATH (meterColor 0.55) and dashed trend line (tone)
+        // already encode the signed slope and are left intact — not flattened
+        // to a uniform 8/14 wash.
+        // The verb capsule and pp/d footer keep their existing tones. Label
+        // contrast holds (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Stable, absPP < 0.4) 14/28 optimal;
+        // active negative (Falling, absPP >= 0.4 && slopePP <= 0) 14/28 strain;
+        // else/partial (Rising, absPP >= 0.4 && slopePP > 0) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (absPP < 0.4 ? RTColor.optimal
+               : (slopePP <= 0 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.line.uptrend.xyaxis")
@@ -3119,10 +3137,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("\(meterTitle) \(verb) \(String(format: "%.1f", slopePP7)) points per week")
