@@ -382,7 +382,7 @@ enum SurfaceID {
     static let healthAirDensityStack = "health.air.density.stack"  // Honest #686 / #793
     static let healthAirDensityWow = "health.air.density.wow"  // Honest #687 / #798
     static let healthAirDensityHeatDay = "health.air.density.heat.day"  // Honest #688 / #795
-    static let healthAirDensitySpark = "health.air.density.spark"  // Honest #689
+    static let healthAirDensitySpark = "health.air.density.spark"  // Honest #689 / #799
     static let healthAirDensityLegend = "health.air.density.legend"  // Honest #690 / #792
     static let healthAirDensity = "health.air.density"  // Honest #691
     static let healthAirDensityCats = "health.air.density.cats"  // Honest #633 / #791
@@ -427,7 +427,7 @@ enum SurfaceID {
     static let fitbitAirChipSparkScrub = "fitbit.air.chip.spark.scrub"  // Honest #532
     static let healthAirChipSparkScrub = "health.air.chip.spark.scrub"  // Honest #702
     static let fitbitAirDataDensityLegend = "fitbit.air.density.legend"  // Honest #513 / #792
-    static let fitbitAirDataDensitySpark = "fitbit.air.density.spark"  // Honest #514
+    static let fitbitAirDataDensitySpark = "fitbit.air.density.spark"  // Honest #514 / #799
     static let fitbitAirDataStrip = "fitbit.air.strip"  // Honest #497 / #787
     static let healthAirDataStrip = "health.air.strip"  // Honest #708 / #787
     static let fitbitAirDataCard = "fitbit.air.card"  // Honest #498 unique

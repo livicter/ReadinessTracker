@@ -1907,6 +1907,19 @@ struct FitbitAirDataCard: View {
         let sparkAccent: Color = isHealthSpark ? Color(hex: "FF2D55") : accent
         let sparkSID = isHealthSpark ? SurfaceID.healthAirDensitySpark : SurfaceID.fitbitAirDataDensitySpark
         let sparkLabel = isHealthSpark ? "Health air density history spark" : "Air density history spark"
+        // Honest #799: WHOOP wells on the existing density history spark container.
+        // The spark PATH already encodes history (AreaMark 0.18, LineMark,
+        // PointMark, mean RuleMark) and is left intact — not flattened to a
+        // uniform 8/14 wash. Labels and mean/range capsules keep their existing
+        // tones so contrast holds (no white text on a light wash).
+        // Idle (no density > 0 in the window) ghost/hairline 8/28 secondaryText;
+        // else/partial (has history) 14/28 accent. No natural complete/negative
+        // state — a history path is not a fill-complete or up/down badge.
+        let wellIsIdle = !points.contains(where: { $0.density > 0 })
+        let wellTone: Color = wellIsIdle ? RTColor.secondaryText : sparkAccent
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         // Honest #677: appleWatch / HealthKit uses Health pink + health.air.density.spark.mean (#556 parity).
         let isHealthMean = source == .appleWatch
         let meanColor: Color = isHealthMean ? Color(hex: "FF2D55") : RTColor.secondaryText
@@ -2046,6 +2059,12 @@ struct FitbitAirDataCard: View {
                     .foregroundStyle(RTColor.tertiaryText)
             }
         }
+        .padding(10)
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
+        )
         .accessibilityIdentifier(sparkSID)
         .accessibilityLabel(sparkLabel)
     }
