@@ -1,0 +1,15 @@
+Honest #797 — Density streak badge (WHOOP wells)
+tip_base: 620c4e3 (main before ship)
+branch: honest-797-density-streak
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD797 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityStreakBadge CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 182.304
+observer_s: 195.016
+pngs: .audit/verify-density-streak.png
+SID: fitbit.air.density.streak / health.air.density.streak
+when_hkt: 2026-11-10 16:43 HKT
+rationale: chrome-only WHOOP wells on existing Honest #538 / #682 density streak badge button after density forecast #796; idle unused (badge mounts only when current > 0 or best > 0); active complete (current >= 3) 14/28 optimal; active negative (current == 0, broken streak with a historical best) 14/28 strain; else/partial (current 1–2) 14/28 accent; inner day capsule keeps existing tone; calendar dots (streak.cal) unchanged; copy/SID/expand-toggle math and READY formula unchanged; mechanical pattern-copy of #796 applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 782.429s, 0 failures (observer 787.927s) on iPhone 17 Pro starting 16:43:25 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityStreakBadge screenshot of health.air.density.streak (Apple Watch / HealthKit fixture; Health 7-day density, Density streak 5d). Badge button shows active complete 14/28 optimal well (current >= 3); 270544 hits of (227,247,232) matching 14% of optimal #34C759 over white. Inner 5d capsule stays optimal. Calendar dots under the badge keep their existing filled/gap encoding. Forecast badge above remains the #796 idle ghost/hairline (Tomorrow density 100%, +0pp). Heatmap intensity from #794 still visible in the same frame. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then short-swipes to the streak badge. model=deepseek-flash
+when_proof_hkt: 2026-11-10 16:43 HKT

@@ -18536,6 +18536,44 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if forecastHealth.exists { saveShot("verify-health-air-density-forecast.png") }
     }
 
+    /// Honest #797: WHOOP wells on existing density streak badge.
+    /// Tight path to fitbit.air.density.streak / health.air.density.streak
+    /// on the Air card (below heatmap + WoW + forecast). Avoids the long
+    /// testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    func testDensityStreakBadge() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let streakFitbit = app.descendants(matching: .any)["fitbit.air.density.streak"].firstMatch
+        let streakHealth = app.descendants(matching: .any)["health.air.density.streak"].firstMatch
+        let streakTitle = app.staticTexts["Density streak"]
+        // Streak sits just under the forecast badge. Forecast used at most
+        // 10 swipes from the title; a few more reach streak without
+        // overscrolling the meter stack.
+        var h = 0
+        while !(isOnScreen(streakFitbit) || isOnScreen(streakHealth) || isOnScreen(streakTitle)) && h < 12 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(streakFitbit.exists || streakHealth.exists
+                      || streakTitle.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "density streak")).count > 0,
+                      "fitbit.air.density.streak / health.air.density.streak")
+        saveShot("verify-density-streak.png")
+        if streakFitbit.exists { saveShot("verify-fitbit-air-density-streak.png") }
+        if streakHealth.exists { saveShot("verify-health-air-density-streak.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

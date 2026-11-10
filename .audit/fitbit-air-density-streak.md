@@ -1,4 +1,3 @@
-Honest #538: Fitbit Air density streak (≥70%)
+Honest #538 / #797: Fitbit Air density streak (WHOOP wells)
 SurfaceID fitbit.air.density.streak
-Proof: UITest testFitbitAirDataCardSurface PASS iPhone 17 Pro 26.5
-.audit/verify-fitbit-air-density-streak.png
+Proof: UITest testDensityStreakBadge → .audit/verify-density-streak.png / .audit/verify-fitbit-air-density-streak.png
