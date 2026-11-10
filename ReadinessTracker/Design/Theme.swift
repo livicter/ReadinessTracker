@@ -329,7 +329,7 @@ enum SurfaceID {
     static let fitbitAirDensityDetail = "fitbit.air.density.detail"  // Honest #630
     static let fitbitAirDensityDetailScrub = "fitbit.air.density.detail.scrub"  // Honest #630
     static let fitbitAirDensityDetailGainPain = "fitbit.air.density.detail.gainpain"  // Honest #630
-    static let fitbitAirDensityDetailCats = "fitbit.air.density.detail.cats"  // Honest #631
+    static let fitbitAirDensityDetailCats = "fitbit.air.density.detail.cats"  // Honest #631 / #791
     static let healthAirDensityGlance = "health.air.density.glance"  // Honest #632
     static let healthAirDensityScrub = "health.air.density.scrub"  // Honest #632
     static let healthAirDensityGainPain = "health.air.density.gainpain"  // Honest #632
@@ -385,13 +385,13 @@ enum SurfaceID {
     static let healthAirDensitySpark = "health.air.density.spark"  // Honest #689
     static let healthAirDensityLegend = "health.air.density.legend"  // Honest #690
     static let healthAirDensity = "health.air.density"  // Honest #691
-    static let healthAirDensityCats = "health.air.density.cats"  // Honest #633
+    static let healthAirDensityCats = "health.air.density.cats"  // Honest #633 / #791
     static let healthAirDensityPeriod = "health.air.density.period"  // Honest #634
     static let healthAirDensityDetailOpen = "health.air.density.detail.open"  // Honest #635
     static let healthAirDensityDetail = "health.air.density.detail"  // Honest #635
     static let healthAirDensityDetailScrub = "health.air.density.detail.scrub"  // Honest #635
     static let healthAirDensityDetailGainPain = "health.air.density.detail.gainpain"  // Honest #635
-    static let healthAirDensityDetailCats = "health.air.density.detail.cats"  // Honest #635
+    static let healthAirDensityDetailCats = "health.air.density.detail.cats"  // Honest #635 / #791
     static let fitbitAirDensityDetailScrubReadout = "fitbit.air.density.detail.scrub.readout"  // Honest #636
     static let healthAirDensityDetailScrubReadout = "health.air.density.detail.scrub.readout"  // Honest #636
     static let healthAirDataGaps = "health.air.gaps"  // Honest #637

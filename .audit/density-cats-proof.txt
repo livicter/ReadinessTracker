@@ -1,0 +1,15 @@
+Honest #791 — Density category overlay chips (WHOOP wells)
+tip_base: c7a2f01 (main before ship)
+branch: honest-791-density-cats
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD791 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityCategoryOverlayChips CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 386.446
+observer_s: 391.745
+pngs: .audit/verify-density-cats.png
+SID: health.air.density.cats / fitbit.air.density.detail.cats / health.air.density.detail.cats
+when_hkt: 2026-11-10 13:20 HKT
+rationale: chrome-only WHOOP wells on existing Honest #631 / #633 / #635 density category overlay chips after air-gaps category gauges #790; idle (filled == 0) ghost/hairline 8/28 secondaryText; active complete (filled == total) 14/28 optimal; else/partial 14/28 accent; no negative state (fill is non-negative); copy/SID/visibility-toggle math/READY formula unchanged; Health on-card twin keeps #633 parity; density legend pills still use pillColor.opacity(0.10) and remain the next sibling; mechanical pattern-copy of #790 fill-complete tones applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 800.389s, 0 failures (observer 811.706s) on iPhone 17 Pro starting 13:21:23 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityCategoryOverlayChips screenshot of health.air.density.detail.cats (Apple Watch / HealthKit fixture; all three overlay chips complete SLP/VIT/MOV 100%, optimal 14/28) bound as .audit/verify-density-cats.png. Well fill samples (227,247,232) = RTColor.optimal #34C759 @ 14% on white (5039 hits). model=deepseek-flash
+when_proof_hkt: 2026-11-10 13:16 HKT
