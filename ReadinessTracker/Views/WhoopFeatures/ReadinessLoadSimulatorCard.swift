@@ -5724,8 +5724,8 @@ struct ReadinessLoadSimulatorCard: View {
         .accessibilityLabel("\(cat.title) air \(n) of \(den)")
     }
 
-    /// Honest #497: Fitbit air field strip.
-    /// Honest #708: appleWatch / HealthKit uses health.air.strip (#497 parity).
+    /// Honest #497 / #787: Fitbit air field strip (WHOOP wells; Google Health graphics).
+    /// Honest #708 / #787: appleWatch / HealthKit uses health.air.strip (#497 parity; WHOOP wells).
     private var fitbitAirStrip: some View {
         let isHealth = source == .appleWatch
         let stripSID = isHealth ? SurfaceID.healthAirDataStrip : SurfaceID.fitbitAirDataStrip
@@ -5738,18 +5738,22 @@ struct ReadinessLoadSimulatorCard: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(fitbitAirChips) { chip in
+                        // Honest #787: WHOOP wells on existing air-strip chips.
+                        // Idle (!filled) ghost/hairline 8/28 secondaryText;
+                        // active complete (filled) 14/28 optimal.
+                        let chipWellTone: Color = chip.filled ? RTColor.optimal : RTColor.secondaryText
                         HStack(spacing: 6) {
                             Circle()
                                 .fill(chip.filled ? RTColor.optimal : RTColor.tertiaryText.opacity(0.35))
                                 .frame(width: 7, height: 7)
                             Text(chip.label)
                                 .font(.caption2.weight(.semibold))
-                                .foregroundStyle(chip.filled ? RTColor.primaryText : RTColor.secondaryText)
+                                .foregroundStyle(chip.filled ? RTColor.optimal : RTColor.secondaryText)
                         }
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(RTColor.surfaceHighlight.opacity(chip.filled ? 1 : 0.5))
-                        .clipShape(Capsule())
+                        .background(chipWellTone.opacity(chip.filled ? 0.14 : 0.08), in: Capsule())
+                        .overlay(Capsule().stroke(chipWellTone.opacity(0.28), lineWidth: 1))
                     }
                 }
             }

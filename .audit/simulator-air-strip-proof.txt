@@ -1,0 +1,11 @@
+Honest #787 — Simulator air strip (WHOOP wells)
+tip_base: d457167 (main before ship)
+branch: honest-787-sim-air-strip
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD787 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 790.308
+observer_s: 803.828
+pngs: .audit/verify-simulator-air-strip.png
+SID: fitbit.air.strip / health.air.strip
+when_hkt: 2026-11-10 09:58 HKT
+rationale: chrome-only WHOOP wells on existing Honest #497 / #708 air-strip chips after task row #786; ring.tint already styled via gauge #784 so invent next chrome gap on LoadSim air strip; idle (!filled) ghost/hairline 8/28 secondaryText; active complete (filled) 14/28 optimal; no negative state (chips are fill/empty only); dot/labels/SID/READY formula unchanged; mechanical pattern-copy of #786/#785 capsule wells applied locally; model=deepseek-flash

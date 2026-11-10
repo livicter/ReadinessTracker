@@ -10430,7 +10430,7 @@ final class SurfacesUITests: XCTestCase {
         }
         saveShot("verify-simulator-controls.png")
         saveShot("verify-readiness-load-simulator.png")
-        // Honest #708: appleWatch fixture uses health.air.strip (fitbit.air.strip / #497 parity).
+        // Honest #497 / #708 / #787: Fitbit/Health air strip (WHOOP wells)
         let stripFitbit = app.descendants(matching: .any)["fitbit.air.strip"].firstMatch
         let stripHealth = app.descendants(matching: .any)["health.air.strip"].firstMatch
         var stripN = 0
@@ -10445,6 +10445,7 @@ final class SurfacesUITests: XCTestCase {
                       "fitbit.air.strip / health.air.strip")
         saveShot("verify-health-air-strip.png")
         saveShot("verify-fitbit-air-strip.png")
+        saveShot("verify-simulator-air-strip.png")
         let tasks = app.descendants(matching: .any)["sim.load.tasks"].firstMatch
         XCTAssertTrue(tasks.exists || app.staticTexts["Today’s tasks"].exists || app.staticTexts["Today's tasks"].exists,
                       "sim.load.tasks")
