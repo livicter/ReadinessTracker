@@ -14353,7 +14353,7 @@ final class SurfacesUITests: XCTestCase {
             app.swipeDown()
         }
 
-        // Honest #637: Health Air gaps + category fill (Fitbit #509/#550/#552/#554 parity)
+        // Honest #637 / #790: Health Air gaps + category fill (Fitbit #509/#550/#552/#554 parity; WHOOP wells)
         // Still on Apple Watch source after #632–#636.
         let healthGaps637 = app.descendants(matching: .any)["health.air.gaps"].firstMatch
         var hg637 = 0
@@ -14386,6 +14386,7 @@ final class SurfacesUITests: XCTestCase {
                 hGapCats637.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
             }
             saveShot("verify-health-air-gaps-categories.png")
+            saveShot("verify-air-gaps-categories.png")
         }
 
 
@@ -14514,13 +14515,14 @@ final class SurfacesUITests: XCTestCase {
             if gapProgress.exists { gapProgress.tap() }
             saveShot("verify-fitbit-air-gaps-progress.png")
         }
-        // Honest #554: gaps category fill gauges (Sleep / Vitals / Move)
+        // Honest #554 / #790: gaps category fill gauges (Sleep / Vitals / Move; WHOOP wells)
         let gapCats = app.descendants(matching: .any)["fitbit.air.gaps.categories"].firstMatch
         if gapCats.waitForExistence(timeout: 3) || gaps.exists {
             if gapCats.exists {
                 gapCats.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
             }
             saveShot("verify-fitbit-air-gaps-categories.png")
+            saveShot("verify-air-gaps-categories.png")
         }
         // Honest #506: air → classic MetricDetail (row under card header).
         // Card grew (#513 legend + #514 density spark) — swipeDown toward header first.

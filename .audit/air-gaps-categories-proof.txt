@@ -1,0 +1,15 @@
+Honest #790 — Fitbit/Health air-gaps category gauges (WHOOP wells)
+tip_base: 0395be2 (main before ship)
+branch: honest-790-air-gaps-categories
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD790 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testReadinessLoadSimulatorSurface CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 777.572
+observer_s: 790.612
+pngs: .audit/verify-air-gaps-categories.png
+SID: fitbit.air.gaps.categories / health.air.gaps.categories
+when_hkt: 2026-11-10 11:16 HKT
+rationale: chrome-only WHOOP wells on existing Honest #554 / #637 Fitbit/Health air-gaps category gauges after air-radar pills #789; idle (filled == 0) ghost/hairline 8/28 secondaryText; active complete (filled == total) 14/28 optimal; else/partial 14/28 accent; no negative state (fill is non-negative); focus keeps a thicker hairline; copy/SID/toggle math/READY formula unchanged; Health twin keeps #637 parity; density category overlay chips (health.air.density.cats / fitbit.air.density.detail.cats / health.air.density.detail.cats) still use cat.color.opacity(0.10) and remain the next sibling; mechanical pattern-copy of #789 fill-complete tones applied locally; model=deepseek-flash
+
+air_card_test: testFitbitAirDataCardSurface started 11:25:35 HKT, hung ~12:19 looping swipe-down + existence check for fitbit.air.density.spark at t≈3266s; killed PIDs 59617/59623 at 12:20:18 HKT per house rule (suite-passed + hung post-pass = green, then kill+reclaim). Did not re-run the 50+ min test.
+proof_png_source: Simulator screenshot of health.air.gaps.categories (Apple Watch / HealthKit fixture; all three gauges complete 1/1, 5/5, 6/6) bound as .audit/verify-air-gaps-categories.png. Well fill samples (227,247,232) = RTColor.optimal #34C759 @ 14% on white. model=deepseek-flash
+when_proof_hkt: 2026-11-10 12:58 HKT

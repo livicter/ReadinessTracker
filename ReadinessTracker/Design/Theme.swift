@@ -264,7 +264,7 @@ enum SurfaceID {
     static let readinessSimulatorTaskLiftSpark = "sim.load.tasks.liftspark"  // Honest #549 / #772
     static let fitbitAirGapsFill = "fitbit.air.gaps.fill"  // Honest #550
     static let fitbitAirGapsProgress = "fitbit.air.gaps.progress"  // Honest #552
-    static let fitbitAirGapsCategories = "fitbit.air.gaps.categories"  // Honest #554
+    static let fitbitAirGapsCategories = "fitbit.air.gaps.categories"  // Honest #554 / #790
     static let readinessSimulatorTasksCheckNext = "sim.load.tasks.checknext"  // Honest #551 / #771
     static let readinessSimulatorTasksUndoLast = "sim.load.tasks.undolast"  // Honest #553 / #770
     static let readinessSimulatorTasksRemainLift = "sim.load.tasks.remainlift"  // Honest #555 / #769
@@ -397,7 +397,7 @@ enum SurfaceID {
     static let healthAirDataGaps = "health.air.gaps"  // Honest #637
     static let healthAirGapsFill = "health.air.gaps.fill"  // Honest #637
     static let healthAirGapsProgress = "health.air.gaps.progress"  // Honest #637
-    static let healthAirGapsCategories = "health.air.gaps.categories"  // Honest #637
+    static let healthAirGapsCategories = "health.air.gaps.categories"  // Honest #637 / #790
     static let readinessSimulatorReadyHeadroom = "sim.load.ready.headroom"  // Honest #595 / #734
     static let readinessSimulatorReadyBurndown = "sim.load.ready.burndown"  // Honest #597 / #735
     static let readinessSimulatorGHTriad = "sim.load.gh.triad"  // Honest #599 / #736
