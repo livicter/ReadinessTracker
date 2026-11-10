@@ -1,6 +1,7 @@
-# Honest #667: Health Air density MAD
+# Honest #667 / #807: Health Air density MAD
 
-Fitbit #582 parity for appleWatch / HealthKit — Health pink MAD meter (14d dens).
+Fitbit #582 / #807 parity for appleWatch / HealthKit — Health pink MAD meter, chrome-only WHOOP wells on the existing container.
 SurfaceID: `health.air.density.mad`
-Proof: `.audit/verify-health-air-density-mad.png`
+Proof: `.audit/verify-density-mad.png`
+UITest: `testDensityMAD`
 model=deepseek-flash
