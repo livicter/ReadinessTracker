@@ -623,3 +623,12 @@
 | 15:40 HKT | #795 density heat.day | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD795; model=deepseek-flash | mid-ship |
 | 15:54 HKT | #795 density heat.day | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD795 (778.339s, 0 failures; observer 783.858s); model=deepseek-flash | mid-ship |
 | 15:54 HKT | #795 density heat.day | land | proof PNG + receipt; SID fitbit.air.density.heat.day / health.air.density.heat.day; PR squash next; model=deepseek-flash |
+
+| 16:01 HKT | Honest #796 density forecast badge | model=deepseek-flash | restyle existing fitbit.air.density.forecast / health.air.density.forecast after density heat.day #795; WHOOP wells on the badge button; idle (abs(deltaPP) < 0.5) ghost/hairline 8/28 secondaryText; active complete (deltaPP > 0, up) 14/28 optimal; active negative (deltaPP < 0, down) 14/28 strain; inner delta/vs-mean capsules keep existing tone; mechanical pattern-copy of #795 applied locally (no separate model iterate needed) | mid-ship |
+| 16:02 HKT | Honest #796 density forecast badge | prove | starting build-for-testing /tmp/RT-DD796; model=deepseek-flash | mid-ship |
+| 16:09 HKT | #796 density forecast badge | prove | starting tight UITest testDensityForecastBadge /tmp/RT-DD796; model=deepseek-flash | mid-ship |
+| 16:12 HKT | #796 density forecast badge | prove | UITest testDensityForecastBadge green /tmp/RT-DD796 (187.217s, 0 failures; observer 200.174s); proof /tmp/rt-audit/verify-density-forecast.png (health.air.density.forecast); model=deepseek-flash |
+| 16:13 HKT | #796 density forecast badge | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD796; model=deepseek-flash | mid-ship |
+
+| 16:27 HKT | #796 density forecast badge | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD796 (781.899s, 0 failures; observer 789.008s); model=deepseek-flash |
+| 16:27 HKT | #796 density forecast badge | land | proof PNG + receipt; SID fitbit.air.density.forecast / health.air.density.forecast; PR squash next; model=deepseek-flash |

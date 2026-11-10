@@ -244,7 +244,7 @@ enum SurfaceID {
     static let fitbitAirDensityStack = "fitbit.air.density.stack"  // Honest #529 / #793
     static let readinessSimulatorSnapB = "sim.load.ab.snapb"  // Honest #530 / #725
     static let readinessSimulatorABLeverDiff = "sim.load.ab.leverdiff"  // Honest #533 / #726
-    static let fitbitAirDensityForecast = "fitbit.air.density.forecast"  // Honest #534
+    static let fitbitAirDensityForecast = "fitbit.air.density.forecast"  // Honest #534 / #796
     static let fitbitAirChipSparkDelta = "fitbit.air.chip.spark.delta"  // Honest #535
     static let healthAirChipSparkDelta = "health.air.chip.spark.delta"  // Honest #703
     static let fitbitAirChipSparkMean = "fitbit.air.chip.spark.mean"  // Honest #536
@@ -376,7 +376,7 @@ enum SurfaceID {
     static let healthAirDensityForecastBar = "health.air.density.forecast.bar"  // Honest #680
     static let healthAirDensityForecastBand = "health.air.density.forecast.band"  // Honest #681
     static let healthAirDensityStreak = "health.air.density.streak"  // Honest #682
-    static let healthAirDensityForecast = "health.air.density.forecast"  // Honest #683
+    static let healthAirDensityForecast = "health.air.density.forecast"  // Honest #683 / #796
     static let healthAirDensityHeat = "health.air.density.heat"  // Honest #684 / #794
     static let healthAirDensityCycle = "health.air.density.cycle"  // Honest #685
     static let healthAirDensityStack = "health.air.density.stack"  // Honest #686 / #793
