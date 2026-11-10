@@ -18389,7 +18389,46 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if stackHealth.exists { saveShot("verify-health-air-density-stack.png") }
     }
 
+    /// Honest #794: WHOOP cell chrome on existing density heatmap.
+    /// Tight path to the on-card 7-day heat (fitbit.air.density.heat /
+    /// health.air.density.heat) without the long testFitbitAirDataCardSurface
+    /// walk that can hang on spark swipe-down.
+    func testDensityHeatmap() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let heatFitbit = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
+        let heatHealth = app.descendants(matching: .any)["health.air.density.heat"].firstMatch
+        // Heatmap sits directly under the density stacked bar, just below the
+        // card title. A small number of swipes is enough; large loops overscroll
+        // the meter stack.
+        var h = 0
+        while !(isOnScreen(heatFitbit) || isOnScreen(heatHealth)) && h < 6 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(heatFitbit.exists || heatHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "seven day air density heatmap")).count > 0
+                      || app.staticTexts["7-day density"].exists
+                      || app.staticTexts["Health 7-day density"].exists,
+                      "fitbit.air.density.heat / health.air.density.heat")
+        saveShot("verify-density-heat.png")
+        if heatFitbit.exists { saveShot("verify-fitbit-air-density-heatmap.png") }
+        if heatHealth.exists { saveShot("verify-health-air-density-heatmap.png") }
+    }
+
     private func revealText(_ text: String) {
+
         let el = app.staticTexts[text]
         var n = 0
         while !isOnScreen(el) && n < 16 {

@@ -1,0 +1,15 @@
+Honest #794 — Density heatmap (WHOOP cell chrome)
+tip_base: e180aae (main before ship)
+branch: honest-794-density-heatmap
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD794 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityHeatmap CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 182.452
+observer_s: 195.631
+pngs: .audit/verify-density-heat.png
+SID: fitbit.air.density.heat / health.air.density.heat
+when_hkt: 2026-11-10 15:06 HKT
+rationale: chrome-only WHOOP cell hairlines on existing Honest #525 / #684 density heatmap after density stack #793; idle (dens == 0) ghost/hairline 8/28 secondaryText; active complete (dens == 1) 28% optimal hairline; else/partial 28% accent hairline; no negative state (density is non-negative); selected keeps a thicker hairline; heat intensity fill (0.25 / 0.55 / 0.9) preserved and not flattened to a uniform 8/14 wash; copy/SID/tap-to-select / spark-scrub math and READY formula unchanged; mechanical pattern-copy of #793 fill-complete tones applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 781.520s, 0 failures (observer 787.037s) on iPhone 17 Pro starting 15:07:14 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityHeatmap screenshot of health.air.density.heat (Apple Watch / HealthKit fixture; Health 7-day density, W–T cells 100/67/100/100/100/100/100) bound as .audit/verify-density-heat.png. Intensity preserved: 100% cells heat 0.9 (255,66,102) 72749 hits; 67% Tue cell heat 0.55 (255,140,162) 11588 hits; not flattened to 8/14 wash. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then a short swipe to the heatmap. model=deepseek-flash
+when_proof_hkt: 2026-11-10 15:06 HKT

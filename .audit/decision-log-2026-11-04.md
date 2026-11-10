@@ -608,3 +608,11 @@
 | 14:37 HKT | #793 density stacked bar | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD793; model=deepseek-flash | mid-ship |
 | 14:52 HKT | #793 density stacked bar | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD793 (769.880s, 0 failures; observer 776.210s); model=deepseek-flash |
 | 14:52 HKT | #793 density stacked bar | land | proof PNG + receipt; SID fitbit.air.density.stack / health.air.density.stack; PR squash next; model=deepseek-flash |
+
+| 14:56 HKT | Honest #794 density heatmap | model=deepseek-flash | restyle existing fitbit.air.density.heat / health.air.density.heat after density stack #793; WHOOP cell chrome only; heat intensity fill (0.25 / 0.55 / 0.9) preserved (not flattened to 8/14 wash); idle (dens == 0) ghost/hairline 8/28 secondaryText; active complete (dens == 1) 28% optimal hairline; else/partial 28% accent hairline; selected thicker hairline; no negative state; mechanical pattern-copy of #793 fill-complete tones applied locally (no separate model iterate needed) | mid-ship |
+| 14:56 HKT | Honest #794 density heatmap | prove | starting build-for-testing /tmp/RT-DD794; model=deepseek-flash | mid-ship |
+| 15:02 HKT | #794 density heatmap | prove | starting tight UITest testDensityHeatmap /tmp/RT-DD794; model=deepseek-flash | mid-ship |
+| 15:06 HKT | #794 density heatmap | prove | UITest testDensityHeatmap green /tmp/RT-DD794 (182.452s, 0 failures; observer 195.631s); proof .audit/verify-density-heat.png (Health 7-day density, 100% cells heat 0.9 (255,66,102) 72749 hits; 67% cell heat 0.55 (255,140,162) 11588 hits; intensity not flattened to 8/14 wash); model=deepseek-flash |
+| 15:06 HKT | #794 density heatmap | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD794; model=deepseek-flash | mid-ship |
+| 15:20 HKT | #794 density heatmap | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD794 (781.520s, 0 failures; observer 787.037s); model=deepseek-flash |
+| 15:20 HKT | #794 density heatmap | land | proof PNG + receipt; SID fitbit.air.density.heat / health.air.density.heat; PR squash next; model=deepseek-flash |
