@@ -1,4 +1,3 @@
-Honest #514: Fitbit Air density history spark
+Honest #514 / #799: Fitbit Air density history spark (WHOOP wells)
 SurfaceID fitbit.air.density.spark
-Proof: UITest testFitbitAirDataCardSurface PASS iPhone 17 Pro 26.5
-.audit/verify-fitbit-air-data-density-spark.png
+Proof: UITest testDensityHistorySpark → .audit/verify-density-spark.png / .audit/verify-fitbit-air-data-density-spark.png

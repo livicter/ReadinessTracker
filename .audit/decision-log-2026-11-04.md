@@ -651,3 +651,11 @@
 | 17:32 HKT | #798 density wow badge | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD798; model=deepseek-flash | mid-ship |
 | 17:46 HKT | #798 density wow badge | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD798 (779.731s, 0 failures; observer 786.153s); model=deepseek-flash |
 | 17:46 HKT | #798 density wow badge | land | proof PNG + receipt; SID fitbit.air.density.wow / health.air.density.wow; PR squash next; model=deepseek-flash |
+
+| 17:52 HKT | Honest #799 density history spark | model=deepseek-flash | restyle existing fitbit.air.density.spark / health.air.density.spark after density wow #798; WHOOP wells on the spark container only; spark PATH encoding left intact (not flattened to 8/14 wash); idle (no density > 0 in window) ghost/hairline 8/28 secondaryText; else/partial (has history) 14/28 accent; no natural complete/negative state (history path is not a fill-complete or up/down badge); mean/range capsules keep existing tones; mechanical pattern-copy of #798/#795 container chrome applied locally (no separate model iterate needed) | mid-ship |
+| 17:52 HKT | Honest #799 density history spark | prove | starting build-for-testing /tmp/RT-DD799; model=deepseek-flash | mid-ship |
+| 17:57 HKT | #799 density history spark | prove | starting tight UITest testDensityHistorySpark /tmp/RT-DD799; model=deepseek-flash | mid-ship |
+| 18:01 HKT | #799 density history spark | prove | UITest testDensityHistorySpark green /tmp/RT-DD799 (194.050s, 0 failures; observer 206.540s); proof /tmp/rt-audit/verify-density-spark.png (health.air.density.spark); model=deepseek-flash |
+| 18:01 HKT | #799 density history spark | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD799; model=deepseek-flash | mid-ship |
+| 18:18 HKT | #799 density history spark | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD799 (814.135s, 0 failures; observer 819.731s); model=deepseek-flash |
+| 18:18 HKT | #799 density history spark | land | proof PNG + receipt; SID fitbit.air.density.spark / health.air.density.spark; PR squash next; model=deepseek-flash |

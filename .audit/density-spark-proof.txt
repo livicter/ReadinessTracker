@@ -1,0 +1,15 @@
+Honest #799 — Density history spark (WHOOP wells)
+tip_base: 0c989ab (main before ship)
+branch: honest-799-density-spark
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD799 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityHistorySpark CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 194.050
+observer_s: 206.540
+pngs: .audit/verify-density-spark.png
+SID: fitbit.air.density.spark / health.air.density.spark
+when_hkt: 2026-11-10 18:01 HKT
+rationale: chrome-only WHOOP wells on existing Honest #514 / #689 density history spark container after density wow #798; spark PATH encoding left intact (AreaMark 0.18, LineMark, PointMark, mean RuleMark — not flattened to a uniform 8/14 wash); idle (no density > 0 in window) ghost/hairline 8/28 secondaryText; else/partial (has history) 14/28 accent; no natural complete/negative state (a history path is not a fill-complete or up/down badge); mean/range capsules keep existing tones; label contrast holds (no white text on a light wash); copy/SID/scrub/period math and READY formula unchanged. Mechanical pattern-copy of #798/#795 container chrome applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 814.135s, 0 failures (observer 819.731s) on iPhone 17 Pro starting 18:01:40 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityHistorySpark screenshot of health.air.density.spark (Apple Watch / HealthKit fixture; Health 7-day density 100/67/100/100/100/100/100 W–T). Spark container "Density · 7d" shows else/partial 14/28 Health-pink accent well (has history); 124967 hits of (255,226,231) matching 14% of #FF2D55 over white; hairline samples around (255,196,207)/(255,193,204) matching 28% (3x retina antialias). Inner avg 95% capsule stays Health pink; scrub 100% +5pp (optimal, above mean); range capsule 67–100% with range strip. Sparkline path, area fill, dashed mean rule, and end PointMark left intact (Tue 67% dip visible — not a uniform 8/14 wash). #798 Health WoW density +0pp idle ghost/hairline and #797 Density streak 5d complete 14/28 optimal well remain visible in the same frame. #796 forecast badge above remains idle ghost/hairline (Tomorrow density 100%, +0pp, vs avg +5pp). Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then upper-third short-swipes to the spark so the spark DragGesture cannot eat a swipe-down. model=deepseek-flash
+when_proof_hkt: 2026-11-10 18:01 HKT

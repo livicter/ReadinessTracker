@@ -18616,6 +18616,50 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
     }
 
 
+    /// Honest #799: WHOOP wells on existing density history spark.
+    /// Tight path to fitbit.air.density.spark / health.air.density.spark
+    /// on the Air card (below heatmap + WoW + forecast + streak). Avoids the long
+    /// testFitbitAirDataCardSurface walk that hangs on spark swipe-down
+    /// after Honest #790. After the Air title is on-screen, further swipes
+    /// originate in the upper third so the spark's DragGesture cannot eat
+    /// the scroll.
+    func testDensityHistorySpark() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let sparkFitbit = app.descendants(matching: .any)["fitbit.air.density.spark"].firstMatch
+        let sparkHealth = app.descendants(matching: .any)["health.air.density.spark"].firstMatch
+        let sparkTitle = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Density ·")).firstMatch
+        // Spark sits just under the streak badge. Streak used at most
+        // 12 swipes from the title; a few more reach the spark. Swipes
+        // stay in the upper third so we never swipe-down on the spark.
+        var h = 0
+        while !(isOnScreen(sparkFitbit) || isOnScreen(sparkHealth) || isOnScreen(sparkTitle)) && h < 16 {
+            let window = app.windows.firstMatch
+            let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+            let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.12))
+            start.press(forDuration: 0.01, thenDragTo: end)
+            h += 1
+        }
+        XCTAssertTrue(sparkFitbit.exists || sparkHealth.exists
+                      || sparkTitle.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "density history spark")).count > 0,
+                      "fitbit.air.density.spark / health.air.density.spark")
+        saveShot("verify-density-spark.png")
+        if sparkFitbit.exists { saveShot("verify-fitbit-air-data-density-spark.png") }
+        if sparkHealth.exists { saveShot("verify-health-air-density-spark.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]
