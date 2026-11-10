@@ -616,3 +616,10 @@
 | 15:06 HKT | #794 density heatmap | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD794; model=deepseek-flash | mid-ship |
 | 15:20 HKT | #794 density heatmap | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD794 (781.520s, 0 failures; observer 787.037s); model=deepseek-flash |
 | 15:20 HKT | #794 density heatmap | land | proof PNG + receipt; SID fitbit.air.density.heat / health.air.density.heat; PR squash next; model=deepseek-flash |
+| 15:29 HKT | Honest #795 density heat.day | model=deepseek-flash | restyle existing fitbit.air.density.heat.day / health.air.density.heat.day after density heat #794; WHOOP wells only; per-dot filled/gap fill preserved (dayAccent vs ghost, not flattened to 8/14 wash); container idle (filled == 0) ghost/hairline 8/28 secondaryText; active complete (filled == total) 14/28 optimal; else/partial 14/28 accent; selected-day thicker hairline; gap dots ghost/hairline 8/28 secondaryText; filled dots 28% hairline matching complete/partial tone; no negative state; mechanical pattern-copy of #794 applied locally (no separate model iterate needed) | mid-ship |
+| 15:29 HKT | Honest #795 density heat.day | prove | starting build-for-testing /tmp/RT-DD795; model=deepseek-flash | mid-ship |
+| 15:35 HKT | #795 density heat.day | prove | starting tight UITest testDensityHeatDay /tmp/RT-DD795; model=deepseek-flash | mid-ship |
+| 15:40 HKT | #795 density heat.day | prove | UITest testDensityHeatDay green /tmp/RT-DD795 (216.353s, 0 failures; observer 228.820s); proof .audit/verify-density-heat-day.png; model=deepseek-flash | mid-ship |
+| 15:40 HKT | #795 density heat.day | prove | starting UITest testReadinessLoadSimulatorSurface /tmp/RT-DD795; model=deepseek-flash | mid-ship |
+| 15:54 HKT | #795 density heat.day | prove | UITest testReadinessLoadSimulatorSurface green /tmp/RT-DD795 (778.339s, 0 failures; observer 783.858s); model=deepseek-flash | mid-ship |
+| 15:54 HKT | #795 density heat.day | land | proof PNG + receipt; SID fitbit.air.density.heat.day / health.air.density.heat.day; PR squash next; model=deepseek-flash |

@@ -1,0 +1,15 @@
+Honest #795 — Density heat.day (WHOOP wells)
+tip_base: 96ba0d5 (main before ship)
+branch: honest-795-density-heat-day
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD795 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityHeatDay CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 216.353
+observer_s: 228.820
+pngs: .audit/verify-density-heat-day.png
+SID: fitbit.air.density.heat.day / health.air.density.heat.day
+when_hkt: 2026-11-10 15:39 HKT
+rationale: chrome-only WHOOP wells on existing Honest #526 / #688 density heat.day strip after density heat #794; container idle (filled == 0) ghost/hairline 8/28 secondaryText; active complete (filled == total) 14/28 optimal; else/partial 14/28 accent; no negative state (density is non-negative); selected-day container keeps a thicker hairline; per-dot fill stays the filled/gap encoding (dayAccent vs ghost) and is not replaced by a uniform 8/14 wash; gap dots ghost/hairline 8/28 secondaryText; filled dots keep solid dayAccent plus a 28% hairline in the matching complete/partial tone; copy/SID/tap-to-select / spark-scrub math and READY formula unchanged; mechanical pattern-copy of #794 applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 778.339s, 0 failures (observer 783.858s) on iPhone 17 Pro starting 15:40:19 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityHeatDay screenshot of health.air.density.heat.day (Apple Watch / HealthKit fixture; Health 7-day density, tapped Density day 7 / today Tue 10 Nov 12/12 fields complete). Container shows 14/28 optimal mint well with thicker selected hairline; 12 filled dots keep solid Health pink (FF2D55 family, not flattened to 8/14 wash). Heatmap intensity from #794 still visible in the same frame: 100% cells heat 0.9 (248,64,96) 66790 hits; 67% Tue cell heat 0.55 (248,136,160) 10849 hits. Tight test scrolls until the Health Air / Fitbit Air title is on-screen, short swipe to the heatmap, then taps a labeled day cell to reveal the strip. model=deepseek-flash
+when_proof_hkt: 2026-11-10 15:39 HKT

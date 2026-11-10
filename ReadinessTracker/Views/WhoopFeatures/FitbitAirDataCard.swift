@@ -895,6 +895,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #526: selected heatmap day chip-dot strip.
     /// Honest #688: appleWatch / HealthKit uses Health pink + health.air.density.heat.day (#526 parity).
+    /// Honest #795: WHOOP wells; filled/gap dot fill preserved (not flattened to 8/14 wash).
     private func heatmapDayStrip(_ day: DailyHealthData) -> some View {
         let dayChips = AirChip.all(from: day)
         let filled = dayChips.filter(\.filled).count
@@ -902,6 +903,22 @@ struct FitbitAirDataCard: View {
         let dayAccent: Color = isHealth ? Color(hex: "FF2D55") : accent
         let daySID = isHealth ? SurfaceID.healthAirDensityHeatDay : SurfaceID.fitbitAirDensityHeatDay
         let dayLabel = isHealth ? "Health selected density day field strip" : "Selected density day field strip"
+        // Honest #795: WHOOP wells on existing density heat.day strip.
+        // Per-dot fill stays the filled/gap encoding (dayAccent vs ghost)
+        // and is not replaced by a uniform 8/14 wash. Container: idle
+        // (filled == 0) ghost/hairline 8/28 secondaryText; active complete
+        // (filled == total) 14/28 optimal; else/partial 14/28 accent.
+        // Selected-day container keeps a thicker hairline. Dots: idle (gap)
+        // ghost/hairline 8/28 secondaryText; filled 28% hairline in the
+        // matching complete/partial tone. No negative state.
+        let stripIsActive = filled > 0
+        let stripComplete = !dayChips.isEmpty && filled >= dayChips.count
+        let stripWellTone: Color = !stripIsActive
+            ? RTColor.secondaryText
+            : (stripComplete ? RTColor.optimal : dayAccent)
+        let stripFill: Color = !stripIsActive
+            ? RTColor.secondaryText.opacity(0.08)
+            : stripWellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(day.date, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
@@ -914,15 +931,26 @@ struct FitbitAirDataCard: View {
             }
             HStack(spacing: 4) {
                 ForEach(dayChips) { chip in
+                    let dotTone: Color = chip.filled
+                        ? (stripComplete ? RTColor.optimal : dayAccent)
+                        : RTColor.secondaryText
                     Circle()
-                        .fill(chip.filled ? dayAccent : RTColor.surfaceHighlight)
+                        .fill(chip.filled ? dayAccent : RTColor.secondaryText.opacity(0.08))
                         .frame(width: 8, height: 8)
+                        .overlay(
+                            Circle()
+                                .stroke(dotTone.opacity(0.28), lineWidth: 1)
+                        )
                         .accessibilityLabel("\(chip.label) \(chip.filled ? "filled" : "gap")")
                 }
             }
         }
         .padding(10)
-        .background(RTColor.surfaceHighlight, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(stripFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(stripWellTone.opacity(0.28), lineWidth: 1.5)
+        )
         .accessibilityIdentifier(daySID)
         .accessibilityLabel(dayLabel)
     }
