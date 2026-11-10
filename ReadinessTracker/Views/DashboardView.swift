@@ -141,9 +141,13 @@ struct DashboardView: View {
                             )
                             .slideIn(delay: 0.18)
                             // Honest #498: Fitbit / Google Health air-data density card
+                            // Honest #798: density WoW (#527) needs history.count >= 8
+                            // (last-7d vs prior-7d). Trends defaults to 7D, which hid
+                            // the existing badge. The Air card keeps at least a 14d
+                            // window; READY / Load Simulator still use trendPeriod.
                             FitbitAirDataCard(
                                 data: data,
-                                history: history,
+                                history: dataStore.dataForSource(selectedSource, days: max(14, trendPeriod.rawValue)),
                                 source: selectedSource
                             )
                             .slideIn(delay: 0.19)
