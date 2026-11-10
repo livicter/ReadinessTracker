@@ -1,6 +1,5 @@
-# Honest #656: Health Air density Percentile
+# Honest #656 / #805: Health Air density percentile
 
-Fitbit #578 parity for appleWatch / HealthKit — Health pink tonight dens percentile-rank meter (High/Mid/Low Pxx).
+Fitbit #578 / #805 parity for appleWatch / HealthKit — Health pink tonight dens percentile-rank meter, chrome-only WHOOP wells.
 SurfaceID: `health.air.density.percentile`
-Proof: `.audit/verify-health-air-density-percentile.png`
-Note: parent steering labeled Fitbit #601; Theme/source Fitbit Honest is #578.
+Proof: `.audit/verify-density-percentile.png`
