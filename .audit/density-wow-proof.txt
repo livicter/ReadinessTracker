@@ -1,0 +1,15 @@
+Honest #798 — Density week-over-week badge (WHOOP wells)
+tip_base: 98ef2c9 (main before ship)
+branch: honest-798-density-wow
+command: xcodebuild build-for-testing + test-without-building -project ReadinessTracker.xcodeproj -scheme ReadinessTracker -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/RT-DD798 -only-testing:ReadinessTrackerUITests/SurfacesUITests/testDensityWowBadge CODE_SIGNING_ALLOWED=NO
+result: Passed (failedTests=0, passedTests=1)
+duration_s: 183.726
+observer_s: 194.069
+pngs: .audit/verify-density-wow.png
+SID: fitbit.air.density.wow / health.air.density.wow
+when_hkt: 2026-11-10 17:32 HKT
+rationale: chrome-only WHOOP wells on existing Honest #527 / #687 density WoW badge button after density streak #797; idle (abs(deltaPP) < 0.5) ghost/hairline 8/28 secondaryText; active complete (deltaPP > 0, up) 14/28 optimal; active negative (deltaPP < 0, down) 14/28 strain; inner pp capsule keeps existing tone (warning for down, optimal for up); wowStat detail row unchanged; copy/SID/expand-toggle math and READY formula unchanged. Dashboard now passes the Air card max(14, trendPeriod) days so the existing #527 metric can mount on default Today (needs history.count >= 8); READY / Load Simulator still use trendPeriod. Mechanical pattern-copy of forecast #796 applied locally; model=deepseek-flash
+
+loadsim_test: testReadinessLoadSimulatorSurface passed 779.731s, 0 failures (observer 786.153s) on iPhone 17 Pro starting 17:32:32 HKT. Did not run testFitbitAirDataCardSurface (known hang on fitbit.air.density.spark swipe-down after #790).
+proof_png_source: UITest testDensityWowBadge screenshot of health.air.density.wow (Apple Watch / HealthKit fixture; Health 7-day density, Health WoW density +0pp). Badge button shows idle ghost/hairline 8/28 secondaryText well (abs(deltaPP) < 0.5); 102418 hits of (246,246,246) in the badge crop matching 8% of secondaryText (142,142,147) over white; hairline 2709 hits of (223,223,225) matching 28%. Inner +0pp capsule stays secondaryText. Heatmap intensity from #794 and #797 Density streak 5d complete 14/28 optimal well remain visible in the same frame. #796 forecast badge below remains idle ghost/hairline (Tomorrow density 100%, +0pp, vs avg +5pp). Tight test scrolls until the Health Air / Fitbit Air title is on-screen, then short-swipes to the WoW badge. model=deepseek-flash
+when_proof_hkt: 2026-11-10 17:32 HKT

@@ -18574,6 +18574,48 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if streakHealth.exists { saveShot("verify-health-air-density-streak.png") }
     }
 
+    /// Honest #798: WHOOP wells on existing density week-over-week badge.
+    /// Tight path to fitbit.air.density.wow / health.air.density.wow
+    /// on the Air card (below heatmap, above forecast + streak). Avoids the long
+    /// testFitbitAirDataCardSurface walk that can hang on spark swipe-down.
+    /// Dashboard supplies the Air card at least 14d of history so densityWow
+    /// (needs count >= 8) mounts on the default Today fixture.
+    func testDensityWowBadge() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let wowFitbit = app.descendants(matching: .any)["fitbit.air.density.wow"].firstMatch
+        let wowHealth = app.descendants(matching: .any)["health.air.density.wow"].firstMatch
+        let wowTitleFitbit = app.staticTexts["WoW density"]
+        let wowTitleHealth = app.staticTexts["Health WoW density"]
+        // WoW sits just under the heatmap. Heat used at most 6 swipes from
+        // the title; a few more reach WoW without overscrolling the meter stack.
+        var h = 0
+        while !(isOnScreen(wowTitleFitbit) || isOnScreen(wowTitleHealth)
+                || isOnScreen(wowFitbit) || isOnScreen(wowHealth)) && h < 10 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(wowFitbit.exists || wowHealth.exists
+                      || wowTitleFitbit.exists || wowTitleHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "week over week density")).count > 0,
+                      "fitbit.air.density.wow / health.air.density.wow")
+        saveShot("verify-density-wow.png")
+        if wowFitbit.exists { saveShot("verify-fitbit-air-density-wow.png") }
+        if wowHealth.exists { saveShot("verify-health-air-density-wow.png") }
+    }
+
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]

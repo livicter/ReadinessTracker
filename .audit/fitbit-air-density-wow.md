@@ -1,4 +1,3 @@
-Honest #527: Fitbit Air density week-over-week
+Honest #527 / #798: Fitbit Air density week-over-week (WHOOP wells)
 SurfaceID fitbit.air.density.wow
-Proof: UITest testFitbitAirDataCardSurface PASS iPhone 17 Pro 26.5
-.audit/verify-fitbit-air-density-wow.png
+Proof: UITest testDensityWowBadge → .audit/verify-density-wow.png / .audit/verify-fitbit-air-density-wow.png

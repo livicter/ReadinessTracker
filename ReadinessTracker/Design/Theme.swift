@@ -237,7 +237,7 @@ enum SurfaceID {
     static let fitbitAirDensityRingCycle = "fitbit.air.density.cycle"  // Honest #521
     static let fitbitAirDensityHeatmap = "fitbit.air.density.heat"  // Honest #525 / #794
     static let fitbitAirDensityHeatDay = "fitbit.air.density.heat.day"  // Honest #526 / #795
-    static let fitbitAirDensityWow = "fitbit.air.density.wow"  // Honest #527
+    static let fitbitAirDensityWow = "fitbit.air.density.wow"  // Honest #527 / #798
     static let interactiveRecoveryDialZones = "balance.dial.zones"  // Honest #522
     static let readinessSimulatorAirGapTasks = "sim.load.tasks.airgaps"  // Honest #523 / #777
     static let readinessSimulatorTaskCoupled = "sim.load.tasks.coupled"  // Honest #528 / #765
@@ -380,7 +380,7 @@ enum SurfaceID {
     static let healthAirDensityHeat = "health.air.density.heat"  // Honest #684 / #794
     static let healthAirDensityCycle = "health.air.density.cycle"  // Honest #685
     static let healthAirDensityStack = "health.air.density.stack"  // Honest #686 / #793
-    static let healthAirDensityWow = "health.air.density.wow"  // Honest #687
+    static let healthAirDensityWow = "health.air.density.wow"  // Honest #687 / #798
     static let healthAirDensityHeatDay = "health.air.density.heat.day"  // Honest #688 / #795
     static let healthAirDensitySpark = "health.air.density.spark"  // Honest #689
     static let healthAirDensityLegend = "health.air.density.legend"  // Honest #690 / #792
