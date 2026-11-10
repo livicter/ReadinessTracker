@@ -1,7 +1,5 @@
-# Honest #670: Health Air density CV
+# Honest #670 / #802: Health Air density CV
 
-14d coefficient of variation σ/μ (Health pink / Google Health graphics).
+Fitbit #572 / #802 parity for appleWatch / HealthKit — Health pink density CV meter, chrome-only WHOOP wells.
 SurfaceID: `health.air.density.cv`
-Parity: Fitbit #572
-Proof: `.audit/verify-health-air-density-cv.png`
-model=deepseek-flash
+Proof: `.audit/verify-density-cv.png`

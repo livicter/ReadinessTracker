@@ -2186,6 +2186,7 @@ struct FitbitAirDataCard: View {
 
     /// Honest #572: density CV meter — 14d coefficient of variation (Google Health graphics).
     /// Honest #670: appleWatch / HealthKit uses Health pink + health.air.density.cv (#572 parity).
+    /// Honest #802: WHOOP wells on the existing density CV meter container.
     @ViewBuilder
     private var densityCVMeter: some View {
         let days = Array(history.suffix(14))
@@ -2215,6 +2216,25 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density CV" : "Density CV"
         let meterSID = isHealth ? SurfaceID.healthAirDensityCV : SurfaceID.fitbitAirDensityCV
+        // Honest #802: WHOOP wells on the existing density CV meter container.
+        // The ratio track already encodes the CV reading itself (barFrac =
+        // min(1, cv/0.5) fill plus meterColor→tone gradient) and is left
+        // intact — not flattened to a uniform 8/14 wash. The stability
+        // capsule keeps its existing tone (Stable/optimal, Mixed/good,
+        // Volatile/warning). Label contrast holds (no white text on a
+        // light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Stable, cvPP <= 15) 14/28 optimal;
+        // active negative (Volatile, cvPP > 30) 14/28 strain;
+        // else/partial (Mixed, 15 < cvPP <= 30) 14/28 accent.
+        let wellIsIdle = !dens.contains(where: { $0 > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (cvPP <= 15 ? RTColor.optimal
+               : (cvPP > 30 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "waveform.path")
@@ -2247,10 +2267,10 @@ struct FitbitAirDataCard: View {
                 .foregroundStyle(RTColor.tertiaryText)
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density coefficient of variation \(cvPP) percent, \(stability)")
