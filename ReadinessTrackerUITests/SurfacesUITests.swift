@@ -18427,6 +18427,77 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if heatHealth.exists { saveShot("verify-health-air-density-heatmap.png") }
     }
 
+    /// Honest #795: WHOOP wells on existing density heat.day strip.
+    /// Tight path: on-card 7-day heat, tap a day cell to reveal
+    /// fitbit.air.density.heat.day / health.air.density.heat.day.
+    /// Avoids the long testFitbitAirDataCardSurface walk that can hang
+    /// on spark swipe-down.
+    func testDensityHeatDay() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        let titleFitbit = app.staticTexts["Fitbit Air"]
+        let titleHealth = app.staticTexts["Health Air"]
+        // Titles exist in the scroll hierarchy off-screen at launch; scroll until
+        // one is actually in the visible window (exists-only loops never moved).
+        var n = 0
+        while !(isOnScreen(titleFitbit) || isOnScreen(titleHealth)) && n < 30 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(isOnScreen(titleFitbit) || isOnScreen(titleHealth),
+                      "Fitbit Air / Health Air on-screen")
+
+        let heatFitbit = app.descendants(matching: .any)["fitbit.air.density.heat"].firstMatch
+        let heatHealth = app.descendants(matching: .any)["health.air.density.heat"].firstMatch
+        var h = 0
+        while !(isOnScreen(heatFitbit) || isOnScreen(heatHealth)) && h < 6 {
+            app.swipeUp()
+            h += 1
+        }
+        XCTAssertTrue(heatFitbit.exists || heatHealth.exists
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "seven day air density heatmap")).count > 0
+                      || app.staticTexts["7-day density"].exists
+                      || app.staticTexts["Health 7-day density"].exists,
+                      "fitbit.air.density.heat / health.air.density.heat")
+
+        let heat = heatFitbit.exists ? heatFitbit : heatHealth
+        // Prefer a labeled day cell so the selected-day strip actually appears.
+        let dayCell = app.descendants(matching: .any).matching(
+            NSPredicate(format: "label BEGINSWITH[c] %@", "Density day")
+        ).element(boundBy: 6)
+        if dayCell.waitForExistence(timeout: 3) {
+            if dayCell.isHittable { dayCell.tap() }
+            else { dayCell.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+        } else if heat.exists {
+            heat.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.62)).tap()
+        }
+
+        let heatDayFitbit = app.descendants(matching: .any)["fitbit.air.density.heat.day"].firstMatch
+        let heatDayHealth = app.descendants(matching: .any)["health.air.density.heat.day"].firstMatch
+        var d = 0
+        while !(heatDayFitbit.exists || heatDayHealth.exists) && d < 4 {
+            // If the first tap missed, try a mid-row cell.
+            let mid = app.descendants(matching: .any).matching(
+                NSPredicate(format: "label BEGINSWITH[c] %@", "Density day")
+            ).element(boundBy: 3)
+            if mid.exists {
+                if mid.isHittable { mid.tap() }
+                else { mid.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap() }
+            } else if heat.exists {
+                heat.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.62)).tap()
+            }
+            d += 1
+        }
+        XCTAssertTrue(heatDayFitbit.waitForExistence(timeout: 6)
+                      || heatDayHealth.waitForExistence(timeout: 3)
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "fields")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Selected density day")).count > 0
+                      || app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@", "Health selected density day")).count > 0,
+                      "fitbit.air.density.heat.day / health.air.density.heat.day")
+        saveShot("verify-density-heat-day.png")
+        if heatDayFitbit.exists { saveShot("verify-fitbit-air-density-heat-day.png") }
+        if heatDayHealth.exists { saveShot("verify-health-air-density-heat-day.png") }
+    }
+
     private func revealText(_ text: String) {
 
         let el = app.staticTexts[text]
