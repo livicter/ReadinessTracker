@@ -302,7 +302,7 @@ enum SurfaceID {
     static let readinessSimulatorPathZoneBands = "sim.load.path.zones"  // Honest #587 / #756
     static let fitbitAirDensityZScore = "fitbit.air.density.zscore"  // Honest #588 / #810
     static let readinessSimulatorReadyPace = "sim.load.ready.pace"  // Honest #589 / #731
-    static let fitbitAirDensityACF = "fitbit.air.density.acf"  // Honest #590
+    static let fitbitAirDensityACF = "fitbit.air.density.acf"  // Honest #590 / #811
     static let readinessSimulatorTaskImpactShare = "sim.load.tasks.impactshare"  // Honest #591 / #732
     static let fitbitAirDensityEntropy = "fitbit.air.density.entropy"  // Honest #592
     static let readinessSimulatorAirRadar = "sim.load.air.radar"  // Honest #593 / #733 / #789
@@ -356,7 +356,7 @@ enum SurfaceID {
     static let healthAirDensitySpan = "health.air.density.span"  // Honest #660
     static let healthAirDensityKurtosis = "health.air.density.kurtosis"  // Honest #661
     static let healthAirDensityEntropy = "health.air.density.entropy"  // Honest #662
-    static let healthAirDensityACF = "health.air.density.acf"  // Honest #663
+    static let healthAirDensityACF = "health.air.density.acf"  // Honest #663 / #811
     static let healthAirDensityZScore = "health.air.density.zscore"  // Honest #664 / #810
     static let healthAirDensitySlope = "health.air.density.slope"  // Honest #665 / #809
     static let healthAirDensityTukey = "health.air.density.tukey"  // Honest #666 / #808

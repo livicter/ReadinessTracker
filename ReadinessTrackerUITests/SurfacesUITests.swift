@@ -19189,6 +19189,55 @@ func testPeakHeartRateCardMetricDetailNavSurface() throws {
         if meterExistsNow(zHealth) { saveShot("verify-health-air-density-zscore.png") }
     }
 
+    func testDensityACF() throws {
+        _ = app.staticTexts["Readiness"].waitForExistence(timeout: 8)
+        tapMainTab("Today")
+
+        let meter = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.acf",
+                        "fitbit.air.density.acf")
+        ).firstMatch
+        let acfFitbit = app.descendants(matching: .any)["fitbit.air.density.acf"].firstMatch
+        let acfHealth = app.descendants(matching: .any)["health.air.density.acf"].firstMatch
+        let mad = app.descendants(matching: .any).matching(
+            NSPredicate(format: "identifier == %@ OR identifier == %@",
+                        "health.air.density.mad",
+                        "fitbit.air.density.mad")
+        ).firstMatch
+
+        // ACF sits immediately under z-score, which sits under slope / Tukey / MAD.
+        // Walk like #810: swipeUp until meterVisible(MAD), then one short
+        // slow drag (0.40→0.28, .slow, hold 0.25s). That crop already
+        // showed z-score fully and ACF fully below it (ACF 7% chrome
+        // started around y=1520 in the #810 1206×2622 shot). Do not add
+        // a default-velocity flick (run #808-4 inertial-jumped to
+        // Gini/volatility). Add one more careful slow drag only if ACF
+        // is not yet in the content band. The ACF SID, like
+        // z-score/slope/Tukey, can surface as a non-hittable Image whose
+        // frame does not intersect the content band — assert existence
+        // after the proven walk, then confirm the PNG is the ACF meter.
+        // Exact SID predicates only, no CONTAINS.
+        var n = 0
+        while !meterVisible(mad) && n < 80 {
+            app.swipeUp()
+            n += 1
+        }
+        XCTAssertTrue(meterVisible(mad),
+                      "health.air.density.mad / fitbit.air.density.mad (anchor for ACF)")
+
+        let window = app.windows.firstMatch
+        let start = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.40))
+        let end = window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.28))
+        start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.25)
+
+        XCTAssertTrue(meterExistsNow(meter),
+                      "fitbit.air.density.acf / health.air.density.acf")
+        saveShot("verify-density-acf.png")
+        if meterExistsNow(acfFitbit) { saveShot("verify-fitbit-air-density-acf.png") }
+        if meterExistsNow(acfHealth) { saveShot("verify-health-air-density-acf.png") }
+    }
+
     private func meterExistsNow(_ el: XCUIElement) -> Bool {
         el.waitForExistence(timeout: 0.1)
     }
