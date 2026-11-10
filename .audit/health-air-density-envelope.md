@@ -1,7 +1,5 @@
-# Honest #668: Health Air density envelope
+# Honest #668 / #806: Health Air density envelope
 
-Q1–Q3 density envelope of last-14 dens (Health pink / Google Health graphics).
+Fitbit #580 / #806 parity for appleWatch / HealthKit — Health pink dens envelope chart, chrome-only WHOOP wells.
 SurfaceID: `health.air.density.envelope`
-Parity: Fitbit #580
-Proof: `.audit/verify-health-air-density-envelope.png`
-model=deepseek-flash
+Proof: `.audit/verify-density-envelope.png`

@@ -2627,8 +2627,9 @@ struct FitbitAirDataCard: View {
 
 
     /// Honest #580: density envelope chart — dens spark with Q1–Q3 band (Google Health graphics).
-    @ViewBuilder
     /// Honest #668: appleWatch / HealthKit uses Health pink + health.air.density.envelope (#580 parity).
+    /// Honest #806: WHOOP wells on the existing density envelope chart container.
+    @ViewBuilder
     private var densityEnvelopeChart: some View {
         let days = Array(history.suffix(14))
         if days.count < 5 {
@@ -2666,6 +2667,24 @@ struct FitbitAirDataCard: View {
         let meterColor: Color = isHealth ? Color(hex: "FF2D55") : accent
         let meterTitle = isHealth ? "Health Density envelope" : "Density envelope"
         let meterSID = isHealth ? SurfaceID.healthAirDensityEnvelope : SurfaceID.fitbitAirDensityEnvelope
+        // Honest #806: WHOOP wells on the existing density envelope chart container.
+        // The Chart already encodes the envelope reading itself (Q1–Q3 AreaMark
+        // at meterColor.opacity(0.14), density LineMark, and dashed median
+        // RuleMark) and is left intact — not flattened to a uniform 8/14 wash.
+        // The IQR capsule keeps its existing meterColor tone. Label contrast
+        // holds (no white text on a light wash).
+        // Idle (no density > 0 in the 14d window) ghost/hairline 8/28 secondaryText;
+        // active complete (has density, Tight, iqrPP <= 12) 14/28 optimal;
+        // active negative (Wide, iqrPP > 22) 14/28 strain;
+        // else/partial (Steady, 12 < iqrPP <= 22) 14/28 accent.
+        let wellIsIdle = !pts.contains(where: { $0.dens > 0 })
+        let wellTone: Color = wellIsIdle
+            ? RTColor.secondaryText
+            : (iqrPP <= 12 ? RTColor.optimal
+               : (iqrPP > 22 ? RTColor.strain : meterColor))
+        let wellFill: Color = wellIsIdle
+            ? RTColor.secondaryText.opacity(0.08)
+            : wellTone.opacity(0.14)
         return VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Image(systemName: "chart.xyaxis.line")
@@ -2733,10 +2752,10 @@ struct FitbitAirDataCard: View {
             }
         }
         .padding(10)
-        .background(meterColor.opacity(0.07), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .background(wellFill, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(meterColor.opacity(0.28), lineWidth: 1)
+                .stroke(wellTone.opacity(0.28), lineWidth: 1)
         )
         .accessibilityIdentifier(meterSID)
         .accessibilityLabel("Density envelope IQR \(iqrPP) points")
